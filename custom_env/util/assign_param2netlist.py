@@ -120,8 +120,7 @@ def assign_param2netlist(param_dict, unassigned_netlist_file_path, assigned_netl
 #     ('IB', '50.0u')
 # ])
 # unassigned_netlist_file_path = ("/Users/hanwu/ML/AnalogDesignAuto_MultiAgent/custom_env/netlist_template"
-#                                 "/DC_parameterized.scs")
-# assigned_netlist_file_path = ("/Users/hanwu/ML/AnalogDesignAuto_MultiAgent/custom_env/netlist_assign_test/DC_assigned"
-#                               ".scs")
-# assigned_yaml_file_path = "/Users/hanwu/ML/AnalogDesignAuto_MultiAgent/custom_env/netlist_assign_test/Assigned.yaml"
+#                                 "/Trans_parameterized.scs")
+# assigned_netlist_file_path = ("/Users/hanwu/ML/AnalogDesignAuto_MultiAgent/custom_env/netlist_assign_test/Trans.scs")
+# assigned_yaml_file_path = "/Users/hanwu/ML/AnalogDesignAuto_MultiAgent/custom_env/netlist_assign_test/assigned.yaml"
 # assign_param2netlist(param_dict, unassigned_netlist_file_path, assigned_netlist_file_path, assigned_yaml_file_path)
