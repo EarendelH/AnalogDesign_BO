@@ -1,0 +1,40 @@
+HEADER
+"PSFversion" "1.00"
+"BINPSF creation time" "1702295083"
+"simulator" "spectre"
+"version" "18.1.0.335.isr6"
+"date" "7:44:43 PM, Mon Dec 11, 2023"
+"design" "// Generated for: spectre"
+"analysis type" "margin.stb"
+"analysis name" "stb"
+"analysis description" "Stability Analysis `stb': freq = (1 Hz -> 1 GHz)"
+"xVecSorted" "ascending"
+"tolerance.relative" 0.00100000
+"operating point producer" "stb"
+"probe" "IPRB1"
+"gainMarginInfo" "Gain(dB)is always less than zero. The loop is always stable. No gain margin or phase margin."
+TYPE
+"dB" FLOAT DOUBLE PROP(
+"key" "gain"
+"units" "dB"
+)
+"Deg" FLOAT DOUBLE PROP(
+"key" "gain"
+"units" "Deg"
+)
+"Hz" FLOAT DOUBLE PROP(
+"key" "gain"
+"units" "Hz"
+)
+"stbstate" STRING *
+VALUE
+"gainMargin" "dB" nan PROP(
+"gainMarginInfo" "Gain(dB)is always less than zero. The loop is always stable. No gain margin or phase margin."
+)
+"gainMarginFreq" "Hz" nan
+"phaseMargin" "Deg" nan PROP(
+"phaseMarginInfo" ""
+)
+"phaseMarginFreq" "Hz" nan
+"stb_state" "stbstate" "Gain(dB)is always less than zero. The circuit is always stable. No gain margin or phase margin."
+END
