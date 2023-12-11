@@ -50,3 +50,9 @@ def run_spectre_simulation(work_dir, sim_config):
             results[simulation] = result
 
     return results
+
+# Test Code
+work_dir = "../netlist_assign_test"
+sim_config = "../config/simulation.ymal"
+test_result = run_spectre_simulation(work_dir, sim_config)
+print(test_result)
