@@ -53,9 +53,13 @@ def run_spectre_simulation(work_dir, sim_config):
     return results
 
 # Test Code
-work_dir = "../netlist_assign_test"
-sim_config_path = "../config/simulation.yaml"
-with open(sim_config_path, 'r') as file:
-    sim_config = yaml.safe_load(file)
-test_result = run_spectre_simulation(work_dir, sim_config)
-print(test_result)
+# work_dir = "../netlist_assign_test"
+# sim_config_path = "../config/simulation.yaml"
+# with open(sim_config_path, 'r') as file:
+#     sim_config = yaml.safe_load(file)
+# test_result = run_spectre_simulation(work_dir, sim_config)
+# print(test_result)
+
+# Output {'DC': {'pwr': 0.000803601}, 'Stability': {'phaseMargin': nan, 'gainBandWidth': nan}, 'Trans': {
+# 'slewRateUp': 4996857.610474619, 'slewRateDown': 5684722.22222081}, 'PSRR': {'powerSupplyRejectionRatio':
+# 9.24983891912481}}
