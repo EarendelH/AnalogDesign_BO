@@ -2,7 +2,7 @@ import re
 import csv
 
 
-def parseDeviceInfo(filepath):
+def parse_device_info(filepath):
     def extract_device_properties(device_section):
         # Extract properties for each device with a flexible approach
         property_patterns = [
@@ -59,7 +59,7 @@ def parseDeviceInfo(filepath):
     return parsed_devices
 
 
-def deviceInfoExport(device_info, output_filepath):
+def device_info_export(device_info, output_filepath):
     # CSV headers
     headers = ["DeviceName", "DeviceType", "ParameterName", "ParameterDateType", "ParameterUnit",
                "ParameterDescription"]

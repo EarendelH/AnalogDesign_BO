@@ -1,8 +1,8 @@
-from utilDeviceInfo import parseDeviceInfo
+from util_device_info import parse_device_info
 import re
 
 
-def parseInstanceProperties(filepath, device_info):
+def parse_instance_properties(filepath, device_info):
     # Read the file content
     with open(filepath, "r") as file:
         file_content = file.read()
@@ -59,9 +59,9 @@ def parseInstanceProperties(filepath, device_info):
     return parsed_values
 
 
-def extractInstanceProperties(filepath):
+def extract_instance_properties(filepath):
     # Using the previously defined parseDeviceInfo function
-    device_info = parseDeviceInfo(filepath)
+    device_info = parse_device_info(filepath)
 
     # Read the file content
     with open(filepath, "r") as file:
@@ -74,7 +74,7 @@ def extractInstanceProperties(filepath):
     instance_type_dict = {instance: dtype for instance, dtype in device_instance_types}
 
     # Parse the device values using the previously defined function
-    device_values = parseInstanceProperties(filepath, device_info)
+    device_values = parse_instance_properties(filepath, device_info)
 
     # Adding device type information to the parsed values
     for instance_name, instance_values in device_values.items():
@@ -85,7 +85,7 @@ def extractInstanceProperties(filepath):
 
 def findDCValue(filepath):
     # Extract the properties using the previously defined function
-    instance_properties = extractInstanceProperties(filepath)
+    instance_properties = extract_instance_properties(filepath)
 
     instance_name = "V0"
     property_name = "pwr"

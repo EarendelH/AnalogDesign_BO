@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-def analyzeTransFile(file_path):
+def analyze_trans_file(file_path):
     """
     Parse the signals from the given file and return a dictionary with signal names as keys
     and their corresponding 2D numpy arrays (time and value) as values.
@@ -80,7 +80,7 @@ def findSlewRate(file_path):
     """
 
     # Parse the signals
-    signals = analyzeTransFile(file_path)
+    signals = analyze_trans_file(file_path)
     # Define the output signal
     signal_name = "net3"
 
