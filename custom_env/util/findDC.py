@@ -1,4 +1,4 @@
-from resultParse.utilDeviceInfo import parseDeviceInfo
+from utilDeviceInfo import parseDeviceInfo
 import re
 
 

@@ -1,5 +1,6 @@
 import os
 import subprocess
+import yaml
 
 
 def run_spectre_simulation(work_dir, sim_config):
@@ -53,6 +54,8 @@ def run_spectre_simulation(work_dir, sim_config):
 
 # Test Code
 work_dir = "../netlist_assign_test"
-sim_config = "../config/simulation.ymal"
+sim_config_path = "../config/simulation.yaml"
+with open(sim_config_path, 'r') as file:
+    sim_config = yaml.safe_load(file)
 test_result = run_spectre_simulation(work_dir, sim_config)
 print(test_result)
