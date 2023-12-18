@@ -1,0 +1,117 @@
+import gymnasium
+import numpy as np
+import yaml
+
+from util_func import unit_conversion
+
+
+def gen_obs_space(result_config_file, param_range_config_file):
+    """
+    Generate observation space for the custom environment.
+    :param result_config_file: path of the result config file
+    :param param_range_config_file: path of the parameter range config file
+    :return: obs_space: gymnasium.spaces.Dict, observation space for the custom environment
+    """
+
+    # Import YAML file
+    with open(result_config_file, 'r') as file:
+        result_config = yaml.safe_load(file)
+    with open(param_range_config_file, 'r') as file:
+        param_range_config = yaml.safe_load(file)
+
+    # Create spaces for ideal_specs and cur_specs
+    ideal_specs_spaces = {key: gymnasium.spaces.Box(low=0, high=1, shape=(1,), dtype=np.float32)
+                          for key in sum(result_config.values(), [])}
+    cur_specs_spaces = {key: gymnasium.spaces.Box(low=0, high=1, shape=(1,), dtype=np.float32)
+                        for key in sum(result_config.values(), [])}
+
+    # Create spaces for cur_param
+    cur_param_spaces = {}
+    for component, data in param_range_config.items():
+        for param in data['params']:
+            variable_name = param['variable_name']
+            range_min, range_max = param['value']['range']
+            cur_param_spaces[variable_name] = gymnasium.spaces.Box(low=unit_conversion(range_min),
+                                                                   high=unit_conversion(range_max), shape=(1,),
+                                                                   dtype=np.float32)
+
+    # Combine three dicts into one gymnasium.spaces.Dict
+    obs_space = gymnasium.spaces.Dict({
+        'ideal_specs': gymnasium.spaces.Dict(ideal_specs_spaces),
+        'cur_specs': gymnasium.spaces.Dict(cur_specs_spaces),
+        'cur_param': gymnasium.spaces.Dict(cur_param_spaces)
+    })
+
+    return obs_space
+
+
+# Test Code
+# result_config_file = "../config/result.yaml"
+# param_range_config_file = "../config/param_range.yaml"
+# observation_space = gen_obs_space(result_config_file, param_range_config_file)
+# print(f"observation_space: {observation_space}")
+#
+# observation_space_sample = observation_space.sample()
+# print(f"observation_space_sample: {observation_space_sample}")
+
+# Output
+# observation_space: Dict('cur_param': Dict('IB': Box(1e-06, 5e-05, (1,), float32), 'l_M11': Box(5e-07, 1e-05,
+# (1,), float32), 'l_M12': Box(5e-07, 1e-05, (1,), float32), 'l_M13': Box(5e-07, 1e-05, (1,), float32), 'l_M14': Box(
+# 5e-07, 1e-05, (1,), float32), 'l_M16': Box(5e-07, 1e-05, (1,), float32), 'l_M17': Box(5e-07, 1e-05, (1,), float32),
+# 'l_M18': Box(5e-07, 1e-05, (1,), float32), 'l_M19': Box(5e-07, 1e-05, (1,), float32), 'l_M20': Box(5e-07, 1e-05,
+# (1,), float32), 'l_M21': Box(5e-07, 1e-05, (1,), float32), 'l_M22': Box(5e-07, 1e-05, (1,), float32), 'l_M23': Box(
+# 5e-07, 1e-05, (1,), float32), 'l_M24': Box(5e-07, 1e-05, (1,), float32), 'l_M25': Box(5e-07, 1e-05, (1,), float32),
+# 'l_M35': Box(5e-07, 1e-05, (1,), float32), 'l_M36': Box(5e-07, 1e-05, (1,), float32), 'nf_M11': Box(1.0, 20.0, (1,
+# ), float32), 'nf_M12': Box(1.0, 20.0, (1,), float32), 'nf_M13': Box(1.0, 20.0, (1,), float32), 'nf_M14': Box(1.0,
+# 20.0, (1,), float32), 'nf_M16': Box(1.0, 20.0, (1,), float32), 'nf_M17': Box(1.0, 20.0, (1,), float32),
+# 'nf_M18': Box(1.0, 20.0, (1,), float32), 'nf_M19': Box(1.0, 20.0, (1,), float32), 'nf_M20': Box(1.0, 20.0, (1,),
+# float32), 'nf_M21': Box(1.0, 20.0, (1,), float32), 'nf_M22': Box(1.0, 20.0, (1,), float32), 'nf_M23': Box(1.0,
+# 20.0, (1,), float32), 'nf_M24': Box(1.0, 20.0, (1,), float32), 'nf_M25': Box(1.0, 20.0, (1,), float32),
+# 'nf_M35': Box(1.0, 20.0, (1,), float32), 'nf_M36': Box(1.0, 20.0, (1,), float32), 'w_M11_per_finger': Box(5e-07,
+# 1e-05, (1,), float32), 'w_M12_per_finger': Box(5e-07, 1e-05, (1,), float32), 'w_M13_per_finger': Box(5e-07, 1e-05,
+# (1,), float32), 'w_M14_per_finger': Box(5e-07, 1e-05, (1,), float32), 'w_M16_per_finger': Box(5e-07, 1e-05, (1,),
+# float32), 'w_M17_per_finger': Box(5e-07, 1e-05, (1,), float32), 'w_M18_per_finger': Box(5e-07, 1e-05, (1,),
+# float32), 'w_M19_per_finger': Box(5e-07, 1e-05, (1,), float32), 'w_M20_per_finger': Box(5e-07, 1e-05, (1,),
+# float32), 'w_M21_per_finger': Box(5e-07, 1e-05, (1,), float32), 'w_M22_per_finger': Box(5e-07, 1e-05, (1,),
+# float32), 'w_M23_per_finger': Box(5e-07, 1e-05, (1,), float32), 'w_M24_per_finger': Box(5e-07, 1e-05, (1,),
+# float32), 'w_M25_per_finger': Box(5e-07, 1e-05, (1,), float32), 'w_M35_per_finger': Box(5e-07, 1e-05, (1,),
+# float32), 'w_M36_per_finger': Box(5e-07, 1e-05, (1,), float32)), 'cur_specs': Dict('gainBandWidth': Box(0.0, 1.0,
+# (1,), float32), 'phaseMargin': Box(0.0, 1.0, (1,), float32), 'powerSupplyRejectionRatio': Box(0.0, 1.0, (1,),
+# float32), 'pwr': Box(0.0, 1.0, (1,), float32), 'slewRateDown': Box(0.0, 1.0, (1,), float32), 'slewRateUp': Box(0.0,
+# 1.0, (1,), float32)), 'ideal_specs': Dict('gainBandWidth': Box(0.0, 1.0, (1,), float32), 'phaseMargin': Box(0.0,
+# 1.0, (1,), float32), 'powerSupplyRejectionRatio': Box(0.0, 1.0, (1,), float32), 'pwr': Box(0.0, 1.0, (1,),
+# float32), 'slewRateDown': Box(0.0, 1.0, (1,), float32), 'slewRateUp': Box(0.0, 1.0, (1,), float32)))
+
+# observation_space_sample: OrderedDict([('cur_param', OrderedDict([('IB', array([2.7066786e-05], dtype=float32)),
+# ('l_M11', array([7.069547e-07], dtype=float32)), ('l_M12', array([4.4842827e-06], dtype=float32)), ('l_M13',
+# array([3.9931497e-06], dtype=float32)), ('l_M14', array([6.3652885e-07], dtype=float32)), ('l_M16',
+# array([8.0275995e-06], dtype=float32)), ('l_M17', array([5.8787855e-06], dtype=float32)), ('l_M18',
+# array([7.584472e-07], dtype=float32)), ('l_M19', array([2.2041734e-06], dtype=float32)), ('l_M20',
+# array([5.0734566e-06], dtype=float32)), ('l_M21', array([3.5145003e-06], dtype=float32)), ('l_M22',
+# array([9.0281355e-06], dtype=float32)), ('l_M23', array([6.743321e-06], dtype=float32)), ('l_M24',
+# array([1.6829325e-06], dtype=float32)), ('l_M25', array([9.29393e-06], dtype=float32)), ('l_M35',
+# array([1.7327176e-06], dtype=float32)), ('l_M36', array([7.5696485e-06], dtype=float32)), ('nf_M11',
+# array([8.507872], dtype=float32)), ('nf_M12', array([17.056787], dtype=float32)), ('nf_M13', array([8.334092],
+# dtype=float32)), ('nf_M14', array([9.521806], dtype=float32)), ('nf_M16', array([16.598408], dtype=float32)),
+# ('nf_M17', array([17.73528], dtype=float32)), ('nf_M18', array([6.257158], dtype=float32)), ('nf_M19',
+# array([4.8691764], dtype=float32)), ('nf_M20', array([11.576777], dtype=float32)), ('nf_M21', array([17.770025],
+# dtype=float32)), ('nf_M22', array([13.11965], dtype=float32)), ('nf_M23', array([4.5762987], dtype=float32)),
+# ('nf_M24', array([5.087942], dtype=float32)), ('nf_M25', array([4.5993686], dtype=float32)), ('nf_M35',
+# array([8.574895], dtype=float32)), ('nf_M36', array([6.6746016], dtype=float32)), ('w_M11_per_finger',
+# array([5.2349124e-06], dtype=float32)), ('w_M12_per_finger', array([5.255114e-06], dtype=float32)),
+# ('w_M13_per_finger', array([9.2266873e-07], dtype=float32)), ('w_M14_per_finger', array([1.1110886e-06],
+# dtype=float32)), ('w_M16_per_finger', array([4.9816827e-06], dtype=float32)), ('w_M17_per_finger',
+# array([4.9746354e-06], dtype=float32)), ('w_M18_per_finger', array([3.792815e-06], dtype=float32)),
+# ('w_M19_per_finger', array([2.269577e-06], dtype=float32)), ('w_M20_per_finger', array([6.874215e-06],
+# dtype=float32)), ('w_M21_per_finger', array([9.167475e-06], dtype=float32)), ('w_M22_per_finger',
+# array([3.5721155e-06], dtype=float32)), ('w_M23_per_finger', array([5.4332527e-06], dtype=float32)),
+# ('w_M24_per_finger', array([9.864257e-07], dtype=float32)), ('w_M25_per_finger', array([9.3203903e-07],
+# dtype=float32)), ('w_M35_per_finger', array([5.4637517e-06], dtype=float32)), ('w_M36_per_finger',
+# array([8.212538e-06], dtype=float32))])), ('cur_specs', OrderedDict([('gainBandWidth', array([0.2701608],
+# dtype=float32)), ('phaseMargin', array([0.16946422], dtype=float32)), ('powerSupplyRejectionRatio',
+# array([0.40048453], dtype=float32)), ('pwr', array([0.66404974], dtype=float32)), ('slewRateDown',
+# array([0.28164378], dtype=float32)), ('slewRateUp', array([0.99810416], dtype=float32))])), ('ideal_specs',
+# OrderedDict([('gainBandWidth', array([0.8282451], dtype=float32)), ('phaseMargin', array([0.07822091],
+# dtype=float32)), ('powerSupplyRejectionRatio', array([0.2896765], dtype=float32)), ('pwr', array([0.8886158],
+# dtype=float32)), ('slewRateDown', array([0.6193389], dtype=float32)), ('slewRateUp', array([0.75055516],
+# dtype=float32))]))])
