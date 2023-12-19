@@ -44,7 +44,6 @@ def gen_obs_space(result_config_file, param_range_config_file):
 
     return obs_space
 
-
 # Test Code
 # result_config_file = "../config/result.yaml"
 # param_range_config_file = "../config/param_range.yaml"
