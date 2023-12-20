@@ -1,4 +1,4 @@
-from util_device_info import parse_device_info
+from util.util_device_info import parse_device_info
 import re
 
 
