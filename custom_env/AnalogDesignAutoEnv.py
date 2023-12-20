@@ -38,7 +38,7 @@ class AnalogDesignEnv(ParallelEnv):
         self.root_dir = "run_test"
         self.root_dir_path = os.path.join(file_path, self.root_dir)
         if not os.path.exists(self.root_dir_path):
-            raise ValueError(f"Root directory {self.root_dir} not found.")
+            raise ValueError(f"Root directory {self.root_dir_path} not found.")
 
         # Load config files
         self.agent_assign_config = "config/agent_assign.yaml"
