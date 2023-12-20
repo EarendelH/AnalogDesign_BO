@@ -4,15 +4,15 @@ import yaml
 from collections import OrderedDict
 from copy import copy
 
-from custom_env.util.gen_action_sapce import gen_action_space
-from custom_env.util.gen_obs_space import gen_obs_space
-from custom_env.util.gen_param_space import gen_param_space
-from custom_env.util.util_func import create_work_dir
-from custom_env.util.assign_param2netlist import assign_param2netlist
-from custom_env.util.run_spectre_simulation import run_spectre_simulation
-from custom_env.util.parse_action_idx import parse_action_idx
-from custom_env.util.cal_reward import cal_reward
-from custom_env.util.generalize_config import generalize_config
+from util.gen_action_sapce import gen_action_space
+from util.gen_obs_space import gen_obs_space
+from util.gen_param_space import gen_param_space
+from util.util_func import create_work_dir
+from util.assign_param2netlist import assign_param2netlist
+from util.run_spectre_simulation import run_spectre_simulation
+from util.parse_action_idx import parse_action_idx
+from util.cal_reward import cal_reward
+from util.generalize_config import generalize_config
 
 from pettingzoo import ParallelEnv
 from pettingzoo.utils.env import AgentID, ObsType
