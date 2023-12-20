@@ -111,16 +111,12 @@ class AnalogDesignEnv(ParallelEnv):
         working_dir = create_work_dir(self.root_dir)
         print(f"Step!!! Working directory: {working_dir}")
 
-        # Summary all actions
-        all_action = {}
         print(f"Step!!!Actions: {actions}")
-        for agent_name, single_agent_action in actions:
-            print(f"Step!!!Agent name: {agent_name} with action: {single_agent_action}")
-            all_action[agent_name] = single_agent_action
         # Flatten all actions
         all_action_flatten = OrderedDict()
-        for action in all_action.values():
+        for action in actions.values():
             all_action_flatten.update(action)
+        print(f"Step!!!Flatten actions: {all_action_flatten}")
 
         print(f"New Action: {all_action_flatten} with step number: {self.step_num}")
 
