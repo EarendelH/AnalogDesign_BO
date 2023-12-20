@@ -42,7 +42,8 @@ def update_obs_space(ideal_specs, cur_specs, cur_param):
 # Test Code
 # cur_specs = {'DC': {'pwr': 0.000803601}, 'Stability': {'phaseMargin': 0, 'gainBandWidth': 0},
 # 'Trans': {'slewRateUp': 4996857.610474619, 'slewRateDown': 5684722.22222081}, 'PSRR': {'powerSupplyRejectionRatio':
-# 9.24983891912481}} ideal_specs = {'DC': {'pwr': 0.1}, 'Stability': {'phaseMargin': 1, 'gainBandWidth': 1},
+# 9.24983891912481}}
+# ideal_specs = {'DC': {'pwr': 0.1}, 'Stability': {'phaseMargin': 1, 'gainBandWidth': 1},
 # 'Trans': {'slewRateUp': 500.5, 'slewRateDown': 500.5}, 'PSRR': {'powerSupplyRejectionRatio': 10}}
 # cur_param =
 # OrderedDict( [('w_M13_per_finger', '4.5u'), ('l_M13', '4.5u'), ('nf_M13', '20'), ('w_M14_per_finger', '1.0u'),
