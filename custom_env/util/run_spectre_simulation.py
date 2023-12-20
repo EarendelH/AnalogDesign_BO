@@ -1,6 +1,7 @@
 import os
 import subprocess
 import yaml
+from importlib import import_module
 
 
 def run_spectre_simulation(work_dir, sim_config):
@@ -45,7 +46,7 @@ def run_spectre_simulation(work_dir, sim_config):
             # Load the function to process the results and execute it
             module_name = f"find{simulation}"
             function_name = parse_funcs[idx]
-            module = __import__(f"util.{module_name}")
+            module = import_module(f"util.{module_name}")
             # module = __import__(module_name)
             function = getattr(module, function_name)
             result = function(processed_file)
