@@ -109,9 +109,9 @@ class AnalogDesignEnv(ParallelEnv):
 
         # Create working directory
         working_dir = create_work_dir(self.root_dir)
-        print(f"Step!!! Working directory: {working_dir}")
+        print(f"Step!!! Working directory: {working_dir} with step number: {self.step_num}")
 
-        print(f"Step!!!Actions: {actions}")
+        print(f"Step!!!Actions: {actions} with step number: {self.step_num}")
         # Flatten all actions
         all_action_flatten = OrderedDict()
         for group in actions.values():
@@ -119,9 +119,8 @@ class AnalogDesignEnv(ParallelEnv):
                 all_action_flatten[key] = value
         print(f"Step!!!Flatten actions: {all_action_flatten}")
 
-        print(f"New Action: {all_action_flatten} with step number: {self.step_num}")
-
         # Update param with new action
+        print(f"Step!!!Current param index: {self.cur_param} with step number: {self.step_num}")
         updated_action_idx = OrderedDict()
         for key in all_action_flatten:
             updated_action_idx[key] = all_action_flatten[key] + self.cur_param[key]
