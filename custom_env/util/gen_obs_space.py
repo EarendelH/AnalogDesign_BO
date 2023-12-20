@@ -2,7 +2,7 @@ import gymnasium
 import numpy as np
 import yaml
 
-from util_func import unit_conversion
+from custom_env.util.util_func import unit_conversion
 
 
 def gen_obs_space(result_config_file, param_range_config_file):
