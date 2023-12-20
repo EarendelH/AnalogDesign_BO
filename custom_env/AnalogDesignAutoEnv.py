@@ -89,8 +89,11 @@ class AnalogDesignEnv(ParallelEnv):
         with open(self.sim_config, 'r') as file:
             sim_config = yaml.safe_load(file)
 
-        observations = run_spectre_simulation(working_dir, sim_config)
-        print(f"Initialing!!!Simulation result: {observations}")
+        observation = run_spectre_simulation(working_dir, sim_config)
+        print(f"Initialing!!!Simulation result: {observation}")
+
+        # Share all observations among agents
+        observations = {agent: observation for agent in self.agents}
 
         # Inherit data
         self.cur_param = init_param
@@ -145,8 +148,10 @@ class AnalogDesignEnv(ParallelEnv):
             sim_config = yaml.safe_load(file)
 
         # Share all observations
-        observations = run_spectre_simulation(working_dir, sim_config)
-        print(f"Step!!!Simulation result: {observations} with step number: {self.step_num}")
+        observation = run_spectre_simulation(working_dir, sim_config)
+        print(f"Step!!!Simulation result: {observation} with step number: {self.step_num}")
+
+        observations = {agent: observation for agent in self.agents}
 
         # Calculate reward
         rewards = {a: -10 for a in self.agents}
