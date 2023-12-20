@@ -34,8 +34,10 @@ class AnalogDesignEnv(ParallelEnv):
         self.ideal_specs = generalize_config(generalize, path)
 
         # Set root directory
+        file_path = os.path.dirname(os.path.abspath(__file__))
         self.root_dir = "run_test"
-        if not os.path.exists(self.root_dir):
+        self.root_dir_path = os.path.join(file_path, self.root_dir)
+        if not os.path.exists(self.root_dir_path):
             raise ValueError(f"Root directory {self.root_dir} not found.")
 
         # Load config files
