@@ -113,6 +113,7 @@ class AnalogDesignEnv(ParallelEnv):
 
         # Summary all actions
         all_action = {}
+        print(f"Step!!!Actions: {actions}")
         for agent_name, single_agent_action in actions:
             print(f"Step!!!Agent name: {agent_name} with action: {single_agent_action}")
             all_action[agent_name] = single_agent_action
