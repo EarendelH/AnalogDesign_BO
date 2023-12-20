@@ -114,8 +114,9 @@ class AnalogDesignEnv(ParallelEnv):
         print(f"Step!!!Actions: {actions}")
         # Flatten all actions
         all_action_flatten = OrderedDict()
-        for action in actions.values():
-            all_action_flatten.update(action)
+        for group in actions.values():
+            for key, value in group.items():
+                all_action_flatten[key] = value
         print(f"Step!!!Flatten actions: {all_action_flatten}")
 
         print(f"New Action: {all_action_flatten} with step number: {self.step_num}")
