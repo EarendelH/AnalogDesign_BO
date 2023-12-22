@@ -133,8 +133,8 @@ class AnalogDesignEnv(ParallelEnv):
                 unassigned_netlist_file_path = os.path.join(self.unassigned_netlist_dir, unassigned_netlist_file)
                 assigned_netlist_file_path = os.path.join(working_dir, assigned_netlist_file)
                 assigned_yaml_file_path = os.path.join(working_dir, "assigned.yaml")
-                assign_param2netlist(unassigned_netlist_file_path, assigned_netlist_file_path, assigned_yaml_file_path,
-                                     updated_param)
+                assign_param2netlist(updated_param, unassigned_netlist_file_path, assigned_netlist_file_path,
+                                     assigned_yaml_file_path)
 
         # Run spectre simulation
         with open(self.sim_config, 'r') as file:
