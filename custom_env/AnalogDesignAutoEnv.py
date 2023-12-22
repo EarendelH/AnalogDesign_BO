@@ -13,6 +13,7 @@ from util.run_spectre_simulation import run_spectre_simulation
 from util.parse_action_idx import parse_action_idx
 from util.cal_reward import cal_reward
 from util.generalize_config import generalize_config
+from util.update_param import update_parameters
 
 from pettingzoo import ParallelEnv
 from pettingzoo.utils.env import AgentID, ObsType
@@ -121,13 +122,7 @@ class AnalogDesignEnv(ParallelEnv):
 
         # Update param with new action
         print(f"Step!!!Current param index: {self.cur_param} with step number: {self.step_num}")
-        updated_action_idx = OrderedDict()
-        for key in all_action_flatten:
-            updated_action_idx[key] = all_action_flatten[key] + self.cur_param[key]
-        print(f"Updated param index: {updated_action_idx} with step number: {self.step_num}")
-
-        # Parse updated param index -> param
-        updated_param = parse_action_idx(self.param_space, updated_action_idx)
+        updated_param = update_parameters(all_action_flatten, self.cur_param, self.param_range_config)
         print(f"Updated param: {updated_param} with step number: {self.step_num}")
 
         # Parse the updated param and generate the netlist
