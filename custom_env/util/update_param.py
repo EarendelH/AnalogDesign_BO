@@ -43,6 +43,9 @@ def adjust_value_within_range(value: str, step: str, range_limits: list, action:
 def update_parameters(action_idx_dict, cur_param_dict, yaml_config):
     updated_params = OrderedDict()
 
+    with open(yaml_config, 'r') as file:
+        yaml_config = yaml.safe_load(file)
+
     for key, actions in action_idx_dict.items():
         if key.startswith('M'):
             for i, action in enumerate(actions):
@@ -81,9 +84,11 @@ def update_parameters(action_idx_dict, cur_param_dict, yaml_config):
 # ('nf_M24', '10'), ('w_M23_per_finger', '5.0u'), ('l_M23', '5.0u'), ('nf_M23', '10'), ('w_M22_per_finger', '5.0u'),
 # ('l_M22', '5.0u'), ('nf_M22', '10'), ('w_M21_per_finger', '5.0u'), ('l_M21', '5.0u'), ('nf_M21', '10'),
 # ('w_M18_per_finger', '5.0u'), ('l_M18', '5.0u'), ('nf_M18', '10'), ('w_M17_per_finger', '5.0u'), ('l_M17', '5.0u'),
-# ('nf_M17', '10'), ('IB', '25.0u')]) yaml_config = yaml.safe_load(open("../config/param_range.yaml",
+# ('nf_M17', '10'), ('IB', '25.0u')])
+# yaml_config = yaml.safe_load(open("../config/param_range.yaml",
 # 'r'))
-# updated_params = update_parameters(action_idx, cur_param_dict, yaml_config) print(updated_params)
+# updated_params = update_parameters(action_idx, cur_param_dict, yaml_config)
+# print(updated_params)
 
 # Output output = OrderedDict([('w_M13_per_finger', "5.5u"), ('l_M13', '5.0u'), ('nf_M13', '11'),
 # ('w_M14_per_finger', '5.5u'), ('l_M14', '5.5u'), ('nf_M14', '10'), ('w_M16_per_finger', '5.5u'), ('l_M16', '4.5u'),
