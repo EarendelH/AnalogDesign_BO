@@ -146,6 +146,10 @@ class AnalogDesignEnv(ParallelEnv):
 
         observations = {agent: observation for agent in self.agents}
 
+        # Store the observation
+        with open(os.path.join(working_dir, "result.yaml"), 'w') as file:
+            yaml.dump(observation, file)
+
         # Calculate reward
         rewards = {a: -10 for a in self.agents}
         for agent_name in rewards:
