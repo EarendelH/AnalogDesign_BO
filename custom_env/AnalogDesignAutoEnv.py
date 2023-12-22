@@ -149,7 +149,7 @@ class AnalogDesignEnv(ParallelEnv):
         # Calculate reward
         rewards = {a: -10 for a in self.agents}
         for agent_name in rewards:
-            rewards[agent_name] = cal_reward(observations, self.ideal_specs)
+            rewards[agent_name] = cal_reward(self.ideal_specs, observation)
 
         # Determine termination or truncations
         terminations = {a: False for a in self.agents}
