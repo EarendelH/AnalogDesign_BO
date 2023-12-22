@@ -1,0 +1,2183 @@
+HEADER
+"PSFversion" "1.00"
+"BINPSF creation time" "1703237641"
+"simulator" "spectre"
+"version" "18.1.0.335.isr6"
+"date" "5:34:01 PM, Fri Dec 22, 2023"
+"design" "// Generated for: spectre"
+"analysis type" "info"
+"analysis name" "dcOpInfo"
+"analysis description" "Circuit Information"
+"xVecSorted" "unknown"
+"tolerance.relative" 0.00100000
+"AnalysisName" "DC"
+"AnalysisType" "dcOp"
+"OpPointTemp.Value" 27.0000
+"OpPointTemp.Units" "C"
+TYPE
+"bsim4" STRUCT(
+"ids" FLOAT DOUBLE PROP(
+"units" "A"
+"description" "Resistive drain-to-source current"
+)
+"vgs" FLOAT DOUBLE PROP(
+"units" "V"
+"description" "Gate-source voltage"
+)
+"vds" FLOAT DOUBLE PROP(
+"units" "V"
+"description" "Drain-source voltage"
+)
+"vbs" FLOAT DOUBLE PROP(
+"units" "V"
+"description" "Bulk-source voltage"
+)
+"vgd" FLOAT DOUBLE PROP(
+"units" "V"
+"description" "Gate-drain voltage"
+)
+"vdb" FLOAT DOUBLE PROP(
+"units" "V"
+"description" "Drain-bulk voltage"
+)
+"vgb" FLOAT DOUBLE PROP(
+"units" "V"
+"description" "Gate-bulk voltage"
+)
+"vth" FLOAT DOUBLE PROP(
+"units" "V"
+"description" "Threshold voltage (alias=lv9)"
+)
+"vdsat" FLOAT DOUBLE PROP(
+"units" "V"
+"description" "Drain-source saturation voltage (alias=lv10)"
+)
+"gm" FLOAT DOUBLE PROP(
+"units" "S"
+"description" "Common-source transconductance (alias=lx7)"
+)
+"gds" FLOAT DOUBLE PROP(
+"units" "S"
+"description" "Common-source output conductance (alias=lx8)"
+)
+"gmbs" FLOAT DOUBLE PROP(
+"units" "S"
+"description" "Body-transconductance (alias=lx9)"
+)
+"betaeff" FLOAT DOUBLE PROP(
+"units" "A/V^2"
+"description" "Effective beta (alias LV21)"
+)
+"cjd" FLOAT DOUBLE PROP(
+"units" "F"
+"description" "Drain-bulk junction capacitance (alias=lx29)"
+)
+"cjs" FLOAT DOUBLE PROP(
+"units" "F"
+"description" "Source-bulk junction capacitance (alias=lx28)"
+)
+"cgg" FLOAT DOUBLE PROP(
+"units" "F"
+"description" "Total gate capacitance, including intrinsic, overlap and fringing components (alias=lx82)"
+)
+"cgd" FLOAT DOUBLE PROP(
+"units" "F"
+"description" "Total gate-to-drain capacitance, including intrinsic, overlap, and fringing components (alias=lx83)"
+)
+"cgs" FLOAT DOUBLE PROP(
+"units" "F"
+"description" "Total gate-to-source capacitance, including intrinsic, overlap, and fringing components (alias=lx84)"
+)
+"cgb" FLOAT DOUBLE PROP(
+"units" "F"
+"description" "Total gate-to-bulk capacitance, including intrinsic and overlap components"
+)
+"cdg" FLOAT DOUBLE PROP(
+"units" "F"
+"description" "Total drain-to-gate capacitance, including intrinsic, overlap, and fringing components (alias=lx87)"
+)
+"cdd" FLOAT DOUBLE PROP(
+"units" "F"
+"description" "Drain capacitance, including intrinsic, overlap, and fringing components"
+)
+"cds" FLOAT DOUBLE PROP(
+"units" "F"
+"description" "Total drain-to-source capacitance (alias=lx86)"
+)
+"cdb" FLOAT DOUBLE PROP(
+"units" "F"
+"description" "Intrinsic drain-to-bulk capacitance"
+)
+"csg" FLOAT DOUBLE PROP(
+"units" "F"
+"description" "Total source-to-gate capacitance, including intrinsic, overlap, and fringing components"
+)
+"csd" FLOAT DOUBLE PROP(
+"units" "F"
+"description" "Total source-to-drain capacitance"
+)
+"css" FLOAT DOUBLE PROP(
+"units" "F"
+"description" "Source capacitance, including intrinsic, overlap, and fringing components"
+)
+"csb" FLOAT DOUBLE PROP(
+"units" "F"
+"description" "Intrinsic source-to-bulk capacitance"
+)
+"cbg" FLOAT DOUBLE PROP(
+"units" "F"
+"description" "Total bulk-to-gate capacitance, including intrinsic and overlap components (alias=lx88)"
+)
+"cbd" FLOAT DOUBLE PROP(
+"units" "F"
+"description" "Intrinsic bulk-to-drain capacitance"
+)
+"cbs" FLOAT DOUBLE PROP(
+"units" "F"
+"description" "Intrinsic bulk-to-source capacitance"
+)
+"cbb" FLOAT DOUBLE PROP(
+"units" "F"
+"description" "Bulk capacitance, including intrinsic and overlap components"
+)
+"covlgs" FLOAT DOUBLE PROP(
+"units" "F/m"
+"description" "Gate-source overlap and fringing capacitances (alias=lv36)"
+)
+"covlgd" FLOAT DOUBLE PROP(
+"units" "F/m"
+"description" "Gate-drain overlap and fringing capacitances (alias=lv37)"
+)
+"covlgb" FLOAT DOUBLE PROP(
+"units" "F/m"
+"description" "Gate-bulk overlap capacitances (alias=lv38)"
+)
+"cggbo" FLOAT DOUBLE PROP(
+"units" "F"
+"description" "CGGBO = dQg/dVg intrinsic gate capacitance (alias=lx18)"
+)
+"cgdbo" FLOAT DOUBLE PROP(
+"units" "F"
+"description" "CGDBO = -dQg/dVd intrinsic gate-to-drain capacitance (alias=lx19)"
+)
+"cgsbo" FLOAT DOUBLE PROP(
+"units" "F"
+"description" "CGSBO = -dQg/dVs intrinsic gate-to-source capacitance (alias=lx20)"
+)
+"cbgbo" FLOAT DOUBLE PROP(
+"units" "F"
+"description" "CBGBO = -dQb/dVg intrinsic bulk-to-gate capacitance (alias=lx21)"
+)
+"cbdbo" FLOAT DOUBLE PROP(
+"units" "F"
+"description" "CBDBO = -dQb/dVd intrinsic bulk-to-drain capacitance (alias=lx22)"
+)
+"cbsbo" FLOAT DOUBLE PROP(
+"units" "F"
+"description" "CBSBO = -dQb/dVs intrinsic bulk-to-source capacitance (alias=lx23)"
+)
+"cdgbo" FLOAT DOUBLE PROP(
+"units" "F"
+"description" "CDGBO = -dQd/dVg intrinsic drain-to-gate capacitance (alias=lx32)"
+)
+"cddbo" FLOAT DOUBLE PROP(
+"units" "F"
+"description" "CDDBO = dQd/dVd intrinsic drain capacitance (alias=lx33)"
+)
+"cdsbo" FLOAT DOUBLE PROP(
+"units" "F"
+"description" "CDSBO = -dQd/dVs intrinsic drain-to-source capacitance (alias=lx34)"
+)
+"ron" FLOAT DOUBLE PROP(
+"units" "Ohm"
+"description" "On-resistance"
+)
+"id" FLOAT DOUBLE PROP(
+"units" "A"
+"description" "Resistive drain current"
+)
+"ig" FLOAT DOUBLE PROP(
+"units" "A"
+"description" "Total DC gate current"
+)
+"is" FLOAT DOUBLE PROP(
+"units" "A"
+"description" "Total DC source current"
+)
+"ib" FLOAT DOUBLE PROP(
+"units" "A"
+"description" "Total DC bulk current"
+)
+"ibulk" FLOAT DOUBLE PROP(
+"units" "A"
+"description" "Resistive bulk current"
+)
+"pwr" FLOAT DOUBLE PROP(
+"units" "W"
+"description" "Power at op point"
+)
+"gmoverid" FLOAT DOUBLE PROP(
+"units" "1/V"
+"description" "Gm/Ids"
+)
+"ueff" FLOAT DOUBLE PROP(
+"description" "ueff"
+)
+"rdeff" FLOAT DOUBLE PROP(
+"units" "Ohm"
+"description" "Effective drain resistance"
+)
+"rseff" FLOAT DOUBLE PROP(
+"units" "Ohm"
+"description" "Effective source resistance"
+)
+"rgbd" FLOAT DOUBLE PROP(
+"units" "Ohm"
+"description" "Gate bias-dependent resistance"
+)
+"igidl" FLOAT DOUBLE PROP(
+"units" "A"
+"description" "Gate-induced drain leakage current (alias=lx70)"
+)
+"igisl" FLOAT DOUBLE PROP(
+"units" "A"
+"description" "Gate-induced source leakage current"
+)
+"igdt" FLOAT DOUBLE PROP(
+"units" "A"
+"description" "Gate Dielectric tunneling current (alias=lx71)"
+)
+"igd" FLOAT DOUBLE PROP(
+"units" "A"
+"description" "Gate-to-drain tunneling current (alias=lx39)"
+)
+"igs" FLOAT DOUBLE PROP(
+"units" "A"
+"description" "Gate-to-source tunneling current (alias=lx38)"
+)
+"igb" FLOAT DOUBLE PROP(
+"units" "A"
+"description" "Gate-to-bulk tunneling current (alias=lx66)"
+)
+"igbacc" FLOAT DOUBLE PROP(
+"units" "A"
+"description" "Gate-to-bulk tunneling current determined by ECB (alias=lx73)"
+)
+"igbinv" FLOAT DOUBLE PROP(
+"units" "A"
+"description" "Gate-to-bulk tunneling current determined by EVB (alias=lx74)"
+)
+"igcs" FLOAT DOUBLE PROP(
+"units" "A"
+"description" "Gate-to-channel (source side) tunneling current (alias=lx67)"
+)
+"igcd" FLOAT DOUBLE PROP(
+"units" "A"
+"description" "Gate-to-channel (drain side) tunneling current (alias=lx68)"
+)
+"isub" FLOAT DOUBLE PROP(
+"units" "A"
+"description" " Substrate current ( alias to LX69 )"
+)
+"gbs" FLOAT DOUBLE PROP(
+"units" "S"
+"description" "Bulk-source diode conductance (alias=lx11)"
+)
+"gbd" FLOAT DOUBLE PROP(
+"units" "S"
+"description" "Bulk-drain diode conductance (alias=lx10)"
+)
+"qg" FLOAT DOUBLE PROP(
+"units" "Coul"
+"description" "Total gate charge, including intrinsic, overlap and fringing components"
+)
+"qd" FLOAT DOUBLE PROP(
+"units" "Coul"
+"description" "Total drain charge, including intrinsic, overlap and fringing components"
+)
+"qs" FLOAT DOUBLE PROP(
+"units" "Coul"
+"description" "Total source charge, including intrinsic, overlap and fringing components"
+)
+"qb" FLOAT DOUBLE PROP(
+"units" "Coul"
+"description" "Total bulk charge, including intrinsic and overlap components"
+)
+"qjd" FLOAT DOUBLE PROP(
+"units" "Coul"
+"description" "Drain-bulk junction charge"
+)
+"qjs" FLOAT DOUBLE PROP(
+"units" "Coul"
+"description" "Source-bulk junction charge"
+)
+"qgdovl" FLOAT DOUBLE PROP(
+"units" "Coul"
+"description" "Gate-drain overlap and fringing charge"
+)
+"qgsovl" FLOAT DOUBLE PROP(
+"units" "Coul"
+"description" "Gate-source overlap and fringing charge"
+)
+"qgi" FLOAT DOUBLE PROP(
+"units" "Coul"
+"description" "Intrinsic gate charge"
+)
+"qdi" FLOAT DOUBLE PROP(
+"units" "Coul"
+"description" "Intrinsic drain charge"
+)
+"qsi" FLOAT DOUBLE PROP(
+"units" "Coul"
+"description" "Intrinsic source charge"
+)
+"qbi" FLOAT DOUBLE PROP(
+"units" "Coul"
+"description" "Intrinsic bulk charge"
+)
+"ide" FLOAT DOUBLE PROP(
+"units" "A"
+"description" "Total DC drain current"
+)
+"ige" FLOAT DOUBLE PROP(
+"units" "A"
+"description" "Total DC gate current"
+)
+"ise" FLOAT DOUBLE PROP(
+"units" "A"
+"description" "Total DC source current"
+)
+"ibe" FLOAT DOUBLE PROP(
+"units" "A"
+"description" "Total DC bulk current"
+)
+"idb" FLOAT DOUBLE PROP(
+"units" "A"
+"description" "DC drain-bulk current"
+)
+"isb" FLOAT DOUBLE PROP(
+"units" "A"
+"description" "DC source-bulk current"
+)
+"vsb" FLOAT DOUBLE PROP(
+"units" "V"
+"description" "Source-bulk DC voltage"
+)
+"gmb" FLOAT DOUBLE PROP(
+"units" "S"
+"description" "DC bulk transconductance"
+)
+"vgt" FLOAT DOUBLE PROP(
+"units" "V"
+"description" "effective gate drive voltage including back bias and drain bias effects"
+)
+"vth_drive" FLOAT DOUBLE PROP(
+"units" "V"
+"description" "effective gate drive voltage including back bias and drain bias effects. Alias for Vgt"
+)
+"vdss" FLOAT DOUBLE PROP(
+"units" "V"
+"description" "Drain saturation voltage at actual bias"
+)
+"vsat_marg" FLOAT DOUBLE PROP(
+"units" "V"
+"description" "Vds margin"
+)
+"vdsat_marg" FLOAT DOUBLE PROP(
+"units" "V"
+"description" "Vds margin"
+)
+"self_gain" FLOAT DOUBLE PROP(
+"description" "Transistor self gain"
+)
+"rout" FLOAT DOUBLE PROP(
+"units" "Ohm"
+"description" "AC output resistor"
+)
+"beff" FLOAT DOUBLE PROP(
+"units" "A/V^2"
+"description" "Gain factor in saturation"
+)
+"fug" FLOAT DOUBLE PROP(
+"units" "Hz"
+"description" "Unity current gain frequency at actual bias"
+)
+"ft" FLOAT DOUBLE PROP(
+"units" "Hz"
+"description" "Unity current gain frequency at actual bias"
+)
+"rgate" FLOAT DOUBLE PROP(
+"units" "Ohm"
+"description" "MOS gate resistance"
+)
+"vearly" FLOAT DOUBLE PROP(
+"units" "V"
+"description" "Equivalent early voltage"
+)
+"region" INT BYTE PROP(
+"description" "Estimated operating region. %Z outputs the number (0-4) in a rawfile"
+)
+"reversed" INT BYTE PROP(
+"description" "Reverse mode indicator"
+)
+) PROP(
+"key" "inst"
+)
+"isource" STRUCT(
+"i" FLOAT DOUBLE PROP(
+"units" "A"
+"description" "Current through the source"
+)
+"v" FLOAT DOUBLE PROP(
+"units" "V"
+"description" "Voltage across the source"
+)
+"pwr" FLOAT DOUBLE PROP(
+"units" "W"
+"description" "Power dissipation"
+)
+) PROP(
+"key" "inst"
+)
+"vsource" STRUCT(
+"v" FLOAT DOUBLE PROP(
+"units" "V"
+"description" "Voltage across the source"
+)
+"i" FLOAT DOUBLE PROP(
+"units" "A"
+"description" "Current through the source"
+)
+"pwr" FLOAT DOUBLE PROP(
+"units" "W"
+"description" "Power dissipation"
+)
+) PROP(
+"key" "inst"
+)
+VALUE
+"I9.M17" "bsim4" (
+-2.01689e-05
+-0.720850
+-1.53124
+0.179150
+0.810392
+-1.71039
+-0.900000
+-0.517566
+-0.195351
+0.000150573
+3.53083e-07
+4.75596e-05
+0.000895237
+1.60497e-13
+2.74654e-13
+1.56214e-12
+-1.61998e-14
+-1.47085e-12
+-7.50907e-14
+-1.65984e-14
+1.62664e-14
+4.67206e-16
+-1.35214e-16
+-1.33232e-12
+-4.13409e-17
+1.72629e-12
+-3.93925e-13
+-2.13226e-13
+-2.52657e-17
+-2.55900e-13
+4.69150e-13
+2.49678e-14
+1.61423e-14
+0.00000
+1.52103e-12
+-5.74162e-17
+-1.44589e-12
+-2.13226e-13
+-2.52657e-17
+-2.55900e-13
+-4.56014e-16
+1.24023e-16
+4.67206e-16
+75920.8
+-2.01689e-05
+nan
+nan
+nan
+1.15261e-11
+3.08835e-05
+7.46557
+0.00838359
+6.72950
+6.72950
+0.00000
+-0.00000
+-0.00000
+-0.00000
+-0.00000
+-0.00000
+-0.00000
+-0.00000
+-0.00000
+-0.00000
+-0.00000
+6.18264e-13
+1.05051e-12
+4.45948e-11
+-1.36298e-12
+-6.78980e-15
+3.12221e-13
+1.05755e-12
+3.35828e-13
+5.13100e-14
+6.87847e-15
+-1.08802e-14
+-1.36298e-12
+-6.78980e-15
+3.12221e-13
+1.05755e-12
+-2.01689e-05
+-0.00000
+2.01689e-05
+1.34156e-11
+1.26118e-11
+1.85545e-13
+-0.179150
+4.75596e-05
+-0.203284
+nan
+-0.195351
+1.33589
+nan
+426.450
+2.83219e+06
+0.000976130
+1.53407e+07
+nan
+0.00000
+57.1223
+2
+0
+) PROP(
+"model" "I9.M17.pch.6"
+)
+"I9.M18" "bsim4" (
+-1.36247e-05
+-0.720850
+-1.54185
+0.179150
+0.821003
+-1.72100
+-0.900000
+-0.515756
+-0.196003
+0.000101291
+2.19810e-07
+3.19589e-05
+0.000599550
+1.31169e-13
+2.24859e-13
+1.55825e-12
+-1.32344e-14
+-1.46912e-12
+-7.58933e-14
+-1.36302e-14
+1.33002e-14
+4.64143e-16
+-1.34160e-16
+-1.33368e-12
+-4.10638e-17
+1.72894e-12
+-3.95227e-13
+-2.10940e-13
+-2.47155e-17
+-2.60290e-13
+4.71254e-13
+2.04282e-14
+1.31770e-14
+0.00000
+1.52464e-12
+-5.74120e-17
+-1.44869e-12
+-2.10940e-13
+-2.47155e-17
+-2.60290e-13
+-4.53175e-16
+1.23191e-16
+4.64143e-16
+113166.
+-1.36247e-05
+nan
+nan
+nan
+9.72309e-12
+2.10073e-05
+7.43433
+0.00839966
+8.22494
+8.22494
+0.00000
+-0.00000
+-0.00000
+-0.00000
+-0.00000
+-0.00000
+-0.00000
+-0.00000
+-0.00000
+-0.00000
+-0.00000
+4.11373e-13
+1.04132e-12
+3.81486e-11
+-1.36886e-12
+-5.59311e-15
+3.13714e-13
+1.06074e-12
+2.76337e-13
+4.20018e-14
+5.68172e-15
+-8.90227e-15
+-1.36886e-12
+-5.59311e-15
+3.13714e-13
+1.06074e-12
+-1.36247e-05
+-0.00000
+1.36247e-05
+1.16232e-11
+1.10275e-11
+1.84383e-13
+-0.179150
+3.19589e-05
+-0.205094
+nan
+-0.196003
+1.34585
+nan
+460.810
+4.54938e+06
+0.000647818
+1.03456e+07
+nan
+0.00000
+61.9841
+2
+0
+) PROP(
+"model" "I9.M18.pch.6"
+)
+"I9.M21" "bsim4" (
+-7.39650e-06
+-1.33123
+-0.0137708
+0.0508759
+-1.31746
+-0.0646466
+-1.38210
+-0.479540
+-0.691151
+6.39340e-06
+0.000536441
+3.65685e-06
+0.000606824
+2.01565e-13
+2.02912e-13
+1.75791e-12
+-9.34421e-13
+-9.12245e-13
+8.87574e-14
+-8.75574e-13
+2.03016e-12
+-8.77457e-13
+-2.77127e-13
+-8.77712e-13
+-6.69902e-13
+1.83083e-12
+-2.83218e-13
+-4.62337e-15
+-4.25835e-13
+-4.11289e-14
+4.71587e-13
+2.04535e-14
+2.04533e-14
+0.00000
+1.71700e-12
+-9.13968e-13
+-8.91791e-13
+-4.62337e-15
+-4.25835e-13
+-4.11289e-14
+-8.55120e-13
+2.00970e-12
+-8.77457e-13
+1861.79
+-7.39650e-06
+nan
+nan
+nan
+2.64416e-15
+1.01855e-07
+0.864381
+0.00693965
+8.22544
+8.22544
+0.00000
+-0.00000
+-0.00000
+-0.00000
+-0.00000
+-0.00000
+-0.00000
+-0.00000
+-0.00000
+-0.00000
+-0.00000
+5.32080e-26
+1.02263e-12
+1.02366e-12
+-2.26177e-12
+7.23367e-13
+7.60304e-13
+7.78104e-13
+1.32294e-14
+1.04690e-14
+-1.62542e-14
+-1.64225e-14
+-2.26177e-12
+7.23367e-13
+7.60304e-13
+7.78104e-13
+-7.39650e-06
+-0.00000
+7.39650e-06
+1.18167e-13
+6.60656e-14
+5.21010e-14
+-0.0508759
+3.65685e-06
+-0.851688
+nan
+-0.691151
+-0.677380
+nan
+0.0119182
+1864.14
+2.03937e-05
+578836.
+nan
+0.00000
+0.0137881
+1
+0
+) PROP(
+"model" "I9.M21.pch.6"
+)
+"I9.M22" "bsim4" (
+-9.61652e-06
+-0.771839
+-0.771839
+0.610265
+0.00000
+-1.38210
+-1.38210
+-0.632785
+-0.156383
+9.09102e-05
+2.08767e-07
+2.48354e-05
+0.000763740
+1.54662e-13
+2.14621e-13
+1.33361e-12
+-2.13326e-14
+-1.24344e-12
+-6.88318e-14
+-2.27381e-14
+2.16725e-14
+1.51163e-15
+-4.45986e-16
+-1.14348e-12
+-2.20352e-16
+1.43709e-12
+-2.93396e-13
+-1.67393e-13
+-1.19556e-16
+-1.95161e-13
+3.62674e-13
+2.27036e-14
+2.10114e-14
+0.00000
+1.28989e-12
+-3.21148e-16
+-1.22074e-12
+-1.67393e-13
+-1.19556e-16
+-1.95161e-13
+-1.72671e-15
+6.61057e-16
+1.51163e-15
+80261.8
+-9.61652e-06
+nan
+nan
+nan
+2.64137e-12
+7.42241e-06
+9.45355
+0.00786072
+7.40245
+7.40245
+0.00000
+-0.00000
+-0.00000
+-0.00000
+-0.00000
+-0.00000
+-0.00000
+-0.00000
+-0.00000
+-0.00000
+-0.00000
+6.65023e-21
+1.37677e-12
+1.18753e-11
+-1.34390e-12
+5.16966e-16
+2.03943e-13
+1.13944e-12
+2.56098e-13
+1.46085e-13
+-2.83155e-16
+-1.05891e-14
+-1.34390e-12
+5.16966e-16
+2.03943e-13
+1.13944e-12
+-9.61652e-06
+-0.00000
+9.61652e-06
+4.63374e-12
+3.94902e-12
+6.84722e-13
+-0.610265
+2.48354e-05
+-0.139054
+nan
+-0.156383
+0.615455
+nan
+435.463
+4.79004e+06
+0.000994670
+1.08494e+07
+nan
+0.00000
+46.0635
+2
+0
+) PROP(
+"model" "I9.M22.pch.6"
+)
+"I9.M23" "bsim4" (
+-2.60000e-05
+-0.766702
+-0.766702
+0.00000
+0.00000
+-0.766702
+-0.766702
+-0.462933
+-0.262232
+0.000144053
+4.73827e-07
+4.95609e-05
+0.000597669
+1.41743e-13
+1.87454e-13
+1.33608e-12
+-1.78688e-14
+-1.26729e-12
+-5.09230e-14
+-1.98781e-14
+1.88942e-14
+1.86056e-15
+-8.76707e-16
+-1.12940e-12
+-6.24527e-16
+1.49303e-12
+-3.63004e-13
+-1.86806e-13
+-4.00882e-16
+-2.27597e-13
+4.14803e-13
+1.83895e-14
+1.70207e-14
+0.00000
+1.30067e-12
+-8.48171e-16
+-1.24890e-12
+-1.86806e-13
+-4.00882e-16
+-2.27597e-13
+-2.85744e-15
+1.87358e-15
+1.86056e-15
+29488.5
+-2.60000e-05
+nan
+nan
+nan
+1.30128e-13
+1.99342e-05
+5.54049
+0.00844511
+9.13938
+9.13938
+0.00000
+-0.00000
+-0.00000
+-0.00000
+-0.00000
+-0.00000
+-0.00000
+-0.00000
+-0.00000
+-0.00000
+-0.00000
+8.84123e-22
+1.02319e-12
+1.62700e-12
+-1.17211e-12
+8.09211e-16
+3.67938e-13
+8.03359e-13
+1.23379e-13
+4.45463e-17
+-2.30971e-16
+-8.51844e-15
+-1.17211e-12
+8.09211e-16
+3.67938e-13
+8.03359e-13
+-2.60000e-05
+-0.00000
+2.60000e-05
+8.96830e-13
+8.96587e-13
+2.43142e-16
+-0.00000
+4.95609e-05
+-0.303769
+nan
+-0.262232
+0.504470
+nan
+304.020
+2.11048e+06
+0.000563529
+1.71596e+07
+nan
+0.00000
+54.8724
+2
+0
+) PROP(
+"model" "I9.M23.pch.6"
+)
+"I9.M24" "bsim4" (
+-3.55177e-05
+-0.766702
+-1.21411
+0.00000
+0.447411
+-1.21411
+-0.766702
+-0.462874
+-0.262121
+0.000196647
+5.71494e-07
+6.76602e-05
+0.000810474
+2.06188e-13
+3.02598e-13
+1.80843e-12
+-1.82087e-14
+-1.72098e-12
+-6.92389e-14
+-1.90844e-14
+1.84805e-14
+9.48120e-16
+-3.44291e-16
+-1.53468e-12
+-1.65484e-16
+2.02824e-12
+-4.93396e-13
+-2.54661e-13
+-1.06390e-16
+-3.08212e-13
+5.62980e-13
+2.49734e-14
+1.79841e-14
+0.00000
+1.76547e-12
+-2.24577e-16
+-1.69601e-12
+-2.54661e-13
+-1.06390e-16
+-3.08212e-13
+-1.10028e-15
+4.96451e-16
+9.48120e-16
+34183.4
+-3.55177e-05
+nan
+nan
+nan
+1.37187e-12
+4.31224e-05
+5.53660
+0.00844160
+6.72916
+6.72916
+0.00000
+-0.00000
+-0.00000
+-0.00000
+-0.00000
+-0.00000
+-0.00000
+-0.00000
+-0.00000
+-0.00000
+-0.00000
+2.18642e-15
+1.03335e-12
+6.98538e-12
+-1.58708e-12
+-4.06673e-15
+4.99919e-13
+1.09123e-12
+2.96145e-13
+7.23267e-17
+4.32969e-15
+-1.15682e-14
+-1.58708e-12
+-4.06673e-15
+4.99919e-13
+1.09123e-12
+-3.55177e-05
+-0.00000
+3.55177e-05
+2.58598e-12
+2.58355e-12
+2.46987e-16
+-0.00000
+6.76602e-05
+-0.303828
+nan
+-0.262121
+0.951992
+nan
+344.093
+1.74980e+06
+0.000769517
+1.73064e+07
+nan
+0.00000
+62.1488
+2
+0
+) PROP(
+"model" "I9.M24.pch.6"
+)
+"I9.M16" "bsim4" (
+-3.37936e-05
+-0.766702
+-0.179150
+0.00000
+-0.587551
+-0.179150
+-0.766702
+-0.463836
+-0.261975
+0.000145975
+9.04070e-05
+5.31533e-05
+0.000900459
+2.78117e-13
+3.02600e-13
+1.82336e-12
+-3.23237e-13
+-1.48920e-12
+-1.09174e-14
+-4.39479e-13
+6.86131e-13
+-1.25446e-13
+-1.21206e-13
+-1.24303e-12
+-2.20396e-13
+1.86639e-12
+-4.02968e-13
+-1.40854e-13
+-1.42498e-13
+-2.51739e-13
+5.35091e-13
+2.49734e-14
+2.49424e-14
+0.00000
+1.77344e-12
+-2.98294e-13
+-1.46423e-12
+-1.40854e-13
+-1.42498e-13
+-2.51739e-13
+-4.14537e-13
+6.61188e-13
+-1.25446e-13
+5301.30
+-3.37936e-05
+nan
+nan
+nan
+6.24940e-15
+6.05414e-06
+4.31959
+0.00842535
+6.72916
+6.72916
+0.00000
+-0.00000
+-0.00000
+-0.00000
+-0.00000
+-0.00000
+-0.00000
+-0.00000
+-0.00000
+-0.00000
+-0.00000
+2.22942e-23
+1.03335e-12
+1.05042e-12
+-1.45933e-12
+5.51662e-14
+4.33613e-13
+9.70554e-13
+5.18478e-14
+6.88162e-17
+-8.88284e-15
+-1.15684e-14
+-1.45933e-12
+5.51662e-14
+4.33613e-13
+9.70554e-13
+-3.37936e-05
+-0.00000
+3.37936e-05
+1.85400e-13
+1.85165e-13
+2.34999e-16
+-0.00000
+5.31533e-05
+-0.302865
+nan
+-0.261975
+-0.0828242
+nan
+1.61464
+11061.1
+0.000736827
+1.27417e+07
+nan
+0.00000
+0.373795
+1
+0
+) PROP(
+"model" "I9.M16.pch.6"
+)
+"I9.M36" "bsim4" (
+-3.19737e-05
+-0.766702
+-1.21289
+0.00000
+0.446184
+-1.21289
+-0.766702
+-0.462916
+-0.261958
+0.000177064
+5.15905e-07
+6.09222e-05
+0.000730156
+1.56057e-13
+2.28952e-13
+1.62784e-12
+-1.63963e-14
+-1.54931e-12
+-6.21404e-14
+-1.71861e-14
+1.66419e-14
+8.54788e-16
+-3.10576e-16
+-1.38118e-12
+-1.49368e-16
+1.82549e-12
+-4.44155e-13
+-2.29472e-13
+-9.61531e-17
+-2.77039e-13
+5.06606e-13
+2.24761e-14
+1.61938e-14
+0.00000
+1.58917e-12
+-2.02583e-16
+-1.52683e-12
+-2.29472e-13
+-9.61531e-17
+-2.77039e-13
+-9.92316e-16
+4.48104e-16
+8.54788e-16
+37933.9
+-3.19737e-05
+nan
+nan
+nan
+1.22800e-12
+3.87804e-05
+5.53782
+0.00845721
+7.47767
+7.47767
+0.00000
+-0.00000
+-0.00000
+-0.00000
+-0.00000
+-0.00000
+-0.00000
+-0.00000
+-0.00000
+-0.00000
+-0.00000
+1.92210e-15
+1.02833e-12
+6.35928e-12
+-1.42839e-12
+-3.65071e-15
+4.49856e-13
+9.82186e-13
+2.23904e-13
+5.47433e-17
+3.88782e-15
+-1.04114e-14
+-1.42839e-12
+-3.65071e-15
+4.49856e-13
+9.82186e-13
+-3.19737e-05
+-0.00000
+3.19737e-05
+2.44088e-12
+2.43871e-12
+2.45871e-16
+-0.00000
+6.09222e-05
+-0.303785
+nan
+-0.261958
+0.950927
+nan
+343.211
+1.93834e+06
+0.000692929
+1.73117e+07
+nan
+0.00000
+61.9759
+2
+0
+) PROP(
+"model" "I9.M36.pch.6"
+)
+"I9.M19" "bsim4" (
+-7.39666e-06
+-0.610265
+-0.0508759
+0.00000
+-0.559389
+-0.0508759
+-0.610265
+-0.463785
+-0.155539
+4.40146e-05
+0.000116383
+1.59220e-05
+0.00104245
+3.24320e-13
+3.32806e-13
+2.05754e-12
+-7.22685e-13
+-1.31972e-12
+-1.51364e-14
+-8.39967e-13
+1.56929e-12
+-4.74781e-13
+-2.54545e-13
+-1.14028e-12
+-5.13955e-13
+2.01933e-12
+-3.65099e-13
+-7.73007e-14
+-3.32653e-13
+-2.24826e-13
+6.34780e-13
+2.74427e-14
+2.74277e-14
+0.00000
+2.00267e-12
+-6.95257e-13
+-1.29228e-12
+-7.73007e-14
+-3.32653e-13
+-2.24826e-13
+-8.12539e-13
+1.54187e-12
+-4.74781e-13
+6878.22
+-7.39666e-06
+nan
+nan
+nan
+1.60966e-15
+3.76312e-07
+5.95060
+0.00887476
+6.11742
+6.11742
+0.00000
+-0.00000
+-0.00000
+-0.00000
+-0.00000
+-0.00000
+-0.00000
+-0.00000
+-0.00000
+-0.00000
+-0.00000
+1.20640e-24
+1.03676e-12
+1.03071e-12
+-1.35381e-12
+9.96051e-14
+2.34577e-13
+1.01962e-12
+1.66980e-14
+1.50592e-17
+-9.30322e-15
+-1.01417e-14
+-1.35381e-12
+9.96051e-14
+2.34577e-13
+1.01962e-12
+-7.39666e-06
+-0.00000
+7.39666e-06
+5.24855e-14
+5.24386e-14
+4.69125e-17
+-0.00000
+1.59220e-05
+-0.146480
+nan
+-0.155539
+-0.104663
+nan
+0.378189
+8592.35
+0.000689462
+3.40461e+06
+nan
+0.00000
+0.0635547
+1
+0
+) PROP(
+"model" "I9.M19.pch.6"
+)
+"I9.M20" "bsim4" (
+-9.61690e-06
+-0.610265
+-0.610265
+0.00000
+0.00000
+-0.610265
+-0.610265
+-0.462061
+-0.155791
+8.62485e-05
+2.00673e-07
+2.90449e-05
+0.000698942
+1.80830e-13
+2.28972e-13
+1.68720e-12
+-2.16775e-14
+-1.54261e-12
+-1.22911e-13
+-2.46724e-14
+2.27349e-14
+3.16400e-15
+-1.22653e-15
+-1.41229e-12
+-6.44535e-16
+1.86457e-12
+-4.51643e-13
+-2.50243e-13
+-4.12917e-16
+-3.25125e-13
+5.75781e-13
+2.24531e-14
+2.08013e-14
+0.00000
+1.64395e-12
+-8.76154e-16
+-1.52016e-12
+-2.50243e-13
+-4.12917e-16
+-3.25125e-13
+-3.87108e-15
+1.93361e-15
+3.16400e-15
+63457.5
+-9.61690e-06
+nan
+nan
+nan
+7.35475e-14
+5.86886e-06
+8.96843
+0.00891870
+7.47767
+7.47767
+0.00000
+-0.00000
+-0.00000
+-0.00000
+-0.00000
+-0.00000
+-0.00000
+-0.00000
+-0.00000
+-0.00000
+-0.00000
+2.77146e-22
+1.02838e-12
+1.37275e-12
+-1.30917e-12
+8.07620e-16
+2.65872e-13
+1.04249e-12
+1.23051e-13
+1.64662e-17
+-2.80332e-16
+-8.29743e-15
+-1.30917e-12
+8.07620e-16
+2.65872e-13
+1.04249e-12
+-9.61690e-06
+-0.00000
+9.61690e-06
+6.83812e-13
+6.83738e-13
+7.39537e-17
+-0.00000
+2.90449e-05
+-0.148204
+nan
+-0.155791
+0.454474
+nan
+429.796
+4.98323e+06
+0.000875686
+8.13588e+06
+nan
+0.00000
+47.9232
+2
+0
+) PROP(
+"model" "I9.M20.pch.6"
+)
+"I9.M12" "bsim4" (
+9.61240e-06
+0.508117
+0.338899
+-0.0789969
+0.169218
+0.417896
+0.587114
+0.477365
+0.0897412
+0.000150512
+3.91638e-07
+4.03573e-05
+0.00303582
+1.55904e-13
+2.06058e-13
+1.07832e-12
+-1.95511e-14
+-9.20707e-13
+-1.38057e-13
+-2.46480e-14
+2.17550e-14
+4.86415e-15
+-1.97114e-15
+-8.68102e-13
+-1.39002e-15
+1.11127e-12
+-2.41780e-13
+-1.85565e-13
+-8.13927e-16
+-1.95429e-13
+3.81808e-13
+1.77894e-14
+1.75849e-14
+0.00000
+1.04294e-12
+-1.96612e-15
+-9.02918e-13
+-1.85565e-13
+-8.13927e-16
+-1.95429e-13
+-7.06307e-15
+4.17007e-15
+4.86415e-15
+35256.5
+9.61241e-06
+nan
+nan
+nan
+-1.66501e-13
+3.25764e-06
+15.6581
+0.0346356
+2.02896
+2.02896
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+9.62096e-21
+1.22810e-12
+1.62269e-12
+8.34073e-13
+-1.69480e-15
+-1.10550e-13
+-7.21828e-13
+-7.05543e-14
+-1.66129e-14
+1.03424e-15
+2.98136e-15
+8.34073e-13
+-1.69480e-15
+-1.10550e-13
+-7.21828e-13
+9.61241e-06
+-0.00000
+-9.61241e-06
+-6.63394e-13
+5.67912e-13
+9.54823e-14
+0.0789969
+4.03573e-05
+0.0307528
+nan
+0.0897412
+0.249158
+nan
+384.315
+2.55338e+06
+0.0203280
+2.22150e+07
+nan
+0.00000
+24.5441
+2
+0
+) PROP(
+"model" "I9.M12.nch.6"
+)
+"I9.M13" "bsim4" (
+2.32416e-05
+0.585887
+0.0789969
+0.00000
+0.506890
+0.0789969
+0.585887
+0.453918
+0.148302
+0.000180832
+0.000185218
+5.08470e-05
+0.00271730
+1.77894e-13
+2.14689e-13
+1.65318e-12
+-4.64545e-13
+-1.15777e-12
+-3.08685e-14
+-5.73712e-13
+9.73012e-13
+-2.45562e-13
+-1.53738e-13
+-9.89241e-13
+-3.18408e-13
+1.59606e-12
+-2.88416e-13
+-9.02296e-14
+-1.90059e-13
+-1.92733e-13
+4.73022e-13
+1.77994e-14
+1.77892e-14
+0.00000
+1.61759e-12
+-4.46756e-13
+-1.13997e-12
+-9.02296e-14
+-1.90059e-13
+-1.92733e-13
+-5.55923e-13
+9.55223e-13
+-2.45562e-13
+3398.94
+2.32416e-05
+nan
+nan
+nan
+-1.63699e-14
+1.83602e-06
+7.78050
+0.0344982
+2.02896
+2.02896
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+4.60241e-22
+1.20004e-12
+1.22788e-12
+1.04559e-12
+-5.78732e-14
+-2.14114e-13
+-7.73603e-13
+-1.43298e-14
+-1.01241e-17
+2.97462e-15
+3.43355e-15
+1.04559e-12
+-5.78732e-14
+-2.14114e-13
+-7.73603e-13
+2.32416e-05
+-0.00000
+-2.32416e-05
+-9.53668e-14
+9.53102e-14
+5.65898e-17
+-0.00000
+5.08470e-05
+0.131970
+nan
+0.148302
+-0.0693048
+nan
+0.976318
+5399.04
+0.00266900
+1.74090e+07
+nan
+0.00000
+0.125483
+1
+0
+) PROP(
+"model" "I9.M13.nch.6"
+)
+"I9.M25" "bsim4" (
+3.55177e-05
+0.585887
+0.585887
+0.00000
+0.00000
+0.585887
+0.585887
+0.452495
+0.149229
+0.000366243
+7.69175e-07
+0.000100660
+0.00302091
+2.12688e-13
+2.65489e-13
+1.87279e-12
+-2.22265e-14
+-1.71888e-12
+-1.31684e-13
+-2.61097e-14
+2.37375e-14
+3.85271e-15
+-1.48054e-15
+-1.57989e-12
+-9.49918e-16
+2.03859e-12
+-4.57751e-13
+-2.66791e-13
+-5.61099e-16
+-3.23564e-13
+5.90916e-13
+2.17549e-14
+2.08878e-14
+0.00000
+1.83015e-12
+-1.33874e-15
+-1.69713e-12
+-2.66791e-13
+-5.61099e-16
+-3.23564e-13
+-5.22193e-15
+2.84975e-15
+3.85271e-15
+16495.7
+3.55177e-05
+nan
+nan
+nan
+-3.47368e-13
+2.08093e-05
+10.3116
+0.0345444
+1.65973
+1.65973
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+6.19364e-20
+1.24449e-12
+2.22423e-12
+1.37044e-12
+-8.75083e-16
+-3.14396e-13
+-1.05517e-12
+-1.37673e-13
+-1.56508e-17
+1.47557e-16
+4.19648e-15
+1.37044e-12
+-8.75083e-16
+-3.14396e-13
+-1.05517e-12
+3.55177e-05
+-0.00000
+-3.55177e-05
+-9.33255e-13
+9.33182e-13
+7.33631e-17
+-0.00000
+0.000100660
+0.133392
+nan
+0.149229
+0.436658
+nan
+476.150
+1.30009e+06
+0.00399220
+3.11243e+07
+nan
+0.00000
+46.1763
+2
+0
+) PROP(
+"model" "I9.M25.nch.6"
+)
+"I9.M11" "bsim4" (
+7.39635e-06
+0.497506
+1.64575
+-0.0896079
+-1.14824
+1.73535
+0.587114
+0.478678
+0.0839608
+0.000120732
+1.74667e-07
+3.22512e-05
+0.00273346
+1.17446e-13
+1.74430e-13
+1.15088e-12
+-1.40398e-14
+-9.71833e-13
+-1.65002e-13
+-1.42467e-14
+1.40558e-14
+2.53372e-16
+-6.25075e-17
+-9.28140e-13
+-1.01928e-17
+1.18618e-12
+-2.58031e-13
+-2.08489e-13
+-5.87218e-18
+-2.14601e-13
+4.23096e-13
+1.77877e-14
+1.40253e-14
+0.00000
+1.11906e-12
+-1.45134e-17
+-9.54045e-13
+-2.08489e-13
+-5.87218e-18
+-2.14601e-13
+-2.21443e-16
+3.05783e-17
+2.53372e-16
+222508.
+7.39666e-06
+nan
+nan
+nan
+-3.09335e-10
+1.21731e-05
+16.3232
+0.0346877
+2.02945
+2.02945
+0.00000
+1.39916e-16
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+3.02019e-10
+1.23516e-12
+1.87782e-11
+9.13531e-13
+3.39075e-15
+-1.11659e-13
+-8.05263e-13
+-2.43803e-13
+-1.59898e-14
+-3.41555e-15
+2.91974e-15
+9.13531e-13
+3.39075e-15
+-1.11659e-13
+-8.05263e-13
+7.39667e-06
+-0.00000
+-7.39636e-06
+-3.11160e-10
+9.03218e-12
+1.08453e-13
+0.0896079
+3.22512e-05
+0.0188285
+nan
+0.0839608
+1.56178
+nan
+691.211
+5.72517e+06
+0.0417285
+1.66961e+07
+nan
+0.00000
+42.3472
+2
+0
+) PROP(
+"model" "I9.M35.nch.6"
+)
+"I9.M35" "bsim4" (
+3.19737e-05
+0.587114
+0.587114
+0.00000
+0.00000
+0.587114
+0.587114
+0.453717
+0.149180
+0.000329614
+7.30092e-07
+9.05380e-05
+0.00271870
+1.46194e-13
+1.82664e-13
+1.39631e-12
+-1.80699e-14
+-1.28119e-12
+-9.70458e-14
+-2.09345e-14
+1.91852e-14
+2.83897e-15
+-1.08972e-15
+-1.17546e-12
+-6.98410e-16
+1.51618e-12
+-3.40023e-13
+-1.99916e-13
+-4.16890e-16
+-2.37825e-13
+4.38158e-13
+1.77996e-14
+1.70900e-14
+0.00000
+1.36142e-12
+-9.79931e-16
+-1.26339e-12
+-1.99916e-13
+-4.16890e-16
+-2.37825e-13
+-3.84449e-15
+2.09523e-15
+2.83897e-15
+18362.4
+3.19737e-05
+nan
+nan
+nan
+-2.85340e-13
+1.87722e-05
+10.3089
+0.0345003
+2.02945
+2.02945
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+5.59817e-20
+1.19634e-12
+2.00506e-12
+1.01917e-12
+-6.57417e-16
+-2.33815e-13
+-7.84694e-13
+-9.48781e-14
+-1.18531e-17
+1.20758e-16
+3.44059e-15
+1.01917e-12
+-6.57417e-16
+-2.33815e-13
+-7.84694e-13
+3.19737e-05
+-0.00000
+-3.19737e-05
+-8.72454e-13
+8.72377e-13
+7.76292e-17
+-0.00000
+9.05380e-05
+0.133397
+nan
+0.149180
+0.437934
+nan
+451.469
+1.36969e+06
+0.00359360
+3.75704e+07
+nan
+0.00000
+43.7941
+2
+0
+) PROP(
+"model" "I9.M35.nch.6"
+)
+"I9.M14" "bsim4" (
+2.75653e-05
+0.585887
+0.0896079
+0.00000
+0.496279
+0.0896079
+0.585887
+0.455109
+0.147414
+0.000224571
+0.000171532
+6.28239e-05
+0.00302298
+1.74436e-13
+1.82665e-13
+1.45901e-12
+-3.53014e-13
+-1.07062e-12
+-3.53802e-14
+-4.52821e-13
+7.38234e-13
+-1.65615e-13
+-1.19798e-13
+-9.11550e-13
+-2.40149e-13
+1.41674e-12
+-2.65044e-13
+-9.46393e-14
+-1.45071e-13
+-1.80512e-13
+4.20222e-13
+1.77994e-14
+1.77875e-14
+0.00000
+1.42342e-12
+-3.35227e-13
+-1.05282e-12
+-9.46393e-14
+-1.45071e-13
+-1.80512e-13
+-4.35034e-13
+7.20447e-13
+-1.65615e-13
+3250.75
+2.75653e-05
+nan
+nan
+nan
+-1.88244e-14
+2.47007e-06
+8.14688
+0.0344735
+2.02945
+2.02945
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+7.09422e-22
+1.19634e-12
+1.23511e-12
+9.35046e-13
+-4.30272e-14
+-1.94460e-13
+-6.97560e-13
+-1.59774e-14
+-1.02189e-17
+2.91302e-15
+3.43350e-15
+9.35046e-13
+-4.30272e-14
+-1.94460e-13
+-6.97560e-13
+2.75653e-05
+-0.00000
+-2.75653e-05
+-1.08432e-13
+1.08365e-13
+6.69260e-17
+-0.00000
+6.28239e-05
+0.130779
+nan
+0.147414
+-0.0578063
+nan
+1.30921
+5829.82
+0.00322344
+2.44972e+07
+nan
+0.00000
+0.160701
+1
+0
+) PROP(
+"model" "I9.M14.nch.6"
+)
+"I10" "isource" (
+2.60000e-05
+1.03330
+2.68658e-05
+) PROP(
+"model" "isource"
+)
+"V0" "vsource" (
+1.80000
+-0.000144299
+-0.000259737
+) PROP(
+"model" "vsource"
+)
+"V3" "vsource" (
+0.900000
+0.00000
+0.00000
+) PROP(
+"model" "vsource"
+)
+"V4" "vsource" (
+0.900000
+0.00000
+0.00000
+) PROP(
+"model" "vsource"
+)
+END
