@@ -9,7 +9,7 @@ from ray.rllib.models.torch.torch_modelv2 import TorchModelV2
 from ray.rllib.models.torch.fcnet import FullyConnectedNetwork as FCNet
 from ray.rllib.models import ModelCatalog
 from torch import nn
-from supersuit import pad_action_space_v0
+from supersuit.multiagent_wrappers import pad_action_space_v0
 
 from AnalogDesignAutoEnv import AnalogDesignEnv
 
