@@ -48,7 +48,7 @@ if __name__ == "__main__":
     config = (
         PPOConfig()
         .environment(env=env_name, clip_actions=True)
-        .rollouts(num_rollout_workers=4)
+        .rollouts(num_rollout_workers=2)
         .training(
             train_batch_size=512,
             lr=2e-5,
@@ -62,7 +62,7 @@ if __name__ == "__main__":
             sgd_minibatch_size=64,
             num_sgd_iter=10,
         )
-        .debugging(log_level="INFO")
+        .debugging(log_level="ERROR")
         .framework("torch")
         .resources(num_gpus=int(os.environ.get("RLLIB_NUM_GPUS", "0")))
     )
