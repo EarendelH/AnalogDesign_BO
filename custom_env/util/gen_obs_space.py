@@ -156,7 +156,7 @@ def gen_obs_space_extend(result_config_file, param_range_config_file, agent_assi
         'cur_param': gymnasium.spaces.Dict(cur_param_spaces)
     })
 
-    obs_space = {}
+    obs_space = gymnasium.spaces.Dict()
     for group_name in agent_assign.keys():
         obs_space[group_name] = obs_space_single
 
