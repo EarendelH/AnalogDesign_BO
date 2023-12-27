@@ -100,10 +100,10 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
             sim_config = yaml.safe_load(file)
 
         observation = run_spectre_simulation(working_dir, sim_config)
-        print(f"Initialing!!!Simulation result: {observation}")
 
         # Share all observations among agents
         observations = {agent: observation for agent in self.agents}
+        print(f"Initialing!!!Simulation result: {observations}")
 
         self.cur_param = init_param
 
@@ -113,6 +113,8 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
 
         # Update step number
         self.step_num += 1
+
+        print(f"Updated action: {action_dict} with step number: {self.step_num}")
 
         # Create working directory
         working_dir = create_work_dir(self.root_dir)
