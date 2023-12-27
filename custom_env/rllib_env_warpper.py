@@ -4,7 +4,7 @@ import yaml
 from collections import OrderedDict
 from copy import copy
 
-from ray.tune.registry import get_trainable_cls
+from ray.tune.registry import get_trainable_cls, register_env
 
 from util.gen_action_sapce import gen_action_space
 from util.gen_obs_space import gen_obs_space
@@ -178,6 +178,13 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         return obs, rew, terminated, truncated, info
 
 
+def env_creator(env_config):
+    return RllibAnalogDesignAutoEnv(generalize=True, path='sampled_specs')
+
+
+register_env("analog_design_env", env_creator)
+
+
 def get_cli_args():
     """Create CLI parser and return parsed arguments"""
     parser = argparse.ArgumentParser()
@@ -233,7 +240,7 @@ if __name__ == "__main__":
     config = (
         get_trainable_cls(args.run)
         .get_default_config()
-        .environment(RllibAnalogDesignAutoEnv(generalize=True, path='sampled_specs'))
+        .environment("analog_design_env")
         .resources(
             # Use GPUs iff `RLLIB_NUM_GPUS` env var set to > 0.
             num_gpus=int(os.environ.get("RLLIB_NUM_GPUS", "0")),
