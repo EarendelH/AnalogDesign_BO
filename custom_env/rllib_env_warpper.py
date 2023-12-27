@@ -22,7 +22,7 @@ import ray
 
 
 class RllibAnalogDesignAutoEnv(MultiAgentEnv):
-    def __init__(self, generalize=False, path=''):
+    def __init__(self, generalize=True, path='sampled_specs'):
         # Init values
         self.cur_param = None
         self.step_num = 0
@@ -178,11 +178,6 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         return obs, rew, terminated, truncated, info
 
 
-def env_creator():
-    env = RllibAnalogDesignAutoEnv(generalize=True, path='sampled_specs')
-    return env
-
-
 def get_cli_args():
     """Create CLI parser and return parsed arguments"""
     parser = argparse.ArgumentParser()
@@ -240,7 +235,7 @@ if __name__ == "__main__":
     config = (
         get_trainable_cls(args.run)
         .get_default_config()
-        .environment(env_creator())
+        .environment(RllibAnalogDesignAutoEnv)
         .resources(
             # Use GPUs iff `RLLIB_NUM_GPUS` env var set to > 0.
             num_gpus=int(os.environ.get("RLLIB_NUM_GPUS", "0")),
