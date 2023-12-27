@@ -44,6 +44,7 @@ def gen_obs_space(result_config_file, param_range_config_file):
 
     return obs_space
 
+
 # Test Code
 # result_config_file = "../config/result.yaml"
 # param_range_config_file = "../config/param_range.yaml"
@@ -114,3 +115,49 @@ def gen_obs_space(result_config_file, param_range_config_file):
 # dtype=float32)), ('powerSupplyRejectionRatio', array([0.2896765], dtype=float32)), ('pwr', array([0.8886158],
 # dtype=float32)), ('slewRateDown', array([0.6193389], dtype=float32)), ('slewRateUp', array([0.75055516],
 # dtype=float32))]))])
+
+def gen_obs_space_extend(result_config_file, param_range_config_file, agent_assign_yaml_path):
+    """
+    Generate observation space for the custom environment.
+    :param result_config_file: path of the result config file
+    :param param_range_config_file: path of the parameter range config file
+    :return: obs_space: gymnasium.spaces.Dict, observation space for the custom environment
+    """
+
+    with open(agent_assign_yaml_path, 'r') as file:
+        agent_assign = yaml.safe_load(file)
+
+    # Import YAML file
+    with open(result_config_file, 'r') as file:
+        result_config = yaml.safe_load(file)
+    with open(param_range_config_file, 'r') as file:
+        param_range_config = yaml.safe_load(file)
+
+    # Create spaces for ideal_specs and cur_specs
+    ideal_specs_spaces = {key: gymnasium.spaces.Box(low=0, high=1, shape=(1,), dtype=np.float32)
+                          for key in sum(result_config.values(), [])}
+    cur_specs_spaces = {key: gymnasium.spaces.Box(low=0, high=1, shape=(1,), dtype=np.float32)
+                        for key in sum(result_config.values(), [])}
+
+    # Create spaces for cur_param
+    cur_param_spaces = {}
+    for component, data in param_range_config.items():
+        for param in data['params']:
+            variable_name = param['variable_name']
+            range_min, range_max = param['value']['range']
+            cur_param_spaces[variable_name] = gymnasium.spaces.Box(low=unit_conversion(range_min),
+                                                                   high=unit_conversion(range_max), shape=(1,),
+                                                                   dtype=np.float32)
+
+    # Combine three dicts into one gymnasium.spaces.Dict
+    obs_space_single = gymnasium.spaces.Dict({
+        'ideal_specs': gymnasium.spaces.Dict(ideal_specs_spaces),
+        'cur_specs': gymnasium.spaces.Dict(cur_specs_spaces),
+        'cur_param': gymnasium.spaces.Dict(cur_param_spaces)
+    })
+
+    obs_space = {}
+    for group_name in agent_assign.keys():
+        obs_space[group_name] = obs_space_single
+
+    return obs_space

@@ -7,7 +7,7 @@ from copy import copy
 from ray.tune.registry import get_trainable_cls, register_env
 
 from util.gen_action_sapce import gen_action_space
-from util.gen_obs_space import gen_obs_space
+from util.gen_obs_space import gen_obs_space_extend
 from util.gen_param_space import gen_param_space
 from util.util_func import create_work_dir
 from util.assign_param2netlist import assign_param2netlist
@@ -63,7 +63,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         self.terminateds = set()
         self.truncateds = set()
         self._obs_space_in_preferred_format = True
-        self.observation_space = gen_obs_space(self.result_config, self.param_range_config)
+        self.observation_space = gen_obs_space_extend(self.result_config, self.param_range_config)
         print(f"observation_space: {self.observation_space}")
         self._action_space_in_preferred_format = True
         self.action_space = gen_action_space(self.agent_assign_config)
@@ -149,8 +149,10 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
             sim_config = yaml.safe_load(file)
 
         # Share all observations
-        obs = run_spectre_simulation(working_dir, sim_config)
-        print(f"Step!!!Simulation result: {obs} with step number: {self.step_num}")
+        single_obs = run_spectre_simulation(working_dir, sim_config)
+        print(f"Step!!!Simulation result: {single_obs} with step number: {self.step_num}")
+
+        obs = {agent: single_obs for agent in self.agents}
 
         # Store the observation
         with open(os.path.join(working_dir, "result.yaml"), 'w') as file:
