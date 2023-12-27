@@ -233,7 +233,7 @@ if __name__ == "__main__":
     config = (
         get_trainable_cls(args.run)
         .get_default_config()
-        .environment(env=RllibAnalogDesignAutoEnv)
+        .environment(RllibAnalogDesignAutoEnv(generalize=True, path='sampled_specs'))
         .resources(
             # Use GPUs iff `RLLIB_NUM_GPUS` env var set to > 0.
             num_gpus=int(os.environ.get("RLLIB_NUM_GPUS", "0")),
