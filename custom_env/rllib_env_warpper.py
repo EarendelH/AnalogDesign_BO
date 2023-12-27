@@ -63,7 +63,8 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         self.terminateds = set()
         self.truncateds = set()
         self._obs_space_in_preferred_format = True
-        self.observation_space = gen_obs_space_extend(self.result_config, self.param_range_config)
+        self.observation_space = gen_obs_space_extend(self.result_config, self.param_range_config,
+                                                      self.agent_assign_config)
         print(f"observation_space: {self.observation_space}")
         self._action_space_in_preferred_format = True
         self.action_space = gen_action_space(self.agent_assign_config)
