@@ -71,8 +71,6 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
 
     def reset(self, *, seed=None, options=None):
 
-        self.agents = copy(self.possible_agents)
-
         # Select the middle point of the param space as the initial param
         init_param = OrderedDict()
         for param, value_list in self.param_space.items():
