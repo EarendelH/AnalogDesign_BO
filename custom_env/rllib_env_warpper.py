@@ -249,9 +249,9 @@ if __name__ == "__main__":
         .rollouts(num_rollout_workers=1, rollout_fragment_length="auto")
         .framework(args.framework)
         .multi_agent(
-            policies={"agent_for_Group_1", "agent_for_Group_2", "agent_for_Group_3", "agent_for_Group_4"},
-            policy_mapping_fn=(lambda aid, episode, worker, **kw: f"agent_for_Group_{aid[-1]}"),
-            policies_to_train=["agent_for_Group_1", "agent_for_Group_2", "agent_for_Group_3", "agent_for_Group_4"],
+            policies={"main1", "main2", "main3", "main4"},
+            policy_mapping_fn=(lambda aid, episode, worker, **kw: f"main{aid[-1]}"),
+            policies_to_train=["main1", "main2", "main3", "main4"],
         )
     )
 
