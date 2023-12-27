@@ -250,7 +250,7 @@ if __name__ == "__main__":
         .framework(args.framework)
         .multi_agent(
             policies={"agent_for_Group_1", "agent_for_Group_2", "agent_for_Group_3", "agent_for_Group_4"},
-            policy_mapping_fn=(lambda aid, episode, worker, **kw: f"main{aid[-1]}"),
+            policy_mapping_fn=(lambda aid, episode, worker, **kw: f"agent_for_Group_{aid[-1]}"),
             policies_to_train=["agent_for_Group_1", "agent_for_Group_2", "agent_for_Group_3", "agent_for_Group_4"],
         )
     )
