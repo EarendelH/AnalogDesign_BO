@@ -45,13 +45,16 @@ def gen_obs_space(result_config_file, param_range_config_file):
     return obs_space
 
 
-def gen_obs_space_simple(result_config_file, param_range_config_file):
+def gen_obs_space_simple(result_config_file, param_range_config_file, agent_assign_yaml_path):
     """
     Generate observation space for the custom environment.
     :param result_config_file: path of the result config file
     :param param_range_config_file: path of the parameter range config file
     :return: obs_space: gymnasium.spaces.Dict, observation space for the custom environment
     """
+
+    with open(agent_assign_yaml_path, 'r') as file:
+        agent_assign = yaml.safe_load(file)
 
     # Import YAML file
     with open(result_config_file, 'r') as file:
@@ -76,9 +79,13 @@ def gen_obs_space_simple(result_config_file, param_range_config_file):
                                                                    dtype=np.float32)
 
     # Combine three dicts into one gymnasium.spaces.Dict
-    obs_space = gymnasium.spaces.Dict({
+    obs_space_single = gymnasium.spaces.Dict({
         'cur_specs': gymnasium.spaces.Dict(cur_specs_spaces)
     })
+
+    obs_space = gymnasium.spaces.Dict()
+    for group_name in agent_assign.keys():
+        obs_space[group_name] = obs_space_single
 
     return obs_space
 
