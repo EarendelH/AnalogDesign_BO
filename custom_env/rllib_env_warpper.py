@@ -7,7 +7,8 @@ from copy import copy
 from ray.tune.registry import get_trainable_cls, register_env
 
 from util.gen_action_sapce import gen_action_space
-from util.gen_obs_space import gen_obs_space_extend
+# from util.gen_obs_space import gen_obs_space_extend
+from util.gen_obs_space import gen_obs_space_simple
 from util.gen_param_space import gen_param_space
 from util.util_func import create_work_dir
 from util.assign_param2netlist import assign_param2netlist
@@ -15,7 +16,8 @@ from util.run_spectre_simulation import run_spectre_simulation
 from util.cal_reward import cal_reward
 from util.generalize_config import generalize_config
 from util.update_param import update_parameters
-from util.update_obs_space import update_obs_space
+# from util.update_obs_space import update_obs_space
+from util.update_obs_space import update_obs_space_simple
 
 from ray.rllib.env.multi_agent_env import MultiAgentEnv
 from ray import air, tune
@@ -64,7 +66,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         self.terminateds = set()
         self.truncateds = set()
         self._obs_space_in_preferred_format = True
-        self.observation_space = gen_obs_space_extend(self.result_config, self.param_range_config,
+        self.observation_space = gen_obs_space_simple(self.result_config, self.param_range_config,
                                                       self.agent_assign_config)
         print(f"observation_space: {self.observation_space}")
         self._action_space_in_preferred_format = True
@@ -105,7 +107,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
 
         # Generate observation
 
-        observation = update_obs_space(self.ideal_specs, sim_result, init_param)
+        observation = update_obs_space_simple(self.ideal_specs, sim_result, init_param)
         print(f"Initialing!!!Observation result: {observation}")
 
         # Share all observations among agents
@@ -159,7 +161,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         sim_result = run_spectre_simulation(working_dir, sim_config)
         print(f"Step!!!Simulation result: {sim_result} with step number: {self.step_num}")
 
-        observation = update_obs_space(self.ideal_specs, sim_result, updated_param)
+        observation = update_obs_space_simple(self.ideal_specs, sim_result, updated_param)
         print(f"Step!!!Observation result: {observation} with step number: {self.step_num}")
         observations = {agent: observation for agent in self.agents}
         print(f"Step!!!Observations result: {observations} with step number: {self.step_num}")

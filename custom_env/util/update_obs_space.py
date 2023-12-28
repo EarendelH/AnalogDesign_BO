@@ -46,6 +46,43 @@ def update_obs_space(ideal_specs, cur_specs, cur_param):
 
     return dict_sum
 
+def update_obs_space_simple(ideal_specs, cur_specs, cur_param):
+    """
+    Update observation space for the environment.
+    :param ideal_specs: Dict, ideal normalized specs for the circuit
+    :param cur_specs: Dict, current normalized specs for the circuit
+    :param cur_param: OrderedDict, current device parameters deleting unit of the circuit
+    :return: gym.spaces.Dict, the observation space for the environment
+    """
+
+    print("Debug, in update_obs_space, ideal_specs = ", ideal_specs)
+    print("Debug, in update_obs_space, cur_specs = ", cur_specs)
+    print("Debug, in update_obs_space, cur_param = ", cur_param)
+
+    # Convert cur_param to Dict, and convert unit to float
+    cur_param_dict = {}
+    for key, value in cur_param.items():
+        cur_param_dict[key] = np.array([unit_conversion(value)], dtype=np.float32)
+
+    # Flatten ideal_specs and cur_specs
+    ideal_specs_flatten = {key: specs['value'] for key, specs in ideal_specs.items()}
+    cur_specs_flatten = {k: v for d in cur_specs.values() for k, v in d.items()}
+
+    # Convert ideal_specs_flatten and cur_specs_flatten values to np.array
+    for key, value in ideal_specs_flatten.items():
+        print(f"Debug, in update_obs_space, ideal_specs_flatten[{key}] = {value}")
+        ideal_specs_flatten[key] = np.array([value], dtype=np.float32)
+        print(f"Debug, in update_obs_space, ideal_specs_flatten[{key}] = {ideal_specs_flatten[key]}")
+    for key, value in cur_specs_flatten.items():
+        print(f"Debug, in update_obs_space, cur_specs_flatten[{key}] = {value}")
+        cur_specs_flatten[key] = np.array([value], dtype=np.float32)
+        print(f"Debug, in update_obs_space, cur_specs_flatten[{key}] = {cur_specs_flatten[key]}")
+
+    # Combine three dicts into one
+    dict_sum = {"cur_specs": cur_specs_flatten}
+    dict_sum = OrderedDict(dict_sum)
+
+    return dict_sum
 
 # Test Code
 # cur_specs = {'DC': {'pwr': 0.000803601}, 'Stability': {'phaseMargin': 0, 'gainBandWidth': 0},

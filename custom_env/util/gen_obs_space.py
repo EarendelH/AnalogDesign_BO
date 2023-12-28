@@ -45,6 +45,44 @@ def gen_obs_space(result_config_file, param_range_config_file):
     return obs_space
 
 
+def gen_obs_space_simple(result_config_file, param_range_config_file):
+    """
+    Generate observation space for the custom environment.
+    :param result_config_file: path of the result config file
+    :param param_range_config_file: path of the parameter range config file
+    :return: obs_space: gymnasium.spaces.Dict, observation space for the custom environment
+    """
+
+    # Import YAML file
+    with open(result_config_file, 'r') as file:
+        result_config = yaml.safe_load(file)
+    with open(param_range_config_file, 'r') as file:
+        param_range_config = yaml.safe_load(file)
+
+    # Create spaces for ideal_specs and cur_specs
+    ideal_specs_spaces = {key: gymnasium.spaces.Box(low=0, high=1, shape=(1,), dtype=np.float32)
+                          for key in sum(result_config.values(), [])}
+    cur_specs_spaces = {key: gymnasium.spaces.Box(low=0, high=1, shape=(1,), dtype=np.float32)
+                        for key in sum(result_config.values(), [])}
+
+    # Create spaces for cur_param
+    cur_param_spaces = {}
+    for component, data in param_range_config.items():
+        for param in data['params']:
+            variable_name = param['variable_name']
+            range_min, range_max = param['value']['range']
+            cur_param_spaces[variable_name] = gymnasium.spaces.Box(low=unit_conversion(range_min),
+                                                                   high=unit_conversion(range_max), shape=(1,),
+                                                                   dtype=np.float32)
+
+    # Combine three dicts into one gymnasium.spaces.Dict
+    obs_space = gymnasium.spaces.Dict({
+        'cur_specs': gymnasium.spaces.Dict(cur_specs_spaces)
+    })
+
+    return obs_space
+
+
 # Test Code
 # result_config_file = "../config/result.yaml"
 # param_range_config_file = "../config/param_range.yaml"
