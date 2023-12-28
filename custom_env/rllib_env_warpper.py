@@ -15,6 +15,7 @@ from util.run_spectre_simulation import run_spectre_simulation
 from util.cal_reward import cal_reward
 from util.generalize_config import generalize_config
 from util.update_param import update_parameters
+from util.update_obs_space import update_obs_space
 
 from ray.rllib.env.multi_agent_env import MultiAgentEnv
 from ray import air, tune
@@ -100,11 +101,16 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         with open(self.sim_config, 'r') as file:
             sim_config = yaml.safe_load(file)
 
-        observation = run_spectre_simulation(working_dir, sim_config)
+        sim_result = run_spectre_simulation(working_dir, sim_config)
+
+        # Generate observation
+
+        observation = update_obs_space(self.ideal_specs, sim_result, init_param)
+        print(f"Initialing!!!Observation result: {observation}")
 
         # Share all observations among agents
         observations = {agent: observation for agent in self.agents}
-        print(f"Initialing!!!Simulation result: {observations}")
+        print(f"Initialing!!!Observations result: {observations}")
 
         self.cur_param = init_param
 
@@ -150,19 +156,22 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
             sim_config = yaml.safe_load(file)
 
         # Share all observations
-        single_obs = run_spectre_simulation(working_dir, sim_config)
-        print(f"Step!!!Simulation result: {single_obs} with step number: {self.step_num}")
+        sim_result = run_spectre_simulation(working_dir, sim_config)
+        print(f"Step!!!Simulation result: {sim_result} with step number: {self.step_num}")
 
-        obs = {agent: single_obs for agent in self.agents}
+        observation = update_obs_space(self.ideal_specs, sim_result, updated_param)
+        print(f"Step!!!Observation result: {observation} with step number: {self.step_num}")
+        observations = {agent: observation for agent in self.agents}
+        print(f"Step!!!Observations result: {observations} with step number: {self.step_num}")
 
         # Store the observation
         with open(os.path.join(working_dir, "result.yaml"), 'w') as file:
-            yaml.dump(obs, file)
+            yaml.dump(observation, file)
 
         # Calculate reward
         rew = {a: -10 for a in self.agents}
         for agent_name in rew:
-            rew[agent_name] = cal_reward(self.ideal_specs, obs)
+            rew[agent_name] = cal_reward(self.ideal_specs, observation)
 
         # Determine termination or truncations
         terminated = {a: False for a in self.agents}
@@ -180,7 +189,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         terminated["__all__"] = len(self.terminateds) == len(self.agents)
         truncated["__all__"] = len(self.truncateds) == len(self.agents)
 
-        return obs, rew, terminated, truncated, info
+        return observations, rew, terminated, truncated, info
 
 
 def env_creator(env_config):
