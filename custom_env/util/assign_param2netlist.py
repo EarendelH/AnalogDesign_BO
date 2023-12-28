@@ -66,7 +66,7 @@ def assign_param2netlist(param_dict, unassigned_netlist_file_path, assigned_netl
     for key in key_to_delete:
         del param_dict_processed[key]
 
-    print(param_dict_processed)
+    # print(param_dict_processed)
 
     update_params = []
     for param in param_names_in_netlist:
@@ -79,7 +79,7 @@ def assign_param2netlist(param_dict, unassigned_netlist_file_path, assigned_netl
     # Validate all variable are assigned.
     assigned_param_name = re.split(r'\s+', updated_parameters_line.split('parameters')[1].strip())
     unassigned_params_after_update = [param for param in assigned_param_name if "=" not in param]
-    print(unassigned_params_after_update)
+    # print(unassigned_params_after_update)
     if unassigned_params_after_update:
         raise ValueError(f"Unassigned parameters: {unassigned_params_after_update}")
 
