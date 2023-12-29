@@ -18,6 +18,7 @@ from util.generalize_config import generalize_config
 from util.update_param import update_parameters
 # from util.update_obs_space import update_obs_space
 from util.update_obs_space import update_obs_space_simple
+from util.normlization import normalization
 
 from ray.rllib.env.multi_agent_env import MultiAgentEnv
 from ray import air, tune
@@ -105,9 +106,11 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
 
         sim_result = run_spectre_simulation(working_dir, sim_config)
 
-        # Generate observation
+        # Normalize the observation
+        norm_sim_result = normalization(self.ideal_specs, sim_result)
 
-        observation = update_obs_space_simple(self.ideal_specs, sim_result, init_param)
+        # Generate observation
+        observation = update_obs_space_simple(self.ideal_specs, norm_sim_result, init_param)
         print(f"Initialing!!!Observation result: {observation}")
 
         # Share all observations among agents
@@ -157,12 +160,18 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         with open(self.sim_config, 'r') as file:
             sim_config = yaml.safe_load(file)
 
-        # Share all observations
+        # Run spectre simulation
         sim_result = run_spectre_simulation(working_dir, sim_config)
         print(f"Step!!!Simulation result: {sim_result} with step number: {self.step_num}")
 
-        observation = update_obs_space_simple(self.ideal_specs, sim_result, updated_param)
+        # Normalize the observation
+        norm_sim_result = normalization(self.ideal_specs, sim_result)
+
+        # Generate observation
+        observation = update_obs_space_simple(self.ideal_specs, norm_sim_result, updated_param)
         print(f"Step!!!Observation result: {observation} with step number: {self.step_num}")
+
+        # Share all observations
         observations = {agent: observation for agent in self.agents}
         print(f"Step!!!Observations result: {observations} with step number: {self.step_num}")
 
