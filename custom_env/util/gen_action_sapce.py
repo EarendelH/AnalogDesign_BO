@@ -36,7 +36,7 @@ def gen_action_space(agent_assign_yaml_path):
                 space = gymnasium.spaces.MultiDiscrete([operation_number])
             space_dict[device] = space
         action_space_dict[group_name] = gymnasium.spaces.Dict(space_dict)
-    return action_space_dict
+    return gymnasium.spaces.Dict(action_space_dict)
 
 
 # Test Code
@@ -55,22 +55,21 @@ def gen_action_space(agent_assign_yaml_path):
 #     all_action_flatten.update(action)
 # print(all_action_flatten)
 
-# Output
-# {'Group_1': Dict('M13': MultiDiscrete([3 3 3]), 'M14': MultiDiscrete([3 3 3]), 'M16': MultiDiscrete([3 3
+# Output Dict('Agent_1': Dict('M13': MultiDiscrete([3 3 3]), 'M14': MultiDiscrete([3 3 3]), 'M16': MultiDiscrete([3 3
 # 3]), 'M23': MultiDiscrete([3 3 3]), 'M24': MultiDiscrete([3 3 3]), 'M25': MultiDiscrete([3 3 3]),
-# 'M35': MultiDiscrete([3 3 3]), 'M36': MultiDiscrete([3 3 3])), 'Group_2': Dict('M17': MultiDiscrete([3 3 3]),
-# 'M18': MultiDiscrete([3 3 3])), 'Group_3': Dict('M11': MultiDiscrete([3 3 3]), 'M12': MultiDiscrete([3 3 3]),
+# 'M35': MultiDiscrete([3 3 3]), 'M36': MultiDiscrete([3 3 3])), 'Agent_2': Dict('M17': MultiDiscrete([3 3 3]),
+# 'M18': MultiDiscrete([3 3 3])), 'Agent_3': Dict('M11': MultiDiscrete([3 3 3]), 'M12': MultiDiscrete([3 3 3]),
 # 'M19': MultiDiscrete([3 3 3]), 'M20': MultiDiscrete([3 3 3]), 'M21': MultiDiscrete([3 3 3]), 'M22': MultiDiscrete([
-# 3 3 3])), 'Group_4': Dict('IB': MultiDiscrete([3]))}
-
-# {'Group_1': OrderedDict([('M13', array([0, 0, 0])), ('M14', array([1, 2, 2])), ('M16', array([1, 2, 2])), ('M23',
-# array([0, 0, 0])), ('M24', array([1, 1, 1])), ('M25', array([2, 2, 1])), ('M35', array([2, 1, 2])), ('M36',
-# array([2, 0, 2]))]), 'Group_2': OrderedDict([('M17', array([2, 1, 1])), ('M18', array([1, 2, 1]))]), 'Group_3':
-# OrderedDict([('M11', array([0, 0, 1])), ('M12', array([2, 1, 0])), ('M19', array([2, 1, 2])), ('M20', array([1, 1,
-# 0])), ('M21', array([1, 1, 0])), ('M22', array([0, 2, 1]))]), 'Group_4': OrderedDict([('IB', array([0]))])}
-
-# OrderedDict([('M13', array([0, 0, 0])), ('M14', array([1, 2, 2])), ('M16', array([1, 2, 2])), ('M23', array([0, 0,
-# 0])), ('M24', array([1, 1, 1])), ('M25', array([2, 2, 1])), ('M35', array([2, 1, 2])), ('M36', array([2, 0, 2])),
-# ('M17', array([2, 1, 1])), ('M18', array([1, 2, 1])), ('M11', array([0, 0, 1])), ('M12', array([2, 1, 0])), ('M19',
-# array([2, 1, 2])), ('M20', array([1, 1, 0])), ('M21', array([1, 1, 0])), ('M22', array([0, 2, 1])), ('IB',
-# array([0]))])
+# 3 3 3])), 'Agent_4': Dict('IB': MultiDiscrete([3])))
+#
+# {'Agent_1': OrderedDict([('M13', array([1, 2, 2])), ('M14', array([2, 1, 1])), ('M16', array([1, 2, 1])), ('M23',
+# array([2, 0, 2])), ('M24', array([2, 0, 1])), ('M25', array([2, 2, 2])), ('M35', array([0, 0, 2])), ('M36',
+# array([0, 1, 2]))]), 'Agent_2': OrderedDict([('M17', array([0, 0, 1])), ('M18', array([1, 0, 1]))]), 'Agent_3':
+# OrderedDict([('M11', array([1, 0, 0])), ('M12', array([0, 2, 0])), ('M19', array([0, 2, 0])), ('M20', array([2, 0,
+# 1])), ('M21', array([2, 2, 0])), ('M22', array([1, 2, 2]))]), 'Agent_4': OrderedDict([('IB', array([1]))])}
+#
+# OrderedDict([('M13', array([1, 2, 2])), ('M14', array([2, 1, 1])), ('M16', array([1, 2, 1])), ('M23', array([2, 0,
+# 2])), ('M24', array([2, 0, 1])), ('M25', array([2, 2, 2])), ('M35', array([0, 0, 2])), ('M36', array([0, 1, 2])),
+# ('M17', array([0, 0, 1])), ('M18', array([1, 0, 1])), ('M11', array([1, 0, 0])), ('M12', array([0, 2, 0])), ('M19',
+# array([0, 2, 0])), ('M20', array([2, 0, 1])), ('M21', array([2, 2, 0])), ('M22', array([1, 2, 2])), ('IB',
+# array([1]))])
