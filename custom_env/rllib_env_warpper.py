@@ -107,6 +107,8 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         sim_result = run_spectre_simulation(working_dir, sim_config)
 
         # Normalize the observation
+        print(f"Debug!!!Ideal specs: {self.ideal_specs}")
+        print(f"Debug!!!Simulation result: {sim_result}")
         norm_sim_result = normalization(self.ideal_specs, sim_result)
 
         # Generate observation
