@@ -17,9 +17,9 @@ def update_obs_space(ideal_specs, cur_specs, cur_param):
     :return: gym.spaces.Dict, the observation space for the environment
     """
 
-    print("Debug, in update_obs_space, ideal_specs = ", ideal_specs)
-    print("Debug, in update_obs_space, cur_specs = ", cur_specs)
-    print("Debug, in update_obs_space, cur_param = ", cur_param)
+    # print("Debug, in update_obs_space, ideal_specs = ", ideal_specs)
+    # print("Debug, in update_obs_space, cur_specs = ", cur_specs)
+    # print("Debug, in update_obs_space, cur_param = ", cur_param)
 
     # Convert cur_param to Dict, and convert unit to float
     cur_param_dict = {}
@@ -32,13 +32,13 @@ def update_obs_space(ideal_specs, cur_specs, cur_param):
 
     # Convert ideal_specs_flatten and cur_specs_flatten values to np.array
     for key, value in ideal_specs_flatten.items():
-        print(f"Debug, in update_obs_space, ideal_specs_flatten[{key}] = {value}")
+        # print(f"Debug, in update_obs_space, ideal_specs_flatten[{key}] = {value}")
         ideal_specs_flatten[key] = np.array([value], dtype=np.float32)
-        print(f"Debug, in update_obs_space, ideal_specs_flatten[{key}] = {ideal_specs_flatten[key]}")
+        # print(f"Debug, in update_obs_space, ideal_specs_flatten[{key}] = {ideal_specs_flatten[key]}")
     for key, value in cur_specs_flatten.items():
-        print(f"Debug, in update_obs_space, cur_specs_flatten[{key}] = {value}")
+        # print(f"Debug, in update_obs_space, cur_specs_flatten[{key}] = {value}")
         cur_specs_flatten[key] = np.array([value], dtype=np.float32)
-        print(f"Debug, in update_obs_space, cur_specs_flatten[{key}] = {cur_specs_flatten[key]}")
+        # print(f"Debug, in update_obs_space, cur_specs_flatten[{key}] = {cur_specs_flatten[key]}")
 
     # Combine three dicts into one
     dict_sum = {"cur_specs": cur_specs_flatten, "ideal_specs": ideal_specs_flatten, "cur_param": cur_param_dict}
@@ -55,9 +55,9 @@ def update_obs_space_simple(ideal_specs, cur_specs, cur_param):
     :return: gym.spaces.Dict, the observation space for the environment
     """
 
-    print("Debug, in update_obs_space, ideal_specs = ", ideal_specs)
-    print("Debug, in update_obs_space, cur_specs = ", cur_specs)
-    print("Debug, in update_obs_space, cur_param = ", cur_param)
+    # print("Debug, in update_obs_space, ideal_specs = ", ideal_specs)
+    # print("Debug, in update_obs_space, cur_specs = ", cur_specs)
+    # print("Debug, in update_obs_space, cur_param = ", cur_param)
 
     # Convert cur_param to Dict, and convert unit to float
     cur_param_dict = {}
@@ -70,13 +70,13 @@ def update_obs_space_simple(ideal_specs, cur_specs, cur_param):
 
     # Convert ideal_specs_flatten and cur_specs_flatten values to np.array
     for key, value in ideal_specs_flatten.items():
-        print(f"Debug, in update_obs_space, ideal_specs_flatten[{key}] = {value}")
+        # print(f"Debug, in update_obs_space, ideal_specs_flatten[{key}] = {value}")
         ideal_specs_flatten[key] = np.array([value], dtype=np.float32)
-        print(f"Debug, in update_obs_space, ideal_specs_flatten[{key}] = {ideal_specs_flatten[key]}")
+        # print(f"Debug, in update_obs_space, ideal_specs_flatten[{key}] = {ideal_specs_flatten[key]}")
     for key, value in cur_specs_flatten.items():
-        print(f"Debug, in update_obs_space, cur_specs_flatten[{key}] = {value}")
+        # print(f"Debug, in update_obs_space, cur_specs_flatten[{key}] = {value}")
         cur_specs_flatten[key] = np.array([value], dtype=np.float32)
-        print(f"Debug, in update_obs_space, cur_specs_flatten[{key}] = {cur_specs_flatten[key]}")
+        # print(f"Debug, in update_obs_space, cur_specs_flatten[{key}] = {cur_specs_flatten[key]}")
 
     # Combine three dicts into one
     dict_sum = {"cur_specs": cur_specs_flatten}
