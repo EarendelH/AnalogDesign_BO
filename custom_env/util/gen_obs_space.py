@@ -20,9 +20,9 @@ def gen_obs_space(result_config_file, param_range_config_file):
         param_range_config = yaml.safe_load(file)
 
     # Create spaces for ideal_specs and cur_specs
-    ideal_specs_spaces = {key: gymnasium.spaces.Box(low=0, high=1, shape=(1,), dtype=np.float32)
+    ideal_specs_spaces = {key: gymnasium.spaces.Box(low=-1, high=1, shape=(1,), dtype=np.float32)
                           for key in sum(result_config.values(), [])}
-    cur_specs_spaces = {key: gymnasium.spaces.Box(low=0, high=1, shape=(1,), dtype=np.float32)
+    cur_specs_spaces = {key: gymnasium.spaces.Box(low=-1, high=1, shape=(1,), dtype=np.float32)
                         for key in sum(result_config.values(), [])}
 
     # Create spaces for cur_param
@@ -63,9 +63,9 @@ def gen_obs_space_simple(result_config_file, param_range_config_file, agent_assi
         param_range_config = yaml.safe_load(file)
 
     # Create spaces for ideal_specs and cur_specs
-    ideal_specs_spaces = {key: gymnasium.spaces.Box(low=0, high=1, shape=(1,), dtype=np.float32)
+    ideal_specs_spaces = {key: gymnasium.spaces.Box(low=-1, high=1, shape=(1,), dtype=np.float32)
                           for key in sum(result_config.values(), [])}
-    cur_specs_spaces = {key: gymnasium.spaces.Box(low=0, high=1, shape=(1,), dtype=np.float32)
+    cur_specs_spaces = {key: gymnasium.spaces.Box(low=-1, high=1, shape=(1,), dtype=np.float32)
                         for key in sum(result_config.values(), [])}
 
     # Create spaces for cur_param
@@ -179,9 +179,9 @@ def gen_obs_space_extend(result_config_file, param_range_config_file, agent_assi
         param_range_config = yaml.safe_load(file)
 
     # Create spaces for ideal_specs and cur_specs
-    ideal_specs_spaces = {key: gymnasium.spaces.Box(low=0, high=1, shape=(1,), dtype=np.float32)
+    ideal_specs_spaces = {key: gymnasium.spaces.Box(low=-1, high=1, shape=(1,), dtype=np.float32)
                           for key in sum(result_config.values(), [])}
-    cur_specs_spaces = {key: gymnasium.spaces.Box(low=0, high=1, shape=(1,), dtype=np.float32)
+    cur_specs_spaces = {key: gymnasium.spaces.Box(low=-1, high=1, shape=(1,), dtype=np.float32)
                         for key in sum(result_config.values(), [])}
 
     # Create spaces for cur_param
