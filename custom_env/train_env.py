@@ -28,26 +28,26 @@ class CustomFCNet(FCNet):
             nn.Linear(64, num_outputs)
         )
 
-    def forward(self, input_dict, state, seq_lens):
+    def forwad(self, input_dict, state, seq_lens):
         model_out = self.model(input_dict["obs"])
         return model_out, state
 
 
-def env_creator(env_config):
-    return RllibAnalogDesignAutoEnv(generalize=True, path='sampled_specs')
+# def env_creator(env_config):
+#     return RllibAnalogDesignAutoEnv(generalize=True, path='sampled_specs')
 
 
 if __name__ == "__main__":
     ray.init()
 
-    env_name = "AnalogDesignEnv_v0"
+    # env_name = "AnalogDesignEnv_v0"
 
-    register_env("analog_design_env", env_creator)
+    # register_env("analog_design_env", env_creator)
     ModelCatalog.register_custom_model("CustomFCNet", CustomFCNet)
 
     config = (
         PPOConfig()
-        .environment(env=env_name, clip_actions=True)
+        .environment(env=RllibAnalogDesignAutoEnv(generalize=True, path='sampled_specs'), clip_actions=True)
         .rollouts(num_rollout_workers=2)
         .training(
             train_batch_size=512,
