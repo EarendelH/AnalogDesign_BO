@@ -11,7 +11,7 @@ from ray.rllib.models import ModelCatalog
 from torch import nn
 from supersuit.multiagent_wrappers import pad_action_space_v0
 
-from AnalogDesignAutoEnv import AnalogDesignEnv
+from rllib_env_warpper import RllibAnalogDesignAutoEnv
 
 
 class CustomFCNet(FCNet):
@@ -33,10 +33,8 @@ class CustomFCNet(FCNet):
         return model_out, state
 
 
-def env_creator(args):
-    env = AnalogDesignEnv(generalize=True, path='sampled_specs')
-    env = pad_action_space_v0(env)
-    return env
+def env_creator(env_config):
+    return RllibAnalogDesignAutoEnv(generalize=True, path='sampled_specs')
 
 
 if __name__ == "__main__":
@@ -44,7 +42,7 @@ if __name__ == "__main__":
 
     env_name = "AnalogDesignEnv_v0"
 
-    register_env(env_name, lambda config: ParallelPettingZooEnv(env_creator(config)))
+    register_env("analog_design_env", env_creator)
     ModelCatalog.register_custom_model("CustomFCNet", CustomFCNet)
 
     config = (
