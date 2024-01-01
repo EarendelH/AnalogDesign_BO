@@ -40,7 +40,7 @@ class CustomFCNet(FCNet):
 if __name__ == "__main__":
     ray.init()
 
-    # env_name = "AnalogDesignEnv_v0"
+    env_name = "AnalogDesignEnv_v0"
 
     # register_env("analog_design_env", env_creator)
     ModelCatalog.register_custom_model("CustomFCNet", CustomFCNet)
