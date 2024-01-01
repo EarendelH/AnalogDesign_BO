@@ -66,6 +66,11 @@ if __name__ == "__main__":
         .debugging(log_level="ERROR")
         .framework("torch")
         .resources(num_gpus=int(os.environ.get("RLLIB_NUM_GPUS", "0")))
+        .multi_agent(
+            policies={"main1", "main2", "main3", "main4"},
+            policy_mapping_fn=(lambda aid, episode, worker, **kw: f"main{aid[-1]}"),
+            policies_to_train=["main1", "main2", "main3", "main4"],
+        )
     )
 
     tune.run(
