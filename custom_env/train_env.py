@@ -33,21 +33,22 @@ class CustomFCNet(FCNet):
         return model_out, state
 
 
-# def env_creator(env_config):
-#     return RllibAnalogDesignAutoEnv(generalize=True, path='sampled_specs')
+def env_creator(env_config):
+    return RllibAnalogDesignAutoEnv(generalize=True, path='sampled_specs')
 
+
+register_env("AnalogDesignEnv_v0", env_creator)
 
 if __name__ == "__main__":
     ray.init()
 
     env_name = "AnalogDesignEnv_v0"
 
-    # register_env("analog_design_env", env_creator)
     ModelCatalog.register_custom_model("CustomFCNet", CustomFCNet)
 
     config = (
         PPOConfig()
-        .environment(env=RllibAnalogDesignAutoEnv(generalize=True, path='sampled_specs'), clip_actions=True)
+        .environment(env="AnalogDesignEnv_v0", clip_actions=True)
         .rollouts(num_rollout_workers=2)
         .training(
             train_batch_size=512,
