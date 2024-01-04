@@ -22,6 +22,7 @@ def norm_ideal_spec(input_specs, norm_specs):
 
     return norm_cur_specs
 
+
 def norm_sim_spec(sim_specs, norm_specs):
     norm_cur_specs = {
         outer_k: {
