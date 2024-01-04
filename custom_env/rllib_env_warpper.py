@@ -120,12 +120,12 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
 
         # Normalize the current ideal specs
         print(f"Debug!!!Ideal specs: {self.ideal_specs}")
-        self.norm_ideal_specs = normalization(self.norm_specs, self.ideal_specs)
+        self.norm_ideal_specs = normalization(self.ideal_specs, self.norm_specs)
         print(f"Debug!!!Normalized ideal specs: {self.norm_ideal_specs}")
 
         # Normalize the current simulation specs
         print(f"Debug!!!Simulation result: {sim_result}")
-        norm_sim_result = normalization(self.norm_specs, sim_result)
+        norm_sim_result = normalization(sim_result, self.norm_specs)
         print(f"Debug!!!Normalized simulation result: {norm_sim_result}")
 
         # Generate observation
@@ -183,7 +183,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         # Run spectre simulation and normalize the result
         sim_result = run_spectre_simulation(working_dir, sim_config)
         print(f"Step!!!Simulation result: {sim_result} with step number: {self.step_num}")
-        norm_sim_result = normalization(self.norm_specs, sim_result)
+        norm_sim_result = normalization(sim_result, self.norm_specs)
         print(f"Step!!!Normalized simulation result: {norm_sim_result} with step number: {self.step_num}")
 
         # Generate observation
