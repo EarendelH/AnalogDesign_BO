@@ -17,9 +17,9 @@ def update_obs_space(ideal_specs, cur_specs, cur_param):
     :return: gym.spaces.Dict, the observation space for the environment
     """
 
-    print("Debug, in update_obs_space, ideal_specs = ", ideal_specs)
-    print("Debug, in update_obs_space, cur_specs = ", cur_specs)
-    print("Debug, in update_obs_space, cur_param = ", cur_param)
+    # print("Debug, in update_obs_space, ideal_specs = ", ideal_specs)
+    # print("Debug, in update_obs_space, cur_specs = ", cur_specs)
+    # print("Debug, in update_obs_space, cur_param = ", cur_param)
 
     # Convert cur_param to Dict, and convert unit to float
     cur_param_dict = {}
@@ -27,7 +27,7 @@ def update_obs_space(ideal_specs, cur_specs, cur_param):
         cur_param_dict[key] = np.array([unit_conversion(value)], dtype=np.float32)
 
     # Flatten ideal_specs and cur_specs
-    ideal_specs_flatten = {key: specs['value'] for key, specs in ideal_specs.items()}
+    ideal_specs_flatten = {k: v for d in ideal_specs.values() for k, v in d.items()}
     cur_specs_flatten = {k: v for d in cur_specs.values() for k, v in d.items()}
 
     # Convert ideal_specs_flatten and cur_specs_flatten values to np.array
