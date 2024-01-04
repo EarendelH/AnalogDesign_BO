@@ -4,12 +4,10 @@ import ray
 from ray import tune
 from ray.rllib.algorithms.ppo import PPOConfig
 from ray.tune.registry import register_env
-from ray.rllib.env.wrappers.pettingzoo_env import ParallelPettingZooEnv
 from ray.rllib.models.torch.torch_modelv2 import TorchModelV2
 from ray.rllib.models.torch.fcnet import FullyConnectedNetwork as FCNet
 from ray.rllib.models import ModelCatalog
 from torch import nn
-from supersuit.multiagent_wrappers import pad_action_space_v0
 
 from rllib_env_warpper import RllibAnalogDesignAutoEnv
 
@@ -28,7 +26,7 @@ class CustomFCNet(FCNet):
             nn.Linear(64, num_outputs)
         )
 
-    def forwad(self, input_dict, state, seq_lens):
+    def forward(self, input_dict, state, seq_lens):
         model_out = self.model(input_dict["obs"])
         return model_out, state
 
