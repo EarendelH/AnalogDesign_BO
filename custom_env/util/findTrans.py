@@ -161,6 +161,14 @@ def findSlewRate(file_path):
     # plt.grid(True)
     # plt.show()
 
+    # If slewRateUp or slewRateDown is None, return 0
+    if slewRateUp_val is None:
+        slewRateUp_val = 0
+        print(f"Warning!!! slewRateUp is not found, set to 0")
+    if slewRateDown_val is None:
+        slewRateDown_val = 0
+        print(f"Warning!!! slewRateDown is not found, set to 0")
+
     return {"slewRateUp": slewRateUp_val, "slewRateDown": slewRateDown_val}
 
 
