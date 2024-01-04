@@ -17,9 +17,9 @@ def update_obs_space(ideal_specs, cur_specs, cur_param):
     :return: gym.spaces.Dict, the observation space for the environment
     """
 
-    # print("Debug, in update_obs_space, ideal_specs = ", ideal_specs)
-    # print("Debug, in update_obs_space, cur_specs = ", cur_specs)
-    # print("Debug, in update_obs_space, cur_param = ", cur_param)
+    print("Debug, in update_obs_space, ideal_specs = ", ideal_specs)
+    print("Debug, in update_obs_space, cur_specs = ", cur_specs)
+    print("Debug, in update_obs_space, cur_param = ", cur_param)
 
     # Convert cur_param to Dict, and convert unit to float
     cur_param_dict = {}
