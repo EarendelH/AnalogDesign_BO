@@ -2,13 +2,12 @@ import argparse
 import os
 import yaml
 from collections import OrderedDict
-from copy import copy
 
 from ray.tune.registry import get_trainable_cls, register_env
 
 from util.gen_action_sapce import gen_action_space
-# from util.gen_obs_space import gen_obs_space_extend
-from util.gen_obs_space import gen_obs_space_simple
+from util.gen_obs_space import gen_obs_space_extend
+# from util.gen_obs_space import gen_obs_space_simple
 from util.gen_param_space import gen_param_space
 from util.util_func import create_work_dir
 from util.assign_param2netlist import assign_param2netlist
@@ -16,8 +15,8 @@ from util.run_spectre_simulation import run_spectre_simulation
 from util.cal_reward import cal_reward
 from util.generalize_config import generalize_config
 from util.update_param import update_parameters
-# from util.update_obs_space import update_obs_space
-from util.update_obs_space import update_obs_space_simple
+from util.update_obs_space import update_obs_space
+# from util.update_obs_space import update_obs_space_simple
 from util.normlization import normalization
 
 from ray.rllib.env.multi_agent_env import MultiAgentEnv
@@ -28,12 +27,20 @@ import ray
 class RllibAnalogDesignAutoEnv(MultiAgentEnv):
     def __init__(self, generalize=False, path=''):
         # Init values
+        self.norm_ideal_specs = None
+        self.ideal_specs = None
         self.cur_param = None
         self.step_num = 0
         self.max_step = 10000
 
-        # Set the ideal specs based on the generalize flag
-        self.ideal_specs = generalize_config(generalize, path)
+        # Pass generalization flag
+        self.generalize = generalize
+        self.ideal_specs_path = path
+
+        # Set normalization items
+        self.norm_specs_file = "config/norm_specs.yaml"
+        with open(self.norm_specs_file, 'r') as file:
+            self.norm_specs = yaml.safe_load(file)
 
         # Set root directory
         file_path = os.path.dirname(os.path.abspath(__file__))
@@ -67,8 +74,10 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         self.terminateds = set()
         self.truncateds = set()
         self._obs_space_in_preferred_format = True
-        self.observation_space = gen_obs_space_simple(self.result_config, self.param_range_config,
+        self.observation_space = gen_obs_space_extend(self.result_config, self.param_range_config,
                                                       self.agent_assign_config)
+        # self.observation_space = gen_obs_space_simple(self.result_config, self.param_range_config,
+        #                                               self.agent_assign_config)
         print(f"observation_space: {self.observation_space}")
         self._action_space_in_preferred_format = True
         self.action_space = gen_action_space(self.agent_assign_config)
@@ -77,6 +86,9 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         super().__init__()
 
     def reset(self, *, seed=None, options=None):
+
+        # Set the ideal specs based on the generalize flag
+        self.ideal_specs = generalize_config(self.generalize, self.ideal_specs_path)
 
         # Select the middle point of the param space as the initial param
         init_param = OrderedDict()
@@ -106,13 +118,19 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
 
         sim_result = run_spectre_simulation(working_dir, sim_config)
 
-        # Normalize the observation
+        # Normalize the current ideal specs
         print(f"Debug!!!Ideal specs: {self.ideal_specs}")
+        self.norm_ideal_specs = normalization(self.norm_specs, self.ideal_specs)
+        print(f"Debug!!!Normalized ideal specs: {self.norm_ideal_specs}")
+
+        # Normalize the current simulation specs
         print(f"Debug!!!Simulation result: {sim_result}")
-        norm_sim_result = normalization(self.ideal_specs, sim_result)
+        norm_sim_result = normalization(self.norm_specs, sim_result)
+        print(f"Debug!!!Normalized simulation result: {norm_sim_result}")
 
         # Generate observation
-        observation = update_obs_space_simple(self.ideal_specs, norm_sim_result, init_param)
+        # observation = update_obs_space_simple(self.ideal_specs, norm_sim_result, init_param)
+        observation = update_obs_space(self.norm_ideal_specs, norm_sim_result, init_param)
         print(f"Initialing!!!Observation result: {observation}")
 
         # Share all observations among agents
@@ -162,15 +180,15 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         with open(self.sim_config, 'r') as file:
             sim_config = yaml.safe_load(file)
 
-        # Run spectre simulation
+        # Run spectre simulation and normalize the result
         sim_result = run_spectre_simulation(working_dir, sim_config)
         print(f"Step!!!Simulation result: {sim_result} with step number: {self.step_num}")
-
-        # Normalize the observation
-        norm_sim_result = normalization(self.ideal_specs, sim_result)
+        norm_sim_result = normalization(self.norm_specs, sim_result)
+        print(f"Step!!!Normalized simulation result: {norm_sim_result} with step number: {self.step_num}")
 
         # Generate observation
-        observation = update_obs_space_simple(self.ideal_specs, norm_sim_result, updated_param)
+        # observation = update_obs_space_simple(self.ideal_specs, norm_sim_result, updated_param)
+        observation = update_obs_space(self.norm_ideal_specs, norm_sim_result, updated_param)
         print(f"Step!!!Observation result: {observation} with step number: {self.step_num}")
 
         # Share all observations
