@@ -17,7 +17,7 @@ from util.generalize_config import generalize_config
 from util.update_param import update_parameters
 from util.update_obs_space import update_obs_space
 # from util.update_obs_space import update_obs_space_simple
-from util.normlization import normalization
+from util.normlization import norm_ideal_spec, norm_sim_spec
 
 from ray.rllib.env.multi_agent_env import MultiAgentEnv
 from ray import air, tune
@@ -120,12 +120,12 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
 
         # Normalize the current ideal specs
         print(f"Debug!!!Ideal specs: {self.ideal_specs}")
-        self.norm_ideal_specs = normalization(self.ideal_specs, self.norm_specs)
+        self.norm_ideal_specs = norm_ideal_spec(self.ideal_specs, self.norm_specs)
         print(f"Debug!!!Normalized ideal specs: {self.norm_ideal_specs}")
 
         # Normalize the current simulation specs
         print(f"Debug!!!Simulation result: {sim_result}")
-        norm_sim_result = normalization(sim_result, self.norm_specs)
+        norm_sim_result = norm_sim_spec(sim_result, self.norm_specs)
         print(f"Debug!!!Normalized simulation result: {norm_sim_result}")
 
         # Generate observation
@@ -183,7 +183,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         # Run spectre simulation and normalize the result
         sim_result = run_spectre_simulation(working_dir, sim_config)
         print(f"Step!!!Simulation result: {sim_result} with step number: {self.step_num}")
-        norm_sim_result = normalization(sim_result, self.norm_specs)
+        norm_sim_result = norm_sim_spec(sim_result, self.norm_specs)
         print(f"Step!!!Normalized simulation result: {norm_sim_result} with step number: {self.step_num}")
 
         # Generate observation

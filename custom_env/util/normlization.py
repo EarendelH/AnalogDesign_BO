@@ -1,4 +1,4 @@
-def normalization(input_specs, norm_specs):
+def norm_ideal_spec(input_specs, norm_specs):
     """
     Normalize the current specs by the ideal specs.
     :param input_specs: dict, ideal specs for the circuit
@@ -21,6 +21,16 @@ def normalization(input_specs, norm_specs):
         norm_cur_specs[key] = norm_cur_specs_sub
 
     return norm_cur_specs
+
+def norm_sim_spec(sim_specs, norm_specs):
+    norm_cur_specs = {
+        outer_k: {
+            inner_k: (sim_specs[outer_k][inner_k] - norm_specs[outer_k][inner_k]) / (
+                        sim_specs[outer_k][inner_k] + norm_specs[outer_k][inner_k])
+            for inner_k in sim_specs[outer_k]
+        }
+        for outer_k in sim_specs
+    }
 
 # Test Code
 # input_specs = {'gainBandWidth': {'constrain_type': 'hard', 'objective': 'max', 'value': 919974068.633527}, 'phaseMargin': {'constrain_type': 'hard', 'objective': 'max', 'value': 74.04052105931964}, 'powerSupplyRejectionRatio': {'constrain_type': 'hard', 'objective': 'max', 'value': 92.7820345842324}, 'pwr': {'constrain_type': 'soft', 'objective': 'min', 'value': 0.0001202291774645289}, 'slewRateDown': {'constrain_type': 'hard', 'objective': 'max', 'value': 6131225.304059564}, 'slewRateUp': {'constrain_type': 'hard', 'objective': 'max', 'value': 4413834.613031412}}
