@@ -10,6 +10,9 @@ def findLoopGain(filename):
                     # Split the line using spaces and then extract the value inside the parentheses
                     value_str = value_line.split()[1].lstrip("(")
                     value_float = float(value_str)
+                else:
+                    value_float = -100.0
+                    print("Warning: loopGain not Existing, set to -100.0")
                     return {"loopGain": value_float}
 
 
@@ -30,6 +33,12 @@ def findPhaseMarginAndGBW(filename):
             # Break early if both values have been found
             if phase_margin is not None and phase_margin_frequency is not None:
                 break
+
+            # Set to default values if not found
+            if phase_margin is None or phase_margin_frequency is None:
+                phase_margin = 0.1
+                phase_margin_frequency = 0.1
+                print("Warning: Unstable, phaseMargin or phaseMarginFreq not Existing, set to 0.1")
 
         # Calculate gainBandWidth
         gain_bandwidth = phase_margin * phase_margin_frequency
