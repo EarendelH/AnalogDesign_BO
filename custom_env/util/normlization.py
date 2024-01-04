@@ -31,6 +31,7 @@ def norm_sim_spec(sim_specs, norm_specs):
         }
         for outer_k in sim_specs
     }
+    return norm_cur_specs
 
 # Test Code
 # input_specs = {'gainBandWidth': {'constrain_type': 'hard', 'objective': 'max', 'value': 919974068.633527}, 'phaseMargin': {'constrain_type': 'hard', 'objective': 'max', 'value': 74.04052105931964}, 'powerSupplyRejectionRatio': {'constrain_type': 'hard', 'objective': 'max', 'value': 92.7820345842324}, 'pwr': {'constrain_type': 'soft', 'objective': 'min', 'value': 0.0001202291774645289}, 'slewRateDown': {'constrain_type': 'hard', 'objective': 'max', 'value': 6131225.304059564}, 'slewRateUp': {'constrain_type': 'hard', 'objective': 'max', 'value': 4413834.613031412}}
