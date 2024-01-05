@@ -2,8 +2,8 @@ import gymnasium
 import numpy as np
 import yaml
 
-from util.util_func import unit_conversion
-# from util_func import unit_conversion
+# from util.util_func import unit_conversion
+from util_func import unit_conversion
 
 
 def gen_obs_space(result_config_file, param_range_config_file):
@@ -209,11 +209,11 @@ def gen_obs_space_extend(result_config_file, param_range_config_file, agent_assi
     return obs_space
 
 # Test Code
-# result_config_file = "../config/result.yaml"
-# param_range_config_file = "../config/param_range.yaml"
-# agent_assign_yaml_file = "../config/agent_assign.yaml"
-# observation_space = gen_obs_space_extend(result_config_file, param_range_config_file, agent_assign_yaml_file)
-# print(f"observation_space: {observation_space}")
+result_config_file = "../config/result.yaml"
+param_range_config_file = "../config/param_range.yaml"
+agent_assign_yaml_file = "../config/agent_assign.yaml"
+observation_space = gen_obs_space_extend(result_config_file, param_range_config_file, agent_assign_yaml_file)
+print(f"observation_space: {observation_space}")
 
 # Output observation_space:
 # Dict('Agent_1': Dict('cur_param': Dict('IB': Box(1e-06, 5e-05, (1,), float32),
