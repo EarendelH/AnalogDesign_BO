@@ -325,3 +325,44 @@ def gen_obs_space_extend(result_config_file, param_range_config_file, agent_assi
 # 'gainBandWidth': Box(-1.0, 1.0, (1,), float32), 'phaseMargin': Box(-1.0, 1.0, (1,), float32),
 # 'powerSupplyRejectionRatio': Box(-1.0, 1.0, (1,), float32), 'pwr': Box(-1.0, 1.0, (1,), float32), 'slewRateDown':
 # Box(-1.0, 1.0, (1,), float32), 'slewRateUp': Box(-1.0, 1.0, (1,), float32))))
+
+
+def flatten_obs_space(obs_space: gymnasium.spaces.Dict):
+    """
+    :param obs_space: Complex obs dict
+    :return: obs_space_flat: Flatten obs dict, only remain first level keys. For sub-dict, sort the element and convert
+    to tuple. Rearrange the dict as 'cur_specs', 'ideal_specs' and 'cur_param'.
+    """
+    flattened_space = {}
+
+    for agent, agent_space in obs_space.items():
+        # Sort and prepare the data for cur_specs, ideal_specs, and cur_param
+        sorted_cur_specs = {key: agent_space['cur_specs'][key] for key in sorted(agent_space['cur_specs'])}
+        sorted_ideal_specs = {key: agent_space['ideal_specs'][key] for key in sorted(agent_space['ideal_specs'])}
+        sorted_cur_param = {key: agent_space['cur_param'][key] for key in sorted(agent_space['cur_param'])}
+
+        # Print the sorted dicts for debugging
+        # print(f"Agent: {agent}")
+        # print("Sorted cur_specs:", sorted_cur_specs)
+        # print("Sorted ideal_specs:", sorted_ideal_specs)
+        # print("Sorted cur_param:", sorted_cur_param)
+
+        # Combine all boxes from sorted dicts
+        combined_boxes = []
+        combined_boxes.extend(sorted_cur_specs.values())
+        combined_boxes.extend(sorted_ideal_specs.values())
+        combined_boxes.extend(sorted_cur_param.values())
+
+        # Convert the combined list to a Tuple space and assign to the agent
+        flattened_space[agent] = gymnasium.spaces.Tuple(combined_boxes)
+
+    return gymnasium.spaces.Dict(flattened_space)
+
+# Test Code
+# result_config_file = "../config/result.yaml"
+# param_range_config_file = "../config/param_range.yaml"
+# agent_assign_yaml_file = "../config/agent_assign.yaml"
+# observation_space = gen_obs_space_extend(result_config_file, param_range_config_file, agent_assign_yaml_file)
+# print(f"observation_space: {observation_space}")
+# observation_space_flat = flatten_obs_space(observation_space)
+# print(f"observation_space_flat: {observation_space_flat}")
