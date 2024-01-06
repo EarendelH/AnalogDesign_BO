@@ -5,8 +5,8 @@ import math
 
 import numpy as np
 
-# from util.util_func import unit_conversion
-from util_func import unit_conversion
+from util.util_func import unit_conversion
+# from util_func import unit_conversion
 
 def update_obs_space(ideal_specs, cur_specs, cur_param):
     """
