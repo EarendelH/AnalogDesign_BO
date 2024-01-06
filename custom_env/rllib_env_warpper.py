@@ -31,7 +31,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         self.ideal_specs = None
         self.cur_param = None
         self.step_num = 0
-        self.max_step = 10000
+        self.max_step = 200
 
         # Pass generalization flag
         self.generalize = generalize
@@ -96,11 +96,11 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
             n = len(value_list)
             middle_index = n // 2 - 1 if n % 2 == 0 else n // 2
             init_param[param] = value_list[middle_index]
-        print(f"Initialing!!!Init param: {init_param}")
+        # print(f"Initialing!!!Init param: {init_param}")
 
         # Generate working directory
         working_dir = create_work_dir(self.root_dir)
-        print(f"Initialing!!!Working directory: {working_dir}")
+        # print(f"Initialing!!!Working directory: {working_dir}")
 
         for unassigned_netlist_file in os.listdir(self.unassigned_netlist_dir):
             if unassigned_netlist_file.endswith(".scs"):
@@ -119,14 +119,14 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         sim_result = run_spectre_simulation(working_dir, sim_config)
 
         # Normalize the current ideal specs
-        print(f"Debug!!!Ideal specs: {self.ideal_specs}")
+        # print(f"Debug!!!Ideal specs: {self.ideal_specs}")
         self.norm_ideal_specs = norm_ideal_spec(self.ideal_specs, self.norm_specs)
-        print(f"Debug!!!Normalized ideal specs: {self.norm_ideal_specs}")
+        # print(f"Debug!!!Normalized ideal specs: {self.norm_ideal_specs}")
 
         # Normalize the current simulation specs
-        print(f"Debug!!!Simulation result: {sim_result}")
+        # print(f"Debug!!!Simulation result: {sim_result}")
         norm_sim_result = norm_sim_spec(sim_result, self.norm_specs)
-        print(f"Debug!!!Normalized simulation result: {norm_sim_result}")
+        # print(f"Debug!!!Normalized simulation result: {norm_sim_result}")
 
         # Generate observation
         # observation = update_obs_space_simple(self.ideal_specs, norm_sim_result, init_param)
@@ -136,7 +136,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
 
         # Share all observations among agents
         observations = {agent: observation for agent in self.agents}
-        print(f"Initialing!!!Observations result: {observations}")
+        # print(f"Initialing!!!Observations result: {observations}")
 
         self.cur_param = init_param
 
@@ -159,7 +159,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         for group in action_dict.values():
             for key, value in group.items():
                 all_action_flatten[key] = value
-        print(f"Step!!!Flatten actions: {all_action_flatten}")
+        # print(f"Step!!!Flatten actions: {all_action_flatten}")
 
         # Update param with new action
         print(f"Step!!!Current param index: {self.cur_param} with step number: {self.step_num}")
@@ -185,17 +185,17 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         sim_result = run_spectre_simulation(working_dir, sim_config)
         print(f"Step!!!Simulation result: {sim_result} with step number: {self.step_num}")
         norm_sim_result = norm_sim_spec(sim_result, self.norm_specs)
-        print(f"Step!!!Normalized simulation result: {norm_sim_result} with step number: {self.step_num}")
+        # print(f"Step!!!Normalized simulation result: {norm_sim_result} with step number: {self.step_num}")
 
         # Generate observation
         # observation = update_obs_space_simple(self.ideal_specs, norm_sim_result, updated_param)
         observation_detail = update_obs_space(self.norm_ideal_specs, norm_sim_result, updated_param)
-        print(f"Step!!!Observation result: {observation_detail} with step number: {self.step_num}")
+        # print(f"Step!!!Observation result: {observation_detail} with step number: {self.step_num}")
         observation = flatten_observation(observation_detail)
 
         # Share all observations
         observations = {agent: observation for agent in self.agents}
-        print(f"Step!!!Observations result: {observations} with step number: {self.step_num}")
+        # print(f"Step!!!Observations result: {observations} with step number: {self.step_num}")
 
         # Store the observation
         with open(os.path.join(working_dir, "result.yaml"), 'w') as file:
@@ -205,6 +205,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         rew = {a: -10 for a in self.agents}
         for agent_name in rew:
             rew[agent_name] = cal_reward(self.ideal_specs, observation_detail)
+        print(f"Step!!!Reward result: {rew} with step number: {self.step_num}")
 
         # Determine termination or truncations
         terminated = {a: False for a in self.agents}
@@ -253,13 +254,13 @@ def get_cli_args():
     parser.add_argument(
         "--stop-timesteps",
         type=int,
-        default=10000,
+        default=5000,
         help="Number of timesteps to train.",
     )
     parser.add_argument(
         "--stop-reward",
         type=float,
-        default=-0.1,
+        default=-0.5,
         help="Reward at which we stop training.",
     )
     parser.add_argument(
@@ -293,7 +294,7 @@ if __name__ == "__main__":
             num_gpus=int(os.environ.get("RLLIB_NUM_GPUS", "0")),
         )
         .training(train_batch_size=1024)
-        .rollouts(num_rollout_workers=1, rollout_fragment_length="auto")
+        .rollouts(num_rollout_workers=10, rollout_fragment_length="auto")
         .framework(args.framework)
         .multi_agent(
             policies={"main1", "main2", "main3", "main4"},
