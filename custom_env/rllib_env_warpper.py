@@ -189,9 +189,9 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
 
         # Generate observation
         # observation = update_obs_space_simple(self.ideal_specs, norm_sim_result, updated_param)
-        observation = update_obs_space(self.norm_ideal_specs, norm_sim_result, updated_param)
-        print(f"Step!!!Observation result: {observation} with step number: {self.step_num}")
-        observation = flatten_observation(observation)
+        observation_detail = update_obs_space(self.norm_ideal_specs, norm_sim_result, updated_param)
+        print(f"Step!!!Observation result: {observation_detail} with step number: {self.step_num}")
+        observation = flatten_observation(observation_detail)
 
         # Share all observations
         observations = {agent: observation for agent in self.agents}
@@ -204,7 +204,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         # Calculate reward
         rew = {a: -10 for a in self.agents}
         for agent_name in rew:
-            rew[agent_name] = cal_reward(self.ideal_specs, observation)
+            rew[agent_name] = cal_reward(self.ideal_specs, observation_detail)
 
         # Determine termination or truncations
         terminated = {a: False for a in self.agents}
