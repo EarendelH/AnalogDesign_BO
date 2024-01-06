@@ -78,10 +78,10 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
                                                                         self.agent_assign_config))
         # self.observation_space = gen_obs_space_simple(self.result_config, self.param_range_config,
         #                                               self.agent_assign_config)
-        print(f"observation_space: {self.observation_space}")
+        # print(f"observation_space: {self.observation_space}")
         self._action_space_in_preferred_format = True
         self.action_space = gen_action_space(self.agent_assign_config)
-        print(f"action_space: {self.action_space}")
+        # print(f"action_space: {self.action_space}")
 
         super().__init__()
 
@@ -147,7 +147,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         # Update step number
         self.step_num += 1
 
-        print(f"Updated action: {action_dict} with step number: {self.step_num}")
+        # print(f"Updated action: {action_dict} with step number: {self.step_num}")
 
         # Create working directory
         working_dir = create_work_dir(self.root_dir)
@@ -162,9 +162,9 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         # print(f"Step!!!Flatten actions: {all_action_flatten}")
 
         # Update param with new action
-        print(f"Step!!!Current param index: {self.cur_param} with step number: {self.step_num}")
+        # print(f"Step!!!Current param index: {self.cur_param} with step number: {self.step_num}")
         updated_param = update_parameters(all_action_flatten, self.cur_param, self.param_range_config)
-        print(f"Updated param: {updated_param} with step number: {self.step_num}")
+        print(f"Step!!!Updated param: {updated_param} with step number: {self.step_num}")
 
         # Parse the updated param and generate the netlist
         for unassigned_netlist_file in os.listdir(self.unassigned_netlist_dir):
@@ -190,7 +190,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         # Generate observation
         # observation = update_obs_space_simple(self.ideal_specs, norm_sim_result, updated_param)
         observation_detail = update_obs_space(self.norm_ideal_specs, norm_sim_result, updated_param)
-        # print(f"Step!!!Observation result: {observation_detail} with step number: {self.step_num}")
+        print(f"Step!!!Observation result: {observation_detail} with step number: {self.step_num}")
         observation = flatten_observation(observation_detail)
 
         # Share all observations

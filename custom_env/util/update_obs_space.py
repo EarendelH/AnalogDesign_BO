@@ -141,9 +141,9 @@ def flatten_observation(observation):
     sorted_cur_param = OrderedDict(sorted(observation['cur_param'].items()))
 
     # Print the sorted dicts for debugging
-    print("Sorted cur_specs:", sorted_cur_specs)
-    print("Sorted ideal_specs:", sorted_ideal_specs)
-    print("Sorted cur_param:", sorted_cur_param)
+    # print("Sorted cur_specs:", sorted_cur_specs)
+    # print("Sorted ideal_specs:", sorted_ideal_specs)
+    # print("Sorted cur_param:", sorted_cur_param)
 
     # Combine all values from sorted dicts into a single tuple
     combined_values = tuple(
