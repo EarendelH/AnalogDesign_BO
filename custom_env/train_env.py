@@ -47,7 +47,7 @@ if __name__ == "__main__":
     config = (
         PPOConfig()
         .environment(env="AnalogDesignEnv_v0", clip_actions=True)
-        .rollouts(num_rollout_workers=2)
+        .rollouts(num_rollout_workers=15)
         .training(
             train_batch_size=512,
             lr=2e-5,
@@ -74,7 +74,7 @@ if __name__ == "__main__":
     tune.run(
         "PPO",
         name="PPO",
-        stop={"timesteps_total": 5000000},
+        stop={"timesteps_total": 5000},
         checkpoint_freq=10,
         local_dir="/data/data_home/wuhan/ray_results/" + env_name,
         config=config.to_dict(),
