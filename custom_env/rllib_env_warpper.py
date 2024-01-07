@@ -19,19 +19,20 @@ from util.update_obs_space import update_obs_space, flatten_observation
 # from util.update_obs_space import update_obs_space_simple
 from util.normlization import norm_ideal_spec, norm_sim_spec
 
-from ray.rllib.env.multi_agent_env import MultiAgentEnv
+from ray.rllib.env.multi_agent_env import MultiAgentEnv, make_multi_agent
 from ray import air, tune
 import ray
 
 
 class RllibAnalogDesignAutoEnv(MultiAgentEnv):
     def __init__(self, generalize=False, path=''):
+
         # Init values
         self.norm_ideal_specs = None
         self.ideal_specs = None
         self.cur_param = None
         self.step_num = 0
-        self.max_step = 200
+        self.max_step = 100000
 
         # Pass generalization flag
         self.generalize = generalize
@@ -82,6 +83,8 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         self._action_space_in_preferred_format = True
         self.action_space = gen_action_space(self.agent_assign_config)
         # print(f"action_space: {self.action_space}")
+
+        self.resetted = False
 
         super().__init__()
 
@@ -140,7 +143,13 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
 
         self.cur_param = init_param
 
-        return observations, {}
+        self.resetted = True
+        self.terminateds = set()
+        self.truncateds = set()
+
+        info = {agent: {} for agent in self.agents}
+
+        return observations, info
 
     def step(self, action_dict):
 
