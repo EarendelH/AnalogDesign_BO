@@ -61,7 +61,7 @@ if __name__ == "__main__":
             sgd_minibatch_size=64,
             num_sgd_iter=10,
         )
-        .debugging(log_level="ERROR")
+        .debugging(log_level="DEBUG")
         .framework("torch")
         .resources(num_gpus=int(os.environ.get("RLLIB_NUM_GPUS", "0")))
         .multi_agent(
