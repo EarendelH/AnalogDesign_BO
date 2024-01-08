@@ -219,6 +219,9 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         with open(os.path.join(working_dir, "result.yaml"), 'w') as file:
             yaml.dump(observation, file)
 
+        print("Debug!!!self.ideal_specs: ", self.ideal_specs)
+        print("Debug!!!observation_detail: ", observation_detail)
+
         # Calculate reward
         rew = {a: -10 for a in self.agents}
         for agent_name in rew:
