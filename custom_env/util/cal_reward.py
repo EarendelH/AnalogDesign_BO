@@ -12,9 +12,9 @@ def cal_reward(ideal_specs_dict, cur_specs_dict):
     # Flatten cur_specs_dict
     cur_specs_flatten = {k: v for d in cur_specs_dict.values() for k, v in d.items()}
 
-    reward = 0
+    rew = 0
 
-    epsilon = 0.01
+    epsilon = 0.1
 
     for spec, detail in ideal_specs_dict.items():
 
@@ -26,20 +26,19 @@ def cal_reward(ideal_specs_dict, cur_specs_dict):
         constrain_objective = detail['objective']
 
         if constrain_type == 'hard' and constrain_objective == "max":
-            single_reward = min((cur_spec_value - ideal_spec_value) / (cur_spec_value + ideal_spec_value), 0)
+            single_reward = min((cur_spec_value - ideal_spec_value) / (cur_spec_value + ideal_spec_value), 0.0)
         elif constrain_type == 'hard' and constrain_objective == "min":
-            single_reward = min((ideal_spec_value - cur_spec_value) / (cur_spec_value + ideal_spec_value), 0)
+            single_reward = min((ideal_spec_value - cur_spec_value) / (cur_spec_value + ideal_spec_value), 0.0)
         elif constrain_type == 'soft' and constrain_objective == "max":
             single_reward = epsilon * (ideal_spec_value - cur_spec_value) / (cur_spec_value + ideal_spec_value)
         elif constrain_type == 'soft' and constrain_objective == "min":
             single_reward = epsilon * (cur_spec_value - ideal_spec_value) / (cur_spec_value + ideal_spec_value)
+        rew += single_reward
 
-        reward += single_reward
+    rew = rew + 10 if rew >= -0.01 else rew
+    # reward = float(reward)
 
-    reward = reward + 10 if reward >= -0.01 else reward
-    reward = float(reward)
-
-    return reward
+    return rew
 
 
 # Test Code
@@ -50,7 +49,9 @@ def cal_reward(ideal_specs_dict, cur_specs_dict):
 # 'constrain_type': 'hard', 'objective': 'max', 'value': 6}}
 # cur_specs = {'DC': {'pwr': 1}, 'Stability': {
 # 'phaseMargin': 2, 'gainBandWidth': 3}, 'Trans': {'slewRateUp': 4, 'slewRateDown': 5}, 'PSRR': {
-# 'powerSupplyRejectionRatio': 6}} reward = cal_reward(ideal_specs, cur_specs) print(reward)
+# 'powerSupplyRejectionRatio': 6}}
+# reward = cal_reward(ideal_specs, cur_specs)
+# print(reward)
 
 # Output
 # -0.20600000000000002

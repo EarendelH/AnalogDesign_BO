@@ -55,6 +55,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         self.result_config = "config/result.yaml"
         self.param_range_config = "config/param_range.yaml"
         self.sim_config = "config/simulation.yaml"
+        self.init_param = "config/init_param.yaml"
 
         # Set netlist directory
         self.unassigned_netlist_dir = "netlist_template"
@@ -93,13 +94,21 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         # Set the ideal specs based on the generalize flag
         self.ideal_specs = generalize_config(self.generalize, self.ideal_specs_path)
 
+        # If self.init_param file exists, use the init_param file as the initial param or
         # Select the middle point of the param space as the initial param
+
         init_param = OrderedDict()
-        for param, value_list in self.param_space.items():
-            n = len(value_list)
-            middle_index = n // 2 - 1 if n % 2 == 0 else n // 2
-            init_param[param] = value_list[middle_index]
-        # print(f"Initialing!!!Init param: {init_param}")
+
+        if os.path.exists(self.init_param):
+            with open(self.init_param, 'r') as file:
+                init_param = yaml.safe_load(file)
+            print(f"Initialing!!!init_param file exist, Init param: {init_param}")
+        else:
+            for param, value_list in self.param_space.items():
+                n = len(value_list)
+                middle_index = n // 2 - 1 if n % 2 == 0 else n // 2
+                init_param[param] = value_list[middle_index]
+            print(f"Initialing!!!init_param file not exist, Init param: {init_param}")
 
         # Generate working directory
         working_dir = create_work_dir(self.root_dir)

@@ -70,6 +70,7 @@ class BasicMultiAgentMultiSpaces(MultiAgentEnv):
             info[i] = {}
         terminated["__all__"] = len(self.terminateds) == len(self.agents)
         truncated["__all__"] = len(self.truncateds) == len(self.agents)
+        print(f"Rewards: {rew}, Terminated: {terminated}, Truncated: {truncated}")
         return obs, rew, terminated, truncated, info
 
 
