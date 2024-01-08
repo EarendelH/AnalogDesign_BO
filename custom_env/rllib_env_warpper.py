@@ -136,7 +136,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         # print(f"Debug!!!Normalized ideal specs: {self.norm_ideal_specs}")
 
         # Normalize the current simulation specs
-        # print(f"Debug!!!Simulation result: {sim_result}")
+        print(f"Debug!!!Simulation result: {sim_result}")
         norm_sim_result = norm_sim_spec(sim_result, self.norm_specs)
         # print(f"Debug!!!Normalized simulation result: {norm_sim_result}")
 
