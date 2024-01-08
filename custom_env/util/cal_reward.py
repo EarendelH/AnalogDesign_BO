@@ -33,7 +33,7 @@ def cal_reward(ideal_specs_dict, cur_specs_dict):
             single_reward = epsilon * (ideal_spec_value - cur_spec_value) / (cur_spec_value + ideal_spec_value)
         elif constrain_type == 'soft' and constrain_objective == "min":
             single_reward = epsilon * (cur_spec_value - ideal_spec_value) / (cur_spec_value + ideal_spec_value)
-        rew += single_reward
+        rew += float(single_reward)
 
     rew = rew + 10 if rew >= -0.01 else rew
     # reward = float(reward)
