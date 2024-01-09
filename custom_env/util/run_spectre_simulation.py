@@ -56,9 +56,10 @@ def run_spectre_simulation(work_dir, sim_config, show_output=False):
             # module = __import__(module_name)
             function = getattr(module, function_name)
             current_path = os.getcwd()
-            print(f"Debug!!!Current Path: {current_path}")
-            print(f"Debug!!!Work Dict: {work_dir}")
-            print(f"Debug!!!Processing file: {processed_file}")
+            # print(f"Debug!!!Current Path: {current_path}")
+            # print(f"Debug!!!Work Dict: {work_dir}")
+            # print(f"Debug!!!Processing file: {processed_file}")
+            # Apply absolute path for avoiding file not found error
             processed_file_full_path = os.path.join(current_path, processed_file)
             for i in range(max_retries):
                 try:
