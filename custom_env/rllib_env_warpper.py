@@ -25,7 +25,7 @@ import ray
 
 
 class RllibAnalogDesignAutoEnv(MultiAgentEnv):
-    def __init__(self, generalize=False, path=''):
+    def __init__(self, generalize=False, path='', sim_output=False):
 
         # Init values
         self.norm_ideal_specs = None
@@ -37,6 +37,9 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         # Pass generalization flag
         self.generalize = generalize
         self.ideal_specs_path = path
+
+        # Pass sim_output flag
+        self.sim_output_enable = sim_output
 
         # Set normalization items
         self.norm_specs_file = "config/norm_specs.yaml"
@@ -128,7 +131,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         with open(self.sim_config, 'r') as file:
             sim_config = yaml.safe_load(file)
 
-        sim_result = run_spectre_simulation(working_dir, sim_config)
+        sim_result = run_spectre_simulation(working_dir, sim_config, self.sim_output_enable)
 
         # Normalize the current ideal specs
         print(f"Initialing!!!Ideal specs: {self.ideal_specs}")
@@ -205,7 +208,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
             sim_config = yaml.safe_load(file)
 
         # Run spectre simulation and normalize the result
-        sim_result = run_spectre_simulation(working_dir, sim_config)
+        sim_result = run_spectre_simulation(working_dir, sim_config, self.sim_output_enable)
         print(f"Step!!!Simulation result: {sim_result} with step number: {self.step_num}")
         norm_sim_result = norm_sim_spec(sim_result, self.norm_specs)
         # print(f"Step!!!Normalized simulation result: {norm_sim_result} with step number: {self.step_num}")

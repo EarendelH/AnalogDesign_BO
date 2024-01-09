@@ -4,11 +4,12 @@ import yaml
 from importlib import import_module
 
 
-def run_spectre_simulation(work_dir, sim_config):
+def run_spectre_simulation(work_dir, sim_config, show_output=False):
     """
     Run spectre simulation based on the given config and netlist
     :param work_dir: working directory
     :param sim_config: config simulation item and corresponding result parse function
+    :param show_output: show the output of the simulation
     :return: Arranged simulation results
     """
     results = {}
@@ -25,7 +26,11 @@ def run_spectre_simulation(work_dir, sim_config):
         # Run spectre simulation
         print(f"Execute command: spectre -64 {os.path.join(work_dir, assigned_netlist_filename)}")
         print(f"Run spectre simulation for: {simulation}")
-        subprocess.run(f"spectre -64 {os.path.join(work_dir, assigned_netlist_filename)}", shell=True)
+        if show_output:
+            subprocess.run(f"spectre -64 {os.path.join(work_dir, assigned_netlist_filename)}", shell=True)
+        else:
+            subprocess.run(f"spectre -64 {os.path.join(work_dir, assigned_netlist_filename)}",
+                           shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
         # Process the simulation files as specified in the config
         raw_dir = os.path.join(work_dir, f"{simulation}.raw")
