@@ -55,7 +55,9 @@ def run_spectre_simulation(work_dir, sim_config, show_output=False):
             module = import_module(f"util.{module_name}")
             # module = __import__(module_name)
             function = getattr(module, function_name)
-            print(f"Debug!!!Raw Dict: {work_dir}")
+            current_path = os.getcwd()
+            print(f"Debug!!!Current Path: {current_path}")
+            print(f"Debug!!!Work Dict: {work_dir}")
             print(f"Debug!!!Processing file: {processed_file}")
             processed_file_full_path = os.path.join(work_dir, processed_file)
             for i in range(max_retries):
