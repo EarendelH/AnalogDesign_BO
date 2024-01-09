@@ -13,6 +13,7 @@ def run_spectre_simulation(work_dir, sim_config, show_output=False):
     :return: Arranged simulation results
     """
     results = {}
+    max_retries = 3
 
     for simulation_config in sim_config:
         simulation = simulation_config["simulation_name"]
@@ -54,8 +55,18 @@ def run_spectre_simulation(work_dir, sim_config, show_output=False):
             module = import_module(f"util.{module_name}")
             # module = __import__(module_name)
             function = getattr(module, function_name)
-            result = function(processed_file)
-            results[simulation] = result
+            processed_file_full_path = os.path.join(raw_dir, processed_file)
+            for i in range(max_retries):
+                try:
+                    result = function(processed_file_full_path)
+                    results[simulation] = result
+                    break
+                except Exception as e:
+                    if i < max_retries - 1:
+                        print(f"Attempt {i + 1} failed. Retrying. in func: {function_name}")
+                    else:
+                        print(f"Attempt {i + 1} failed. Throwing exception. in func: {function_name}")
+                        raise
 
     return results
 
