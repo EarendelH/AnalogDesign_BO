@@ -19,7 +19,7 @@ from util.update_obs_space import update_obs_space, flatten_observation
 # from util.update_obs_space import update_obs_space_simple
 from util.normlization import norm_ideal_spec, norm_sim_spec
 
-from ray.rllib.env.multi_agent_env import MultiAgentEnv, make_multi_agent
+from ray.rllib.env.multi_agent_env import MultiAgentEnv
 from ray import air, tune
 import ray
 
@@ -131,24 +131,28 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         sim_result = run_spectre_simulation(working_dir, sim_config)
 
         # Normalize the current ideal specs
-        # print(f"Debug!!!Ideal specs: {self.ideal_specs}")
+        print(f"Initialing!!!Ideal specs: {self.ideal_specs}")
         self.norm_ideal_specs = norm_ideal_spec(self.ideal_specs, self.norm_specs)
-        # print(f"Debug!!!Normalized ideal specs: {self.norm_ideal_specs}")
+        print(f"Initialing!!!Normalized ideal specs: {self.norm_ideal_specs}")
 
         # Normalize the current simulation specs
-        print(f"Debug!!!Simulation result: {sim_result}")
+        print(f"Initialing!!!Simulation result: {sim_result}")
         norm_sim_result = norm_sim_spec(sim_result, self.norm_specs)
-        # print(f"Debug!!!Normalized simulation result: {norm_sim_result}")
+        print(f"Initialing!!!Normalized simulation result: {norm_sim_result}")
 
         # Generate observation
         # observation = update_obs_space_simple(self.ideal_specs, norm_sim_result, init_param)
-        observation = update_obs_space(self.norm_ideal_specs, norm_sim_result, init_param)
-        print(f"Initialing!!!Observation result: {observation}")
-        observation = flatten_observation(observation)
+        observation_detail = update_obs_space(self.norm_ideal_specs, norm_sim_result, init_param)
+        print(f"Initialing!!!Observation result: {observation_detail}")
+        observation = flatten_observation(observation_detail)
 
         # Share all observations among agents
         observations = {agent: observation for agent in self.agents}
         # print(f"Initialing!!!Observations result: {observations}")
+
+        # Test Rew func
+        rew = cal_reward(self.ideal_specs, observation_detail)
+        print(f"Debug!!!Initialing!!!Reward result: {rew}")
 
         self.cur_param = init_param
 
@@ -181,6 +185,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
 
         # Update param with new action
         # print(f"Step!!!Current param index: {self.cur_param} with step number: {self.step_num}")
+        print(f"Step!!!Previous param: {self.cur_param} with step number: {self.step_num}")
         updated_param = update_parameters(all_action_flatten, self.cur_param, self.param_range_config)
         print(f"Step!!!Updated param: {updated_param} with step number: {self.step_num}")
 
@@ -219,8 +224,8 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         with open(os.path.join(working_dir, "result.yaml"), 'w') as file:
             yaml.dump(observation, file)
 
-        print("Debug!!!self.ideal_specs: ", self.ideal_specs)
-        print("Debug!!!observation_detail: ", observation_detail)
+        print("Step!!!self.ideal_specs: ", self.ideal_specs)
+        print("Step!!!observation_detail: ", observation_detail)
 
         # Calculate reward
         rew = {a: -10 for a in self.agents}
