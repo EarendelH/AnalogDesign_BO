@@ -59,7 +59,7 @@ def run_spectre_simulation(work_dir, sim_config, show_output=False):
             print(f"Debug!!!Current Path: {current_path}")
             print(f"Debug!!!Work Dict: {work_dir}")
             print(f"Debug!!!Processing file: {processed_file}")
-            processed_file_full_path = os.path.join(work_dir, processed_file)
+            processed_file_full_path = os.path.join(current_path, processed_file)
             for i in range(max_retries):
                 try:
                     result = function(processed_file_full_path)
