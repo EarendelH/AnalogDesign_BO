@@ -21,9 +21,9 @@ def cal_reward(ideal_specs_dict, cur_specs_dict):
         single_reward = 0
 
         ideal_spec_value = detail['value']
-        cur_spec_value = cur_specs_flatten[spec]
+        cur_spec_value = float(cur_specs_flatten[spec])
         constrain_type = detail['constrain_type']
-        constrain_objective = detail['objective']
+        constrain_objective = float(detail['objective'])
 
         if constrain_type == 'hard' and constrain_objective == "max":
             single_reward = min((cur_spec_value - ideal_spec_value) / (cur_spec_value + ideal_spec_value), 0.0)

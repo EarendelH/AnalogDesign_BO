@@ -154,7 +154,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         # print(f"Initialing!!!Observations result: {observations}")
 
         # Test Rew func
-        rew = cal_reward(self.ideal_specs, observation_detail)
+        rew = cal_reward(self.ideal_specs, sim_result)
         print(f"Debug!!!Initialing!!!Reward result: {rew}")
 
         self.cur_param = init_param
@@ -233,7 +233,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         # Calculate reward
         rew = {a: -10 for a in self.agents}
         for agent_name in rew:
-            rew[agent_name] = cal_reward(self.ideal_specs, observation_detail)
+            rew[agent_name] = cal_reward(self.ideal_specs, sim_result)
         print(f"Step!!!Reward result: {rew} with step number: {self.step_num}")
 
         # Determine termination or truncations
