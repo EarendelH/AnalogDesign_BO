@@ -232,8 +232,9 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
 
         # Calculate reward
         rew = {a: -10 for a in self.agents}
+        rew_single = cal_reward(self.ideal_specs, sim_result)
         for agent_name in rew:
-            rew[agent_name] = cal_reward(self.ideal_specs, sim_result)
+            rew[agent_name] = rew_single
         print(f"Step!!!Reward result: {rew} with step number: {self.step_num}")
 
         # Determine termination or truncations

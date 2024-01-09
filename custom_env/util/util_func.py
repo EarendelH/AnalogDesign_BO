@@ -42,5 +42,5 @@ def create_work_dir(base_path):
     dir_name = f"tmp_{cur_time}{random_num}"
     work_dir = os.path.join(base_path, dir_name)
     os.makedirs(work_dir, exist_ok=True)
-    print(f"Created working directory: {work_dir}")
+    # print(f"Created working directory: {work_dir}")
     return work_dir
