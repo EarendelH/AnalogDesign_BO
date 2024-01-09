@@ -1,3 +1,5 @@
+import re
+
 def findLoopGain(filename):
     with open(filename, 'r') as file:
         lines = file.readlines()
@@ -17,37 +19,34 @@ def findLoopGain(filename):
 
 
 def findPhaseMarginAndGBW(filename):
+
     with open(filename, 'r') as file:
-        lines = file.readlines()
+        file_content = file.read()
 
-        phase_margin = None
-        phase_margin_frequency = None
+    header_type_content = re.search(r'HEADER(.*?)TYPE', file_content, re.DOTALL).group(1)
 
-        # Extract phaseMargin value
-        for line in lines:
-            if '"phaseMargin" "Deg"' in line:
-                phase_margin = float(line.split()[2])
-            if '"phaseMarginFreq" "Hz"' in line:
-                phase_margin_frequency = float(line.split()[2])
+    required_keywords = ["phaseMargin", "phaseMarginFrequency"]
+    has_keywords = all(keyword in header_type_content for keyword in required_keywords)
 
-            # Break early if both values have been found
-            if phase_margin is not None and phase_margin_frequency is not None:
-                break
+    phase_margin = phase_margin_frequency = 0.0
 
-            # Set to default values if not found
-            if phase_margin is None or phase_margin_frequency is None:
-                phase_margin = 0.1
-                phase_margin_frequency = 0.1
-                print("Warning: Unstable, phaseMargin or phaseMarginFreq not Existing, set to 0.1")
+    if has_keywords:
+        phase_margin = float(re.search(r'"phaseMargin"\s+"([\d.+e]+)\s+Deg"', header_type_content).group(1))
+        phase_margin_frequency = float(
+            re.search(r'"phaseMarginFrequency"\s+"([\d.+e]+)\s+Hz"', header_type_content).group(1))
+    else:
+        if "phaseMargin" not in header_type_content or "phaseMarginFrequency" not in header_type_content:
+            print("Warning: phaseMargin or phaseMarginFrequency not existing, set to 1.0")
 
-        # Calculate gainBandWidth
-        gain_bandwidth = phase_margin * phase_margin_frequency
+    gain_bandwidth = phase_margin_frequency
 
-        return {"phaseMargin": phase_margin, "gainBandWidth": gain_bandwidth}
+    return {"phaseMargin": phase_margin, "gainBandWidth": gain_bandwidth}
+
+
 
 # Test the function with the provided file
-# value_dict = findPhaseMarginAndGBW("/Users/hanwu/ML/AnalogDesignAuto/resultParse/spectreEnv/spectreTmpFile/tmp_202308301525373103/Stability.raw/stb.margin.stb.encode")
-# print(value_dict)
+value_dict = findPhaseMarginAndGBW("/Users/hanwu/ML/AnalogDesignAuto_MultiAgent/custom_env/run_test/tmp_202401090942255147/Stability.raw/stb.margin.stb.encode")
+print(value_dict)
 
 # value_dict = findLoopGain("/Users/hanwu/ML/AnalogDesignAuto/resultParse/spectreEnv/spectreTmpFile/tmp_202308211608431287/Stability.raw/stb.stb.encode")
 # print(value_dict)
