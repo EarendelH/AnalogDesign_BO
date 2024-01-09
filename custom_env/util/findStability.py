@@ -45,8 +45,8 @@ def findPhaseMarginAndGBW(filename):
 
 
 # Test the function with the provided file
-value_dict = findPhaseMarginAndGBW("/Users/hanwu/ML/AnalogDesignAuto_MultiAgent/custom_env/run_test/tmp_202401090942255147/Stability.raw/stb.margin.stb.encode")
-print(value_dict)
+# value_dict = findPhaseMarginAndGBW("/Users/hanwu/ML/AnalogDesignAuto_MultiAgent/custom_env/run_test/tmp_202401090942255147/Stability.raw/stb.margin.stb.encode")
+# print(value_dict)
 
 # value_dict = findLoopGain("/Users/hanwu/ML/AnalogDesignAuto/resultParse/spectreEnv/spectreTmpFile/tmp_202308211608431287/Stability.raw/stb.stb.encode")
 # print(value_dict)
