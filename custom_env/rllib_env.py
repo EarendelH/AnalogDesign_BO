@@ -28,11 +28,11 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
     def __init__(self, generalize=False, path='', sim_output=False):
 
         # Init values
+        self.step_num = None
         self.norm_ideal_specs = None
         self.ideal_specs = None
         self.cur_param = None
-        self.step_num = 0
-        self.max_step = 20
+        self.max_step = 200
 
         # Get absolute path
         self.current_path = os.getcwd()
@@ -102,6 +102,9 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         super().__init__()
 
     def reset(self, *, seed=None, options=None):
+
+        # Reset step number
+        self.step_num = 0
 
         # Set the ideal specs based on the generalize flag
         self.ideal_specs = generalize_config(self.generalize, self.ideal_specs_path)
