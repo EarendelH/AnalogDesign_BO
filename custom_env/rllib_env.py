@@ -256,16 +256,18 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         for agent_name in terminated:
             if rew[agent_name] >= 0:
                 terminated[agent_name] = True
+                self.terminateds.add(agent_name)
 
         truncated = {a: False for a in self.agents}
         for agent_name in truncated:
             if self.step_num >= self.max_step:
                 truncated[agent_name] = True
+                self.truncateds.add(agent_name)
 
         info = {agent: {} for agent in self.agents}
 
-        # terminated["__all__"] = len(self.terminateds) == len(self.agents)
-        # truncated["__all__"] = len(self.truncateds) == len(self.agents)
+        terminated["__all__"] = len(self.terminateds) == len(self.agents)
+        truncated["__all__"] = len(self.truncateds) == len(self.agents)
 
         print(f"Step!!!terminated: {terminated} with step number: {self.step_num}")
         print(f"Step!!!truncated: {truncated} with step number: {self.step_num}")
