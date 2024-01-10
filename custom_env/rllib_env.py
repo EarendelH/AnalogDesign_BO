@@ -264,8 +264,8 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
 
         info = {agent: {} for agent in self.agents}
 
-        terminated["__all__"] = len(self.terminateds) == len(self.agents)
-        truncated["__all__"] = len(self.truncateds) == len(self.agents)
+        # terminated["__all__"] = len(self.terminateds) == len(self.agents)
+        # truncated["__all__"] = len(self.truncateds) == len(self.agents)
 
         print(f"Step!!!terminated: {terminated} with step number: {self.step_num}")
         print(f"Step!!!truncated: {truncated} with step number: {self.step_num}")
