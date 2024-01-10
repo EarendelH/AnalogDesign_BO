@@ -34,34 +34,43 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         self.step_num = 0
         self.max_step = 250
 
+        # Get absolute path
+        self.current_path = os.getcwd()
+
         # Pass generalization flag
         self.generalize = generalize
-        self.ideal_specs_path = path
+        self.ideal_specs_path = os.path.join(self.current_path, path)
 
         # Pass sim_output flag
         self.sim_output_enable = sim_output
 
         # Set normalization items
         self.norm_specs_file = "config/norm_specs.yaml"
+        self.norm_specs_file = os.path.join(self.current_path, self.norm_specs_file)
         with open(self.norm_specs_file, 'r') as file:
             self.norm_specs = yaml.safe_load(file)
 
         # Set root directory
-        file_path = os.path.dirname(os.path.abspath(__file__))
-        self.root_dir = "run_test"
-        self.root_dir_path = os.path.join(file_path, self.root_dir)
-        if not os.path.exists(self.root_dir_path):
-            raise ValueError(f"Root directory {self.root_dir_path} not found.")
+        self.run_root_dir = "run_test"
+        self.run_root_dir = os.path.join(self.current_path, self.run_root_dir)
+        if not os.path.exists(self.run_root_dir):
+            raise ValueError(f"Root directory {self.run_root_dir} not found.")
 
         # Load config files
         self.agent_assign_config = "config/agent_assign.yaml"
+        self.agent_assign_config = os.path.join(self.current_path, self.agent_assign_config)
         self.result_config = "config/result.yaml"
+        self.result_config = os.path.join(self.current_path, self.result_config)
         self.param_range_config = "config/param_range.yaml"
+        self.param_range_config = os.path.join(self.current_path, self.param_range_config)
         self.sim_config = "config/simulation.yaml"
+        self.sim_config = os.path.join(self.current_path, self.sim_config)
         self.init_param = "config/init_param.yaml"
+        self.init_param = os.path.join(self.current_path, self.init_param)
 
         # Set netlist directory
         self.unassigned_netlist_dir = "netlist_template"
+        self.unassigned_netlist_dir = os.path.join(self.current_path, self.unassigned_netlist_dir)
 
         # Multi-agent config
         with open(self.agent_assign_config, 'r') as file:
@@ -114,7 +123,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
             print(f"Initialing!!!init_param file not exist, Init param: {init_param}")
 
         # Generate working directory
-        working_dir = create_work_dir(self.root_dir)
+        working_dir = create_work_dir(self.run_root_dir)
         # print(f"Initialing!!!Working directory: {working_dir}")
 
         for unassigned_netlist_file in os.listdir(self.unassigned_netlist_dir):
@@ -175,7 +184,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         # print(f"Updated action: {action_dict} with step number: {self.step_num}")
 
         # Create working directory
-        working_dir = create_work_dir(self.root_dir)
+        working_dir = create_work_dir(self.run_root_dir)
         print(f"Step!!! Working directory: {working_dir} with step number: {self.step_num}")
 
         print(f"Step!!!Actions: {action_dict} with step number: {self.step_num}")
@@ -191,6 +200,9 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         print(f"Step!!!Previous param: {self.cur_param} with step number: {self.step_num}")
         updated_param = update_parameters(all_action_flatten, self.cur_param, self.param_range_config)
         print(f"Step!!!Updated param: {updated_param} with step number: {self.step_num}")
+
+        # Update current param
+        self.cur_param = updated_param
 
         # Parse the updated param and generate the netlist
         for unassigned_netlist_file in os.listdir(self.unassigned_netlist_dir):
@@ -240,7 +252,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         # Determine termination or truncations
         terminated = {a: False for a in self.agents}
         for agent_name in terminated:
-            if rew[agent_name] > 0:
+            if rew[agent_name] >= 0:
                 terminated[agent_name] = True
 
         truncated = {a: False for a in self.agents}
@@ -254,95 +266,3 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         truncated["__all__"] = len(self.truncateds) == len(self.agents)
 
         return observations, rew, terminated, truncated, info
-
-
-def env_creator(env_config):
-    return RllibAnalogDesignAutoEnv(generalize=True, path='sampled_specs')
-
-
-register_env("analog_design_env", env_creator)
-
-
-def get_cli_args():
-    """Create CLI parser and return parsed arguments"""
-    parser = argparse.ArgumentParser()
-
-    # general args
-    parser.add_argument(
-        "--run", type=str, default="PPO", help="The RLlib-registered algorithm to use."
-    )
-    parser.add_argument("--num-cpus", type=int, default=10)
-    parser.add_argument(
-        "--framework",
-        choices=["tf", "tf2", "torch"],
-        default="torch",
-        help="The DL framework specifier.",
-    )
-    parser.add_argument(
-        "--stop-iters", type=int, default=10, help="Number of iterations to train."
-    )
-    parser.add_argument(
-        "--stop-timesteps",
-        type=int,
-        default=5000,
-        help="Number of timesteps to train.",
-    )
-    parser.add_argument(
-        "--stop-reward",
-        type=float,
-        default=-0.5,
-        help="Reward at which we stop training.",
-    )
-    parser.add_argument(
-        "--local-mode",
-        action="store_true",
-        help="Init Ray in local mode for easier debugging.",
-    )
-
-    args = parser.parse_args()
-    print(f"Running with following CLI args: {args}")
-    return args
-
-
-if __name__ == "__main__":
-    args = get_cli_args()
-
-    ray.init(num_cpus=args.num_cpus or None, local_mode=args.local_mode)
-
-    stop = {
-        "training_iteration": args.stop_iters,
-        "timesteps_total": args.stop_timesteps,
-        "episode_reward_mean": args.stop_reward,
-    }
-
-    config = (
-        get_trainable_cls(args.run)
-        .get_default_config()
-        .environment("analog_design_env")
-        .resources(
-            # Use GPUs iff `RLLIB_NUM_GPUS` env var set to > 0.
-            num_gpus=int(os.environ.get("RLLIB_NUM_GPUS", "0")),
-        )
-        .training(train_batch_size=1024)
-        .rollouts(num_rollout_workers=10, rollout_fragment_length="auto")
-        .framework(args.framework)
-        .multi_agent(
-            policies={"main1", "main2", "main3", "main4"},
-            policy_mapping_fn=(lambda aid, episode, worker, **kw: f"main{aid[-1]}"),
-            policies_to_train=["main1", "main2", "main3", "main4"],
-        )
-    )
-
-    results = tune.Tuner(
-        args.run,
-        run_config=air.RunConfig(
-            stop=stop,
-        ),
-        param_space=config,
-    ).fit()
-
-    if not results:
-        raise ValueError(
-            "No results returned from tune.run(). Something must have gone wrong."
-        )
-    ray.shutdown()
