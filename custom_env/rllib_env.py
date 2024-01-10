@@ -124,7 +124,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
 
         # Generate working directory
         working_dir = create_work_dir(self.run_root_dir)
-        # print(f"Initialing!!!Working directory: {working_dir}")
+        print(f"Initialing!!!Working directory: {working_dir}")
 
         for unassigned_netlist_file in os.listdir(self.unassigned_netlist_dir):
             if unassigned_netlist_file.endswith(".scs"):
