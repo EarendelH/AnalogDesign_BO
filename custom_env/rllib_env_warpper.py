@@ -32,7 +32,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         self.ideal_specs = None
         self.cur_param = None
         self.step_num = 0
-        self.max_step = 100000
+        self.max_step = 250
 
         # Pass generalization flag
         self.generalize = generalize
@@ -228,7 +228,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
             yaml.dump(observation, file)
 
         print("Step!!!self.ideal_specs: ", self.ideal_specs)
-        print("Step!!!observation_detail: ", observation_detail)
+        # print("Step!!!observation_detail: ", observation_detail)
 
         # Calculate reward
         rew = {a: -10 for a in self.agents}
