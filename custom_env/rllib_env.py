@@ -105,6 +105,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
 
         # Set the ideal specs based on the generalize flag
         self.ideal_specs = generalize_config(self.generalize, self.ideal_specs_path)
+        print(f"Initialing!!!Generalize flag: {self.generalize} with ideal specs: {self.ideal_specs}")
 
         # If self.init_param file exists, use the init_param file as the initial param or
         # Select the middle point of the param space as the initial param
