@@ -49,7 +49,7 @@ if __name__ == "__main__":
         .resources(num_gpus=int(os.environ.get("RLLIB_NUM_GPUS", "0")))
         .multi_agent(
             policies={"policy_1", "policy_2", "policy_3", "policy_4"},
-            policy_mapping_fn=(lambda agent_id: f"policy_{agent_id.split('_')[1]}"),
+            policy_mapping_fn=(lambda aid, episode, worker, **kw: f"policy_{aid[-1]}"),
             policies_to_train=["policy_1", "policy_2", "policy_3", "policy_4"],
         )
     )
