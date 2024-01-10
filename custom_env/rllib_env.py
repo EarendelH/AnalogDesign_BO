@@ -32,7 +32,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         self.norm_ideal_specs = None
         self.ideal_specs = None
         self.cur_param = None
-        self.max_step = 200
+        self.max_step = 100
 
         # Get absolute path
         self.current_path = os.getcwd()
