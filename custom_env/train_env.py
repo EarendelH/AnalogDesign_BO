@@ -60,6 +60,7 @@ if __name__ == "__main__":
         stop={"training_iteration": 1000,
               "episode_reward_mean": -0.1},
         checkpoint_freq=1,
+        checkpoint_at_end=True,
         local_dir="/home/wuhan/ray_results/" + env_name,
         config=config.to_dict(),
     )
