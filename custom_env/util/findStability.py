@@ -19,11 +19,15 @@ def findLoopGain(filename):
 
 
 def findPhaseMarginAndGBW(filename):
-
     with open(filename, 'r') as file:
         file_content = file.read()
 
-    header_type_content = re.search(r'HEADER(.*?)TYPE', file_content, re.DOTALL).group(1)
+    header_type_content = re.search(r'HEADER(.*?)TYPE', file_content, re.DOTALL)
+    if header_type_content:
+        header_type_content = header_type_content.group(1)
+    else:
+        print("Warning from findPhaseMarginAndGBW: HEADER or TYPE section not found in the file.")
+        return {"phaseMargin": 0.0, "gainBandWidth": 0.0}
 
     required_keywords = ["phaseMargin", "phaseMarginFrequency"]
     has_keywords = all(keyword in header_type_content for keyword in required_keywords)
@@ -31,12 +35,16 @@ def findPhaseMarginAndGBW(filename):
     phase_margin = phase_margin_frequency = 0.0
 
     if has_keywords:
-        phase_margin = float(re.search(r'"phaseMargin"\s+"([\d.+e]+)\s+Deg"', header_type_content).group(1))
-        phase_margin_frequency = float(
-            re.search(r'"phaseMarginFrequency"\s+"([\d.+e]+)\s+Hz"', header_type_content).group(1))
+        phase_margin_match = re.search(r'"phaseMargin"\s+"([\d.+e]+)\s+Deg"', header_type_content)
+        phase_margin_frequency_match = re.search(r'"phaseMarginFrequency"\s+"([\d.+e]+)\s+Hz"', header_type_content)
+
+        if phase_margin_match and phase_margin_frequency_match:
+            phase_margin = float(phase_margin_match.group(1))
+            phase_margin_frequency = float(phase_margin_frequency_match.group(1))
+        else:
+            print("Warning: phaseMargin or phaseMarginFrequency not properly formatted, set to 0.0")
     else:
-        if "phaseMargin" not in header_type_content or "phaseMarginFrequency" not in header_type_content:
-            print("Warning: phaseMargin or phaseMarginFrequency not existing, set to 1.0")
+        print("Warning: phaseMargin or phaseMarginFrequency not existing, set to 0.0")
 
     gain_bandwidth = phase_margin_frequency
 
