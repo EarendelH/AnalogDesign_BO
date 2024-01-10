@@ -1,9 +1,36 @@
 import os
 import subprocess
-import yaml
 from importlib import import_module
 
+import time
+from functools import wraps
 
+
+def retry(max_retries=3, delay=2):
+    """
+    Decorator for retrying a function if exception occurs
+    """
+
+    def decorator(func):
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            for i in range(max_retries):
+                try:
+                    return func(*args, **kwargs)
+                except Exception as e:
+                    if i < max_retries - 1:  # not the last attempt
+                        print(f"Attempt {i + 1} failed. Retrying after {delay} seconds...")
+                        time.sleep(delay)  # wait a bit before retrying
+                    else:
+                        print(f"Attempt {i + 1} failed. Giving up.")
+                        raise
+
+        return wrapper
+
+    return decorator
+
+
+@retry(max_retries=3, delay=2)
 def run_spectre_simulation(work_dir, sim_config, show_output=False):
     """
     Run spectre simulation based on the given config and netlist
@@ -13,7 +40,6 @@ def run_spectre_simulation(work_dir, sim_config, show_output=False):
     :return: Arranged simulation results
     """
     results = {}
-    max_retries = 3
 
     for simulation_config in sim_config:
         simulation = simulation_config["simulation_name"]
@@ -53,24 +79,15 @@ def run_spectre_simulation(work_dir, sim_config, show_output=False):
             module_name = f"find{simulation}"
             function_name = parse_funcs[idx]
             module = import_module(f"util.{module_name}")
-            # module = __import__(module_name)
-            function = getattr(module, function_name)
             # print(f"Debug!!!Current Path: {current_path}")
             # print(f"Debug!!!Work Dict: {work_dir}")
             # print(f"Debug!!!Processing file: {processed_file}")
             # Apply absolute path for avoiding file not found error
             processed_file_full_path = os.path.join(raw_dir, processed_file)
-            for i in range(max_retries):
-                try:
-                    result = function(processed_file_full_path)
-                    results[simulation] = result
-                    break
-                except Exception as e:
-                    if i < max_retries - 1:
-                        print(f"Attempt {i + 1} failed. Retrying. in func: {function_name}")
-                    else:
-                        print(f"Attempt {i + 1} failed. Throwing exception. in func: {function_name}")
-                        raise
+            function = getattr(module, function_name)
+            function = retry()(function)  # wrap function with retry decorator
+            result = function(processed_file_full_path)
+            results[simulation] = result
 
     return results
 
