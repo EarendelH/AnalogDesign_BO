@@ -22,7 +22,7 @@ register_env("AnalogDesignEnv_v0", env_creator)
 if __name__ == "__main__":
     env_name = "AnalogDesignEnv_v0"
     context = ray.init()
-    print(ray.init().dashboard_url)
+    print(context.dashboard_url)
 
     config = (
         PPOConfig()
