@@ -6,9 +6,10 @@ import time
 from functools import wraps
 
 
-def retry(max_retries=3, delay=2):
+def retry(max_retries=3, delay=0.5):
     """
     Decorator for retrying a function if exception occurs
+    Delay time: 0.5s
     """
 
     def decorator(func):
