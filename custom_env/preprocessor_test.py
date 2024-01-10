@@ -1,4 +1,4 @@
-from rllib_env_warpper import RllibAnalogDesignAutoEnv
+from rllib_env import RllibAnalogDesignAutoEnv
 from ray.rllib.models import ModelCatalog
 
 config = {

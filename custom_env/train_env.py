@@ -10,11 +10,11 @@ from ray.rllib.models import ModelCatalog
 from ray.rllib.utils.typing import ModelConfigDict, TensorType
 from torch import nn
 
-from rllib_env_warpper import RllibAnalogDesignAutoEnv
+from rllib_env import RllibAnalogDesignAutoEnv
 
 
 def env_creator(env_config):
-    return RllibAnalogDesignAutoEnv(generalize=True, path='sampled_specs')
+    return RllibAnalogDesignAutoEnv(generalize=True, path='sampled_specs', sim_output=False)
 
 
 register_env("AnalogDesignEnv_v0", env_creator)
