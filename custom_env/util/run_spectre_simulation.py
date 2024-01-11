@@ -2,36 +2,7 @@ import os
 import subprocess
 from importlib import import_module
 
-import time
-from functools import wraps
 
-
-def retry(max_retries=3, delay=0.5):
-    """
-    Decorator for retrying a function if exception occurs
-    Delay time: 0.5s
-    """
-
-    def decorator(func):
-        @wraps(func)
-        def wrapper(*args, **kwargs):
-            for i in range(max_retries):
-                try:
-                    return func(*args, **kwargs)
-                except Exception as e:
-                    if i < max_retries - 1:  # not the last attempt
-                        print(f"Attempt {i + 1} failed. Retrying after {delay} seconds...")
-                        time.sleep(delay)  # wait a bit before retrying
-                    else:
-                        print(f"Attempt {i + 1} failed. Giving up.")
-                        raise
-
-        return wrapper
-
-    return decorator
-
-
-@retry(max_retries=3, delay=2)
 def run_spectre_simulation(work_dir, sim_config, show_output=False):
     """
     Run spectre simulation based on the given config and netlist
@@ -86,7 +57,6 @@ def run_spectre_simulation(work_dir, sim_config, show_output=False):
             # Apply absolute path for avoiding file not found error
             processed_file_full_path = os.path.join(raw_dir, processed_file)
             function = getattr(module, function_name)
-            function = retry()(function)  # wrap function with retry decorator
             result = function(processed_file_full_path)
             results[simulation] = result
 

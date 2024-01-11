@@ -1,6 +1,8 @@
 import datetime
 import os
 import random
+import time
+import functools
 
 
 def unit_conversion(value):
@@ -44,3 +46,33 @@ def create_work_dir(base_path):
     os.makedirs(work_dir, exist_ok=True)
     # print(f"Created working directory: {work_dir}")
     return work_dir
+
+
+def retry_decorator(retry_count=2, delay_seconds=1, default_value=None):
+    """
+    A decorator for retrying a function up to `retry_count` times with `delay_seconds` delay between retries if it raises an exception.
+    If all retries fail, returns `default_value` and prints a warning message.
+    """
+    def decorator_retry(func):
+        @functools.wraps(func)
+        def wrapper_retry(*args, **kwargs):
+            nonlocal retry_count, delay_seconds
+            attempts = 0
+            while attempts <= retry_count:
+                try:
+                    return func(*args, **kwargs)
+                except Exception as e:
+                    print(f"Attempt {attempts + 1} failed for {func.__name__}, retrying after {delay_seconds} seconds...")
+                    time.sleep(delay_seconds)
+                    if attempts == retry_count:
+                        print(f"Warning: Function {func.__name__} failed after {retry_count + 1} attempts.")
+                        return default_value
+                    attempts += 1
+        return wrapper_retry
+    return decorator_retry
+
+# Example of usage:
+# @retry_decorator(retry_count=2, delay_seconds=5, default_value=self.zero_sim_result)
+# def run_spectre_simulation(working_dir, sim_config, sim_output_enable):
+#     ...
+#     return sim_result

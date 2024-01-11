@@ -1,9 +1,6 @@
-import argparse
 import os
 import yaml
 from collections import OrderedDict
-
-from ray.tune.registry import get_trainable_cls, register_env
 
 from util.gen_action_sapce import gen_action_space
 from util.gen_obs_space import gen_obs_space_extend, flatten_obs_space
@@ -18,16 +15,16 @@ from util.update_param import update_parameters
 from util.update_obs_space import update_obs_space, flatten_observation
 # from util.update_obs_space import update_obs_space_simple
 from util.normlization import norm_ideal_spec, norm_sim_spec
+from util.util_func import retry_decorator
 
 from ray.rllib.env.multi_agent_env import MultiAgentEnv
-from ray import air, tune
-import ray
 
 
 class RllibAnalogDesignAutoEnv(MultiAgentEnv):
     def __init__(self, generalize=False, path='', sim_output=False):
 
         # Init values
+        self.zero_sim_result = None
         self.step_num = None
         self.norm_ideal_specs = None
         self.ideal_specs = None
@@ -147,6 +144,9 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
 
         sim_result = run_spectre_simulation(working_dir, sim_config, self.sim_output_enable)
 
+        # For avoid simulation error in step, generate a default result with zero value but correct key
+        self.zero_sim_result = {k: {inner_k: 0.0 for inner_k in v} for k, v in sim_result.items()}
+
         # Normalize the current ideal specs
         print(f"Initialing!!!Ideal specs: {self.ideal_specs}")
         self.norm_ideal_specs = norm_ideal_spec(self.ideal_specs, self.norm_specs)
@@ -225,7 +225,12 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
             sim_config = yaml.safe_load(file)
 
         # Run spectre simulation and normalize the result
-        sim_result = run_spectre_simulation(working_dir, sim_config, self.sim_output_enable)
+        # Define a private function for retrying
+        @retry_decorator(retry_count=2, delay_seconds=1, default_value=self.zero_sim_result)
+        def _run_simulation_with_retry():
+            return run_spectre_simulation(working_dir, sim_config, self.sim_output_enable)
+
+        sim_result = _run_simulation_with_retry()
         print(f"Step!!!Simulation result: {sim_result} with step number: {self.step_num}")
         norm_sim_result = norm_sim_spec(sim_result, self.norm_specs)
         # print(f"Step!!!Normalized simulation result: {norm_sim_result} with step number: {self.step_num}")
