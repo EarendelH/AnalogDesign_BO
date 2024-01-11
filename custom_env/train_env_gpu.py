@@ -46,7 +46,7 @@ if __name__ == "__main__":
         )
         .debugging(log_level="DEBUG")
         .framework("torch")
-        .resources(num_gpus=int(os.environ.get("RLLIB_NUM_GPUS", "0")))
+        .resources(num_gpus=1)
         .multi_agent(
             policies={"policy_1", "policy_2", "policy_3", "policy_4"},
             policy_mapping_fn=(lambda aid, episode, worker, **kw: f"policy_{aid[-1]}"),
