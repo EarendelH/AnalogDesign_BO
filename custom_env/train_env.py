@@ -30,18 +30,18 @@ if __name__ == "__main__":
         .rollouts(num_rollout_workers=20)
         .training(
             train_batch_size=512,
-            lr=2e-5,
-            gamma=0.99,
-            lambda_=0.9,
+            lr=2e-4,
+            gamma=0.98,
+            lambda_=0.99,
             use_gae=True,
-            clip_param=0.4,
+            clip_param=0.2,
             grad_clip=None,
             entropy_coeff=0.1,
             vf_loss_coeff=0.25,
             sgd_minibatch_size=64,
             num_sgd_iter=10,
             model={
-                "fcnet_hiddens": [256, 256, 256],
+                "fcnet_hiddens": [256, 256, 256, 256, 256],
             }
         )
         .debugging(log_level="DEBUG")
@@ -57,8 +57,8 @@ if __name__ == "__main__":
     tune.run(
         "PPO",
         name="PPO",
-        stop={"training_iteration": 1000,
-              "episode_reward_mean": -0.1},
+        stop={"training_iteration": 500,
+              "episode_reward_mean": -0.5},
         checkpoint_freq=1,
         checkpoint_at_end=True,
         local_dir="/home/wuhan/ray_results/" + env_name,

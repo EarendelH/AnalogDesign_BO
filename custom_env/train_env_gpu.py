@@ -57,8 +57,8 @@ if __name__ == "__main__":
     tune.run(
         "PPO",
         name="PPO",
-        stop={"training_iteration": 1000,
-              "episode_reward_mean": -0.1},
+        stop={"training_iteration": 500,
+              "episode_reward_mean": -0.5},
         checkpoint_freq=1,
         checkpoint_at_end=True,
         local_dir="/home/hanwu/ray_results/" + env_name,
