@@ -58,7 +58,7 @@ if __name__ == "__main__":
         "PPO",
         name="PPO",
         stop={"training_iteration": 500,
-              "episode_reward_mean": 50},
+              "episode_reward_mean": 200},
         checkpoint_freq=1,
         checkpoint_at_end=True,
         local_dir="/home/wuhan/ray_results/" + env_name,
