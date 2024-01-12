@@ -277,8 +277,8 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         # print(f"Step!!!Observations result: {observations} with step number: {self.step_num}")
 
         # Store the observation
-        with open(os.path.join(working_dir, "result.yaml"), 'w') as file:
-            yaml.dump(observation, file)
+        # with open(os.path.join(working_dir, "result.yaml"), 'w') as file:
+        #     yaml.dump(observation, file)
 
         print("Step!!!self.ideal_specs: ", self.ideal_specs)
         # print("Step!!!observation_detail: ", observation_detail)
