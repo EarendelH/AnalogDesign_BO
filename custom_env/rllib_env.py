@@ -1,6 +1,10 @@
 import os
 import yaml
 from collections import OrderedDict
+import pickle
+import time
+import random
+import shutil
 
 from util.gen_action_sapce import gen_action_space
 from util.gen_obs_space import gen_obs_space_extend, flatten_obs_space
@@ -24,12 +28,16 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
     def __init__(self, generalize=False, path='', sim_output=False):
 
         # Init values
+        self.resetted = None
+        self.trajectory_data = None
+        self.log_file_path = None
+        self.log_file_name = None
         self.zero_sim_result = None
         self.step_num = None
         self.norm_ideal_specs = None
         self.ideal_specs = None
         self.cur_param = None
-        self.max_step = 4096
+        self.max_step = 1024
 
         # Get absolute path
         self.current_path = os.getcwd()
@@ -179,6 +187,29 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
 
         info = {agent: {} for agent in self.agents}
 
+        # Generate log pickle file
+        self.log_file_name = f"{int(time.time())}{random.randint(1000, 9999)}.pkl"
+        self.log_file_path = os.path.join(self.run_root_dir, self.log_file_name)
+
+        # Save trajectory reset info
+        self.trajectory_data = {
+            'initial_data': {
+                'ideal_specs': self.ideal_specs,
+                'norm_specs': self.norm_specs,
+                'sim_result': sim_result,
+                'init_param': init_param,
+                'rew': rew
+            },
+            'steps_data': []
+        }
+
+        with open(self.log_file_path, 'wb') as f:
+            pickle.dump(self.trajectory_data, f)
+
+        # Delete working temp directory
+        if os.path.exists(working_dir):
+            shutil.rmtree(working_dir)
+
         return observations, info
 
     def step(self, action_dict):
@@ -279,5 +310,21 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
 
         print(f"Step!!!terminated: {terminated} with step number: {self.step_num}")
         print(f"Step!!!truncated: {truncated} with step number: {self.step_num}")
+
+        step_data = {
+            'step_num': self.step_num,
+            'sim_result': sim_result,
+            'updated_param': updated_param,
+            'rew': rew
+        }
+
+        self.trajectory_data['steps_data'].append(step_data)
+
+        with open(self.log_file_path, 'wb') as f:
+            pickle.dump(self.trajectory_data, f)
+
+        # Delete working temp directory
+        if os.path.exists(working_dir):
+            shutil.rmtree(working_dir)
 
         return observations, rew, terminated, truncated, info
