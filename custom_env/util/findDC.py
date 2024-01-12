@@ -89,27 +89,27 @@ def findDCValue(filepath):
 
     instance_name = "V0"
     property_name = "pwr"
+    default_value = 1
 
-    # Retrieve the specific instance details
-    instance_details = instance_properties.get(instance_name, None)
-    if not instance_details:
-        raise ValueError(f"Instance '{instance_name}' not found in the file.")
+    # Retrieve the specific instance and property value
+    instance_details = instance_properties.get(instance_name)
+    property_value = instance_details.get(property_name) if instance_details else None
 
-    # Retrieve the specific property value
-    property_value = instance_details.get(property_name, None)
-    if property_value is None:
-        raise ValueError(f"Property '{property_name}' not found for instance '{instance_name}'.")
+    if not instance_details or property_value is None:
+        print(f"Warning: Instance '{instance_name}' or property '{property_name}' not found. Power set to 1W.")
+        return {property_name: default_value}
 
-    # Convert the value to float
+    # Convert the value to float and check for validity
     try:
         float_value = float(property_value)
-        float_value = abs(float_value)
         if float_value != float_value:  # Check for NaN values
-            raise ValueError(f"The value of property '{property_name}' for instance '{instance_name}' is NaN.")
-        return {property_name: float_value}
+            print(f"Warning: The value of property '{property_name}' is NaN. Power set to 1W.")
+            return {property_name: default_value}
     except ValueError:
-        raise ValueError(
-            f"The value of property '{property_name}' for instance '{instance_name}' is not a valid number.")
+        print(f"Warning: The value of property '{property_name}' is not a valid number. Power set to 1W.")
+        return {property_name: default_value}
+
+    return {property_name: default_value}
 
 
 # device_instance_properties = extractInstanceProperties("DC.raw/dcOpInfo.info.encode")
