@@ -27,7 +27,7 @@ if __name__ == "__main__":
     config = (
         PPOConfig()
         .environment(env="AnalogDesignEnv_v0", clip_actions=True)
-        .rollouts(num_rollout_workers=5)
+        .rollouts(num_rollout_workers=48)
         .training(
             train_batch_size=512,
             lr=2e-4,
@@ -46,7 +46,7 @@ if __name__ == "__main__":
         )
         .debugging(log_level="DEBUG")
         .framework("torch")
-        .resources(num_gpus=1)
+        .resources(num_gpus=2)
         .multi_agent(
             policies={"policy_1", "policy_2", "policy_3", "policy_4"},
             policy_mapping_fn=(lambda aid, episode, worker, **kw: f"policy_{aid[-1]}"),
@@ -58,7 +58,7 @@ if __name__ == "__main__":
         "PPO",
         name="PPO",
         stop={"training_iteration": 500,
-              "episode_reward_mean": -0.5},
+              "episode_reward_mean": 100},
         checkpoint_freq=1,
         checkpoint_at_end=True,
         local_dir="/home/hanwu/ray_results/" + env_name,
