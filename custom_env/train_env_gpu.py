@@ -61,6 +61,6 @@ if __name__ == "__main__":
               "episode_reward_mean": 100},
         checkpoint_freq=1,
         checkpoint_at_end=True,
-        local_dir="/home/hanwu/ray_results/" + env_name,
+        local_dir="/home/wuhan/ray_results/" + env_name,
         config=config.to_dict(),
     )
