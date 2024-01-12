@@ -2,7 +2,7 @@ import os
 import yaml
 from collections import OrderedDict
 import pickle
-import time
+import datetime
 import random
 import shutil
 
@@ -188,7 +188,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         info = {agent: {} for agent in self.agents}
 
         # Generate log pickle file
-        self.log_file_name = f"{int(time.time())}{random.randint(1000, 9999)}.pkl"
+        self.log_file_name = f"{datetime.datetime.now().strftime('%Y%m%d%H%M%S')}{random.randint(1000, 9999)}.pkl"
         self.log_file_path = os.path.join(self.run_root_dir, self.log_file_name)
 
         # Save trajectory reset info
