@@ -18,7 +18,7 @@ def validate_checkpoint(checkpoint_path, num_episode):
     for i in range(num_episode):
         obs, _ = env.reset()
         action = algo.compute_actions(observations=obs)
-        obs, reward, terminated, _, info = env.step(action)
+        obs, reward, terminated, _, info = algo.step(action)
         episode_reward += reward
         done = terminated
         print(f"Episode {i} reward: {episode_reward}")
