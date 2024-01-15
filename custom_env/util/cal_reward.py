@@ -37,7 +37,7 @@ def cal_reward(ideal_specs_dict, cur_specs_dict):
         # cur_spec_value}")
         rew += float(single_reward)
 
-    rew = rew + 50 if rew >= -0.01 else rew
+    rew = rew + 15 if rew >= -0.01 else rew
     # reward = float(reward)
 
     return rew
