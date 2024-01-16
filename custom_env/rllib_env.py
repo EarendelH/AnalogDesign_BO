@@ -206,9 +206,13 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         with open(self.log_file_path, 'wb') as f:
             pickle.dump(self.trajectory_data, f)
 
-        # Delete working temp directory
-        if os.path.exists(working_dir):
-            shutil.rmtree(working_dir)
+        # Delete working temp directory, if it exists
+        try:
+            if os.path.exists(working_dir):
+                shutil.rmtree(working_dir)
+        except OSError as e:
+            print(f"Warning!!!: {e.strerror}. Directory {working_dir} does not exist or cannot be removed.")
+            pass
 
         return observations, info
 
