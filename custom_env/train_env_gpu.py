@@ -14,7 +14,7 @@ from rllib_env import RllibAnalogDesignAutoEnv
 
 
 def env_creator(env_config):
-    return RllibAnalogDesignAutoEnv(generalize=True, path='sampled_specs', sim_output=False)
+    return RllibAnalogDesignAutoEnv(generalize=True, path='sampled_specs', sim_output=False, init_method='random')
 
 
 register_env("AnalogDesignEnv_v0", env_creator)
@@ -57,8 +57,7 @@ if __name__ == "__main__":
     tune.run(
         "PPO",
         name="PPO",
-        stop={"training_iteration": 500,
-              "episode_reward_mean": 50},
+        stop={"training_iteration": 2000},
         checkpoint_freq=1,
         checkpoint_at_end=True,
         local_dir="/home/wuhan/ray_results/" + env_name,

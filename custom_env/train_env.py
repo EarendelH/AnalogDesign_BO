@@ -14,7 +14,7 @@ from rllib_env import RllibAnalogDesignAutoEnv
 
 
 def env_creator(env_config):
-    return RllibAnalogDesignAutoEnv(generalize=True, path='sampled_specs', sim_output=False)
+    return RllibAnalogDesignAutoEnv(generalize=True, path='sampled_specs', sim_output=False, init_method='random')
 
 
 register_env("AnalogDesignEnv_v0", env_creator)

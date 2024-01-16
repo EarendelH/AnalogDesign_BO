@@ -25,7 +25,7 @@ from ray.rllib.env.multi_agent_env import MultiAgentEnv
 
 
 class RllibAnalogDesignAutoEnv(MultiAgentEnv):
-    def __init__(self, generalize=False, path='', sim_output=False):
+    def __init__(self, generalize=True, path='', sim_output=False, init_method='random'):
 
         # Init values
         self.resetted = None
@@ -45,6 +45,9 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         # Pass generalization flag
         self.generalize = generalize
         self.ideal_specs_path = os.path.join(self.current_path, path)
+
+        # Pass init method
+        self.init_method = init_method
 
         # Pass sim_output flag
         self.sim_output_enable = sim_output
@@ -121,16 +124,23 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
 
         init_param = OrderedDict()
 
-        if os.path.exists(self.init_param):
+        # Select init method
+        if self.init_method == 'file':
             with open(self.init_param, 'r') as file:
                 init_param = yaml.safe_load(file)
-            print(f"Initialing!!!init_param file exist, Init param: {init_param}")
-        else:
+            print(f"Initialing!!!init method: file, init param: {init_param}")
+        if self.init_method == 'half':
             for param, value_list in self.param_space.items():
                 n = len(value_list)
                 middle_index = n // 2 - 1 if n % 2 == 0 else n // 2
                 init_param[param] = value_list[middle_index]
-            print(f"Initialing!!!init_param file not exist, Init param: {init_param}")
+            print(f"Initialing!!!init method: half, init param: {init_param}")
+        if self.init_method == 'random':
+            for param, value_list in self.param_space.items():
+                n = len(value_list)
+                random_index = random.randint(0, n - 1)
+                init_param[param] = value_list[random_index]
+            print(f"Initialing!!!init method: random, init param: {init_param}")
 
         # Generate working directory
         working_dir = create_work_dir(self.run_root_dir)
