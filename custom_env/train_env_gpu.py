@@ -27,7 +27,7 @@ if __name__ == "__main__":
     config = (
         PPOConfig()
         .environment(env="AnalogDesignEnv_v0", clip_actions=True)
-        .rollouts(num_rollout_workers=48)
+        .rollouts(num_rollout_workers=96)
         .training(
             train_batch_size=512,
             lr=2e-5,
