@@ -29,9 +29,9 @@ def cal_reward(ideal_specs_dict, cur_specs_dict):
             single_reward = min((cur_spec_value - ideal_spec_value) / (cur_spec_value + ideal_spec_value), 0.0)
         elif constrain_type == 'hard' and constrain_objective == "min":
             single_reward = min((ideal_spec_value - cur_spec_value) / (cur_spec_value + ideal_spec_value), 0.0)
-        elif constrain_type == 'soft' and constrain_objective == "max":
-            single_reward = epsilon * (ideal_spec_value - cur_spec_value) / (cur_spec_value + ideal_spec_value)
         elif constrain_type == 'soft' and constrain_objective == "min":
+            single_reward = epsilon * (ideal_spec_value - cur_spec_value) / (cur_spec_value + ideal_spec_value)
+        elif constrain_type == 'soft' and constrain_objective == "max":
             single_reward = epsilon * (cur_spec_value - ideal_spec_value) / (cur_spec_value + ideal_spec_value)
         # print(f"Debug!!! {spec}: {single_reward} ideal_spec_value: {ideal_spec_value} cur_spec_value: {
         # cur_spec_value}")
