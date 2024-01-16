@@ -30,11 +30,11 @@ if __name__ == "__main__":
         .rollouts(num_rollout_workers=36)
         .training(
             train_batch_size=512,
-            lr=2e-4,
-            gamma=0.98,
-            lambda_=0.99,
+            lr=2e-5,
+            gamma=0.99,
+            lambda_=0.9,
             use_gae=True,
-            clip_param=0.2,
+            clip_param=0.4,
             grad_clip=None,
             entropy_coeff=0.1,
             vf_loss_coeff=0.25,
