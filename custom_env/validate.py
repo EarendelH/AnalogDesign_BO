@@ -1,33 +1,31 @@
 import ray
-from ray.rllib.algorithms.algorithm import Algorithm
+from ray.rllib.algorithms.ppo import PPO
 from rllib_env import RllibAnalogDesignAutoEnv
 from ray.tune.registry import register_env
 
+num_episode = 10
 
-def validate_checkpoint(checkpoint_path, num_episode):
-    def env_creator(env_config):
-        return RllibAnalogDesignAutoEnv(generalize=True, path='sampled_specs', sim_output=False)
+ray.init()
 
-    env = register_env("AnalogDesignEnv_v0", env_creator)
+def env_creator(env_config):
+    return RllibAnalogDesignAutoEnv(generalize=True, path='sampled_specs', sim_output=False, init_method='random')
 
-    ray.init()
-    episode_reward = 0
 
-    algo = Algorithm.from_checkpoint(checkpoint_path)
+register_env("AnalogDesignEnv_v0", env_creator)
 
-    for i in range(num_episode):
-        obs, _ = env.reset()
-        action = algo.compute_actions(observations=obs)
-        obs, reward, terminated, _, info = algo.step(action)
-        episode_reward += reward
-        done = terminated
-        print(f"Episode {i} reward: {episode_reward}")
-        if done:
-            print("Episode done!")
+ppo = PPO(env="AnalogDesignEnv_v0")
 
-    ray.shutdown()
+checkpoint_path = ("/home/wuhan/ray_results/AnalogDesignEnv_v0/"
+                   "PPO/PPO_AnalogDesignEnv_v0_5b5b4_00000_0_2024-01-16_21-15-45/checkpoint_000009/")
+ppo.load_checkpoint(checkpoint_path)
 
-# Test Code
-check_point = ("/home/wuhan/ray_results/AnalogDesignEnv_v0/PPO/"
-               "PPO_AnalogDesignEnv_v0_6806e_00000_0_2024-01-12_13-06-55/checkpoint_000122/")
-validate_checkpoint(check_point, 10)
+env = RllibAnalogDesignAutoEnv(generalize=True, path='sampled_specs', sim_output=False, init_method='random')
+for _ in range(num_episode):
+    obs = env.reset()
+    terminated = {"__all__": False}
+    while not terminated["__all__"]:
+        action = {agent_id: ppo.compute_single_action(observation) for agent_id, observation in obs.items()}
+        obs, rew, terminateds, truncated, info = env.step(action)
+        terminated = terminateds["__all__"]
+
+ray.shutdown()
