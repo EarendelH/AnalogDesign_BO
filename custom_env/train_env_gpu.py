@@ -57,7 +57,7 @@ if __name__ == "__main__":
     tune.run(
         "PPO",
         name="PPO",
-        stop={"training_iteration": 2000},
+        stop={"training_iteration": 200},
         checkpoint_freq=1,
         checkpoint_at_end=True,
         local_dir="/home/wuhan/ray_results/" + env_name,
