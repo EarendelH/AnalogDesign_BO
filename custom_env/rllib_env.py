@@ -160,9 +160,18 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         with open(self.sim_config, 'r') as file:
             sim_config = yaml.safe_load(file)
 
-        sim_result = run_spectre_simulation(working_dir, sim_config, self.sim_output_enable)
+        try:
+            sim_result = run_spectre_simulation(working_dir, sim_config, self.sim_output_enable)
+        # For avoid simulation error in init, use zero result instead.
+        except Exception as e:
+            print(f"Warning!!!: {e}. Simulation failed, use zero result instead.")
+            sim_result = {}
+            for sim in sim_config:
+                sim_name = sim['simulation_name']
+                sim_items = sim['simulation_item']
+                sim_result[sim_name] = {item: 0.0 for item in sim_items}
 
-        # For avoid simulation error in step, generate a default result with zero value but correct key
+        # For avoid simulation error in step, generate a default result with zero value but correct key in step method
         self.zero_sim_result = {k: {inner_k: 0.0 for inner_k in v} for k, v in sim_result.items()}
 
         # Normalize the current ideal specs
