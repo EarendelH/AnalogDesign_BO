@@ -1,17 +1,3 @@
-DC:
-  pwr:
-    objective: min
-    constrain_type: soft
-    bounds:
-    - 0.0001
-    - 0.0005
-PSRR:
-  powerSupplyRejectionRatio:
-    objective: max
-    constrain_type: hard
-    bounds:
-    - 10.0
-    - 50.0
 Stability:
   gainBandWidth:
     objective: max
