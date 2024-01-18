@@ -22,6 +22,7 @@ def run_evaluation(checkpoint_path, num_episodes=10):
 
     for episode in range(num_episodes):
         obs = env.reset()
+        print(f"Observation: {obs}")
         done = {"__all__": False}
         while not done["__all__"]:
             action_dict = {}
