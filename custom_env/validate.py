@@ -21,7 +21,7 @@ def run_evaluation(checkpoint_path, num_episodes=10):
     agent = Algorithm.from_checkpoint(checkpoint_path)
 
     for episode in range(num_episodes):
-        obs = env.reset()
+        obs, _ = env.reset()
         print(f"Observation: {obs}")
         done = {"__all__": False}
         while not done["__all__"]:
@@ -37,7 +37,6 @@ def run_evaluation(checkpoint_path, num_episodes=10):
     ray.shutdown()
 
 if __name__ == "__main__":
-    checkpoint_path = ("/home/wuhan/ray_results/AnalogDesignEnv_v0/PPO/"
-                       "PPO_AnalogDesignEnv_v0_5b5b4_00000_0_2024-01-16_21-15-45/checkpoint_000009/")
+    checkpoint_path = ("/home/wuhan/ray_results/AnalogDesignEnv_v0/PPO/PPO_AnalogDesignEnv_v0_e5728_00000_0_2024-01-17_21-54-13/checkpoint_000199")
     num_episode = 10
     run_evaluation(checkpoint_path, num_episode)
