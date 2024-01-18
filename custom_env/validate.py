@@ -7,7 +7,7 @@ from ray.tune.registry import register_env
 
 
 def env_creator(env_config):
-    return RllibAnalogDesignAutoEnv(generalize=True, path='sampled_specs', sim_output=False, init_method='file')
+    return RllibAnalogDesignAutoEnv(generalize=True, path='sampled_specs_validate', sim_output=False, init_method='file')
 
 def run_evaluation(checkpoint_path, num_episodes=10):
 
