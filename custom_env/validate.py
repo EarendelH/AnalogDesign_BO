@@ -1,3 +1,4 @@
+import logging
 import ray
 from ray.rllib.algorithms.ppo import PPO
 from ray.rllib.algorithms.ppo import PPOConfig
@@ -11,7 +12,7 @@ def env_creator(env_config):
 
 def run_evaluation(checkpoint_path, num_episodes=10):
 
-    ray.init()
+    ray.init(logging_level=logging.WARNING)
 
     register_env("AnalogDesignEnv_v0", env_creator)
     env = env_creator({})
