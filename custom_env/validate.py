@@ -24,6 +24,7 @@ def run_evaluation(checkpoint_path, num_episodes=10):
         obs, _ = env.reset()
         print(f"Observation: {obs}")
         done = {"__all__": False}
+        step = 0
         while not done["__all__"]:
             action_dict = {}
             for agent_id, agent_obs in obs.items():
@@ -31,8 +32,9 @@ def run_evaluation(checkpoint_path, num_episodes=10):
                 action = agent.compute_single_action(agent_obs, policy_id=policy_id)
                 action_dict[agent_id] = action
             obs, rew, done, _, info = env.step(action_dict)
+            step += 1
 
-        print(f"Episode reward: {rew} at episode {episode}")
+        print(f"Episode {episode} finished after {step} steps")
 
     ray.shutdown()
 
