@@ -11,6 +11,10 @@ ray.init()
 def env_creator(env_config):
     return RllibAnalogDesignAutoEnv(generalize=True, path='sampled_specs', sim_output=False, init_method='file')
 
+
+def policy_mapping_fn(agent_id, episode, worker, **kwargs):
+    return f"policy_{agent_id[-1]}"
+
 register_env("AnalogDesignEnv_v0", env_creator)
 
 ppo_config = {
@@ -18,7 +22,7 @@ ppo_config = {
     "framework": "torch",
     "multi_agent": {
         "policies": {"policy_1", "policy_2", "policy_3", "policy_4"},
-        "policy_mapping_fn": (lambda aid, episode, worker, **kw: f"policy_{aid[-1]}"),
+        "policy_mapping_fn": policy_mapping_fn,
         "policies_to_train": ["policy_1", "policy_2", "policy_3", "policy_4"],
     },
 }
