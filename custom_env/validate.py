@@ -5,9 +5,6 @@ from ray.rllib.algorithms.algorithm import Algorithm
 from rllib_env import RllibAnalogDesignAutoEnv
 from ray.tune.registry import register_env
 
-num_episode = 10
-
-ray.init()
 
 def env_creator(env_config):
     return RllibAnalogDesignAutoEnv(generalize=True, path='sampled_specs', sim_output=False, init_method='file')
