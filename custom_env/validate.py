@@ -13,7 +13,9 @@ def env_creator(env_config):
     return RllibAnalogDesignAutoEnv(generalize=True, path='sampled_specs', sim_output=False, init_method='file')
 
 def run_evaluation(checkpoint_path, num_episodes=10):
+
     ray.init()
+
     register_env("AnalogDesignEnv_v0", env_creator)
     env = env_creator({})
 
