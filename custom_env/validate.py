@@ -1,6 +1,7 @@
 import ray
 from ray.rllib.algorithms.ppo import PPO
 from ray.rllib.algorithms.ppo import PPOConfig
+from ray.rllib.algorithms.algorithm import Algorithm
 from rllib_env import RllibAnalogDesignAutoEnv
 from ray.tune.registry import register_env
 
@@ -11,34 +12,30 @@ ray.init()
 def env_creator(env_config):
     return RllibAnalogDesignAutoEnv(generalize=True, path='sampled_specs', sim_output=False, init_method='file')
 
+def run_evaluation(checkpoint_path, num_episodes=10):
+    ray.init()
+    register_env("AnalogDesignEnv_v0", env_creator)
+    env = env_creator({})
 
-def policy_mapping_fn(agent_id, episode, worker, **kwargs):
-    return f"policy_{agent_id[-1]}"
+    config = PPOConfig().environment(env="AnalogDesignEnv_v0").to_dict()
+    agent = Algorithm.from_checkpoint(checkpoint_path, config=config)
 
-register_env("AnalogDesignEnv_v0", env_creator)
+    for episode in range(num_episodes):
+        obs = env.reset()
+        done = {"__all__": False}
+        while not done["__all__"]:
+            action_dict = {}
+            for agent_id, agent_obs in obs.items():
+                policy_id = f"policy_{agent_id[-1]}"
+                action = agent.compute_single_action(agent_obs, policy_id=policy_id)
+                action_dict[agent_id] = action
+            obs, rew, done, _, info = env.step(action_dict)
 
-ppo_config = {
-    "env": "AnalogDesignEnv_v0",
-    "framework": "torch",
-    "multi_agent": {
-        "policies": {"policy_1", "policy_2", "policy_3", "policy_4"},
-        "policy_mapping_fn": policy_mapping_fn,
-        "policies_to_train": ["policy_1", "policy_2", "policy_3", "policy_4"],
-    },
-}
+        print(f"Episode reward: {rew} at episode {episode}")
 
-ppo = PPO(config=ppo_config)
+    ray.shutdown()
 
-checkpoint_path = ("/home/wuhan/ray_results/AnalogDesignEnv_v0/"
-                   "PPO/PPO_AnalogDesignEnv_v0_5b5b4_00000_0_2024-01-16_21-15-45/checkpoint_000009/")
-ppo.load_checkpoint(checkpoint_path)
-
-for _ in range(num_episode):
-    obs = ppo.get_env().reset()
-    terminated = {"__all__": False}
-    while not terminated["__all__"]:
-        actions = {agent_id: ppo.compute_single_action(observation) for agent_id, observation in obs.items()}
-        obs, rew, terminateds, truncated, info = ppo.get_env().step(actions)
-        terminated = terminateds["__all__"]
-
-ray.shutdown()
+if __name__ == "__main__":
+    checkpoint_path = "/home/wuhan/ray_results/AnalogDesignEnv_v0/PPO/PPO_AnalogDesignEnv_v0_5b5b4_00000_0_2024-01-16_21-15-45/checkpoint_000009/"
+    num_episode = 10
+    run_evaluation(checkpoint_path, num_episode)
