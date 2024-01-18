@@ -29,14 +29,12 @@ checkpoint_path = ("/home/wuhan/ray_results/AnalogDesignEnv_v0/"
                    "PPO/PPO_AnalogDesignEnv_v0_5b5b4_00000_0_2024-01-16_21-15-45/checkpoint_000009/")
 ppo.load_checkpoint(checkpoint_path)
 
-env = RllibAnalogDesignAutoEnv(generalize=True, path='sampled_specs', sim_output=False, init_method='file')
-
 for _ in range(num_episode):
-    obs = env.reset()
+    obs = ppo.get_env().reset()
     terminated = {"__all__": False}
     while not terminated["__all__"]:
-        action = {agent_id: ppo.compute_single_action(observation) for agent_id, observation in obs.items()}
-        obs, rew, terminateds, truncated, info = env.step(action)
+        actions = {agent_id: ppo.compute_single_action(observation) for agent_id, observation in obs.items()}
+        obs, rew, terminateds, truncated, info = ppo.get_env().step(actions)
         terminated = terminateds["__all__"]
 
 ray.shutdown()
