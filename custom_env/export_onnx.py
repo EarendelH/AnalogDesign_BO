@@ -4,12 +4,12 @@ import ray
 from rllib_env import RllibAnalogDesignAutoEnv
 from ray.tune.registry import register_env
 
-checkpoint_path = ("checkpoint_demo/checkpoint_000199")
+checkpoint_path = ("/home/wuhan/AnalogDesignAuto/AnalogDesignAuto_MA/AnalogDesignAuto_MultiAgent/custom_env/checkpoint_demo/checkpoint_000009")
 
 ray.init()
 
 def env_creator(env_config):
-    return RllibAnalogDesignAutoEnv(generalize=True, path='sampled_specs_validate', sim_output=False, init_method='file')
+    return RllibAnalogDesignAutoEnv(generalize=True, path='sampled_specs_validate', sim_output=False, init_me:thod='file')
 
 def policy_mapping_fn(agent_id):
     return f"policy_{agent_id[-1]}"
