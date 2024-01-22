@@ -11,9 +11,15 @@ ray.init()
 def env_creator(env_config):
     return RllibAnalogDesignAutoEnv(generalize=True, path='sampled_specs_validate', sim_output=False, init_method='file')
 
+def policy_mapping_fn(agent_id):
+    return f"policy_{agent_id[-1]}"
+
 register_env("AnalogDesignEnv_v0", env_creator)
 
 ppo_config = PPOConfig().environment("AnalogDesignEnv_v0")
+ppo_config.multi_agent({"policies_to_train": ["policy_1", "policy_2", "policy_3", "policy_4"],
+                        "policy_mapping_fn": policy_mapping_fn})
+
 ppo = ppo_config.build()
 ppo.restore(checkpoint_path)
 
