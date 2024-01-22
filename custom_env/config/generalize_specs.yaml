@@ -11,3 +11,16 @@ Stability:
     bounds:
     - 15.0
     - 75.0
+Trans:
+  slewRateDown:
+    objective: max
+    constrain_type: hard
+    bounds:
+    - 1000000.0
+    - 10000000.0
+  slewRateUp:
+    objective: max
+    constrain_type: hard
+    bounds:
+    - 1000000.0
+    - 10000000.0
