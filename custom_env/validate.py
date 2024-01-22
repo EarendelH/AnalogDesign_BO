@@ -39,6 +39,6 @@ def run_evaluation(checkpoint_path, num_episodes=10):
     ray.shutdown()
 
 if __name__ == "__main__":
-    checkpoint_path = ("/data/share/train_data/PPO_Result/PPO_AnalogDesignEnv_file_simple_yelab_1/checkpoint_000199")
+    checkpoint_path = ("/home/wuhan/ray_results/AnalogDesignEnv_v0/PPO/PPO_AnalogDesignEnv_v0_e5728_00000_0_2024-01-17_21-54-13/checkpoint_000199/")
     num_episode = 200
     run_evaluation(checkpoint_path, num_episode)
