@@ -16,9 +16,15 @@ def policy_mapping_fn(agent_id):
 
 register_env("AnalogDesignEnv_v0", env_creator)
 
-ppo_config = PPOConfig().environment("AnalogDesignEnv_v0")
-ppo_config.multi_agent({"policies_to_train": ["policy_1", "policy_2", "policy_3", "policy_4"],
-                        "policy_mapping_fn": policy_mapping_fn})
+ppo_config = (
+    PPOConfig()
+    .environment(env="AnalogDesignEnv_v0", clip_actions=True)
+    .multi_agent(
+        policies={"policy_1", "policy_2", "policy_3", "policy_4"},
+        policy_mapping_fn=policy_mapping_fn,
+        policies_to_train=["policy_1", "policy_2", "policy_3", "policy_4"],
+    )
+)
 
 ppo = ppo_config.build()
 ppo.restore(checkpoint_path)
