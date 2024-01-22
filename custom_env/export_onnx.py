@@ -9,7 +9,7 @@ checkpoint_path = ("../checkpoint_demo/checkpoint_000199")
 ray.init()
 
 def env_creator(env_config):
-    return RllibAnalogDesignAutoEnv(generalize=True, path='../sampled_specs_validate', sim_output=False, init_method='file')
+    return RllibAnalogDesignAutoEnv(generalize=True, path='sampled_specs_validate', sim_output=False, init_method='file')
 
 register_env("AnalogDesignEnv_v0", env_creator)
 
