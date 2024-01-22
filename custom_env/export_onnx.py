@@ -53,7 +53,7 @@ policies = ['policy_1', 'policy_2', 'policy_3', 'policy_4']
 
 for policy_name in policies:
     policy = ppo.get_policy(policy_name)
-    export_path = f"~/Downloads/{policy_name}.onnx"
+    export_path = f"/home/wuhan/Downloads/{policy_name}.onnx"
     policy.export_model(export_path, onnx=False)
     print(f"Model for {policy_name} exported to {export_path}")
 
