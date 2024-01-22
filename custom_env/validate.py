@@ -40,5 +40,5 @@ def run_evaluation(checkpoint_path, num_episodes=10):
 
 if __name__ == "__main__":
     checkpoint_path = ("checkpoint_demo/checkpoint_000199")
-    num_episode = 10
+    num_episode = 200
     run_evaluation(checkpoint_path, num_episode)
