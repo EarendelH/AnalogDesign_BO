@@ -4,7 +4,7 @@ import ray
 from rllib_env import RllibAnalogDesignAutoEnv
 from ray.tune.registry import register_env
 
-checkpoint_path = ("../checkpoint_demo/checkpoint_000199")
+checkpoint_path = ("checkpoint_demo/checkpoint_000199")
 
 ray.init()
 
