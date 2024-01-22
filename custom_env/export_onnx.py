@@ -21,7 +21,7 @@ ppo_config = (
     .environment(env="AnalogDesignEnv_v0", clip_actions=True)
     .multi_agent(
         policies={"policy_1", "policy_2", "policy_3", "policy_4"},
-        policy_mapping_fn=policy_mapping_fn,
+        policy_mapping_fn=(lambda aid, episode, worker, **kw: f"policy_{aid[-1]}"),
         policies_to_train=["policy_1", "policy_2", "policy_3", "policy_4"],
     )
 )
