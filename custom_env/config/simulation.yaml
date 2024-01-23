@@ -4,9 +4,8 @@
   simulation_item:
     - phaseMargin
     - gainBandWidth
-- simulation_name: Trans
-  simulation_file: tran.tran.tran
-  parse_func: findSlewRate
+- simulation_name: DC
+  simulation_file: dcOpInfo.info
+  parse_func: findDCValue
   simulation_item:
-    - slewRateUp
-    - slewRateDown
+    - pwr

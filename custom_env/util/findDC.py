@@ -1,121 +1,30 @@
-from util.util_device_info import parse_device_info
-import re
-
-
-def parse_instance_properties(filepath, device_info):
-    # Read the file content
-    with open(filepath, "r") as file:
-        file_content = file.read()
-
-    # Extract the VALUE section
-    match = re.search(r'VALUE(.+)', file_content, re.DOTALL)
-    if not match:
-        raise ValueError("The 'VALUE' section not found in the file.")
-
-    value_section = match.group(1)
-
-    # Split the section into individual device values based on the provided delimiter
-    device_values_raw = re.split(r'\"[\w.]+?\" \"\w+?\" \(', value_section)
-    device_values_raw = [v for v in device_values_raw if v.strip()]
-
-    # Create a dictionary to store the parsed values
-    parsed_values = {}
-
-    # Iterate over the parsed device info to extract corresponding values
-    for device in device_info:
-        device_name_pattern = r'\"([\w.]+?)\" \"' + device['device_name'] + r'\" \('
-        device_name_matches = re.findall(device_name_pattern, value_section)
-
-        # If there are no instances of a particular device, continue to the next device
-        if not device_name_matches:
-            continue
-
-        # Extract values for the properties of each device instance
-        for instance_name in device_name_matches:
-            instance_values = {}
-            instance_pattern = r'\"' + instance_name + r'\" \"' + device['device_name'] + r'\" \(([\s\S]+?)\n\)'
-            instance_match = re.search(instance_pattern, value_section)
-
-            if instance_match:
-                instance_value_str = instance_match.group(1)
-                instance_value_list = [v.strip() for v in instance_value_str.split('\n') if v.strip()]
-
-                for i, prop in enumerate(device['properties']):
-                    if i < len(instance_value_list):
-                        prop_value = instance_value_list[i]
-                        # Convert the value based on its type
-                        if prop['property_type'] == 'FLOAT DOUBLE':
-                            try:
-                                prop_value = float(prop_value)
-                            except ValueError:
-                                prop_value = None  # For values like "nan"
-                        elif prop['property_type'] == 'INT BYTE':
-                            prop_value = int(prop_value)
-
-                        instance_values[prop['property_name']] = prop_value
-
-            parsed_values[instance_name] = instance_values
-
-    return parsed_values
-
-
-def extract_instance_properties(filepath):
-    # Using the previously defined parseDeviceInfo function
-    device_info = parse_device_info(filepath)
-
-    # Read the file content
-    with open(filepath, "r") as file:
-        file_content = file.read()
-
-    # Extracting the device instance names and their types from the VALUE section
-    device_instance_types = re.findall(r'\"([\w.]+?)\" \"(\w+?)\" \(', file_content)
-
-    # Creating a dictionary for instance names and their types
-    instance_type_dict = {instance: dtype for instance, dtype in device_instance_types}
-
-    # Parse the device values using the previously defined function
-    device_values = parse_instance_properties(filepath, device_info)
-
-    # Adding device type information to the parsed values
-    for instance_name, instance_values in device_values.items():
-        instance_values['device_type'] = instance_type_dict.get(instance_name, "Unknown")
-
-    return device_values
+# from extract_device_param_value import parse_device_values, parse_device_param, find_device_param_value
+from util.extract_device_param_value import parse_device_values, parse_device_param, find_device_param_value
 
 
 def findDCValue(filepath):
     # Extract the properties using the previously defined function
-    instance_properties = extract_instance_properties(filepath)
 
     instance_name = "V0"
     property_name = "pwr"
     default_value = 1
 
-    # Retrieve the specific instance and property value
-    instance_details = instance_properties.get(instance_name)
-    property_value = instance_details.get(property_name) if instance_details else None
-
-    if not instance_details or property_value is None:
-        print(f"Warning: Instance '{instance_name}' or property '{property_name}' not found. Power set to 1W.")
-        return {property_name: default_value}
-
-    # Convert the value to float and check for validity
     try:
-        float_value = float(property_value)
-        if float_value != float_value:  # Check for NaN values
-            print(f"Warning: The value of property '{property_name}' is NaN. Power set to 1W.")
-            return {property_name: default_value}
-    except ValueError:
-        print(f"Warning: The value of property '{property_name}' is not a valid number. Power set to 1W.")
-        return {property_name: default_value}
+        value_dict = parse_device_values(filepath)
+        param_dict = parse_device_param(filepath)
+        value = find_device_param_value(instance_name, property_name, value_dict, param_dict)
 
-    return {property_name: default_value}
+        # Check if the value is a valid result
+        if isinstance(value, str):
+            raise ValueError("Error in finding device parameter value")
+
+    except Exception as e:
+        print(f"Warning: {e}. Setting value to default ({default_value}).")
+        value = default_value
+
+    return {property_name: value}
 
 
-# device_instance_properties = extractInstanceProperties("DC.raw/dcOpInfo.info.encode")
-# var = list(device_instance_properties.items())[:]
-# print(var)
-
-# Testing the function of get_instance_property_value
-# power = findDCValue("DC.raw/dcOpInfo.info.encode", "V0", "pwr")
-# print(power)
+# Test Code
+# file_path = "/Users/hanwu/ML/AnalogDesignAuto_MultiAgent/custom_env/netlist_assign_test/DC.raw/dcOpInfo.info.encode"
+# print(findDCValue(file_path))
