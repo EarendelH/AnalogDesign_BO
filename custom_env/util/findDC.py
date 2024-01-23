@@ -13,6 +13,7 @@ def findDCValue(filepath):
         value_dict = parse_device_values(filepath)
         param_dict = parse_device_param(filepath)
         value = find_device_param_value(instance_name, property_name, value_dict, param_dict)
+        value = abs(value)
 
         # Check if the value is a valid result
         if isinstance(value, str):
