@@ -1,11 +1,34 @@
 import pickle
 import numpy as np
 import matplotlib.pyplot as plt
+import pandas as pd
 
 pickle_file = "/Users/hanwu/ML/AnalogDesignAuto_MultiAgent/custom_env/analysis_file/202401222314028359.pkl"
 
 with open(pickle_file, 'rb') as f:
     data = pickle.load(f)
+
+init_param = data['initial_data']['init_param']
+init_param = dict(init_param)
+updated_params = [step['updated_param'] for step in data['steps_data']]
+updated_params = [dict(params) for params in updated_params]
+
+param_names = set(init_param.keys())
+for params in updated_params:
+    param_names.update(params.keys())
+
+params_dict = {param: [init_param.get(param, None)] for param in param_names}
+for i, params in enumerate(updated_params, start=1):
+    for param in param_names:
+        params_dict[param].append(params.get(param, params_dict[param][i-1]))
+
+df = pd.DataFrame(params_dict)
+df.insert(0, 'Step', ['Initial'] + [f'Step {i}' for i in range(1, len(updated_params) + 1)])
+df.set_index('Step', inplace=True)
+
+print(df.T)
+# file_path = "~/Downloads/params.csv"
+# df.to_csv(file_path)
 
 ideal_specs = data['initial_data']['ideal_specs']
 ideal_specs_extracted = {key: value['value'] for key, value in ideal_specs.items()}
