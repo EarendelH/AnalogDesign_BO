@@ -25,7 +25,7 @@ from ray.rllib.env.multi_agent_env import MultiAgentEnv
 
 
 class RllibAnalogDesignAutoEnv(MultiAgentEnv):
-    def __init__(self, generalize=True, path='', sim_output=False, init_method='random'):
+    def __init__(self, generalize=True, path='', sim_output=False, init_method='file'):
 
         # Init values
         self.resetted = None

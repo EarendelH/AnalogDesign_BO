@@ -2,7 +2,7 @@ import pickle
 import numpy as np
 import matplotlib.pyplot as plt
 
-pickle_file = "/Users/hanwu/Downloads/Pickle/202401222328071884.pkl"
+pickle_file = "/Users/hanwu/ML/AnalogDesignAuto_MultiAgent/custom_env/analysis_file/202401222314028359.pkl"
 
 with open(pickle_file, 'rb') as f:
     data = pickle.load(f)
