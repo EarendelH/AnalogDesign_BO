@@ -57,7 +57,7 @@ if __name__ == "__main__":
     tune.run(
         "PPO",
         name="PPO",
-        stop={"training_iteration": 5000},
+        stop={"training_iteration": 500},
         checkpoint_freq=10,
         checkpoint_at_end=True,
         local_dir="~/ray_results/" + env_name,
