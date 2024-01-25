@@ -2,7 +2,6 @@ import pickle
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
-import matplotlib.style as style
 
 # Load data from the provided pickle file
 pickle_file = "/Users/hanwu/Downloads/run_test/202401251122043275.pkl"
@@ -68,7 +67,6 @@ index = np.arange(len(sim_results) + 1)
 n_metrics = len(metrics_data)
 fig, axs = plt.subplots(1, n_metrics, figsize=(8 * n_metrics, 6), constrained_layout=True)
 
-print(plt.style.available)
 
 # Plotting the values of each metric and their ideal specifications if available
 for i, (metric, values) in enumerate(metrics_data.items()):
