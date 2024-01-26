@@ -10,7 +10,7 @@ def set_max_process_limit():
         if 'bash' or '-bash' in shell:
             print("Setting max process limit to 40960")
             subprocess.call('ulimit -u 40960', shell=True)
-        elif 'tcsh' in shell:
+        elif 'tcsh' or '-tcsh' in shell:
             print("Setting max process limit to 40960")
             subprocess.call('limit maxproc 40960', shell=True)
         else:
