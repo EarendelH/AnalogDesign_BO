@@ -8,11 +8,11 @@ def set_max_process_limit():
         shell = subprocess.check_output('echo $0', shell=True).decode().strip()
         print(f"SHELL: {shell}")
         if 'bash' or '-bash' in shell:
-            print("Setting max process limit to 40960")
-            subprocess.call('ulimit -u 40960', shell=True)
+            print("Setting max process limit to 409600")
+            subprocess.call('ulimit -u 409600', shell=True)
         elif 'tcsh' or '-tcsh' in shell:
-            print("Setting max process limit to 40960")
-            subprocess.call('limit maxproc 40960', shell=True)
+            print("Setting max process limit to 409600")
+            subprocess.call('limit maxproc 409600', shell=True)
         else:
             print("Unknown shell. Not setting max process limit. Continuing? (y/n)")
             choice = input().strip().lower()
@@ -35,7 +35,7 @@ from rllib_env import RllibAnalogDesignAutoEnv
 num_cpu = int(os.cpu_count() * 0.8)
 
 def env_creator(env_config):
-    return RllibAnalogDesignAutoEnv(generalize=True, path='sampled_specs', sim_output=False, init_method='file')
+    return RllibAnalogDesignAutoEnv(generalize=True, path='sampled_specs', sim_output=False, init_method='random')
 
 
 register_env("AnalogDesignEnv_v0", env_creator)
