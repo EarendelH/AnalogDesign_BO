@@ -7,12 +7,18 @@ def set_max_process_limit():
     try:
         shell = subprocess.check_output('echo $0', shell=True).decode().strip()
         print(f"SHELL: {shell}")
-        if 'bash' in shell:
+        if 'bash' or '-bash' in shell:
             print("Setting max process limit to 40960")
             subprocess.call('ulimit -u 40960', shell=True)
         elif 'tcsh' in shell:
             print("Setting max process limit to 40960")
             subprocess.call('limit maxproc 40960', shell=True)
+        else:
+            print("Unknown shell. Not setting max process limit. Continuing? (y/n)")
+            choice = input().strip().lower()
+            if choice != 'n':
+                print("Exiting")
+                sys.exit(1)
     except subprocess.SubprocessError as e:
         print(f"Error setting max process limit: {e} and exiting")
         sys.exit(1)
@@ -36,8 +42,7 @@ register_env("AnalogDesignEnv_v0", env_creator)
 
 if __name__ == "__main__":
     env_name = "AnalogDesignEnv_v0"
-    context = ray.init()
-    print(context.dashboard_url)
+    ray.init()
 
     # Restore or Initialize train
     restore_checkpoint = input("Restore from checkpoint? (y/n): ").strip().lower()
