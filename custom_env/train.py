@@ -39,6 +39,25 @@ if __name__ == "__main__":
     context = ray.init()
     print(context.dashboard_url)
 
+    # Restore or Initialize train
+    restore_checkpoint = input("Restore from checkpoint? (y/n): ").strip().lower()
+    checkpoint_path = None
+    if restore_checkpoint == "y":
+        checkpoint_path = input("Checkpoint path: ").strip()
+        assert os.path.exists(checkpoint_path), "Checkpoint path does not exist"
+        print(f"Restoring from checkpoint: {checkpoint_path}")
+
+    # Typing Train Iterations
+    train_iterations = input("Train iterations(Default 200): ").strip()
+    if not train_iterations:
+        train_iterations = 200
+    else:
+        try:
+            train_iterations = int(train_iterations)
+        except ValueError:
+            print("Invalid input. Applying default value 200")
+            train_iterations = 200
+
     config = (
         PPOConfig()
         .environment(env="AnalogDesignEnv_v0", clip_actions=True)
@@ -69,12 +88,15 @@ if __name__ == "__main__":
         )
     )
 
+    user_home_dir = os.path.expanduser("~")
+
     tune.run(
         "PPO",
         name="PPO",
-        stop={"training_iteration": 5000},
-        checkpoint_freq=10,
+        stop={"training_iteration": train_iterations},
+        restore=checkpoint_path if restore_checkpoint == "y" else None,
+        checkpoint_freq=25,
         checkpoint_at_end=True,
-        local_dir="~/ray_results/" + env_name,
+        local_dir=f"{user_home_dir}/ray_results/{env_name}",
         config=config.to_dict(),
     )
