@@ -6,7 +6,7 @@ import datetime
 import random
 import shutil
 
-from util.gen_action_sapce import gen_action_space
+from util.gen_action_sapce import gen_masked_action_space
 from util.gen_obs_space import gen_obs_space_extend, flatten_obs_space
 # from util.gen_obs_space import gen_obs_space_simple
 from util.gen_param_space import gen_param_space
@@ -20,6 +20,8 @@ from util.update_obs_space import update_obs_space, flatten_observation
 # from util.update_obs_space import update_obs_space_simple
 from util.normlization import norm_ideal_spec, norm_sim_spec
 from util.util_func import retry_decorator
+from util.init_param import gen_init_param
+
 
 from ray.rllib.env.multi_agent_env import MultiAgentEnv
 
@@ -43,7 +45,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         self.current_path = os.getcwd()
 
         # Pass action mask flag
-        self.action_mask_enable = action_mask
+        self.action_mask = action_mask
 
         # Pass generalization flag
         self.generalize = generalize
@@ -76,6 +78,8 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         self.sim_config = os.path.join(self.current_path, self.sim_config)
         self.init_param = "config/init_param.yaml"
         self.init_param = os.path.join(self.current_path, self.init_param)
+        self.device_mask_config = "config/device_mask.yaml"
+        self.device_mask_config = os.path.join(self.current_path, self.device_mask_config)
 
         # Set netlist directory
         self.unassigned_netlist_dir = "netlist_template"
@@ -101,7 +105,8 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
                                                                         self.agent_assign_config))
         # print(f"observation_space: {self.observation_space}")
         self._action_space_in_preferred_format = True
-        self.action_space = gen_action_space(self.agent_assign_config)
+        self.action_space = gen_masked_action_space(action_mask, self.device_mask_config, self.agent_assign_config)
+        # self.action_space = gen_action_space(self.agent_assign_config)
         # print(f"action_space: {self.action_space}")
 
         self.resetted = False
@@ -118,28 +123,9 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         print(f"Initialing!!!Generalize flag: {self.generalize}")
         print(f"Initialing!!!Ideal specs: {self.ideal_specs}")
 
-        # If self.init_param file exists, use the init_param file as the initial param or
-        # Select the middle point of the param space as the initial param
-
-        init_param = OrderedDict()
-
-        # Select init method
-        if self.init_method == 'file':
-            with open(self.init_param, 'r') as file:
-                init_param = yaml.safe_load(file)
-            print(f"Initialing!!!init method: file, init param: {init_param}")
-        if self.init_method == 'half':
-            for param, value_list in self.param_space.items():
-                n = len(value_list)
-                middle_index = n // 2 - 1 if n % 2 == 0 else n // 2
-                init_param[param] = value_list[middle_index]
-            print(f"Initialing!!!init method: half, init param: {init_param}")
-        if self.init_method == 'random':
-            for param, value_list in self.param_space.items():
-                n = len(value_list)
-                random_index = random.randint(0, n - 1)
-                init_param[param] = value_list[random_index]
-            print(f"Initialing!!!init method: random, init param: {init_param}")
+        # Generate init param
+        init_param = gen_init_param(self.init_method, self.init_param, self.action_mask, self.device_mask_config,
+                                    self.param_space)
 
         # Generate working directory
         working_dir = create_work_dir(self.run_root_dir)
@@ -245,6 +231,17 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         working_dir = create_work_dir(self.run_root_dir)
         print(f"Step!!! Working directory: {working_dir} with step number: {self.step_num}")
 
+        with open(self.device_mask_config, 'r') as file:
+            device_mask = yaml.safe_load(file)
+
+        if self.action_mask:
+            for agent, device_lists in action_dict.items():
+                key_to_add = {}
+                for master_key, slave_keys in device_mask.items():
+                    if master_key in device_lists:
+                        for new_key in slave_keys:
+                            key_to_add[new_key] = device_lists[master_key]
+
         print(f"Step!!!Actions: {action_dict} with step number: {self.step_num}")
         # Flatten all actions
         all_action_flatten = OrderedDict()
@@ -279,7 +276,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
 
         # Run spectre simulation and normalize the result
         # Define a private function for retrying
-        @retry_decorator(retry_count=2, delay_seconds=1, default_value=self.zero_sim_result)
+        @retry_decorator(retry_count=2, delay_seconds=0.5, default_value=self.zero_sim_result)
         def _run_simulation_with_retry():
             return run_spectre_simulation(working_dir, sim_config, self.sim_output_enable)
 
