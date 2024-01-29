@@ -3,6 +3,7 @@ import sys
 import torch
 import os
 
+
 def set_max_process_limit():
     try:
         shell = subprocess.check_output('echo $0', shell=True).decode().strip()
@@ -23,6 +24,7 @@ def set_max_process_limit():
         print(f"Error setting max process limit: {e} and exiting")
         sys.exit(1)
 
+
 set_max_process_limit()
 
 import ray
@@ -34,8 +36,10 @@ from rllib_env import RllibAnalogDesignAutoEnv
 
 num_cpu = int(os.cpu_count() * 0.8)
 
+
 def env_creator(env_config):
-    return RllibAnalogDesignAutoEnv(generalize=True, path='sampled_specs', sim_output=False, init_method='random')
+    return RllibAnalogDesignAutoEnv(action_mask=True, generalize=True, path='sampled_specs', sim_output=False,
+                                    init_method='random')
 
 
 register_env("AnalogDesignEnv_v0", env_creator)
