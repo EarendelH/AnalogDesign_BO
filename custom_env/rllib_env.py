@@ -235,12 +235,13 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
             device_mask = yaml.safe_load(file)
 
         if self.action_mask:
-            for agent, device_lists in action_dict.items():
-                key_to_add = {}
-                for master_key, slave_keys in device_mask.items():
-                    if master_key in device_lists:
-                        for new_key in slave_keys:
-                            key_to_add[new_key] = device_lists[master_key]
+            for key in device_mask:
+                for agent_key in action_dict:
+                    if key in action_dict[agent_key]:
+                        new_values = device_mask[key]
+                        for new_key in new_values:
+                            new_value = action_dict[agent_key][key]
+                            action_dict[agent_key][new_key] = new_value
 
         print(f"Step!!!Actions: {action_dict} with step number: {self.step_num}")
         # Flatten all actions
