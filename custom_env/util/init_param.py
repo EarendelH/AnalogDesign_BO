@@ -44,6 +44,8 @@ def gen_init_param(init_method_flag, init_param_path, action_mask_flag, device_m
 
         print(f"Initialing!!!init method: random, init param: {init_param}")
 
+    return init_param
+
 
 # Test Code
 # init_method_flag = 'random'
