@@ -25,7 +25,7 @@ from ray.rllib.env.multi_agent_env import MultiAgentEnv
 
 
 class RllibAnalogDesignAutoEnv(MultiAgentEnv):
-    def __init__(self, generalize=True, path='', sim_output=False, init_method='file'):
+    def __init__(self, action_mask=True, generalize=True, path='', sim_output=False, init_method='file'):
 
         # Init values
         self.resetted = None
@@ -41,6 +41,9 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
 
         # Get absolute path
         self.current_path = os.getcwd()
+
+        # Pass action mask flag
+        self.action_mask_enable = action_mask
 
         # Pass generalization flag
         self.generalize = generalize
@@ -67,8 +70,6 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         # Load config files
         self.agent_assign_config = "config/agent_assign.yaml"
         self.agent_assign_config = os.path.join(self.current_path, self.agent_assign_config)
-        self.result_config = "config/result.yaml"
-        self.result_config = os.path.join(self.current_path, self.result_config)
         self.param_range_config = "config/param_range.yaml"
         self.param_range_config = os.path.join(self.current_path, self.param_range_config)
         self.sim_config = "config/simulation.yaml"
@@ -96,10 +97,8 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         self.terminateds = set()
         self.truncateds = set()
         self._obs_space_in_preferred_format = True
-        self.observation_space = flatten_obs_space(gen_obs_space_extend(self.result_config, self.param_range_config,
+        self.observation_space = flatten_obs_space(gen_obs_space_extend(self.sim_config, self.param_range_config,
                                                                         self.agent_assign_config))
-        # self.observation_space = gen_obs_space_simple(self.result_config, self.param_range_config,
-        #                                               self.agent_assign_config)
         # print(f"observation_space: {self.observation_space}")
         self._action_space_in_preferred_format = True
         self.action_space = gen_action_space(self.agent_assign_config)

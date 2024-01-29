@@ -2,8 +2,8 @@ import gymnasium
 import numpy as np
 import yaml
 
-from util.util_func import unit_conversion
-# from util_func import unit_conversion
+# from util.util_func import unit_conversion
+from util_func import unit_conversion
 
 
 def gen_obs_space(result_config_file, param_range_config_file):
@@ -162,10 +162,10 @@ def gen_obs_space_simple(result_config_file, param_range_config_file, agent_assi
 # dtype=float32)), ('slewRateDown', array([0.6193389], dtype=float32)), ('slewRateUp', array([0.75055516],
 # dtype=float32))]))])
 
-def gen_obs_space_extend(result_config_file, param_range_config_file, agent_assign_yaml_path):
+def gen_obs_space_extend(sim_config_file, param_range_config_file, agent_assign_yaml_path):
     """
     Generate observation space for the custom environment.
-    :param result_config_file: path of the result config file
+    :param sim_config_file: path of the result config file
     :param param_range_config_file: path of the parameter range config file
     :return: obs_space: gymnasium.spaces.Dict, observation space for the custom environment
     """
@@ -174,8 +174,15 @@ def gen_obs_space_extend(result_config_file, param_range_config_file, agent_assi
         agent_assign = yaml.safe_load(file)
 
     # Import YAML file
-    with open(result_config_file, 'r') as file:
-        result_config = yaml.safe_load(file)
+    with open(sim_config_file, 'r') as file:
+        sim_config = yaml.safe_load(file)
+
+    result_config = {}
+    for item in sim_config:
+        sim_name = item['simulation_name']
+        sim_item = item['simulation_item']
+        result_config[sim_name] = sim_item
+
     with open(param_range_config_file, 'r') as file:
         param_range_config = yaml.safe_load(file)
 
@@ -208,12 +215,14 @@ def gen_obs_space_extend(result_config_file, param_range_config_file, agent_assi
 
     return obs_space
 
+
 # Test Code
-# result_config_file = "../config/result.yaml"
+# sim_config_file = "../config/simulation.yaml"
 # param_range_config_file = "../config/param_range.yaml"
 # agent_assign_yaml_file = "../config/agent_assign.yaml"
-# observation_space = gen_obs_space_extend(result_config_file, param_range_config_file, agent_assign_yaml_file)
+# observation_space = gen_obs_space_extend(sim_config_file, param_range_config_file, agent_assign_yaml_file)
 # print(f"observation_space: {observation_space}")
+
 
 # Output observation_space:
 # Dict('Agent_1': Dict('cur_param': Dict('IB': Box(1e-06, 5e-05, (1,), float32),
