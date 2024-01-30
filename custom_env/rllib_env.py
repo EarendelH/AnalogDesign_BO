@@ -160,7 +160,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
                       f"init step number: {init_step}")
                 # 0 cut-off, 1 triode, 2 saturation, 3 subth, 4 breakdown
                 # Check whether all transistors are in saturation/sub-threshold/triode region
-                valid_init_param = any(item != 1 and item != 2 and item != 3 for item in operation_region_list)
+                valid_init_param = all(item in [1, 2, 3] for item in operation_region_list)
                 init_step += 1
                 # Delete working temp directory, if it exists
                 try:
