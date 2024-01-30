@@ -2,7 +2,8 @@ from ray.rllib.utils import check_env
 from rllib_env import RllibAnalogDesignAutoEnv
 
 if __name__ == "__main__":
-    env = RllibAnalogDesignAutoEnv(action_mask=True, generalize=True, path='sampled_specs', sim_output=False,
-                                   init_method='random')
+    env = RllibAnalogDesignAutoEnv(generalize=True, path='sampled_specs', sim_output=False, init_method='random',
+                                   action_mask=True, init_dc_check=True)
+
     check_env(env)
     print("Test passed")

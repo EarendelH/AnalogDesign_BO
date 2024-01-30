@@ -130,6 +130,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
 
         # Generate init param
         if self.init_method == 'random' and self.init_dc_check:
+            print(f"Initaling Checking!!!Init method: {self.init_method} with init_dc_check: {self.init_dc_check}")
             valid_init_param = False
             init_step = 0
             while not valid_init_param:
