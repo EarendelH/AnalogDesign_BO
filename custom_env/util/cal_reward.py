@@ -57,3 +57,43 @@ def cal_reward(ideal_specs_dict, cur_specs_dict):
 
 # Output
 # -0.20600000000000002
+
+def cal_reward_simple(ideal_specs_dict, cur_specs_dict):
+    """
+    Calculate the reward based on the ideal specs and current specs.
+    :param ideal_specs_dict: Dict with ideal specs value and property
+    :param cur_specs_dict: Dict with current specs
+    :return: reward: float, reward value
+    """
+
+    # Flatten cur_specs_dict
+    cur_specs_flatten = {k: v for d in cur_specs_dict.values() for k, v in d.items()}
+
+    rew = 0
+
+    epsilon = 0.1
+
+    for spec, detail in ideal_specs_dict.items():
+
+        single_reward = 0
+
+        ideal_spec_value = float(detail['value'])
+        cur_spec_value = float(cur_specs_flatten[spec])
+        constrain_type = detail['constrain_type']
+        constrain_objective = detail['objective']
+
+        if constrain_type == 'hard' and constrain_objective == "max":
+            single_reward = 0 if cur_spec_value >= ideal_spec_value else -1
+        elif constrain_type == 'hard' and constrain_objective == "min":
+            single_reward = 0 if cur_spec_value <= ideal_spec_value else -1
+        elif constrain_type == 'soft' and constrain_objective == "min":
+            single_reward = epsilon * (ideal_spec_value - cur_spec_value) / (cur_spec_value + ideal_spec_value)
+        elif constrain_type == 'soft' and constrain_objective == "max":
+            single_reward = epsilon * (cur_spec_value - ideal_spec_value) / (cur_spec_value + ideal_spec_value)
+        # print(f"Debug!!! {spec}: {single_reward} ideal_spec_value: {ideal_spec_value} cur_spec_value: {
+        # cur_spec_value}")
+        rew += float(single_reward)
+
+    rew = 5 if rew >= -0.01 else rew
+
+    return rew
