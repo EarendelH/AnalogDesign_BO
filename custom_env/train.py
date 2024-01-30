@@ -34,12 +34,12 @@ from ray.tune.registry import register_env
 
 from rllib_env import RllibAnalogDesignAutoEnv
 
-num_cpu = int(os.cpu_count() * 0.8)
+num_cpu = int(os.cpu_count() * 0.9)
 
 
 def env_creator(env_config):
-    return RllibAnalogDesignAutoEnv(action_mask=True, generalize=True, path='sampled_specs', sim_output=False,
-                                    init_method='random')
+    return RllibAnalogDesignAutoEnv(generalize=True, path='sampled_specs', sim_output=False, init_method='random',
+                                    action_mask=True, init_dc_check=True)
 
 
 register_env("AnalogDesignEnv_v0", env_creator)
@@ -84,7 +84,7 @@ if __name__ == "__main__":
             sgd_minibatch_size=64,
             num_sgd_iter=10,
             model={
-                "fcnet_hiddens": [256, 256, 256, 256, 256],
+                "fcnet_hiddens": [512, 512, 512, 512, 512],
             }
         )
         .debugging(log_level="DEBUG")
