@@ -42,6 +42,7 @@ def process_paragraph(paragraph):
 
     return paragraph_dict
 
+
 def parse_device_values(filepath):
     """
     Parses a file containing device data and extracts the values.
@@ -70,6 +71,7 @@ def parse_device_values(filepath):
     processed_device_dict = [process_paragraph(paragraph) for paragraph in device_raw_info]
 
     return processed_device_dict
+
 
 # Test Code
 # filepath = "/Users/hanwu/ML/AnalogDesignAuto_MultiAgent/custom_env/netlist_assign_test/DC.raw/dcOpInfo.info.encode"
@@ -171,6 +173,7 @@ def dict_to_csv(dict_data, csv_file_path):
                     properties.get("Description", "")
                 ])
 
+
 # Test Code
 # filepath = "/Users/hanwu/ML/AnalogDesignAuto_MultiAgent/custom_env/netlist_assign_test/DC.raw/dcOpInfo.info.encode"
 # value_param = parse_device_param(filepath)
@@ -218,13 +221,62 @@ def find_device_param_value(device_name, param_name, value_dict, param_dict):
     # Retrieve the value from the values list
     return device_info[device_name]['values'][param_index]
 
+
 # Test Code
 # device_name = "V0"
 # param_name = "pwr"
 # filepath = "/Users/hanwu/ML/AnalogDesignAuto_MultiAgent/custom_env/netlist_assign_test/DC.raw/dcOpInfo.info.encode"
 # value_dict = parse_device_values(filepath)
+# print(value_dict)
 # param_dict = parse_device_param(filepath)
+# print(param_dict)
 # print(find_device_param_value(device_name, param_name, value_dict, param_dict))
 
 # Output
 # -0.000803601
+
+
+def extract_group_params(device_type_str, param_name_str, value_dict_list, param_list_dict):
+    extract_values = []
+    for values_dict in value_dict_list:
+        for device_id, device_info in values_dict.items():
+            if device_info['Device_Type'] == device_type_str:
+                param_index = list(param_list_dict[device_type_str].keys()).index(param_name_str)
+                value = device_info['values'][param_index]
+                extract_values.append(value)
+
+    return extract_values
+
+
+# Test Code
+# filepath = "/Users/hanwu/ML/AnalogDesignAuto_MultiAgent/custom_env/netlist_assign_test/DC.raw/dcOpInfo.info.encode"
+# value_dict = parse_device_values(filepath)
+# param_dict = parse_device_param(filepath)
+# device_type = "bsim4"
+# param_name = "region"
+# print(extract_group_params(device_type, param_name, value_dict, param_dict))
+
+# Output
+# [2, 2, 2, 2, 1, 1, 1, 2, 2, 2, 1, 1, 1, 2, 2, 1]
+
+# 0 cut-off
+# 1 triode
+# 2 sat
+# 3 subth
+# 4 breakdown
+
+def extract_operation_region(dc_result_file_path):
+    device_type_str = "bsim4"
+    param_name_str = "region"
+    value_dict_list = parse_device_values(dc_result_file_path)
+    param_list_dict = parse_device_param(dc_result_file_path)
+    operation_region_list = extract_group_params(device_type_str, param_name_str, value_dict_list, param_list_dict)
+
+    return operation_region_list
+
+# Test Code
+# filepath = "/Users/hanwu/ML/AnalogDesignAuto_MultiAgent/custom_env/netlist_assign_test/DC.raw/dcOpInfo.info.encode"
+# print(extract_operation_region(filepath))
+
+# Output
+# [2, 2, 2, 2, 1, 1, 1, 2, 2, 2, 1, 1, 1, 2, 2, 1]
