@@ -25,7 +25,12 @@ def set_max_process_limit():
         sys.exit(1)
 
 
-set_max_process_limit()
+print("Do you want to set the max process limit? (y/n)")
+choice = input().strip().lower()
+if choice == 'y':
+    set_max_process_limit()
+else:
+    print("Continuing without setting max process limit.")
 
 import ray
 from ray import tune
