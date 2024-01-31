@@ -215,20 +215,20 @@ def update_obs_space_w_type(ideal_specs_dict, cur_specs_dict, cur_param_input, p
 
     device_type = {}
     # Add type sub-dict
-    # 1 for pch, 2 for nch, 3 for vsource, 4 for isource
+    # 0 for pch, 1 for nch, 2 for vsource, 3 for isource
     for key, value in param_range_config.items():
         if key == 'other_variable':
             for param in value['params']:
                 device_name = param['variable_name']
                 if device_name.startswith('I'):
-                    device_type[device_name] = 4
-                elif device_name.startswith('V'):
                     device_type[device_name] = 3
+                elif device_name.startswith('V'):
+                    device_type[device_name] = 2
         else:
             if value['instance_type'] == 'nch_mac':
-                device_type[key] = 2
-            if value['instance_type'] == 'pch_mac':
                 device_type[key] = 1
+            if value['instance_type'] == 'pch_mac':
+                device_type[key] = 0
 
     # Combine three dicts into one
     dict_sum = {"cur_specs": cur_specs_flatten, "ideal_specs": ideal_specs_flatten, "cur_param": cur_param_dict,
