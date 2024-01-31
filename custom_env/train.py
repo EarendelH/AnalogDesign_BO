@@ -89,7 +89,7 @@ if __name__ == "__main__":
             sgd_minibatch_size=64,
             num_sgd_iter=10,
             model={
-                "fcnet_hiddens": [512, 512, 512, 512, 512],
+                "fcnet_hiddens": [512, 512, 512, 512, 512, 512, 512, 512, 512, 512],
             }
         )
         .debugging(log_level="DEBUG")
