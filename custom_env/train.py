@@ -25,8 +25,7 @@ def set_max_process_limit():
         sys.exit(1)
 
 
-print("Do you want to set the max process limit? (y/n)")
-choice = input().strip().lower()
+choice = input("Do you want to set the max process limit? (y/n)").strip().lower()
 if choice == 'y':
     set_max_process_limit()
 else:
@@ -39,7 +38,9 @@ from ray.tune.registry import register_env
 
 from rllib_env import RllibAnalogDesignAutoEnv
 
-num_cpu = int(os.cpu_count() * 0.9)
+cpu_count = os.cpu_count()
+num_cpu = input(f"Total CPU cores available: {cpu_count}. Enter number of CPU cores to use: ").strip()
+num_cpu = int(num_cpu)
 
 
 def env_creator(env_config):
