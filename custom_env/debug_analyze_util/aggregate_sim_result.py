@@ -1,7 +1,7 @@
 import os
 import pickle
 import sys
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 
 def flatten_result(sim_result):
@@ -27,35 +27,38 @@ def update_aggregated_metrics(aggregated_metrics, initial_sim_result, sim_result
                 aggregated_metrics[metric].append(value)
 
 
-def process_file(file_path, aggregated_metrics):
+def process_file(file_path):
     try:
         with open(file_path, 'rb') as f:
             data = pickle.load(f)
-
         initial_sim_result = flatten_result(data['initial_data']['sim_result'])
         sim_results = [flatten_result(step['sim_result']) for step in data['steps_data']]
-
-        update_aggregated_metrics(aggregated_metrics, initial_sim_result, sim_results)
+        return initial_sim_result, sim_results
     except EOFError:
-        print(f"Warning: Unable to read {file_path}, skipping.")
+        print(f"Error reading file: {file_path}. File may be empty or corrupted.")
+        return None, None
 
 
 def scan_and_aggregate_metrics(input_folder, output_file):
-    """遍历文件夹并汇总metrics数据"""
     aggregated_metrics = {}
-    files = [os.path.join(root, file) for root, dirs, files in os.walk(input_folder) for file in files if file.endswith('.pkl')]
-    total_files = len(files)
-    print(f"Found {total_files} pickle files in the folder.")
+    file_paths = [os.path.join(root, file)
+                  for root, dirs, files in os.walk(input_folder)
+                  for file in files if file.endswith('.pkl')]
+
+    print(f"Found {len(file_paths)} pickle files.")
 
     with ThreadPoolExecutor() as executor:
-        for i, file_path in enumerate(files, 1):
-            executor.submit(process_file, file_path, aggregated_metrics)
-            print(f"Processing file {i}/{total_files}: {file_path}")
+        future_to_file = {executor.submit(process_file, file_path): file_path for file_path in file_paths}
+        for i, future in enumerate(as_completed(future_to_file), 1):
+            file_path = future_to_file[future]
+            initial_sim_result, sim_results = future.result()
+            if initial_sim_result is not None and sim_results is not None:
+                update_aggregated_metrics(aggregated_metrics, initial_sim_result, sim_results)
+            print(f"Processed {i}/{len(file_paths)} files.")
 
     # 保存整合后的数据为pickle文件
     with open(output_file, 'wb') as f:
         pickle.dump(aggregated_metrics, f)
-    print("Aggregation complete. Output saved.")
 
 
 if __name__ == "__main__":
