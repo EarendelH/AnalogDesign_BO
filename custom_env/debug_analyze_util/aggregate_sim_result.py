@@ -1,6 +1,7 @@
 import os
 import pickle
 import sys
+from concurrent.futures import ThreadPoolExecutor
 
 
 def flatten_result(sim_result):
@@ -26,15 +27,8 @@ def update_aggregated_metrics(aggregated_metrics, initial_sim_result, sim_result
                 aggregated_metrics[metric].append(value)
 
 
-def scan_and_aggregate_metrics(input_folder, output_file):
-    aggregated_metrics = {}
-    pickle_files = [f for f in os.listdir(input_folder) if f.endswith('.pkl')]
-    total_files = len(pickle_files)
-    print(f"Found {total_files} pickle files in the folder.")
-
-    for i, file in enumerate(pickle_files, start=1):
-        print(f"Processing file {i} of {total_files}...")
-        file_path = os.path.join(input_folder, file)
+def process_file(file_path, aggregated_metrics):
+    try:
         with open(file_path, 'rb') as f:
             data = pickle.load(f)
 
@@ -42,10 +36,26 @@ def scan_and_aggregate_metrics(input_folder, output_file):
         sim_results = [flatten_result(step['sim_result']) for step in data['steps_data']]
 
         update_aggregated_metrics(aggregated_metrics, initial_sim_result, sim_results)
+    except EOFError:
+        print(f"Warning: Unable to read {file_path}, skipping.")
 
+
+def scan_and_aggregate_metrics(input_folder, output_file):
+    """遍历文件夹并汇总metrics数据"""
+    aggregated_metrics = {}
+    files = [os.path.join(root, file) for root, dirs, files in os.walk(input_folder) for file in files if file.endswith('.pkl')]
+    total_files = len(files)
+    print(f"Found {total_files} pickle files in the folder.")
+
+    with ThreadPoolExecutor() as executor:
+        for i, file_path in enumerate(files, 1):
+            executor.submit(process_file, file_path, aggregated_metrics)
+            print(f"Processing file {i}/{total_files}: {file_path}")
+
+    # 保存整合后的数据为pickle文件
     with open(output_file, 'wb') as f:
         pickle.dump(aggregated_metrics, f)
-    print(f"All files processed. Output saved to {output_file}")
+    print("Aggregation complete. Output saved.")
 
 
 if __name__ == "__main__":
