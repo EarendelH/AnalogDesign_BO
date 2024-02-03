@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 # Load data from the provided pickle file
-pickle_file = "/data/share/train_data/run_data_three/202401232334136407.pkl"
+pickle_file = "/Users/hanwu/ML/AnalogDesignAuto_MultiAgent/custom_env/analysis_file/202401232334136407.pkl"
 with open(pickle_file, 'rb') as f:
     data = pickle.load(f)
 
