@@ -2,6 +2,7 @@ import os
 import pickle
 import sys
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from joblib import dump
 
 
 def flatten_result(sim_result):
@@ -56,9 +57,8 @@ def scan_and_aggregate_metrics(input_folder, output_file):
                 update_aggregated_metrics(aggregated_metrics, initial_sim_result, sim_results)
             print(f"Processed {i}/{len(file_paths)} files.")
 
-    # 保存整合后的数据为pickle文件
     with open(output_file, 'wb') as f:
-        pickle.dump(aggregated_metrics, f)
+        dump(aggregated_metrics, f)
 
 
 if __name__ == "__main__":
