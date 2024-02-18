@@ -14,7 +14,8 @@ from util.gen_param_space import gen_param_space
 from util.util_func import create_work_dir
 from util.assign_param2netlist import assign_param2netlist
 from util.run_spectre_simulation import run_spectre_simulation
-from util.cal_reward import cal_reward_simple as cal_reward
+# from util.cal_reward import cal_reward_simple as cal_reward
+from util.cal_reward import cal_reward
 from util.generalize_config import generalize_config
 from util.update_param import update_parameters
 # from util.update_obs_space import update_obs_space, flatten_observation
