@@ -40,7 +40,7 @@ def gen_action_space(agent_assign_yaml_path):
 
 
 # Test Code
-# agent_assign_yaml_path = "../config/agent_assign.yaml"
+# agent_assign_yaml_path = "../config_3/agent_assign.yaml"
 # action_space_dict = gen_action_space(agent_assign_yaml_path)
 # print(action_space_dict)
 #
@@ -133,8 +133,8 @@ def gen_masked_action_space(action_mask_flag, device_mask_yaml_path, agent_assig
     return gymnasium.spaces.Dict(action_space_dict)
 
 # Test Code
-# agent_assign_yaml_path = "../config/agent_assign.yaml"
-# device_mask_yaml_path = "../config/device_mask.yaml"
+# agent_assign_yaml_path = "../config_3/agent_assign.yaml"
+# device_mask_yaml_path = "../config_3/device_mask.yaml"
 # action_space_dict = gen_masked_action_space(True, device_mask_yaml_path, agent_assign_yaml_path)
 # print(action_space_dict)
 
@@ -146,8 +146,8 @@ def gen_masked_action_space(action_mask_flag, device_mask_yaml_path, agent_assig
 # MultiDiscrete([3])))
 
 # Test Code
-# agent_assign_yaml_path = "../config/agent_assign.yaml"
-# device_mask_yaml_path = "../config/device_mask.yaml"
+# agent_assign_yaml_path = "../config_3/agent_assign.yaml"
+# device_mask_yaml_path = "../config_3/device_mask.yaml"
 # action_space_dict = gen_masked_action_space(False, device_mask_yaml_path, agent_assign_yaml_path)
 # print(action_space_dict)
 

@@ -85,7 +85,7 @@ def update_parameters(action_idx_dict, cur_param_dict, yaml_config):
 # ('l_M22', '5.0u'), ('nf_M22', '10'), ('w_M21_per_finger', '5.0u'), ('l_M21', '5.0u'), ('nf_M21', '10'),
 # ('w_M18_per_finger', '5.0u'), ('l_M18', '5.0u'), ('nf_M18', '10'), ('w_M17_per_finger', '5.0u'), ('l_M17', '5.0u'),
 # ('nf_M17', '10'), ('IB', '25.0u')])
-# yaml_config = yaml.safe_load(open("../config/param_range.yaml",
+# yaml_config = yaml.safe_load(open("../config_3/param_range.yaml",
 # 'r'))
 # updated_params = update_parameters(action_idx, cur_param_dict, yaml_config)
 # print(updated_params)

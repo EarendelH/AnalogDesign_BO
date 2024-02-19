@@ -41,11 +41,11 @@ class AnalogDesignEnv(ParallelEnv):
         if not os.path.exists(self.root_dir_path):
             raise ValueError(f"Root directory {self.root_dir_path} not found.")
 
-        # Load config files
-        self.agent_assign_config = "config/agent_assign.yaml"
-        self.result_config = "config/result.yaml"
-        self.param_range_config = "config/param_range.yaml"
-        self.sim_config = "config/simulation.yaml"
+        # Load config_3 files
+        self.agent_assign_config = "config_3/agent_assign.yaml"
+        self.result_config = "config_3/result.yaml"
+        self.param_range_config = "config_3/param_range.yaml"
+        self.sim_config = "config_3/simulation.yaml"
 
         # Set netlist directory
         self.unassigned_netlist_dir = "netlist_template"

@@ -65,7 +65,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         self.sim_output_enable = sim_output
 
         # Set normalization items
-        self.norm_specs_file = "config/norm_specs.yaml"
+        self.norm_specs_file = "config_3/norm_specs.yaml"
         self.norm_specs_file = os.path.join(self.current_path, self.norm_specs_file)
         with open(self.norm_specs_file, 'r') as file:
             self.norm_specs = yaml.safe_load(file)
@@ -77,15 +77,15 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
             raise ValueError(f"Root directory {self.run_root_dir} not found.")
 
         # Load config files
-        self.agent_assign_config = "config/agent_assign.yaml"
+        self.agent_assign_config = "config_3/agent_assign.yaml"
         self.agent_assign_config = os.path.join(self.current_path, self.agent_assign_config)
-        self.param_range_config = "config/param_range.yaml"
+        self.param_range_config = "config_3/param_range.yaml"
         self.param_range_config = os.path.join(self.current_path, self.param_range_config)
-        self.sim_config = "config/simulation.yaml"
+        self.sim_config = "config_3/simulation.yaml"
         self.sim_config = os.path.join(self.current_path, self.sim_config)
-        self.predefined_init_param = "config/init_param.yaml"
+        self.predefined_init_param = "config_3/init_param.yaml"
         self.predefined_init_param = os.path.join(self.current_path, self.predefined_init_param)
-        self.device_mask_config = "config/device_mask.yaml"
+        self.device_mask_config = "config_3/device_mask.yaml"
         self.device_mask_config = os.path.join(self.current_path, self.device_mask_config)
 
         # Set netlist directory

@@ -281,7 +281,7 @@ def flatten_observation_w_type(observation):
 #      ('w_M20_per_finger', '1.0u'), ('l_M20', '1.0u'), ('nf_M20', '1'), ('w_M21_per_finger', '1.0u'),
 #      ('l_M21', '1.0u'),
 #      ('nf_M21', '1'), ('w_M22_per_finger', '0.5u'), ('l_M22', '1.5u'), ('nf_M22', '2'), ('IB', '50.0u')])
-# param_range_config_file = '../config/param_range.yaml'
+# param_range_config_file = '../config_3/param_range.yaml'
 # obs_space = update_obs_space_w_type(ideal_specs, cur_specs, cur_param, param_range_config_file)
 # print(obs_space)
 # print(flatten_observation_w_type(obs_space))

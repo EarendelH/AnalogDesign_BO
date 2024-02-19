@@ -17,8 +17,8 @@ def run_evaluation(checkpoint_path, num_episodes=10):
     register_env("AnalogDesignEnv_v0", env_creator)
     env = env_creator({})
 
-    # config = PPOConfig().environment(env="AnalogDesignEnv_v0").to_dict()
-    # agent = Algorithm.from_checkpoint(checkpoint_path, config=config)
+    # config_3 = PPOConfig().environment(env="AnalogDesignEnv_v0").to_dict()
+    # agent = Algorithm.from_checkpoint(checkpoint_path, config_3=config_3)
     agent = Algorithm.from_checkpoint(checkpoint_path)
 
     for episode in range(num_episodes):

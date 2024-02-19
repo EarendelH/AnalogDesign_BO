@@ -61,7 +61,7 @@ def gen_param_space(file_path):
 
 
 # Test Code
-# processed_data_test = "../config/param_range.yaml"
+# processed_data_test = "../config_3/param_range.yaml"
 # param_space = gen_param_space(processed_data_test)
 # print(param_space)
 

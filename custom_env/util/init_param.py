@@ -50,11 +50,11 @@ def gen_init_param(init_method_flag, init_param_path, action_mask_flag, device_m
 # Test Code
 # init_method_flag = 'random'
 #
-# init_param_path = "../config/init_param.yaml"
+# init_param_path = "../config_3/init_param.yaml"
 #
 # action_mask_flag = True
 #
-# device_mask_yaml_path = "../config/device_mask.yaml"
+# device_mask_yaml_path = "../config_3/device_mask.yaml"
 #
 # param_space = OrderedDict([('w_M14_per_finger', ['0.5u',
 # '1.0u', '1.5u', '2.0u', '2.5u', '3.0u', '3.5u', '4.0u', '4.5u', '5.0u', '5.5u', '6.0u', '6.5u', '7.0u', '7.5u',

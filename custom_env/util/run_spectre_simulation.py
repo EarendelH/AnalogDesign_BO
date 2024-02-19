@@ -64,7 +64,7 @@ def run_spectre_simulation(work_dir, sim_config, show_output=False):
 
 # Test Code
 # work_dir = "../netlist_assign_test"
-# sim_config_path = "../config/simulation.yaml"
+# sim_config_path = "../config_3/simulation.yaml"
 # with open(sim_config_path, 'r') as file:
 #     sim_config = yaml.safe_load(file)
 # test_result = run_spectre_simulation(work_dir, sim_config)

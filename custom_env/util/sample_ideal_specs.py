@@ -56,5 +56,5 @@ if __name__ == "__main__":
 
 # Test Code
 # python sample_ideal_specs.py
-# /Users/hanwu/ML/AnalogDesignAuto_MultiAgent/custom_env/config/generalize_specs.yaml 100
+# /Users/hanwu/ML/AnalogDesignAuto_MultiAgent/custom_env/config_3/generalize_specs.yaml 100
 # /Users/hanwu/ML/AnalogDesignAuto_MultiAgent/custom_env/sampled_specs

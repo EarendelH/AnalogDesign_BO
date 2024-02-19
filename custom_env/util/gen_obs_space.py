@@ -93,8 +93,8 @@ def gen_obs_space_simple(result_config_file, param_range_config_file, agent_assi
 
 
 # Test Code
-# result_config_file = "../config/result.yaml"
-# param_range_config_file = "../config/param_range.yaml"
+# result_config_file = "../config_3/result.yaml"
+# param_range_config_file = "../config_3/param_range.yaml"
 # observation_space = gen_obs_space(result_config_file, param_range_config_file)
 # print(f"observation_space: {observation_space}")
 #
@@ -167,8 +167,8 @@ def gen_obs_space_extend(sim_config_file, param_range_config_file, agent_assign_
     """
     Generate observation space for the custom environment.
     :param agent_assign_yaml_path: path of the agent assign yaml file
-    :param sim_config_file: path of the result config file
-    :param param_range_config_file: path of the parameter range config file
+    :param sim_config_file: path of the result config_3 file
+    :param param_range_config_file: path of the parameter range config_3 file
     :return: obs_space: gymnasium.spaces.Dict, observation space for the custom environment
     """
 
@@ -219,9 +219,9 @@ def gen_obs_space_extend(sim_config_file, param_range_config_file, agent_assign_
 
 
 # Test Code
-# sim_config_file = "../config/simulation.yaml"
-# param_range_config_file = "../config/param_range.yaml"
-# agent_assign_yaml_file = "../config/agent_assign.yaml"
+# sim_config_file = "../config_3/simulation.yaml"
+# param_range_config_file = "../config_3/param_range.yaml"
+# agent_assign_yaml_file = "../config_3/agent_assign.yaml"
 # observation_space = gen_obs_space_extend(sim_config_file, param_range_config_file, agent_assign_yaml_file)
 # print(f"observation_space: {observation_space}")
 
@@ -370,9 +370,9 @@ def flatten_obs_space(obs_space: gymnasium.spaces.Dict):
     return gymnasium.spaces.Dict(flattened_space)
 
 # Test Code
-# result_config_file = "../config/result.yaml"
-# param_range_config_file = "../config/param_range.yaml"
-# agent_assign_yaml_file = "../config/agent_assign.yaml"
+# result_config_file = "../config_3/result.yaml"
+# param_range_config_file = "../config_3/param_range.yaml"
+# agent_assign_yaml_file = "../config_3/agent_assign.yaml"
 # observation_space = gen_obs_space_extend(result_config_file, param_range_config_file, agent_assign_yaml_file)
 # print(f"observation_space: {observation_space}")
 # observation_space_flat = flatten_obs_space(observation_space)
@@ -480,9 +480,9 @@ def flatten_obs_space_w_type(obs_space: gymnasium.spaces.Dict):
     return gymnasium.spaces.Dict(flattened_space)
 
 # Test Code
-# result_config_file = "../config/simulation.yaml"
-# param_range_config_file = "../config/param_range.yaml"
-# agent_assign_yaml_file = "../config/agent_assign.yaml"
+# result_config_file = "../config_3/simulation.yaml"
+# param_range_config_file = "../config_3/param_range.yaml"
+# agent_assign_yaml_file = "../config_3/agent_assign.yaml"
 # observation_space = gen_obs_space_w_type(result_config_file, param_range_config_file, agent_assign_yaml_file)
 # print(f"observation_space: {observation_space}")
 # observation_space_flat = flatten_obs_space_w_type(observation_space)
