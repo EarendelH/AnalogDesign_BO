@@ -86,7 +86,6 @@ def start_ray_master(default_password='password'):
     input_password = input(f"Please enter the redis password to continue [{default_password}]: ") or default_password
     ray.init(num_cpus=num_cpus, _node_ip_address=socket.gethostbyname(socket.gethostname()),
              _redis_password=input_password)
-    print(f"Ray Master is running at {ray.get_webui_url()}")
     print("Waiting for slave nodes to join the cluster...")
 
     while True:
