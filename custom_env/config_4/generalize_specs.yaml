@@ -4,7 +4,7 @@ Stability:
     constrain_type: hard
     bounds:
     - 1000000.0
-    - 500000000.0
+    - 30000000.0
   phaseMargin:
     objective: max
     constrain_type: hard
@@ -17,11 +17,11 @@ DC:
     constrain_type: hard
     bounds:
     - 0.0001
-    - 0.001
+    - 0.0005
 PSRR:
   powerSupplyRejectionRatio:
     objective: max
     constrain_type: hard
     bounds:
-    - 20.0
-    - 80.0
+    - 10.0
+    - 50.0
