@@ -44,8 +44,8 @@ num_cpu = int(num_cpu)
 
 
 def env_creator(env_config):
-    return RllibAnalogDesignAutoEnv(generalize=True, path='sampled_specs_v4', sim_output=False, init_method='random',
-                                    action_mask=True, init_dc_check=True)
+    return RllibAnalogDesignAutoEnv(generalize=True, path='sampled_specs_v4', sim_output=False, init_method='file',
+                                    action_mask=True, init_dc_check=False)
 
 
 register_env("AnalogDesignEnv_v0", env_creator)
