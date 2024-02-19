@@ -1,7 +1,13 @@
 import subprocess
 import sys
-import torch
 import os
+
+import ray
+from ray import tune
+from ray.rllib.algorithms.ppo import PPOConfig
+from ray.tune.registry import register_env
+
+from rllib_env_v4 import RllibAnalogDesignAutoEnv
 
 
 def set_max_process_limit():
@@ -16,8 +22,8 @@ def set_max_process_limit():
             subprocess.call('limit maxproc 409600', shell=True)
         else:
             print("Unknown shell. Not setting max process limit. Continuing? (y/n)")
-            choice = input().strip().lower()
-            if choice != 'n':
+            limit_flag = input().strip().lower()
+            if limit_flag != 'n':
                 print("Exiting")
                 sys.exit(1)
     except subprocess.SubprocessError as e:
@@ -31,12 +37,6 @@ if choice == 'y':
 else:
     print("Continuing without setting max process limit.")
 
-import ray
-from ray import tune
-from ray.rllib.algorithms.ppo import PPOConfig
-from ray.tune.registry import register_env
-
-from rllib_env_v4 import RllibAnalogDesignAutoEnv
 
 cpu_count = os.cpu_count()
 num_cpu = input(f"Total CPU cores available: {cpu_count}. Enter number of CPU cores to use: ").strip()
