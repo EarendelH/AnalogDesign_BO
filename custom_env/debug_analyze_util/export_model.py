@@ -9,7 +9,7 @@ checkpoint_path = ("/home/wuhan/AnalogDesignAuto/AnalogDesignAuto_MA/AnalogDesig
 ray.init()
 
 def env_creator(env_config):
-    return RllibAnalogDesignAutoEnv(generalize=True, path='../sampled_specs_validate', sim_output=False, init_method='file')
+    return RllibAnalogDesignAutoEnv(generalize=True, path='../sampled_specs_validate_v2', sim_output=False, init_method='file')
 
 def policy_mapping_fn(agent_id):
     return f"policy_{agent_id[-1]}"
