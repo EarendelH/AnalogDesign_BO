@@ -223,18 +223,18 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         # Normalize the current ideal specs
         print(f"Initialing!!!Ideal specs: {self.ideal_specs}")
         self.norm_ideal_specs = norm_ideal_spec(self.ideal_specs, self.norm_specs)
-        print(f"Initialing!!!Normalized ideal specs: {self.norm_ideal_specs}")
+        # print(f"Initialing!!!Normalized ideal specs: {self.norm_ideal_specs}")
 
         # Normalize the current simulation specs
         print(f"Initialing!!!Simulation result: {sim_result}")
         norm_sim_result = norm_sim_spec(sim_result, self.norm_specs)
-        print(f"Initialing!!!Normalized simulation result: {norm_sim_result}")
+        # print(f"Initialing!!!Normalized simulation result: {norm_sim_result}")
 
         # Generate observation
         # observation = update_obs_space_simple(self.ideal_specs, norm_sim_result, init_param)
         observation_detail = update_obs_space_w_type(self.norm_ideal_specs, norm_sim_result, init_param,
                                                      self.param_range_config)
-        print(f"Initialing!!!Observation result: {observation_detail}")
+        # print(f"Initialing!!!Observation result: {observation_detail}")
         observation = flatten_observation_w_type(observation_detail)
 
         # Share all observations among agents
@@ -305,7 +305,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
                             new_value = action_dict[agent_key][key]
                             action_dict[agent_key][new_key] = new_value
 
-        print(f"Step!!!Actions: {action_dict} with step number: {self.step_num}")
+        # print(f"Step!!!Actions: {action_dict} with step number: {self.step_num}")
         # Flatten all actions
         all_action_flatten = OrderedDict()
         for group in action_dict.values():
@@ -315,9 +315,9 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
 
         # Update param with new action
         # print(f"Step!!!Current param index: {self.cur_param} with step number: {self.step_num}")
-        print(f"Step!!!Previous param: {self.cur_param} with step number: {self.step_num}")
+        # print(f"Step!!!Previous param: {self.cur_param} with step number: {self.step_num}")
         updated_param = update_parameters(all_action_flatten, self.cur_param, self.param_range_config)
-        print(f"Step!!!Updated param: {updated_param} with step number: {self.step_num}")
+        # print(f"Step!!!Updated param: {updated_param} with step number: {self.step_num}")
 
         # Update current param
         self.cur_param = updated_param
@@ -352,7 +352,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         # observation = update_obs_space_simple(self.ideal_specs, norm_sim_result, updated_param)
         observation_detail = update_obs_space_w_type(self.norm_ideal_specs, norm_sim_result, updated_param,
                                                      self.param_range_config)
-        print(f"Step!!!Observation result: {observation_detail} with step number: {self.step_num}")
+        # print(f"Step!!!Observation result: {observation_detail} with step number: {self.step_num}")
         observation = flatten_observation_w_type(observation_detail)
 
         # Share all observations
@@ -363,7 +363,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         # with open(os.path.join(working_dir, "result.yaml"), 'w') as file:
         #     yaml.dump(observation, file)
 
-        print("Step!!!self.ideal_specs: ", self.ideal_specs)
+        # print("Step!!!self.ideal_specs: ", self.ideal_specs)
         # print("Step!!!observation_detail: ", observation_detail)
 
         # Calculate reward
