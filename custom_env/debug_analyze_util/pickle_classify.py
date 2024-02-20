@@ -16,7 +16,7 @@ def classify_pickle_files(source_dir):
     for filename in os.listdir(source_dir):
         if filename.endswith('.pkl'):
             pickle_path = os.path.join(source_dir, filename)
-            num_params = count_sim_params(pickle_path)
+            num_params = count_sim_params(pickle_path) + 1
             target_dir = os.path.join(source_dir, f'specs_{num_params}')
             if not os.path.exists(target_dir):
                 os.makedirs(target_dir)
