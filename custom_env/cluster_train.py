@@ -52,6 +52,7 @@ register_env("AnalogDesignEnv_v0", env_creator)
 
 if __name__ == "__main__":
     env_name = "AnalogDesignEnv_v0"
+    ray.init()
 
     # Restore or Initialize train
     restore_checkpoint = input("Restore from checkpoint? (y/n): ").strip().lower()
