@@ -44,8 +44,8 @@ num_cpu = int(num_cpu)
 
 
 def env_creator(env_config):
-    return RllibAnalogDesignAutoEnv(generalize=True, path='sampled_specs_v3', sim_output=False, init_method='file',
-                                    action_mask=True, init_dc_check=False)
+    return RllibAnalogDesignAutoEnv(generalize=True, path='sampled_specs_v3', sim_output=False, init_method='random',
+                                    action_mask=True, init_dc_check=True)
 
 
 register_env("AnalogDesignEnv_v0", env_creator)
@@ -79,18 +79,18 @@ if __name__ == "__main__":
         .rollouts(num_rollout_workers=num_cpu)
         .training(
             train_batch_size=512,
-            lr=2e-5,
-            gamma=0.99,
-            lambda_=0.9,
+            lr=2e-4,
+            gamma=0.96,
+            lambda_=0.95,
             use_gae=True,
-            clip_param=0.4,
+            clip_param=0.3,
             grad_clip=None,
-            entropy_coeff=0.1,
+            entropy_coeff=0.01,
             vf_loss_coeff=0.25,
             sgd_minibatch_size=64,
             num_sgd_iter=10,
             model={
-                "fcnet_hiddens": [512, 512, 512, 512, 512, 512, 512, 512, 512, 512],
+                "fcnet_hiddens": [256, 256, 256, 256, 256],
             }
         )
         .debugging(log_level="DEBUG")
