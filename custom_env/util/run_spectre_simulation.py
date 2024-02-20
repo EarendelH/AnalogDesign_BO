@@ -23,8 +23,8 @@ def run_spectre_simulation(work_dir, sim_config, show_output=False):
             raise ValueError(f"Assigned netlist file {assigned_netlist_filename} not found.")
 
         # Run spectre simulation
-        print(f"Execute command: spectre -64 {os.path.join(work_dir, assigned_netlist_filename)}")
-        print(f"Run spectre simulation for: {simulation}")
+        # print(f"Execute command: spectre -64 {os.path.join(work_dir, assigned_netlist_filename)}")
+        # print(f"Run spectre simulation for: {simulation}")
         if show_output:
             subprocess.run(f"spectre -64 {os.path.join(work_dir, assigned_netlist_filename)}", shell=True)
         else:
@@ -45,7 +45,7 @@ def run_spectre_simulation(work_dir, sim_config, show_output=False):
             file_to_process = os.path.join(raw_dir, sim_file)
             processed_file = f"{file_to_process}.encode"
             subprocess.run(f"psf {file_to_process} -o {processed_file}", shell=True)
-            print(f"Processed file: {sim_file}")
+            # print(f"Processed file: {sim_file}")
 
             # Load the function to process the results and execute it
             module_name = f"find{simulation}"
