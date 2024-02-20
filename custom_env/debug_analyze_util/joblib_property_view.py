@@ -5,7 +5,7 @@ def print_keys_and_lengths(joblib_file):
     data = load(joblib_file)
 
     for key, values_list in data.items():
-        print(f"{key}: Length: {len(values_list)}")
+        print(f"{key} with length: {len(values_list)}")
 
 
 if __name__ == "__main__":
