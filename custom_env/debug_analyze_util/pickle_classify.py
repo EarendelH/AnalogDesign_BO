@@ -25,5 +25,5 @@ def classify_pickle_files(source_dir):
 
 
 if __name__ == '__main__':
-    source_dir = 'path/to/your/pickle/files'
+    source_dir = input('Path to directory with pickle files: ')
     classify_pickle_files(source_dir)
