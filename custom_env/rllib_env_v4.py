@@ -7,20 +7,20 @@ import random
 import shutil
 
 from util.gen_action_sapce import gen_masked_action_space
-# from util.gen_obs_space import gen_obs_space_extend, flatten_obs_space
-from util.gen_obs_space import gen_obs_space_w_type, flatten_obs_space_w_type
+from util.gen_obs_space import gen_obs_space_extend, flatten_obs_space
+# from util.gen_obs_space import gen_obs_space_w_type, flatten_obs_space_w_type
 # from util.gen_obs_space import gen_obs_space_simple
 from util.gen_param_space import gen_param_space
 from util.util_func import create_work_dir
 from util.assign_param2netlist import assign_param2netlist
 from util.run_spectre_simulation import run_spectre_simulation
-# from util.cal_reward import cal_reward_simple as cal_reward
-from util.cal_reward import cal_reward
+from util.cal_reward import cal_reward_simple as cal_reward
+# from util.cal_reward import cal_reward
 from util.generalize_config import generalize_config
 from util.update_param import update_parameters
-# from util.update_obs_space import update_obs_space, flatten_observation
+from util.update_obs_space import update_obs_space, flatten_observation
 # from util.update_obs_space import update_obs_space_simple
-from util.update_obs_space import update_obs_space_w_type, flatten_observation_w_type
+# from util.update_obs_space import update_obs_space_w_type, flatten_observation_w_type
 from util.normlization import norm_ideal_spec, norm_sim_spec
 from util.util_func import retry_decorator
 from util.init_param import gen_init_param
@@ -108,8 +108,10 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         self.terminateds = set()
         self.truncateds = set()
         self._obs_space_in_preferred_format = True
-        self.observation_space = flatten_obs_space_w_type(gen_obs_space_w_type(self.sim_config, self.param_range_config,
-                                                                               self.agent_assign_config))
+        # self.observation_space = flatten_obs_space_w_type(gen_obs_space_w_type(self.sim_config, self.param_range_config,
+        #                                                                        self.agent_assign_config))
+        self.observation_space = flatten_obs_space(gen_obs_space_extend(self.sim_config, self.param_range_config,
+                                                                        self.agent_assign_config))
         # print(f"observation_space: {self.observation_space}")
         self._action_space_in_preferred_format = True
         self.action_space = gen_masked_action_space(action_mask, self.device_mask_config, self.agent_assign_config)
@@ -232,10 +234,12 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
 
         # Generate observation
         # observation = update_obs_space_simple(self.ideal_specs, norm_sim_result, init_param)
-        observation_detail = update_obs_space_w_type(self.norm_ideal_specs, norm_sim_result, init_param,
-                                                     self.param_range_config)
+        # observation_detail = update_obs_space_w_type(self.norm_ideal_specs, norm_sim_result, init_param,
+        #                                              self.param_range_config)
+        observation_detail = update_obs_space(self.norm_ideal_specs, norm_sim_result, init_param)
         # print(f"Initialing!!!Observation result: {observation_detail}")
-        observation = flatten_observation_w_type(observation_detail)
+        # observation = flatten_observation_w_type(observation_detail)
+        observation = flatten_observation(observation_detail)
 
         # Share all observations among agents
         observations = {agent: observation for agent in self.agents}
@@ -350,10 +354,12 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
 
         # Generate observation
         # observation = update_obs_space_simple(self.ideal_specs, norm_sim_result, updated_param)
-        observation_detail = update_obs_space_w_type(self.norm_ideal_specs, norm_sim_result, updated_param,
-                                                     self.param_range_config)
+        # observation_detail = update_obs_space_w_type(self.norm_ideal_specs, norm_sim_result, updated_param,
+        #                                              self.param_range_config)
+        observation_detail = update_obs_space(self.norm_ideal_specs, norm_sim_result, updated_param)
         # print(f"Step!!!Observation result: {observation_detail} with step number: {self.step_num}")
-        observation = flatten_observation_w_type(observation_detail)
+        # observation = flatten_observation_w_type(observation_detail)
+        observation = flatten_observation(observation_detail)
 
         # Share all observations
         observations = {agent: observation for agent in self.agents}
