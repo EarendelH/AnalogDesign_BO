@@ -1,13 +1,7 @@
 import subprocess
 import sys
+import torch
 import os
-
-import ray
-from ray import tune
-from ray.rllib.algorithms.ppo import PPOConfig
-from ray.tune.registry import register_env
-
-from rllib_env_v4 import RllibAnalogDesignAutoEnv
 
 
 def set_max_process_limit():
@@ -21,9 +15,9 @@ def set_max_process_limit():
             print("Setting max process limit to 409600")
             subprocess.call('limit maxproc 409600', shell=True)
         else:
-            print("Unknown shell. Not setting max process limit. Continuing? (y/n): ")
-            limit_flag = input().strip().lower()
-            if limit_flag != 'n':
+            print("Unknown shell. Not setting max process limit. Continuing? (y/n)")
+            choice = input().strip().lower()
+            if choice != 'n':
                 print("Exiting")
                 sys.exit(1)
     except subprocess.SubprocessError as e:
@@ -31,12 +25,18 @@ def set_max_process_limit():
         sys.exit(1)
 
 
-choice = input("Do you want to set the max process limit? (y/n): ").strip().lower()
+choice = input("Do you want to set the max process limit? (y/n)").strip().lower()
 if choice == 'y':
     set_max_process_limit()
 else:
     print("Continuing without setting max process limit.")
 
+import ray
+from ray import tune
+from ray.rllib.algorithms.ppo import PPOConfig
+from ray.tune.registry import register_env
+
+from rllib_env_v3 import RllibAnalogDesignAutoEnv
 
 cpu_count = os.cpu_count()
 num_cpu = input(f"Total CPU cores available: {cpu_count}. Enter number of CPU cores to use: ").strip()
@@ -44,15 +44,15 @@ num_cpu = int(num_cpu)
 
 
 def env_creator(env_config):
-    return RllibAnalogDesignAutoEnv(generalize=True, path='sampled_specs_v4', sim_output=False, init_method='file',
-                                    action_mask=True, init_dc_check=False)
+    return RllibAnalogDesignAutoEnv(generalize=True, path='sampled_specs_v3', sim_output=False, init_method='random',
+                                    action_mask=True, init_dc_check=True)
 
 
 register_env("AnalogDesignEnv_v0", env_creator)
 
 if __name__ == "__main__":
     env_name = "AnalogDesignEnv_v0"
-    ray.init()
+    ray.init(address="10.16.125.31:6379")
 
     # Restore or Initialize train
     restore_checkpoint = input("Restore from checkpoint? (y/n): ").strip().lower()
@@ -79,18 +79,18 @@ if __name__ == "__main__":
         .rollouts(num_rollout_workers=num_cpu)
         .training(
             train_batch_size=512,
-            lr=2e-5,
-            gamma=0.99,
-            lambda_=0.9,
+            lr=2e-4,
+            gamma=0.96,
+            lambda_=0.95,
             use_gae=True,
-            clip_param=0.4,
+            clip_param=0.3,
             grad_clip=None,
-            entropy_coeff=0.1,
+            entropy_coeff=0.01,
             vf_loss_coeff=0.25,
             sgd_minibatch_size=64,
             num_sgd_iter=10,
             model={
-                "fcnet_hiddens": [512, 512, 512, 512, 512],
+                "fcnet_hiddens": [256, 256, 256, 256, 256],
             }
         )
         .debugging(log_level="DEBUG")
