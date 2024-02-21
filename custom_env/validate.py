@@ -1,25 +1,22 @@
 import logging
 import ray
-from ray.rllib.algorithms.ppo import PPO
-from ray.rllib.algorithms.ppo import PPOConfig
 from ray.rllib.algorithms.algorithm import Algorithm
 from rllib_env_v3 import RllibAnalogDesignAutoEnv
 from ray.tune.registry import register_env
 
 
-def env_creator(env_config):
-    return RllibAnalogDesignAutoEnv(generalize=True, path='sampled_specs_validate_v2', sim_output=False, init_method='file')
+def env_creator(env_config, path):
+    return RllibAnalogDesignAutoEnv(generalize=True, path=path, sim_output=False, init_method='random',
+                                    action_mask=True, init_dc_check=True)
 
-def run_evaluation(checkpoint_path, num_episodes=10):
 
+def run_evaluation(checkpoint_file_path, path, num_episodes=10):
     ray.init(logging_level=logging.WARNING)
 
-    register_env("AnalogDesignEnv_v0", env_creator)
-    env = env_creator({})
+    register_env("AnalogDesignEnv_v0", lambda env_config: env_creator(env_config, path))
+    env = env_creator({}, path)
 
-    # config_3 = PPOConfig().environment(env="AnalogDesignEnv_v0").to_dict()
-    # agent = Algorithm.from_checkpoint(checkpoint_path, config_3=config_3)
-    agent = Algorithm.from_checkpoint(checkpoint_path)
+    agent = Algorithm.from_checkpoint(checkpoint_file_path)
 
     for episode in range(num_episodes):
         obs, _ = env.reset()
@@ -38,7 +35,11 @@ def run_evaluation(checkpoint_path, num_episodes=10):
 
     ray.shutdown()
 
+
 if __name__ == "__main__":
-    checkpoint_path = ("/home/wuhan/ray_results/AnalogDesignEnv_v0/PPO/PPO_AnalogDesignEnv_v0_e5728_00000_0_2024-01-17_21-54-13/checkpoint_000199/")
-    num_episode = 200
-    run_evaluation(checkpoint_path, num_episode)
+    print("Init Validation")
+    checkpoint_path = input("Enter the checkpoint path: ").strip()
+    path = input("Enter the folder path for validation: ").strip()
+    num_episode = input("Enter the number of episodes: ").strip()
+    num_episode = int(num_episode)
+    run_evaluation(checkpoint_path, path, num_episode)
