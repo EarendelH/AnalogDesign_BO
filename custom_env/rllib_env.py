@@ -33,7 +33,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
     def __init__(self, generalize=True,
                  specs_folder_name='',
                  config_folder_name='',
-                 run_dir_name='',
+                 run_folder_name='',
                  sim_output=False,
                  init_method='file',
                  action_mask=True,
