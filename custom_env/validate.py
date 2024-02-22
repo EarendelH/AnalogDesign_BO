@@ -1,28 +1,23 @@
 import logging
-import os
-
 import ray
 from ray.rllib.algorithms.algorithm import Algorithm
 from rllib_env_v3 import RllibAnalogDesignAutoEnv
 from ray.tune.registry import register_env
-from ray.util.multiprocessing import Pool
+from concurrent.futures import ThreadPoolExecutor, as_completed
+import os
 
 
-def env_creator(env_config, validate_specs_path):
-    return RllibAnalogDesignAutoEnv(generalize=True, path=validate_specs_path, sim_output=False, init_method='random',
+def env_creator(env_config, validate_path):
+    return RllibAnalogDesignAutoEnv(generalize=True, path=validate_path, sim_output=False, init_method='random',
                                     action_mask=True, init_dc_check=True)
 
 
-def evaluate_episode(checkpoint_file_path, path, episode_num):
-    register_env("AnalogDesignEnv_v0", lambda env_config: env_creator(env_config, path))
-    env = env_creator({}, path)
+def evaluate_episode(checkpoint_file_path, validate_path, episode_num):
+    env = env_creator({}, validate_path)
     agent = Algorithm.from_checkpoint(checkpoint_file_path)
     obs, _ = env.reset()
     done = {"__all__": False}
     step = 0
-    count = 0
-    count_finished = 0
-    count_terminated = 0
     while not done["__all__"]:
         action_dict = {}
         for agent_id, agent_obs in obs.items():
@@ -31,30 +26,37 @@ def evaluate_episode(checkpoint_file_path, path, episode_num):
             action_dict[agent_id] = action
         obs, rew, done, _, info = env.step(action_dict)
         step += 1
-        if done["__all__"]:
-            count += 1
-            count_finished += 1
-            print(f"Total valid episodes: {count_finished}, finished episodes: {count_finished} "
-                  f"and terminated episodes: {count_terminated}")
         if step > 1000:
-            print(f"Episode {episode_num} terminated due to exceeding max steps")
-            count += 1
-            count_terminated += 1
-            print(f"Total valid episodes: {count_finished}, finished episodes: {count_finished} "
-                  f"and terminated episodes: {count_terminated}")
-            break
-    return f"Episode {episode_num} finished after {step} steps"
+            return {'episode': episode_num, 'steps': step, 'passed': False}
+    return {'episode': episode_num, 'steps': step, 'passed': True}
 
 
-def run_evaluation_parallel(checkpoint_file_path, validate_specs_path, num_episodes, used_cpu):
+def run_evaluation_parallel(checkpoint_file_path, validate_path, num_episodes=10, util_cpu=4):
     ray.init(logging_level=logging.WARNING)
-    # Using a process pool to run evaluations in parallel
-    with Pool(processes=used_cpu) as pool:
-        results = pool.starmap(evaluate_episode, [(checkpoint_file_path, validate_specs_path, episode) for episode in
-                                                  range(num_episodes)])
-        for result in results:
-            print(result)
+    register_env("AnalogDesignEnv_v0", lambda env_config: env_creator(env_config, validate_path))
+
+    passed_count = 0
+    failed_count = 0
+
+    with ThreadPoolExecutor(max_workers=util_cpu) as executor:
+        futures = [executor.submit(evaluate_episode, checkpoint_file_path, validate_path, episode) for episode
+                   in range(num_episodes)]
+        for future in as_completed(futures):
+            result = future.result()
+            if result['passed']:
+                passed_count += 1
+            else:
+                failed_count += 1
+            print(f"Total Completed: {passed_count + failed_count}, Passed: {passed_count}, Failed: {failed_count}")
+
     ray.shutdown()
+
+
+def get_user_thread_count():
+    max_workers = os.cpu_count()
+    print(f"Available threads: {max_workers}")
+    cpu_num = input("Enter the number of threads to use: ").strip()
+    return min(max_workers, int(cpu_num))
 
 
 if __name__ == "__main__":
@@ -63,7 +65,5 @@ if __name__ == "__main__":
     path = input("Enter the folder path for validation: ").strip()
     num_episode = input("Enter the number of episodes: ").strip()
     num_episode = int(num_episode)
-    num_cpu_available = os.cpu_count()
-    num_cpu = input(f"Enter the number of CPUs to use (Available num is {num_cpu_available}): ").strip()
-    num_cpu = int(num_cpu)
-    run_evaluation_parallel(checkpoint_path, path, num_episode, num_cpu)
+    num_workers = get_user_thread_count()
+    run_evaluation_parallel(checkpoint_path, path, num_episode, num_workers)
