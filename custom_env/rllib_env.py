@@ -7,9 +7,10 @@ import random
 import shutil
 
 from util.gen_action_sapce import gen_masked_action_space
-from util.gen_obs_space import gen_obs_space_extend, flatten_obs_space
+# from util.gen_obs_space import gen_obs_space_extend, flatten_obs_space
 # from util.gen_obs_space import gen_obs_space_w_type, flatten_obs_space_w_type
 # from util.gen_obs_space import gen_obs_space_simple
+from util.gen_obs_space import gen_obs_space_w_region, flatten_obs_space_w_region
 from util.gen_param_space import gen_param_space
 from util.util_func import create_work_dir
 from util.assign_param2netlist import assign_param2netlist
@@ -18,13 +19,14 @@ from util.run_spectre_simulation import run_spectre_simulation
 from util.cal_reward import cal_reward
 from util.generalize_config import generalize_config
 from util.update_param import update_parameters
-from util.update_obs_space import update_obs_space, flatten_observation
+# from util.update_obs_space import update_obs_space, flatten_observation
 # from util.update_obs_space import update_obs_space_simple
 # from util.update_obs_space import update_obs_space_w_type, flatten_observation_w_type
+from util.update_obs_space import update_obs_space_w_region, flatten_observation_w_region
 from util.normlization import norm_ideal_spec, norm_sim_spec
 from util.util_func import retry_decorator
 from util.init_param import gen_init_param
-from util.extract_device_param_value import extract_operation_region
+from util.extract_device_param_value import extract_operation_region_w_name
 
 from ray.rllib.env.multi_agent_env import MultiAgentEnv
 
@@ -116,8 +118,9 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         self._obs_space_in_preferred_format = True
         # self.observation_space = flatten_obs_space_w_type(gen_obs_space_w_type(
         #     self.sim_config, self.param_range_config, self.agent_assign_config))
-        self.observation_space = flatten_obs_space(gen_obs_space_extend(self.sim_config, self.param_range_config,
-                                                                        self.agent_assign_config))
+        self.observation_space = flatten_obs_space_w_region(gen_obs_space_w_region(self.sim_config,
+                                                                                   self.param_range_config,
+                                                                                   self.agent_assign_config))
         # print(f"observation_space: {self.observation_space}")
         self._action_space_in_preferred_format = True
         self.action_space = gen_masked_action_space(action_mask, self.device_mask_config, self.agent_assign_config)
@@ -169,12 +172,13 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
                     dc_sim_config = [item for item in sim_config if item['simulation_name'] == 'DC']
                     _ = run_spectre_simulation(working_dir, dc_sim_config, self.sim_output_enable)
                     dc_result_path = os.path.join(working_dir, "DC.raw/dcOpInfo.info.encode")
-                    operation_region_list = extract_operation_region(dc_result_path)
+                    operation_region_dict = extract_operation_region_w_name(dc_result_path)
+                    operation_region_list = list(operation_region_dict.values())
                     print(f"Initialing Checking!!!Operation region: {operation_region_list} with "
                           f"init step number: {init_step}")
                     # 0 cut-off, 1 triode, 2 saturation, 3 sub-th, 4 breakdown
                     # Check whether all transistors are in saturation/sub-threshold/triode region
-                    valid_init_param = all(item in [1, 2] for item in operation_region_list)
+                    valid_init_param = all(item in [1, 2, 3] for item in operation_region_list)
                     init_step += 1
                 except Exception as e:
                     print(f"Warning!!!: {e}. Failed to generate init param with init step number: {init_step}")
@@ -238,14 +242,31 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         norm_sim_result = norm_sim_spec(sim_result, self.norm_specs)
         # print(f"Initialing!!!Normalized simulation result: {norm_sim_result}")
 
+        # Generate region observation
+        try:
+            dc_result_path = os.path.join(working_dir, "DC.raw/dcOpInfo.info.encode")
+            operation_region_dict = extract_operation_region_w_name(dc_result_path)
+        except Exception as e:
+            print(f"Warning!!!: {e}. No DC sim file.")
+            operation_region_dict = {}
+            # Create an empty dict for operation region
+            with open(self.param_range_config, 'r') as file:
+                param_range = yaml.safe_load(file)
+            for component, data in param_range.items():
+                if component == 'other_variable':
+                    pass
+                else:
+                    operation_region_dict[component] = 0
+
         # Generate observation
         # observation = update_obs_space_simple(self.ideal_specs, norm_sim_result, init_param)
         # observation_detail = update_obs_space_w_type(self.norm_ideal_specs, norm_sim_result, init_param,
         #                                              self.param_range_config)
-        observation_detail = update_obs_space(self.norm_ideal_specs, norm_sim_result, init_param)
+        observation_detail = update_obs_space_w_region(self.norm_ideal_specs, norm_sim_result, init_param,
+                                                       operation_region_dict)
         # print(f"Initialing!!!Observation result: {observation_detail}")
         # observation = flatten_observation_w_type(observation_detail)
-        observation = flatten_observation(observation_detail)
+        observation = flatten_observation_w_region(observation_detail)
 
         # Share all observations among agents
         observations = {agent: observation for agent in self.agents}
@@ -296,6 +317,8 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
 
         # Update step number
         self.step_num += 1
+
+        operation_region_dict = {}
 
         # print(f"Updated action: {action_dict} with step number: {self.step_num}")
 
@@ -352,7 +375,8 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
                 dc_sim_config = [item for item in sim_config if item['simulation_name'] == 'DC']
                 _ = run_spectre_simulation(working_dir, dc_sim_config, self.sim_output_enable)
                 dc_result_path = os.path.join(working_dir, "DC.raw/dcOpInfo.info.encode")
-                operation_region_list = extract_operation_region(dc_result_path)
+                operation_region_dict = extract_operation_region_w_name(dc_result_path)
+                operation_region_list = list(operation_region_dict.values())
                 print(f"Step!!!Operation region: {operation_region_list} with step number: {self.step_num}")
                 # 0 cut-off, 1 triode, 2 saturation, 3 sub-th, 4 breakdown
                 # Check whether all transistors are in saturation/sub-threshold/triode region
@@ -365,8 +389,9 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
             print(f"Step!!!Param failed DC check with step number: {self.step_num}")
             sim_result = self.zero_sim_result
             norm_sim_result = norm_sim_spec(sim_result, self.norm_specs)
-            observation_detail = update_obs_space(self.norm_ideal_specs, norm_sim_result, updated_param)
-            observation = flatten_observation(observation_detail)
+            observation_detail = update_obs_space_w_region(self.norm_ideal_specs, norm_sim_result, updated_param,
+                                                           operation_region_dict)
+            observation = flatten_observation_w_region(observation_detail)
             observations = {agent: observation for agent in self.agents}
             rew = {a: -10 for a in self.agents}
 
@@ -409,10 +434,13 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
             # observation = update_obs_space_simple(self.ideal_specs, norm_sim_result, updated_param)
             # observation_detail = update_obs_space_w_type(self.norm_ideal_specs, norm_sim_result, updated_param,
             #                                              self.param_range_config)
-            observation_detail = update_obs_space(self.norm_ideal_specs, norm_sim_result, updated_param)
+            dc_result_path = os.path.join(working_dir, "DC.raw/dcOpInfo.info.encode")
+            operation_region_dict = extract_operation_region_w_name(dc_result_path)
+            observation_detail = update_obs_space_w_region(self.norm_ideal_specs, norm_sim_result, updated_param,
+                                                           operation_region_dict)
             # print(f"Step!!!Observation result: {observation_detail} with step number: {self.step_num}")
             # observation = flatten_observation_w_type(observation_detail)
-            observation = flatten_observation(observation_detail)
+            observation = flatten_observation_w_region(observation_detail)
 
             # Share all observations
             observations = {agent: observation for agent in self.agents}
