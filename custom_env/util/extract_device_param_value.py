@@ -265,6 +265,31 @@ def extract_group_params(device_type_str, param_name_str, value_dict_list, param
 # 3 subth
 # 4 breakdown
 
+def extract_group_params_w_name(device_type_str, param_name_str, value_dict_list, param_list_dict):
+    extract_values = {}
+    for values_dict in value_dict_list:
+        for device_id, device_info in values_dict.items():
+            if device_info['Device_Type'] == device_type_str:
+                param_index = list(param_list_dict[device_type_str].keys()).index(param_name_str)
+                value = device_info['values'][param_index]
+                extract_values[device_id] = value
+
+    return extract_values
+
+
+# Test Code
+# filepath = "/Users/hanwu/ML/AnalogDesignAuto_MultiAgent/custom_env/netlist_assign_test/DC.raw/dcOpInfo.info.encode"
+# value_dict = parse_device_values(filepath)
+# param_dict = parse_device_param(filepath)
+# device_type = "bsim4"
+# param_name = "region"
+# print(extract_group_params_w_name(device_type, param_name, value_dict, param_dict))
+
+# Output
+# {'I9.M17': 2, 'I9.M18': 2, 'I9.M22': 2, 'I9.M23': 2, 'I9.M24': 1, 'I9.M16': 1, 'I9.M36': 1, 'I9.M19': 2, 'I9.M21':
+# 2, 'I9.M20': 2, 'I9.M11': 1, 'I9.M12': 1, 'I9.M13': 1, 'I9.M25': 2, 'I9.M35': 2, 'I9.M14': 1}
+
+
 def extract_operation_region(dc_result_file_path):
     device_type_str = "bsim4"
     param_name_str = "region"
@@ -274,9 +299,21 @@ def extract_operation_region(dc_result_file_path):
 
     return operation_region_list
 
+
+def extract_operation_region_w_name(dc_result_file_path):
+    device_type_str = "bsim4"
+    param_name_str = "region"
+    value_dict_list = parse_device_values(dc_result_file_path)
+    param_list_dict = parse_device_param(dc_result_file_path)
+    operation_region_list = extract_group_params_w_name(device_type_str, param_name_str, value_dict_list,
+                                                        param_list_dict)
+
+    return operation_region_list
+
 # Test Code
 # filepath = "/Users/hanwu/ML/AnalogDesignAuto_MultiAgent/custom_env/netlist_assign_test/DC.raw/dcOpInfo.info.encode"
 # print(extract_operation_region(filepath))
 
 # Output
-# [2, 2, 2, 2, 1, 1, 1, 2, 2, 2, 1, 1, 1, 2, 2, 1]
+# {'I9.M17': 2, 'I9.M18': 2, 'I9.M22': 2, 'I9.M23': 2, 'I9.M24': 1, 'I9.M16': 1, 'I9.M36': 1, 'I9.M19': 2, 'I9.M21': 2,
+# 'I9.M20': 2, 'I9.M11': 1, 'I9.M12': 1, 'I9.M13': 1, 'I9.M25': 2, 'I9.M35': 2, 'I9.M14': 1}
