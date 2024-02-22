@@ -33,8 +33,8 @@ def run_evaluation(checkpoint_file_path, path, num_episodes=10):
             obs, rew, done, _, info = env.step(action_dict)
             step += 1
             if step > 1024:
-                print(f"Episode {episode} terminated due to exceeding the maximum number of steps")
                 count_terminated += 1
+                print(f"Episode {episode} terminated due to exceeding the maximum number of steps")
                 break
             if done["__all__"]:
                 count_finished += 1
