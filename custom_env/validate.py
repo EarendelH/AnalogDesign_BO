@@ -65,4 +65,5 @@ if __name__ == "__main__":
     num_episode = int(num_episode)
     num_cpu_available = os.cpu_count()
     num_cpu = input(f"Enter the number of CPUs to use (Available num is {num_cpu_available}): ").strip()
+    num_cpu = int(num_cpu)
     run_evaluation_parallel(checkpoint_path, path, num_episode, num_cpu)
