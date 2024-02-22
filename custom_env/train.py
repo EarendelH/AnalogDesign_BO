@@ -62,7 +62,7 @@ def main():
     settings = {
         "generalize": get_user_input("Enable generalization (True/False)", "True"),
         "specs_folder_name": get_user_input("Name of specs folder", "sampled_specs"),
-        "config_folder_name": get_user_input("Name of config folder", "config_3"),
+        "config_folder_name": get_user_input("Name of config folder", "config"),
         "run_folder_name": get_user_input("Name of run folder", "run_test"),
         "sim_output": get_user_input("Enable simulation output (True/False)", "False"),
         "init_method": get_user_input("Initialization method (File/Half/Random)", "file"),
