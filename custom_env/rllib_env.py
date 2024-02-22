@@ -77,7 +77,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
             self.norm_specs = yaml.safe_load(file)
 
         # Set root directory
-        self.run_root_dir = run_dir_name
+        self.run_root_dir = run_folder_name
         self.run_root_dir = os.path.join(self.current_path, self.run_root_dir)
         if not os.path.exists(self.run_root_dir):
             raise ValueError(f"Root directory {self.run_root_dir} not found.")
