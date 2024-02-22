@@ -395,6 +395,8 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
             observations = {agent: observation for agent in self.agents}
             rew = {a: -10 for a in self.agents}
 
+            print(f"Step!!!DC Check fail.Reward result: {rew} with step number: {self.step_num}")
+
             terminated = {a: False for a in self.agents}
 
             truncated = {a: False for a in self.agents}
@@ -458,7 +460,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
             rew_single = cal_reward(self.ideal_specs, sim_result)
             for agent_name in rew:
                 rew[agent_name] = rew_single
-            print(f"Step!!!Reward result: {rew} with step number: {self.step_num}")
+            print(f"Step!!!Reward result: {rew_single} with step number: {self.step_num}")
 
             # Determine termination or truncations
             terminated = {a: False for a in self.agents}
