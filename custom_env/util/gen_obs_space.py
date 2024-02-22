@@ -593,13 +593,13 @@ def flatten_obs_space_w_region(obs_space: gymnasium.spaces.Dict):
 
 
 # Test Code
-result_config_file = "../config_3/simulation.yaml"
-param_range_config_file = "../config_3/param_range.yaml"
-agent_assign_yaml_file = "../config_3/agent_assign.yaml"
-observation_space = gen_obs_space_w_region(result_config_file, param_range_config_file, agent_assign_yaml_file)
-print(f"observation_space: {observation_space}")
-observation_space_flat = flatten_obs_space_w_region(observation_space)
-print(f"observation_space_flat: {observation_space_flat}")
+# result_config_file = "../config_3/simulation.yaml"
+# param_range_config_file = "../config_3/param_range.yaml"
+# agent_assign_yaml_file = "../config_3/agent_assign.yaml"
+# observation_space = gen_obs_space_w_region(result_config_file, param_range_config_file, agent_assign_yaml_file)
+# print(f"observation_space: {observation_space}")
+# observation_space_flat = flatten_obs_space_w_region(observation_space)
+# print(f"observation_space_flat: {observation_space_flat}")
 
 # Output
 # observation_space: Dict('Agent_1': Dict('cur_param': Dict('IB': Box(1e-06, 5e-05, (1,), float32),
