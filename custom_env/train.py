@@ -67,7 +67,7 @@ def main():
         "sim_output": get_user_input("Enable simulation output (True/False)", "False"),
         "init_method": get_user_input("Initialization method (File/Half/Random)", "file"),
         "action_mask": get_user_input("Enable action mask (True/False)", "True"),
-        "init_dc_check": get_user_input("Enable step DC check (True/False)", "True"),
+        "dc_check": get_user_input("Enable step DC check (True/False)", "True"),
     }
 
     if confirm_settings(settings):
@@ -75,7 +75,7 @@ def main():
         settings["generalize"] = settings["generalize"] == "True"
         settings["sim_output"] = settings["sim_output"] == "True"
         settings["action_mask"] = settings["action_mask"] == "True"
-        settings["init_dc_check"] = settings["init_dc_check"] == "True"
+        settings["dc_check"] = settings["dc_check"] == "True"
 
         # Environment initialization
         def env_creator(_):
