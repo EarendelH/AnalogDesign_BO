@@ -356,7 +356,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
                 print(f"Step!!!Operation region: {operation_region_list} with step number: {self.step_num}")
                 # 0 cut-off, 1 triode, 2 saturation, 3 sub-th, 4 breakdown
                 # Check whether all transistors are in saturation/sub-threshold/triode region
-                valid_param = all(item in [1, 2] for item in operation_region_list)
+                valid_param = all(item in [1, 2, 3] for item in operation_region_list)
             except Exception as e:
                 print(f"Warning!!!: {e}. Failed to run DC check with step number: {self.step_num}")
                 valid_param = False
