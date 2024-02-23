@@ -1,6 +1,7 @@
 import subprocess
 import sys
 import os
+import math
 
 import ray
 from ray import tune
@@ -49,13 +50,11 @@ def confirm_settings(settings):
 def main():
     """Main function to run the script."""
     cpu_count = os.cpu_count()
-    num_cpu = input(f"Total CPU cores available: {cpu_count}. Enter number of CPU cores to use: ").strip()
-    num_cpu = int(num_cpu)
 
     settings = {
         "max_process_limit": get_user_input("Set max process limit? (True/False)", "False"),
-        "num_cpu": get_user_input(f"Total CPU cores available: {cpu_count}. Enter number of CPU cores to use",
-                                  str(cpu_count)),
+        "cpu_usage_percentage": get_user_input(f"Enter CPU usage percentage, total available CPU is {cpu_count}"
+                                               , "95"),
         "generalize": get_user_input("Enable generalization (True/False)", "True"),
         "specs_folder_name": get_user_input("Name of specs folder", "sampled_specs"),
         "config_folder_name": get_user_input("Name of config folder", "config"),
@@ -75,7 +74,8 @@ def main():
     if settings["restore_checkpoint"].lower() == "true":
         settings["checkpoint_path"] = get_user_input("Checkpoint path", "")
 
-    settings["num_cpu"] = int(settings["num_cpu"])
+    cpu_usage = float(settings["cpu_usage_percentage"]) / 100
+    num_cpu = math.floor(cpu_count * cpu_usage)
     settings["train_iterations"] = int(settings["train_iterations"])
 
     if confirm_settings(settings):
@@ -148,7 +148,7 @@ def main():
             "PPO",
             name="PPO",
             stop={"training_iteration": train_iterations},
-            restore=checkpoint_path if restore_checkpoint == "y" else None,
+            restore=checkpoint_path if restore_checkpoint == "True" else None,
             checkpoint_freq=25,
             checkpoint_at_end=True,
             local_dir=f"{user_home_dir}/ray_results/{env_name}",
