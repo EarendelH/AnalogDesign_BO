@@ -90,7 +90,7 @@ def main():
 
     print(f"Configuration settings: {settings}")
 
-    if settings["max_process_limit"].lower() == "true":
+    if settings["max_process_limit"]:
         set_max_process_limit()
 
     if settings["restore_checkpoint"].lower() == "true":
