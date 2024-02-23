@@ -1,7 +1,6 @@
 import subprocess
 import sys
 import os
-import math
 import argparse
 import yaml
 
@@ -54,6 +53,7 @@ def main():
     settings = {}
     confirm_flag = None
     cpu_count = os.cpu_count()
+    gpu_count = ray.utils.get_gpu_count()
 
     parser = argparse.ArgumentParser(description="Train Analog Design AutoRL Environment")
     parser.add_argument('--config_mode', type=str, choices=['interactive', 'file'], default='interactive',
@@ -72,8 +72,9 @@ def main():
     if args.config_mode == 'interactive':
         settings = {
             "max_process_limit": get_user_input("Set max process limit? (True/False)", "False"),
-            "cpu_usage_percentage": get_user_input(f"Enter CPU usage percentage, total available CPU is {cpu_count}"
-                                                   , "95"),
+            "cpu_usage": get_user_input(f"Enter use CPU num, total available CPU is {cpu_count}"
+                                                   , "10"),
+            "gpu_usage": get_user_input(f"Enter use GPU num, total available CPU is {gpu_count}", "0"),
             "generalize": get_user_input("Enable generalization (True/False)", "True"),
             "specs_folder_name": get_user_input("Name of specs folder", "sampled_specs"),
             "config_folder_name": get_user_input("Name of config folder", "config"),
@@ -96,8 +97,9 @@ def main():
     if settings["restore_checkpoint"]:
         settings["checkpoint_path"] = get_user_input("Checkpoint path", "")
 
-    cpu_usage = float(settings["cpu_usage_percentage"]) / 100
-    num_cpu = math.floor(cpu_count * cpu_usage)
+    num_cpu = int(settings["cpu_usage"])
+    num_gpu = int(settings["gpu_usage"])
+
     settings["train_iterations"] = int(settings["train_iterations"])
 
     if confirm_flag:
@@ -168,7 +170,7 @@ def main():
             )
             .debugging(log_level="DEBUG")
             .framework("torch")
-            .resources(num_gpus=int(os.environ.get("RLLIB_NUM_GPUS", "0")))
+            .resources(num_gpus=num_gpu)
             .multi_agent(
                 policies={"policy_1", "policy_2", "policy_3", "policy_4"},
                 policy_mapping_fn=(lambda aid, episode, worker, **kw: f"policy_{aid[-1]}"),
