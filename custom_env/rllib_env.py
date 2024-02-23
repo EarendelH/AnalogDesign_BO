@@ -436,8 +436,23 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
             # observation = update_obs_space_simple(self.ideal_specs, norm_sim_result, updated_param)
             # observation_detail = update_obs_space_w_type(self.norm_ideal_specs, norm_sim_result, updated_param,
             #                                              self.param_range_config)
-            dc_result_path = os.path.join(working_dir, "DC.raw/dcOpInfo.info.encode")
-            operation_region_dict = extract_operation_region_w_name(dc_result_path)
+
+            # Add logic to avoid exception when no DC sim file
+            try:
+                dc_result_path = os.path.join(working_dir, "DC.raw/dcOpInfo.info.encode")
+                operation_region_dict = extract_operation_region_w_name(dc_result_path)
+            except Exception as e:
+                print(f"Step Warning!!!: {e}. No DC sim file.")
+                operation_region_dict = {}
+                # Create an empty dict for operation region
+                with open(self.param_range_config, 'r') as file:
+                    param_range = yaml.safe_load(file)
+                for component, data in param_range.items():
+                    if component == 'other_variable':
+                        pass
+                    else:
+                        operation_region_dict[component] = 0
+
             observation_detail = update_obs_space_w_region(self.norm_ideal_specs, norm_sim_result, updated_param,
                                                            operation_region_dict)
             # print(f"Step!!!Observation result: {observation_detail} with step number: {self.step_num}")
