@@ -51,6 +51,8 @@ def confirm_settings(settings):
 
 def main():
     """Main function to run the script."""
+    settings = {}
+    confirm_flag = None
     cpu_count = os.cpu_count()
 
     parser = argparse.ArgumentParser(description="Train Analog Design AutoRL Environment")
@@ -65,28 +67,28 @@ def main():
             sys.exit(1)
         with open(args.config_file, 'r') as file:
             settings = yaml.safe_load(file)
-        if confirm_settings(settings):
-            print("Starting training process...")
-        else:
-            print("Configuration not confirmed. Training aborted.")
-        sys.exit(0)
+        confirm_flag = True
 
-    settings = {
-        "max_process_limit": get_user_input("Set max process limit? (True/False)", "False"),
-        "cpu_usage_percentage": get_user_input(f"Enter CPU usage percentage, total available CPU is {cpu_count}"
-                                               , "95"),
-        "generalize": get_user_input("Enable generalization (True/False)", "True"),
-        "specs_folder_name": get_user_input("Name of specs folder", "sampled_specs"),
-        "config_folder_name": get_user_input("Name of config folder", "config"),
-        "run_folder_name": get_user_input("Name of run folder", "run_test"),
-        "sim_output": get_user_input("Enable simulation output (True/False)", "False"),
-        "init_method": get_user_input("Initialization method (File/Half/Random)", "file"),
-        "action_mask": get_user_input("Enable action mask (True/False)", "True"),
-        "dc_check": get_user_input("Enable step DC check (True/False)", "True"),
-        "restore_checkpoint": get_user_input("Restore from checkpoint? (True/False)", "False"),
-        "checkpoint_path": None,  # To be conditionally updated
-        "train_iterations": get_user_input("Train iterations(Default: 200)", "200"),
-    }
+    if args.config_mode == 'interactive':
+        settings = {
+            "max_process_limit": get_user_input("Set max process limit? (True/False)", "False"),
+            "cpu_usage_percentage": get_user_input(f"Enter CPU usage percentage, total available CPU is {cpu_count}"
+                                                   , "95"),
+            "generalize": get_user_input("Enable generalization (True/False)", "True"),
+            "specs_folder_name": get_user_input("Name of specs folder", "sampled_specs"),
+            "config_folder_name": get_user_input("Name of config folder", "config"),
+            "run_folder_name": get_user_input("Name of run folder", "run_test"),
+            "sim_output": get_user_input("Enable simulation output (True/False)", "False"),
+            "init_method": get_user_input("Initialization method (File/Half/Random)", "file"),
+            "action_mask": get_user_input("Enable action mask (True/False)", "True"),
+            "dc_check": get_user_input("Enable step DC check (True/False)", "True"),
+            "restore_checkpoint": get_user_input("Restore from checkpoint? (True/False)", "False"),
+            "checkpoint_path": None,  # To be conditionally updated
+            "train_iterations": get_user_input("Train iterations(Default: 200)", "200"),
+        }
+        confirm_flag = confirm_settings(settings)
+
+    print(f"Configuration settings: {settings}")
 
     if settings["max_process_limit"].lower() == "true":
         set_max_process_limit()
@@ -98,7 +100,7 @@ def main():
     num_cpu = math.floor(cpu_count * cpu_usage)
     settings["train_iterations"] = int(settings["train_iterations"])
 
-    if confirm_settings(settings):
+    if confirm_flag:
         # Convert string boolean values to Python boolean values
         settings["max_process_limit"] = settings["max_process_limit"] == "True"
         settings["generalize"] = settings["generalize"] == "True"
