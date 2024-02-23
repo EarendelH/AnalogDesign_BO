@@ -93,7 +93,7 @@ def main():
     if settings["max_process_limit"]:
         set_max_process_limit()
 
-    if settings["restore_checkpoint"].lower() == "true":
+    if settings["restore_checkpoint"]:
         settings["checkpoint_path"] = get_user_input("Checkpoint path", "")
 
     cpu_usage = float(settings["cpu_usage_percentage"]) / 100
