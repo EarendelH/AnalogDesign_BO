@@ -2,6 +2,8 @@ import subprocess
 import sys
 import os
 import math
+import argparse
+import yaml
 
 import ray
 from ray import tune
@@ -50,6 +52,24 @@ def confirm_settings(settings):
 def main():
     """Main function to run the script."""
     cpu_count = os.cpu_count()
+
+    parser = argparse.ArgumentParser(description="Train Analog Design AutoRL Environment")
+    parser.add_argument('--config_mode', type=str, choices=['interactive', 'file'], default='interactive',
+                        help="Mode for configuration settings")
+    parser.add_argument('--config_file', type=str, help="Path to configuration file")
+    args = parser.parse_args()
+
+    if args.config_mode == 'file':
+        if args.config_file is None:
+            print("Configuration file not provided. Exiting.")
+            sys.exit(1)
+        with open(args.config_file, 'r') as file:
+            settings = yaml.safe_load(file)
+        if confirm_settings(settings):
+            print("Starting training process...")
+        else:
+            print("Configuration not confirmed. Training aborted.")
+        sys.exit(0)
 
     settings = {
         "max_process_limit": get_user_input("Set max process limit? (True/False)", "False"),
