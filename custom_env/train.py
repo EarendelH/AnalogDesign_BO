@@ -87,9 +87,20 @@ def main():
         settings["dc_check"] = settings["dc_check"] == "True"
         settings["restore_checkpoint"] = settings["restore_checkpoint"] == "True"
 
+        env_settings = {
+            "generalize": settings["generalize"],
+            "specs_folder_name": settings["specs_folder_name"],
+            "config_folder_name": settings["config_folder_name"],
+            "run_folder_name": settings["run_folder_name"],
+            "sim_output": settings["sim_output"],
+            "init_method": settings["init_method"],
+            "action_mask": settings["action_mask"],
+            "dc_check": settings["dc_check"],
+        }
+
         # Environment initialization
         def env_creator(_):
-            return RllibAnalogDesignAutoEnv(**settings)
+            return RllibAnalogDesignAutoEnv(**env_settings)
 
         register_env("AnalogDesignEnv_v0", env_creator)
 
