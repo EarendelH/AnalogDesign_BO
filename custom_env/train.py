@@ -3,6 +3,7 @@ import sys
 import os
 import argparse
 import yaml
+import torch
 
 import ray
 from ray import tune
@@ -53,7 +54,7 @@ def main():
     settings = {}
     confirm_flag = None
     cpu_count = os.cpu_count()
-    gpu_count = ray.utils.get_gpu_count()
+    gpu_count = torch.cuda.device_count()
 
     parser = argparse.ArgumentParser(description="Train Analog Design AutoRL Environment")
     parser.add_argument('--config_mode', type=str, choices=['interactive', 'file'], default='interactive',
