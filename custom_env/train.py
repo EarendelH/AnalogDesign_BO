@@ -49,17 +49,14 @@ def confirm_settings(settings):
 def main():
     """Main function to run the script."""
 
-    choice = input("Do you want to set the max process limit? (y/n): ").strip().lower()
-    if choice == 'y':
-        set_max_process_limit()
-    else:
-        print("Continuing without setting max process limit.")
-
     cpu_count = os.cpu_count()
     num_cpu = input(f"Total CPU cores available: {cpu_count}. Enter number of CPU cores to use: ").strip()
     num_cpu = int(num_cpu)
 
     settings = {
+        "max_process_limit": get_user_input("Set max process limit? (True/False)", "False"),
+        "num_cpu": get_user_input(f"Total CPU cores available: {cpu_count}. Enter number of CPU cores to use",
+                                  str(cpu_count)),
         "generalize": get_user_input("Enable generalization (True/False)", "True"),
         "specs_folder_name": get_user_input("Name of specs folder", "sampled_specs"),
         "config_folder_name": get_user_input("Name of config folder", "config"),
@@ -68,14 +65,28 @@ def main():
         "init_method": get_user_input("Initialization method (File/Half/Random)", "file"),
         "action_mask": get_user_input("Enable action mask (True/False)", "True"),
         "dc_check": get_user_input("Enable step DC check (True/False)", "True"),
+        "restore_checkpoint": get_user_input("Restore from checkpoint? (True/False)", "False"),
+        "checkpoint_path": None,  # To be conditionally updated
+        "train_iterations": get_user_input("Train iterations(Default: 200)", "200"),
     }
+
+    if settings["max_process_limit"].lower() == "true":
+        set_max_process_limit()
+
+    if settings["restore_checkpoint"].lower() == "true":
+        settings["checkpoint_path"] = get_user_input("Checkpoint path", "")
+
+    settings["num_cpu"] = int(settings["num_cpu"])
+    settings["train_iterations"] = int(settings["train_iterations"])
 
     if confirm_settings(settings):
         # Convert string boolean values to Python boolean values
+        settings["max_process_limit"] = settings["max_process_limit"] == "True"
         settings["generalize"] = settings["generalize"] == "True"
         settings["sim_output"] = settings["sim_output"] == "True"
         settings["action_mask"] = settings["action_mask"] == "True"
         settings["dc_check"] = settings["dc_check"] == "True"
+        settings["restore_checkpoint"] = settings["restore_checkpoint"] == "True"
 
         # Environment initialization
         def env_creator(_):
@@ -86,29 +97,21 @@ def main():
         # Configuration and launching of the training process would go here
         # Similar to the previously described code for setting up and running the training
 
-        print("Starting training process...")
-
         env_name = "AnalogDesignEnv_v0"
         ray.init()
 
         # Restore or Initialize train
-        restore_checkpoint = input("Restore from checkpoint? (y/n): ").strip().lower()
+        restore_checkpoint = settings["restore_checkpoint"]
         checkpoint_path = None
-        if restore_checkpoint == "y":
-            checkpoint_path = input("Checkpoint path: ").strip()
+        if restore_checkpoint == "True":
+            checkpoint_path = settings["checkpoint_path"]
             assert os.path.exists(checkpoint_path), "Checkpoint path does not exist"
             print(f"Restoring from checkpoint: {checkpoint_path}")
 
         # Typing Train Iterations
-        train_iterations = input("Train iterations(Default 200): ").strip()
-        if not train_iterations:
-            train_iterations = 200
-        else:
-            try:
-                train_iterations = int(train_iterations)
-            except ValueError:
-                print("Invalid input. Applying default value 200")
-                train_iterations = 200
+        train_iterations = settings["train_iterations"]
+
+        print("Starting training process...")
 
         config = (
             PPOConfig()
