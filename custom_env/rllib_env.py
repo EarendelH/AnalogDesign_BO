@@ -112,6 +112,18 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         # Generate param space
         self.param_space = gen_param_space(self.param_range_config)
 
+        # Create an empty dict for operation region
+
+        self.operation_region_dict_zero = {}
+
+        with open(self.param_range_config, 'r') as file:
+            param_range = yaml.safe_load(file)
+        for component, data in param_range.items():
+            if component == 'other_variable':
+                pass
+            else:
+                self.operation_region_dict_zero[component] = 0
+
         # RLlib config
         self.terminateds = set()
         self.truncateds = set()
@@ -248,15 +260,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
             operation_region_dict = extract_operation_region_w_name(dc_result_path)
         except Exception as e:
             print(f"Warning!!!: {e}. No DC sim file.")
-            operation_region_dict = {}
-            # Create an empty dict for operation region
-            with open(self.param_range_config, 'r') as file:
-                param_range = yaml.safe_load(file)
-            for component, data in param_range.items():
-                if component == 'other_variable':
-                    pass
-                else:
-                    operation_region_dict[component] = 0
+            operation_region_dict = self.operation_region_dict_zero
 
         # Generate observation
         # observation = update_obs_space_simple(self.ideal_specs, norm_sim_result, init_param)
@@ -383,6 +387,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
                 valid_param = all(item in [1, 2, 3] for item in operation_region_list)
             except Exception as e:
                 print(f"Warning!!!: {e}. Failed to run DC check with step number: {self.step_num}")
+                operation_region_dict = self.operation_region_dict_zero
                 valid_param = False
 
         if self.dc_check and not valid_param:
@@ -443,15 +448,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
                 operation_region_dict = extract_operation_region_w_name(dc_result_path)
             except Exception as e:
                 print(f"Step Warning!!!: {e}. No DC sim file.")
-                operation_region_dict = {}
-                # Create an empty dict for operation region
-                with open(self.param_range_config, 'r') as file:
-                    param_range = yaml.safe_load(file)
-                for component, data in param_range.items():
-                    if component == 'other_variable':
-                        pass
-                    else:
-                        operation_region_dict[component] = 0
+                operation_region_dict = self.operation_region_dict_zero
 
             observation_detail = update_obs_space_w_region(self.norm_ideal_specs, norm_sim_result, updated_param,
                                                            operation_region_dict)
