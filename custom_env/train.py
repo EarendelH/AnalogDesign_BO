@@ -48,7 +48,6 @@ def confirm_settings(settings):
 
 def main():
     """Main function to run the script."""
-
     cpu_count = os.cpu_count()
     num_cpu = input(f"Total CPU cores available: {cpu_count}. Enter number of CPU cores to use: ").strip()
     num_cpu = int(num_cpu)
