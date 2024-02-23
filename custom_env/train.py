@@ -101,13 +101,14 @@ def main():
     settings["train_iterations"] = int(settings["train_iterations"])
 
     if confirm_flag:
-        # Convert string boolean values to Python boolean values
-        settings["max_process_limit"] = settings["max_process_limit"] == "True"
-        settings["generalize"] = settings["generalize"] == "True"
-        settings["sim_output"] = settings["sim_output"] == "True"
-        settings["action_mask"] = settings["action_mask"] == "True"
-        settings["dc_check"] = settings["dc_check"] == "True"
-        settings["restore_checkpoint"] = settings["restore_checkpoint"] == "True"
+        if args.config_mode == 'interactive':
+            # Convert string boolean values to Python boolean values
+            settings["max_process_limit"] = settings["max_process_limit"] == "True"
+            settings["generalize"] = settings["generalize"] == "True"
+            settings["sim_output"] = settings["sim_output"] == "True"
+            settings["action_mask"] = settings["action_mask"] == "True"
+            settings["dc_check"] = settings["dc_check"] == "True"
+            settings["restore_checkpoint"] = settings["restore_checkpoint"] == "True"
 
         env_settings = {
             "generalize": settings["generalize"],
