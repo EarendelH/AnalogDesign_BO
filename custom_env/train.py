@@ -88,15 +88,16 @@ def main():
             "checkpoint_path": None,  # To be conditionally updated
             "train_iterations": get_user_input("Train iterations(Default: 200)", "200"),
         }
+
+        if settings["restore_checkpoint"]:
+            settings["checkpoint_path"] = get_user_input("Checkpoint path", "")
+
         confirm_flag = confirm_settings(settings)
 
     print(f"Configuration settings: {settings}")
 
     if settings["max_process_limit"]:
         set_max_process_limit()
-
-    if settings["restore_checkpoint"]:
-        settings["checkpoint_path"] = get_user_input("Checkpoint path", "")
 
     num_cpu = int(settings["cpu_usage"])
     num_gpu = int(settings["gpu_usage"])
