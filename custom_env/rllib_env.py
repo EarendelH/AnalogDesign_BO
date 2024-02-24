@@ -78,9 +78,15 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         with open(self.norm_specs_file, 'r') as file:
             self.norm_specs = yaml.safe_load(file)
 
-        # Set root directory
+        # Get home directory
+        self.home_dir = os.path.expanduser("~")
+
+        # Set root directory based on home directory
+        # Avoid run folder placing in /tmp directory when running on cluster
+        # ~/AnalogDesignAuto/AnalogDesignAuto_MultiAgent/custom_env/ + self.run_root_dir
         self.run_root_dir = run_folder_name
-        self.run_root_dir = os.path.join(self.current_path, self.run_root_dir)
+        self.run_root_dir = os.path.join(self.home_dir, "AnalogDesignAuto/AnalogDesignAuto_MultiAgent/custom_env",
+                                         self.run_root_dir)
         if not os.path.exists(self.run_root_dir):
             raise ValueError(f"Root directory {self.run_root_dir} not found.")
 
