@@ -262,6 +262,12 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
             print(f"Warning!!!: {e}. No DC sim file.")
             operation_region_dict = self.operation_region_dict_zero
 
+        # Check operation_region_dict length vs self.operation_region_dict_zero length
+        if len(operation_region_dict) != len(self.operation_region_dict_zero):
+            print(f"Warning!!!: Operation region dict length {len(operation_region_dict)} does not match with "
+                  f"operation_region_dict_zero length {len(self.norm_ideal_specs)}.")
+            operation_region_dict = self.operation_region_dict_zero
+
         # Generate observation
         # observation = update_obs_space_simple(self.ideal_specs, norm_sim_result, init_param)
         # observation_detail = update_obs_space_w_type(self.norm_ideal_specs, norm_sim_result, init_param,
@@ -385,6 +391,12 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
                 # 0 cut-off, 1 triode, 2 saturation, 3 sub-th, 4 breakdown
                 # Check whether all transistors are in saturation/sub-threshold/triode region
                 valid_param = all(item in [1, 2, 3] for item in operation_region_list)
+                # Check operation_region_dict length vs self.operation_region_dict_zero length
+                if len(operation_region_dict) != len(self.operation_region_dict_zero):
+                    print(f"Warning!!!: Operation region dict length {len(operation_region_dict)} does not match with "
+                          f"operation_region_dict_zero length {len(self.norm_ideal_specs)}.")
+                    operation_region_dict = self.operation_region_dict_zero
+                    valid_param = False
             except Exception as e:
                 print(f"Warning!!!: {e}. Failed to run DC check with step number: {self.step_num}")
                 operation_region_dict = self.operation_region_dict_zero
@@ -448,6 +460,12 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
                 operation_region_dict = extract_operation_region_w_name(dc_result_path)
             except Exception as e:
                 print(f"Step Warning!!!: {e}. No DC sim file.")
+                operation_region_dict = self.operation_region_dict_zero
+
+            # Check operation_region_dict length vs self.operation_region_dict_zero length
+            if len(operation_region_dict) != len(self.operation_region_dict_zero):
+                print(f"Warning!!!: Operation region dict length {len(operation_region_dict)} does not match with "
+                      f"operation_region_dict_zero length {len(self.norm_ideal_specs)}.")
                 operation_region_dict = self.operation_region_dict_zero
 
             observation_detail = update_obs_space_w_region(self.norm_ideal_specs, norm_sim_result, updated_param,
