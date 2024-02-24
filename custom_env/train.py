@@ -69,7 +69,6 @@ def main():
         with open(args.config_file, 'r') as file:
             settings = yaml.safe_load(file)
         confirm_flag = True
-
     if args.config_mode == 'interactive':
         settings = {
             "max_process_limit": get_user_input("Set max process limit? (True/False)", "False"),
@@ -93,6 +92,9 @@ def main():
             settings["checkpoint_path"] = get_user_input("Checkpoint path", "")
 
         confirm_flag = confirm_settings(settings)
+    else:
+        print("Invalid configuration mode. Exiting.")
+        sys.exit(1)
 
     print(f"Configuration settings: {settings}")
 
