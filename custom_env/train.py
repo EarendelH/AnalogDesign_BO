@@ -62,6 +62,8 @@ def main():
     parser.add_argument('--config_file', type=str, help="Path to configuration file")
     args = parser.parse_args()
 
+    print("Config Mode: ", args.config_mode)
+
     if args.config_mode == 'file':
         if args.config_file is None:
             print("Configuration file not provided. Exiting.")
