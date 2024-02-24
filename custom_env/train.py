@@ -92,11 +92,7 @@ def main():
 
         if settings["restore_checkpoint"]:
             settings["checkpoint_path"] = get_user_input("Checkpoint path", "")
-
         confirm_flag = confirm_settings(settings)
-    else:
-        print("Invalid configuration mode. Exiting.")
-        sys.exit(1)
 
     print(f"Configuration settings: {settings}")
 
