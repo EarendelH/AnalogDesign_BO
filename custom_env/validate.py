@@ -80,6 +80,17 @@ def run_evaluation_single(checkpoint_file_path, validate_file_path, config_folde
     return step, done_flag
 
 
+def evaluate_specs(specs_file):
+    validate_file_path = os.path.join(validate_file_folder, specs_file)
+    step_count, success_flag = run_evaluation_single(checkpoint_path, validate_file_path, config_folder_name)
+    print(f"Validation episode with file {specs_file} finished after {step_count} steps with success "
+          f"flag {success_flag}")
+    if success_flag:
+        return 1
+    else:
+        return 0
+
+
 if __name__ == "__main__":
 
     cpu_count = os.cpu_count()
@@ -116,16 +127,6 @@ if __name__ == "__main__":
     #         episode_fail_count += 1
     #     print(f"Total episodes: {episode_success_count + episode_fail_count}, Finished: {episode_success_count}, "
     #           f"Terminated: {episode_fail_count}")
-
-    def evaluate_specs(specs_file):
-        validate_file_path = os.path.join(validate_file_folder, specs_file)
-        step_count, success_flag = run_evaluation_single(checkpoint_path, validate_file_path, config_folder_name)
-        print(f"Validation episode with file {specs_file} finished after {step_count} steps with success "
-              f"flag {success_flag}")
-        if success_flag:
-            return 1
-        else:
-            return 0
 
     with concurrent.futures.ThreadPoolExecutor(max_workers=num_threads) as executor:
         results = executor.map(evaluate_specs, selected_files)
