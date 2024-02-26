@@ -116,26 +116,25 @@ if __name__ == "__main__":
 
     # for each file
     # Print the result for each file
-    # for file in selected_files:
-    #     validate_file_path = os.path.join(validate_file_folder, file)
-    #     step_count, success_flag = run_evaluation_single(checkpoint_path, validate_file_path, config_folder_name)
-    #     print(f"Validation episode with file {file} finished after {step_count}
-    #     steps with success flag {success_flag}")
-    #     if success_flag:
-    #         episode_success_count += 1
-    #     else:
-    #         episode_fail_count += 1
-    #     print(f"Total episodes: {episode_success_count + episode_fail_count}, Finished: {episode_success_count}, "
-    #           f"Terminated: {episode_fail_count}")
+    for file in selected_files:
+        validate_file_path = os.path.join(validate_file_folder, file)
+        step_count, success_flag = run_evaluation_single(checkpoint_path, validate_file_path, config_folder_name)
+        print(f"Validation episode with file {file} finished after {step_count} steps with success flag {success_flag}")
+        if success_flag:
+            episode_success_count += 1
+        else:
+            episode_fail_count += 1
+        print(f"Total episodes: {episode_success_count + episode_fail_count}, Finished: {episode_success_count}, "
+              f"Terminated: {episode_fail_count}")
 
-    with concurrent.futures.ThreadPoolExecutor(max_workers=num_threads) as executor:
-        results = executor.map(evaluate_specs, selected_files)
-        for result in results:
-            if result:
-                episode_success_count += 1
-            else:
-                episode_fail_count += 1
-            print(f"Total episodes: {episode_success_count + episode_fail_count}, Finished: {episode_success_count}, "
-                  f"Terminated: {episode_fail_count}")
+    # with concurrent.futures.ThreadPoolExecutor(max_workers=num_threads) as executor:
+    #     results = executor.map(evaluate_specs, selected_files)
+    #     for result in results:
+    #         if result:
+    #             episode_success_count += 1
+    #         else:
+    #             episode_fail_count += 1
+    #         print(f"Total episodes: {episode_success_count + episode_fail_count}, Finished: {episode_success_count}, "
+    #               f"Terminated: {episode_fail_count}")
 
     ray.shutdown()
