@@ -240,12 +240,12 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
             pickle.dump(self.trajectory_data, f)
 
         # Delete working temp directory, if it exists
-        try:
-            if os.path.exists(working_dir):
-                shutil.rmtree(working_dir)
-        except OSError as e:
-            print(f"Warning!!!: {e.strerror}. Directory {working_dir} does not exist or cannot be removed.")
-            pass
+        # try:
+        #     if os.path.exists(working_dir):
+        #         shutil.rmtree(working_dir)
+        # except OSError as e:
+        #     print(f"Warning!!!: {e.strerror}. Directory {working_dir} does not exist or cannot be removed.")
+        #     pass
 
         return observations, info
 
@@ -309,12 +309,12 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
                     operation_region_dict = self.operation_region_dict_zero
                     valid_param = False
                 # Delete working temp directory, if it exists
-                try:
-                    if os.path.exists(working_dir_dc):
-                        shutil.rmtree(working_dir_dc)
-                except OSError as e:
-                    print(f"Warning!!!: {e.strerror}. Directory {working_dir_dc} does not exist or cannot be removed.")
-                    pass
+                # try:
+                #     if os.path.exists(working_dir_dc):
+                #         shutil.rmtree(working_dir_dc)
+                # except OSError as e:
+                #     print(f"Warning!!!: {e.strerror}. Directory {working_dir_dc} does not exist or cannot be removed.")
+                #     pass
             except Exception as e:
                 print(f"Warning!!!: {e}. Failed to run DC check with step number: {self.step_num}")
                 operation_region_dict = self.operation_region_dict_zero
@@ -417,11 +417,11 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
             pickle.dump(self.trajectory_data, f)
 
         # Delete working temp directory, if it exists
-        try:
-            if os.path.exists(working_dir):
-                shutil.rmtree(working_dir)
-        except OSError as e:
-            print(f"Warning!!!: {e.strerror}. Directory {working_dir} does not exist or cannot be removed.")
-            pass
+        # try:
+        #     if os.path.exists(working_dir):
+        #         shutil.rmtree(working_dir)
+        # except OSError as e:
+        #     print(f"Warning!!!: {e.strerror}. Directory {working_dir} does not exist or cannot be removed.")
+        #     pass
 
         return observations, rew, terminated, truncated, info
