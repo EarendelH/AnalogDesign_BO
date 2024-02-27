@@ -1,6 +1,7 @@
 import datetime
 import os
 import random
+import shutil
 import time
 import functools
 
@@ -78,3 +79,16 @@ def retry_decorator(retry_count=2, delay_seconds=1, default_value=None):
 # def run_spectre_simulation(working_dir, sim_config, sim_output_enable):
 #     ...
 #     return sim_result
+
+
+def delete_work_dir(work_dir):
+    """
+    Delete the work directory and all its contents.
+    :param work_dir: path of the work directory
+    """
+    try:
+        if os.path.exists(work_dir):
+            shutil.rmtree(work_dir)
+    except OSError as e:
+        print(f"Warning!!!: {e.strerror}. Directory {work_dir} does not exist or cannot be removed.")
+        pass
