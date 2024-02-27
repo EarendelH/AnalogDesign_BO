@@ -7,14 +7,21 @@ import random
 import shutil
 
 from util.gen_action_sapce import gen_masked_action_space
+# from util.gen_obs_space import gen_obs_space_extend, flatten_obs_space
+# from util.gen_obs_space import gen_obs_space_w_type, flatten_obs_space_w_type
+# from util.gen_obs_space import gen_obs_space_simple
 from util.gen_obs_space import gen_obs_space_w_region, flatten_obs_space_w_region
 from util.gen_param_space import gen_param_space
 from util.util_func import create_work_dir
 from util.assign_param2netlist import update_netlist
 from util.run_spectre_simulation import run_spectre_simulation
+# from util.cal_reward import cal_reward_simple as cal_reward
 from util.cal_reward import cal_reward
 from util.generalize_config import generalize_config
 from util.update_param import update_parameters
+# from util.update_obs_space import update_obs_space, flatten_observation
+# from util.update_obs_space import update_obs_space_simple
+# from util.update_obs_space import update_obs_space_w_type, flatten_observation_w_type
 from util.update_obs_space import update_obs_space_w_region, flatten_observation_w_region
 from util.normlization import norm_ideal_spec, norm_sim_spec
 from util.util_func import retry_decorator
@@ -65,6 +72,12 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         # Pass sim_output flag
         self.sim_output_enable = sim_output
 
+        # Set normalization items
+        self.norm_specs_file = config_folder_name + "/norm_specs.yaml"
+        self.norm_specs_file = os.path.join(self.current_path, self.norm_specs_file)
+        with open(self.norm_specs_file, 'r') as file:
+            self.norm_specs = yaml.safe_load(file)
+
         # Get home directory
         self.home_dir = os.path.expanduser("~")
 
@@ -88,16 +101,12 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         self.predefined_init_param = os.path.join(self.current_path, self.predefined_init_param)
         self.device_mask_config = config_folder_name + "/device_mask.yaml"
         self.device_mask_config = os.path.join(self.current_path, self.device_mask_config)
-        self.norm_specs_file = config_folder_name + "/norm_specs.yaml"
-        self.norm_specs_file = os.path.join(self.current_path, self.norm_specs_file)
 
         # Load YAML
         with open(self.sim_config, 'r') as file:
             self.sim_config_dict = yaml.safe_load(file)
-        # Generate DC sim config
+
         self.dc_sim_config_dict = [item for item in self.sim_config_dict if item['simulation_name'] == 'DC']
-        with open(self.norm_specs_file, 'r') as file:
-            self.norm_specs = yaml.safe_load(file)
 
         # Set netlist directory
         self.unassigned_netlist_dir = "netlist_template"
@@ -131,12 +140,16 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         self.terminateds = set()
         self.truncateds = set()
         self._obs_space_in_preferred_format = True
+        # self.observation_space = flatten_obs_space_w_type(gen_obs_space_w_type(
+        #     self.sim_config, self.param_range_config, self.agent_assign_config))
         self.observation_space = flatten_obs_space_w_region(gen_obs_space_w_region(self.sim_config,
                                                                                    self.param_range_config,
                                                                                    self.agent_assign_config))
         # print(f"observation_space: {self.observation_space}")
         self._action_space_in_preferred_format = True
         self.action_space = gen_masked_action_space(action_mask, self.device_mask_config, self.agent_assign_config)
+        # self.action_space = gen_action_space(self.agent_assign_config)
+        # print(f"action_space: {self.action_space}")
 
         self.resetted = False
 
@@ -152,6 +165,67 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         print(f"Initialing!!!Generalize flag: {self.generalize}")
         print(f"Initialing!!!Ideal specs: {self.ideal_specs}")
 
+        # Redundant code for random init, delete later
+        # Generate init param
+        # init_param = None
+        # working_dir = None
+        # exception_occurred = None
+        # if self.init_method == 'random':
+        #     print(f"Initialing Checking!!!Init method: {self.init_method}")
+        #     valid_init_param = False
+        #     init_step = 0
+        #     while not valid_init_param:
+        #         try:
+        #             init_param = gen_init_param(self.init_method, self.predefined_init_param, self.action_mask,
+        #                                         self.device_mask_config, self.param_space)
+        #             # Check the operation region of transistors with the given init params
+        #             working_dir = create_work_dir(self.run_root_dir)
+        #             print(f"Initialing Checking!!!Working directory: {working_dir}
+        #             with init step number: {init_step}")
+        #
+        #             # Update DC Netlist File for checking init operation region
+        #             unassigned_netlist_file = "DC_parameterized.scs"
+        #             assigned_netlist_file = "DC.scs"
+        #             unassigned_netlist_file_path = os.path.join(self.unassigned_netlist_dir, unassigned_netlist_file)
+        #             assigned_netlist_file_path = os.path.join(working_dir, assigned_netlist_file)
+        #             assigned_yaml_file_path = os.path.join(working_dir, "assigned.yaml")
+        #             assign_param2netlist(init_param, unassigned_netlist_file_path, assigned_netlist_file_path,
+        #                                  assigned_yaml_file_path)
+        #
+        #             with open(self.sim_config, 'r') as file:
+        #                 sim_config = yaml.safe_load(file)
+        #
+        #             dc_sim_config = [item for item in sim_config if item['simulation_name'] == 'DC']
+        #             _ = run_spectre_simulation(working_dir, dc_sim_config, self.sim_output_enable)
+        #             dc_result_path = os.path.join(working_dir, "DC.raw/dcOpInfo.info.encode")
+        #             operation_region_dict = extract_operation_region_w_name(dc_result_path)
+        #             operation_region_list = list(operation_region_dict.values())
+        #             print(f"Initialing Checking!!!Operation region: {operation_region_list} with "
+        #                   f"init step number: {init_step}")
+        #             # 0 cut-off, 1 triode, 2 saturation, 3 sub-th, 4 breakdown
+        #             # Check whether all transistors are in saturation/sub-threshold/triode region
+        #             valid_init_param = all(item in [1, 2, 3] for item in operation_region_list)
+        #             init_step += 1
+        #         except Exception as e:
+        #             print(f"Warning!!!: {e}. Failed to generate init param with init step number: {init_step}")
+        #             exception_occurred = True
+        #             break
+        #         # Delete working temp directory, if it exists
+        #         finally:
+        #             try:
+        #                 if os.path.exists(working_dir):
+        #                     shutil.rmtree(working_dir)
+        #             except OSError as e:
+        #                 print(f"Warning!!!: {e.strerror}. Directory {working_dir}
+        #                 does not exist or cannot be removed.")
+        #                 pass
+        #     if exception_occurred:
+        #         init_param = gen_init_param('file', self.predefined_init_param, self.action_mask,
+        #                                     self.device_mask_config, self.param_space)
+        # else:
+        #     init_param = gen_init_param(self.init_method, self.predefined_init_param, self.action_mask,
+        #                                 self.device_mask_config, self.param_space)
+
         init_param = gen_init_param(self.init_method, self.predefined_init_param, self.action_mask,
                                     self.device_mask_config, self.param_space)
 
@@ -161,6 +235,18 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
 
         # Update Netlist File
         update_netlist(working_dir, self.sim_config_dict, init_param, self.unassigned_netlist_dir)
+
+        # for unassigned_netlist_file in os.listdir(self.unassigned_netlist_dir):
+        #     if unassigned_netlist_file.endswith(".scs"):
+        #         assigned_netlist_file = unassigned_netlist_file.replace("_parameterized", "")
+        #
+        #         unassigned_netlist_file_path = os.path.join(self.unassigned_netlist_dir, unassigned_netlist_file)
+        #         assigned_netlist_file_path = os.path.join(working_dir, assigned_netlist_file)
+        #         assign_param2netlist(init_param, unassigned_netlist_file_path, assigned_netlist_file_path)
+
+        # Run spectre simulation
+        # with open(self.sim_config, 'r') as file:
+        #     sim_config = yaml.safe_load(file)
 
         # For avoid simulation error in step, generate a default result with zero value but correct key in step method
         self.zero_sim_result = {}
@@ -201,12 +287,18 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
             operation_region_dict = self.operation_region_dict_zero
 
         # Generate observation
+        # observation = update_obs_space_simple(self.ideal_specs, norm_sim_result, init_param)
+        # observation_detail = update_obs_space_w_type(self.norm_ideal_specs, norm_sim_result, init_param,
+        #                                              self.param_range_config)
         observation_detail = update_obs_space_w_region(self.norm_ideal_specs, norm_sim_result, init_param,
                                                        operation_region_dict)
+        # print(f"Initialing!!!Observation result: {observation_detail}")
+        # observation = flatten_observation_w_type(observation_detail)
         observation = flatten_observation_w_region(observation_detail)
 
         # Share all observations among agents
         observations = {agent: observation for agent in self.agents}
+        # print(f"Initialing!!!Observations result: {observations}")
 
         # Test Rew func
         rew = cal_reward(self.ideal_specs, sim_result)
@@ -256,6 +348,8 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
 
         operation_region_dict = {}
 
+        # print(f"Updated action: {action_dict} with step number: {self.step_num}")
+
         # Create working directory
         working_dir = create_work_dir(self.run_root_dir)
         print(f"Step!!! Working directory: {working_dir} with step number: {self.step_num}")
@@ -272,14 +366,19 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
                             new_value = action_dict[agent_key][key]
                             action_dict[agent_key][new_key] = new_value
 
+        # print(f"Step!!!Actions: {action_dict} with step number: {self.step_num}")
         # Flatten all actions
         all_action_flatten = OrderedDict()
         for group in action_dict.values():
             for key, value in group.items():
                 all_action_flatten[key] = value
+        # print(f"Step!!!Flatten actions: {all_action_flatten}")
 
         # Update param with new action
+        # print(f"Step!!!Current param index: {self.cur_param} with step number: {self.step_num}")
+        # print(f"Step!!!Previous param: {self.cur_param} with step number: {self.step_num}")
         updated_param = update_parameters(all_action_flatten, self.cur_param, self.param_range_config)
+        # print(f"Step!!!Updated param: {updated_param} with step number: {self.step_num}")
 
         # Update current param
         self.cur_param = updated_param
@@ -292,6 +391,13 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
                 working_dir_dc = create_work_dir(self.run_root_dir)
                 # Update DC Netlist File for checking operation region
                 update_netlist(working_dir, self.sim_config_dict, updated_param, self.unassigned_netlist_dir)
+                # unassigned_netlist_file = "DC_parameterized.scs"
+                # assigned_netlist_file = "DC.scs"
+                # unassigned_netlist_file_path = os.path.join(self.unassigned_netlist_dir, unassigned_netlist_file)
+                # assigned_netlist_file_path = os.path.join(working_dir, assigned_netlist_file)
+                # assigned_yaml_file_path = os.path.join(working_dir, "assigned.yaml")
+                # assign_param2netlist(updated_param, unassigned_netlist_file_path, assigned_netlist_file_path,
+                #                      assigned_yaml_file_path)
 
                 update_netlist(working_dir_dc, self.dc_sim_config_dict, updated_param, self.unassigned_netlist_dir)
                 _ = run_spectre_simulation(working_dir_dc, self.dc_sim_config_dict, self.sim_output_enable)
@@ -353,8 +459,13 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
             sim_result = _run_simulation_with_retry()
             print(f"Step!!!Simulation result: {sim_result} with step number: {self.step_num}")
             norm_sim_result = norm_sim_spec(sim_result, self.norm_specs)
+            # print(f"Step!!!Normalized simulation result: {norm_sim_result} with step number: {self.step_num}")
 
             # Generate observation
+            # observation = update_obs_space_simple(self.ideal_specs, norm_sim_result, updated_param)
+            # observation_detail = update_obs_space_w_type(self.norm_ideal_specs, norm_sim_result, updated_param,
+            #                                              self.param_range_config)
+
             # Add logic to avoid exception when no DC sim file
             try:
                 dc_result_path = os.path.join(working_dir, "DC.raw/dcOpInfo.info.encode")
@@ -371,10 +482,20 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
 
             observation_detail = update_obs_space_w_region(self.norm_ideal_specs, norm_sim_result, updated_param,
                                                            operation_region_dict)
+            # print(f"Step!!!Observation result: {observation_detail} with step number: {self.step_num}")
+            # observation = flatten_observation_w_type(observation_detail)
             observation = flatten_observation_w_region(observation_detail)
 
             # Share all observations
             observations = {agent: observation for agent in self.agents}
+            # print(f"Step!!!Observations result: {observations} with step number: {self.step_num}")
+
+            # Store the observation
+            # with open(os.path.join(working_dir, "result.yaml"), 'w') as file:
+            #     yaml.dump(observation, file)
+
+            # print("Step!!!self.ideal_specs: ", self.ideal_specs)
+            # print("Step!!!observation_detail: ", observation_detail)
 
             # Calculate reward
             rew = {a: -10 for a in self.agents}
