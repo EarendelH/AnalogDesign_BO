@@ -4,13 +4,13 @@
   simulation_item:
     - phaseMargin
     - gainBandWidth
-- simulation_name: DC
-  simulation_file: dcOpInfo.info
-  parse_func: findDCValue
-  simulation_item:
-    - pwr
 - simulation_name: PSRR
   simulation_file: ac.ac
   parse_func: findPowerSupplyRejectionRatio
   simulation_item:
     - powerSupplyRejectionRatio
+- simulation_name: DC
+  simulation_file: dcOpInfo.info
+  parse_func: findDCValue
+  simulation_item:
+    - pwr

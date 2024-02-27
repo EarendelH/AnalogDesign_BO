@@ -7,7 +7,7 @@ def findPowerSupplyRejectionRatio(file_path):
     found_value = False
     net03_value = None
     net3_value = None
-    default_value = 0.1
+    default_value = 0.0
 
     # Regular expression pattern to find the floating point numbers.
     pattern = re.compile(r"[-+]?(\d+(\.\d*)?|\.\d+)([eE][-+]?\d+)?")
@@ -32,7 +32,7 @@ def findPowerSupplyRejectionRatio(file_path):
 
     # Check if values are properly read and calculate the ratio
     if net03_value is None or net3_value is None:
-        print("Error: Unable to read net03_value or net3_value from the file. PSRR set to 0.1dB.")
+        print("Error: Unable to read net03_value or net3_value from the file. PSRR set to 0.0dB.")
         power_supply_rejection_ratio = default_value
     else:
         power_supply_rejection_ratio = net3_value / net03_value

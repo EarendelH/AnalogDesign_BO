@@ -7,7 +7,7 @@ def findDCValue(filepath):
 
     instance_name = "V0"
     property_name = "pwr"
-    default_value = 1
+    default_value = 1.0
 
     try:
         value_dict = parse_device_values(filepath)

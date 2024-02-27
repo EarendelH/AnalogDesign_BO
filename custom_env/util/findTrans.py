@@ -163,17 +163,17 @@ def findSlewRate(file_path):
 
     # If slewRateUp or slewRateDown is None, return 0
     if slewRateUp_val is None:
-        slewRateUp_val = 0
-        print(f"Warning!!! slewRateUp is not found, set to 0")
+        slewRateUp_val = 0.0
+        print(f"Warning!!! slewRateUp is not found, set to 0.0")
     if slewRateDown_val is None:
-        slewRateDown_val = 0
-        print(f"Warning!!! slewRateDown is not found, set to 0")
-    if slewRateUp_val < 0:
-        slewRateUp_val = 0
-        print(f"Warning!!! slewRateUp is negative, set to 0")
-    if slewRateDown_val < 0:
-        slewRateDown_val = 0
-        print(f"Warning!!! slewRateDown is negative, set to 0")
+        slewRateDown_val = 0.0
+        print(f"Warning!!! slewRateDown is not found, set to 0.0")
+    if slewRateUp_val < 0.0:
+        slewRateUp_val = 0.0
+        print(f"Warning!!! slewRateUp is negative, set to 0.0")
+    if slewRateDown_val < 0.0:
+        slewRateDown_val = 0.0
+        print(f"Warning!!! slewRateDown is negative, set to 0.0")
 
     return {"slewRateUp": slewRateUp_val, "slewRateDown": slewRateDown_val}
 
