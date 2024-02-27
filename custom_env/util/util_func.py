@@ -41,7 +41,9 @@ def create_work_dir(base_path):
     """
     cur_time = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
     random_num = str(random.randint(1000, 9999))
-    dir_name = f"tmp_{cur_time}{random_num}"
+    # Get the thread id
+    thread_id = str(os.getpid())
+    dir_name = f"tmp_{cur_time}{thread_id}{random_num}"
     work_dir = os.path.join(base_path, dir_name)
     os.makedirs(work_dir, exist_ok=True)
     # print(f"Created working directory: {work_dir}")
