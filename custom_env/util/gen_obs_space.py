@@ -491,30 +491,20 @@ def flatten_obs_space_w_type(obs_space: gymnasium.spaces.Dict):
 # print(f"observation_space_flat: {observation_space_flat}")
 
 
-def gen_obs_space_w_region(sim_config_file, param_range_config_file, agent_assign_yaml_path):
+def gen_obs_space_w_region(sim_config_dict, param_range_config_dict, agent_assign_dict):
     """
     Generate observation space for the custom environment.
-    :param agent_assign_yaml_path: path of the agent assign yaml file
-    :param sim_config_file: path of the result config file
-    :param param_range_config_file: path of the parameter range config file
+    :param agent_assign_dict: dict of the agent assign yaml file
+    :param sim_config_dict: dict of the result config file
+    :param param_range_config_dict: dict of the parameter range config file
     :return: obs_space: gymnasium.spaces.Dict, observation space for the custom environment
     """
 
-    with open(agent_assign_yaml_path, 'r') as file:
-        agent_assign = yaml.safe_load(file)
-
-    # Import YAML file
-    with open(sim_config_file, 'r') as file:
-        sim_config = yaml.safe_load(file)
-
     result_config = {}
-    for item in sim_config:
+    for item in sim_config_dict:
         sim_name = item['simulation_name']
         sim_item = item['simulation_item']
         result_config[sim_name] = sim_item
-
-    with open(param_range_config_file, 'r') as file:
-        param_range_config = yaml.safe_load(file)
 
     # Create spaces for ideal_specs and cur_specs
     ideal_specs_spaces = {key: gymnasium.spaces.Box(low=-1, high=1, shape=(1,), dtype=np.float32)
@@ -524,7 +514,7 @@ def gen_obs_space_w_region(sim_config_file, param_range_config_file, agent_assig
 
     # Create spaces for cur_param
     cur_param_spaces = {}
-    for component, data in param_range_config.items():
+    for component, data in param_range_config_dict.items():
         for param in data['params']:
             variable_name = param['variable_name']
             range_min, range_max = param['value']['range']
@@ -534,7 +524,7 @@ def gen_obs_space_w_region(sim_config_file, param_range_config_file, agent_assig
 
     # Create spaces for transistor region
     transistor_region_space = {}
-    for component, data in param_range_config.items():
+    for component, data in param_range_config_dict.items():
         if component == 'other_variable':
             pass
         else:
@@ -551,7 +541,7 @@ def gen_obs_space_w_region(sim_config_file, param_range_config_file, agent_assig
     })
 
     obs_space = gymnasium.spaces.Dict()
-    for group_name in agent_assign.keys():
+    for group_name in agent_assign_dict.keys():
         obs_space[group_name] = obs_space_single
 
     return obs_space

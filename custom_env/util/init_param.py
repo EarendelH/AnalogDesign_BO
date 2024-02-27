@@ -3,11 +3,13 @@ import random
 from collections import OrderedDict
 
 
-def gen_init_param(init_method_flag, init_param_path, action_mask_flag, device_mask_yaml_path, param_space):
+def gen_init_param(init_method_flag, init_param_path, action_mask_flag, device_mask_dict, param_space):
     # Load device mask configuration if action_mask_flag is True
+
+    device_mask = {}
+
     if action_mask_flag:
-        with open(device_mask_yaml_path, 'r') as file:
-            device_mask = yaml.safe_load(file)
+        device_mask = device_mask_dict
 
     init_param = OrderedDict()
 

@@ -98,30 +98,28 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         self.dc_sim_config_dict = [item for item in self.sim_config_dict if item['simulation_name'] == 'DC']
         with open(self.norm_specs_file, 'r') as file:
             self.norm_specs = yaml.safe_load(file)
+        with open(self.param_range_config, 'r') as file:
+            self.param_range_dict = yaml.safe_load(file)
+        with open(self.agent_assign_config, 'r') as file:
+            agent_assign_dict = yaml.safe_load(file)
+        with open(self.device_mask_config, 'r') as file:
+            self.device_mask_dict = yaml.safe_load(file)
 
         # Set netlist directory
         self.unassigned_netlist_dir = "netlist_template"
         self.unassigned_netlist_dir = os.path.join(self.current_path, self.unassigned_netlist_dir)
 
-        # Multi-agent config
-        with open(self.agent_assign_config, 'r') as file:
-            agent_assign = yaml.safe_load(file)
-
         # RLlib config
-        self.possible_agents = list(agent_assign.keys())
+        self.possible_agents = list(agent_assign_dict.keys())
         self.agents = self.possible_agents
         self._agent_ids = set(self.agents)
 
         # Generate param space
-        self.param_space = gen_param_space(self.param_range_config)
+        self.param_space = gen_param_space(self.param_range_dict)
 
         # Create an empty dict for operation region
-
         self.operation_region_dict_zero = {}
-
-        with open(self.param_range_config, 'r') as file:
-            param_range = yaml.safe_load(file)
-        for component, data in param_range.items():
+        for component, data in self.param_range_dict.items():
             if component == 'other_variable':
                 pass
             else:
@@ -131,19 +129,20 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         self.terminateds = set()
         self.truncateds = set()
         self._obs_space_in_preferred_format = True
-        self.observation_space = flatten_obs_space_w_region(gen_obs_space_w_region(self.sim_config,
-                                                                                   self.param_range_config,
-                                                                                   self.agent_assign_config))
+
+        # Generate observation and action space
+        self.observation_space = flatten_obs_space_w_region(gen_obs_space_w_region(self.sim_config_dict,
+                                                                                   self.param_range_dict,
+                                                                                   agent_assign_dict))
         # print(f"observation_space: {self.observation_space}")
         self._action_space_in_preferred_format = True
-        self.action_space = gen_masked_action_space(action_mask, self.device_mask_config, self.agent_assign_config)
+        self.action_space = gen_masked_action_space(action_mask, self.device_mask_dict, agent_assign_dict)
 
         self.resetted = False
 
         super().__init__()
 
     def reset(self, *, seed=None, options=None):
-
         # Reset step number
         self.step_num = 0
 
@@ -153,7 +152,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         print(f"Initialing!!!Ideal specs: {self.ideal_specs}")
 
         init_param = gen_init_param(self.init_method, self.predefined_init_param, self.action_mask,
-                                    self.device_mask_config, self.param_space)
+                                    self.device_mask_dict, self.param_space)
 
         # Generate working directory
         working_dir = create_work_dir(self.run_root_dir)
@@ -240,12 +239,12 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
             pickle.dump(self.trajectory_data, f)
 
         # Delete working temp directory, if it exists
-        # try:
-        #     if os.path.exists(working_dir):
-        #         shutil.rmtree(working_dir)
-        # except OSError as e:
-        #     print(f"Warning!!!: {e.strerror}. Directory {working_dir} does not exist or cannot be removed.")
-        #     pass
+        try:
+            if os.path.exists(working_dir):
+                shutil.rmtree(working_dir)
+        except OSError as e:
+            print(f"Warning!!!: {e.strerror}. Directory {working_dir} does not exist or cannot be removed.")
+            pass
 
         return observations, info
 
@@ -260,14 +259,11 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         working_dir = create_work_dir(self.run_root_dir)
         print(f"Step!!! Working directory: {working_dir} with step number: {self.step_num}")
 
-        with open(self.device_mask_config, 'r') as file:
-            device_mask = yaml.safe_load(file)
-
         if self.action_mask:
-            for key in device_mask:
+            for key in self.device_mask_dict:
                 for agent_key in action_dict:
                     if key in action_dict[agent_key]:
-                        new_values = device_mask[key]
+                        new_values = self.device_mask_dict[key]
                         for new_key in new_values:
                             new_value = action_dict[agent_key][key]
                             action_dict[agent_key][new_key] = new_value
@@ -309,12 +305,12 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
                     operation_region_dict = self.operation_region_dict_zero
                     valid_param = False
                 # Delete working temp directory, if it exists
-                # try:
-                #     if os.path.exists(working_dir_dc):
-                #         shutil.rmtree(working_dir_dc)
-                # except OSError as e:
-                #     print(f"Warning!!!: {e.strerror}. Directory {working_dir_dc} does not exist or cannot be removed.")
-                #     pass
+                try:
+                    if os.path.exists(working_dir_dc):
+                        shutil.rmtree(working_dir_dc)
+                except OSError as e:
+                    print(f"Warning!!!: {e.strerror}. Directory {working_dir_dc} does not exist or cannot be removed.")
+                    pass
             except Exception as e:
                 print(f"Warning!!!: {e}. Failed to run DC check with step number: {self.step_num}")
                 operation_region_dict = self.operation_region_dict_zero
@@ -417,11 +413,11 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
             pickle.dump(self.trajectory_data, f)
 
         # Delete working temp directory, if it exists
-        # try:
-        #     if os.path.exists(working_dir):
-        #         shutil.rmtree(working_dir)
-        # except OSError as e:
-        #     print(f"Warning!!!: {e.strerror}. Directory {working_dir} does not exist or cannot be removed.")
-        #     pass
+        try:
+            if os.path.exists(working_dir):
+                shutil.rmtree(working_dir)
+        except OSError as e:
+            print(f"Warning!!!: {e.strerror}. Directory {working_dir} does not exist or cannot be removed.")
+            pass
 
         return observations, rew, terminated, truncated, info

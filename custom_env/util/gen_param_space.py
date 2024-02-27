@@ -1,4 +1,7 @@
-def gen_param_space(file_path):
+from collections import OrderedDict
+
+
+def gen_param_space(param_range_dict):
     """
     Process a YAML file to create an OrderedDict containing all possible param values.
 
@@ -8,10 +11,8 @@ def gen_param_space(file_path):
     Returns:
     OrderedDict: An ordered dictionary with param names and their corresponding param value lists.
     """
-    import yaml
-    from collections import OrderedDict
 
-    def parse_value_range_ascending(value_range, step, is_integer=False):
+    def parse_value_range_ascending(value_range_define, step_num, integer_flag=False):
         """
         Parse the range and step to create a sorted list of values in ascending order.
         Convert to integers if is_integer is True.
@@ -24,18 +25,18 @@ def gen_param_space(file_path):
         Returns:
         list: A list of values in the specified range and step, in ascending order and str type.
         """
-        start, end = value_range
+        start, end = value_range_define
         # Check if start is a string to find magnitude character, otherwise treat as float
         if isinstance(start, str):
             magnitude = ''.join(filter(str.isalpha, start))
-            start, end, step = [float(x.replace(magnitude, '')) for x in [start, end, step]]
+            start, end, step_num = [float(x.replace(magnitude, '')) for x in [start, end, step_num]]
         else:
             magnitude = ''
-            start, end, step = float(start), float(end), float(step)
+            start, end, step_num = float(start), float(end), float(step_num)
 
         # Generate the list of values in ascending order
-        values = [start + i * step for i in range(int((end - start) / step) + 1)]
-        if is_integer:
+        values = [start + i * step_num for i in range(int((end - start) / step_num) + 1)]
+        if integer_flag:
             # Convert values to integers if required
             values = [str(int(value)) for value in values]
         else:
@@ -44,11 +45,8 @@ def gen_param_space(file_path):
 
         return values
 
-    with open(file_path, 'r') as file:
-        data = yaml.safe_load(file)
-
     result = OrderedDict()
-    for key, value in data.items():
+    for key, value in param_range_dict.items():
         for param in value['params']:
             variable_name = param['variable_name']
             value_range = param['value']['range']

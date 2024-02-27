@@ -74,13 +74,13 @@ def gen_action_space(agent_assign_yaml_path):
 # array([0, 2, 0])), ('M20', array([2, 0, 1])), ('M21', array([2, 2, 0])), ('M22', array([1, 2, 2])), ('IB',
 # array([1]))])
 
-def gen_masked_action_space(action_mask_flag, device_mask_yaml_path, agent_assign_yaml_path):
+def gen_masked_action_space(action_mask_flag, device_mask_dict, agent_assign_dict):
     """
     Generate action space for the environment.
     Parameters:
         action_mask_flag: A flag to determine whether to apply the device mask.
-        device_mask_yaml_path: Path to the YAML file that contains devices to be masked.
-        agent_assign_yaml_path: Path to the YAML file that defines the action space including agent name and corresponding device name.
+        device_mask_dict: dict to the YAML file that contains devices to be masked.
+        agent_assign_dict: dict to the YAML file that defines the action space including agent name and corresponding device name.
     Returns:
         gymnasium.spaces.Dict: The action space for the multi-agent environment as a dictionary of MultiDiscrete spaces.
     """
@@ -91,23 +91,15 @@ def gen_masked_action_space(action_mask_flag, device_mask_yaml_path, agent_assig
     # 2: +1 index;
     operation_number = 3
 
-    # Load agent assignment configuration from YAML file
-    with open(agent_assign_yaml_path, 'r') as file:
-        agent_assign = yaml.safe_load(file)
-
-    # Load device mask configuration from YAML file
-    with open(device_mask_yaml_path, 'r') as file:
-        device_mask = yaml.safe_load(file)
-
     # Initialize the dictionary to store action spaces for each agent group
     action_space_dict = {}
 
     # Apply device mask if action_mask_flag is set to True
     if action_mask_flag:
         # Iterate through each device mask key and its values
-        for key, values in device_mask.items():
+        for key, values in device_mask_dict.items():
             # Iterate through each agent group and its device list
-            for group_name, device_list in agent_assign.items():
+            for group_name, device_list in agent_assign_dict.items():
                 # Check if the mask key is in the device list of the agent group
                 if key in device_list:
                     # Iterate through the mask values and remove them from the device list if present
@@ -116,7 +108,7 @@ def gen_masked_action_space(action_mask_flag, device_mask_yaml_path, agent_assig
                             device_list.remove(value)
 
     # Generate the action space for each type of device
-    for group_name, device_list in agent_assign.items():
+    for group_name, device_list in agent_assign_dict.items():
         space_dict = {}
         # Iterate through each device in the device list
         for device in device_list:
