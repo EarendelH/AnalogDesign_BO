@@ -138,9 +138,11 @@ def run_dynamic_simulation(work_dir, sim_config, zero_sim_result, show_output=Fa
 
             if result == 1.0 and simulation == "DC":
                 fail_tag = True
+                print(f"Simulation {simulation} failed. Return zero simulation result")
                 break
             if result == 0.0 and simulation != "DC":
                 fail_tag = True
+                print(f"Simulation {simulation} failed. Return zero simulation result")
                 break
 
     if fail_tag:
