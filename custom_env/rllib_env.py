@@ -287,8 +287,6 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
             try:
                 working_dir_dc = create_work_dir(self.run_root_dir)
                 # Update DC Netlist File for checking operation region
-                update_netlist(working_dir, self.sim_config_dict, updated_param, self.unassigned_netlist_dir)
-
                 update_netlist(working_dir_dc, self.dc_sim_config_dict, updated_param, self.unassigned_netlist_dir)
                 _ = run_spectre_simulation(working_dir_dc, self.dc_sim_config_dict, self.sim_output_enable)
                 dc_result_path = os.path.join(working_dir_dc, "DC.raw/dcOpInfo.info.encode")
