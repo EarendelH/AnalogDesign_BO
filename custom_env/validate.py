@@ -91,41 +91,65 @@ def evaluate_specs(specs_file):
         return 0
 
 
-if __name__ == "__main__":
+@ray.remote
+def evaluate_specs(checkpoint_path, validate_file_path, config_folder_name, specs_file):
+    register_env("AnalogDesignEnv_v0", lambda env_config: env_creator(env_config, validate_file_path, config_folder_name))
+    env = env_creator({}, validate_file_path, config_folder_name)
+    agent = Algorithm.from_checkpoint(checkpoint_path)  # 确保Algorithm已正确引入
 
-    cpu_count = os.cpu_count()
+    obs, _ = env.reset()
+    terminated_done = {"__all__": False}
+    step = 0
 
-    print("Init Validation")
-    checkpoint_path = input("Enter the checkpoint path: ").strip()
-    validate_file_folder = input("Enter the validation folder path: ").strip()
-    config_folder_name = input("Enter the config folder name: ").strip()
-    num_episode = input("Enter the number of episodes: ").strip()
-    num_episode = int(num_episode)
-    num_threads = input(f"Enter the number of threads, available CPU {cpu_count}: ").strip()
-    num_threads = int(num_threads)
+    while not terminated_done["__all__"]:
+        action_dict = {}
+        for agent_id, agent_obs in obs.items():
+            policy_id = f"policy_{agent_id[-1]}"
+            action = agent.compute_single_action(agent_obs, policy_id=policy_id)
+            action_dict[agent_id] = action
+        obs, rew, done, _, info = env.step(action_dict)
+        step += 1
+        if step >= 1024 or done["__all__"]:
+            break
 
-    ray.init(logging_level=logging.WARNING)
+    return specs_file, step, done["__all__"]
 
-    episode_success_count = 0
-    episode_fail_count = 0
 
-    # Random select num_episode files from validate_file_folder and run run_evaluation_single
-
-    file_list = os.listdir(validate_file_folder)
-    selected_files = random.sample(file_list, num_episode)
-
-    # for each file
-    # Print the result for each file
-    for file in selected_files:
-        validate_file_path = os.path.join(validate_file_folder, file)
-        step_count, success_flag = run_evaluation_single(checkpoint_path, validate_file_path, config_folder_name)
-        print(f"Validation episode with file {file} finished after {step_count} steps with success flag {success_flag}")
-        if success_flag:
-            episode_success_count += 1
-        else:
-            episode_fail_count += 1
-        print(f"Total episodes: {episode_success_count + episode_fail_count}, Finished: {episode_success_count}, "
-              f"Terminated: {episode_fail_count}")
+# if __name__ == "__main__":
+#
+#     cpu_count = os.cpu_count()
+#
+#     print("Init Validation")
+#     checkpoint_path = input("Enter the checkpoint path: ").strip()
+#     validate_file_folder = input("Enter the validation folder path: ").strip()
+#     config_folder_name = input("Enter the config folder name: ").strip()
+#     num_episode = input("Enter the number of episodes: ").strip()
+#     num_episode = int(num_episode)
+#     num_threads = input(f"Enter the number of threads, available CPU {cpu_count}: ").strip()
+#     num_threads = int(num_threads)
+#
+#     ray.init(logging_level=logging.WARNING)
+#
+#     episode_success_count = 0
+#     episode_fail_count = 0
+#
+#     # Random select num_episode files from validate_file_folder and run run_evaluation_single
+#
+#     file_list = os.listdir(validate_file_folder)
+#     selected_files = random.sample(file_list, num_episode)
+#
+#     # for each file
+#     # Print the result for each file
+#     for file in selected_files:
+#         validate_file_path = os.path.join(validate_file_folder, file)
+#         step_count, success_flag = run_evaluation_single(checkpoint_path, validate_file_path, config_folder_name)
+#         print(f"Validation episode with file {file} finished after {step_count} steps with success flag {success_flag}")
+#         if success_flag:
+#             episode_success_count += 1
+#         else:
+#             episode_fail_count += 1
+#         print(f"Total episodes: {episode_success_count + episode_fail_count}, Finished: {episode_success_count}, "
+#               f"Terminated: {episode_fail_count}")
 
     # with concurrent.futures.ThreadPoolExecutor(max_workers=num_threads) as executor:
     #     results = executor.map(evaluate_specs, selected_files)
@@ -136,5 +160,26 @@ if __name__ == "__main__":
     #             episode_fail_count += 1
     #         print(f"Total episodes: {episode_success_count + episode_fail_count}, Finished: {episode_success_count}, "
     #               f"Terminated: {episode_fail_count}")
+
+    # ray.shutdown()
+
+if __name__ == "__main__":
+    ray.init()  # 启动 Ray
+
+    checkpoint_path = input("Enter the checkpoint path: ").strip()
+    validate_file_folder = input("Enter the validation folder path: ").strip()
+    config_folder_name = input("Enter the config folder name: ").strip()
+    num_episodes = int(input("Enter the number of episodes: ").strip())
+
+    file_list = os.listdir(validate_file_folder)
+    selected_files = random.sample(file_list, num_episodes)
+
+    futures = [evaluate_specs.remote(checkpoint_path, validate_file_folder, config_folder_name, specs_file) for
+               specs_file in selected_files]
+    results = ray.get(futures)
+
+    for specs_file, step_count, success_flag in results:
+        print(
+            f"Validation episode with file {specs_file} finished after {step_count} steps with success flag {success_flag}")
 
     ray.shutdown()
