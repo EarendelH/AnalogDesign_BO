@@ -90,6 +90,10 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         self.norm_specs_file = config_folder_name + "/norm_specs.yaml"
         self.norm_specs_file = os.path.join(self.current_path, self.norm_specs_file)
 
+        # Set netlist directory
+        self.unassigned_netlist_dir = "netlist_template"
+        self.unassigned_netlist_dir = os.path.join(self.current_path, self.unassigned_netlist_dir)
+
         # Load YAML
         with open(self.sim_config, 'r') as file:
             self.sim_config_dict = yaml.safe_load(file)
@@ -103,10 +107,6 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
             agent_assign_dict = yaml.safe_load(file)
         with open(self.device_mask_config, 'r') as file:
             self.device_mask_dict = yaml.safe_load(file)
-
-        # Set netlist directory
-        self.unassigned_netlist_dir = "netlist_template"
-        self.unassigned_netlist_dir = os.path.join(self.current_path, self.unassigned_netlist_dir)
 
         # RLlib config
         self.possible_agents = list(agent_assign_dict.keys())
@@ -166,6 +166,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
             sim_name = sim['simulation_name']
             sim_items = sim['simulation_item']
             self.zero_sim_result[sim_name] = {item: 0.0 for item in sim_items}
+        self.zero_sim_result['DC']['pwr'] = 1.0
 
         try:
             sim_result = run_dynamic_simulation(working_dir, self.sim_config_dict, self.zero_sim_result,
