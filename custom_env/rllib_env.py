@@ -239,7 +239,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
             pickle.dump(self.trajectory_data, f)
 
         # Delete working temp directory, if it exists
-        delete_work_dir(working_dir)
+        # delete_work_dir(working_dir)
 
         return observations, info
 
@@ -299,7 +299,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
                     operation_region_dict = self.operation_region_dict_zero
                     valid_param = False
                 # Delete working temp directory, if it exists
-                delete_work_dir(working_dir_dc)
+                # delete_work_dir(working_dir_dc)
             except Exception as e:
                 print(f"Warning!!!: {e}. Failed to run DC check with step number: {self.step_num}")
                 operation_region_dict = self.operation_region_dict_zero
@@ -402,6 +402,6 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
             pickle.dump(self.trajectory_data, f)
 
         # Delete working temp directory, if it exists
-        delete_work_dir(working_dir)
+        # delete_work_dir(working_dir)
 
         return observations, rew, terminated, truncated, info
