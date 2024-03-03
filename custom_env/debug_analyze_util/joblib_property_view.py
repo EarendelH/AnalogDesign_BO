@@ -3,9 +3,10 @@ from joblib import load
 
 def print_keys_and_lengths(joblib_file):
     data = load(joblib_file)
-
-    for key, values_list in data.items():
-        print(f"{key} with length: {len(values_list)}")
+    # data is a list, print list size and first 5 elements
+    print(f"Loaded {len(data)} elements.")
+    for i, element in enumerate(data[:5]):
+        print(element)
 
 
 if __name__ == "__main__":
