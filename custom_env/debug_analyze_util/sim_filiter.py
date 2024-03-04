@@ -53,8 +53,19 @@ def filter_data(df, results):
     if continue_filter.lower() == 'y':
         filter_data(filtered_df, filtered_results)  # Recursive call to continue filtering
     else:
-        print("Displaying filtered results:")
-        print(filtered_df.to_string())
+        display_or_save_data(filtered_df)
+
+
+def display_or_save_data(df):
+    choice = input("Do you want to display the results or save them to a CSV file? (display/save): ")
+    if choice.lower() == 'display':
+        print(df.to_string())
+    elif choice.lower() == 'save':
+        file_path = input("Enter the file path to save the CSV: ")
+        df.to_csv(file_path, index=False)
+        print(f"Data saved to {file_path}")
+    else:
+        print("Invalid option. Please choose 'display' or 'save'.")
 
 
 # Main script
