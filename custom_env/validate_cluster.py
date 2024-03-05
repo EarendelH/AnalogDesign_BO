@@ -53,16 +53,10 @@ def run_evaluation(checkpoint_file_path, validate_file_path, config_dir_name, ru
 if __name__ == "__main__":
     print("Init Validation")
     # Get the script path
-    running_script_path = os.path.abspath(__file__)
-    checkpoint_path = input("Enter the checkpoint path: ").strip()
-    validate_file_folder = input("Enter the validation folder path: ").strip()
-    config_folder_name = input("Enter the config folder name: ").strip()
-    run_dir_name = input("Enter the run folder name: ").strip()
-    run_dir_full_path = os.path.join(os.path.dirname(running_script_path), run_dir_name)
-    if not os.path.exists(run_dir_full_path):
-        os.makedirs(run_dir_full_path)
-        print(f"Directory {run_dir_full_path} created")
-    num_episode = input("Enter the number of episodes: ").strip()
-    num_episode = int(num_episode)
+    checkpoint_path = "checkpoint"
+    validate_file_folder = "sampled_specs_validate_v4"
+    config_folder_name = "config_v4"
+    run_dir_name = "run_validate"
+    num_episode = 100
 
     run_evaluation(checkpoint_path, validate_file_folder, config_folder_name, run_dir_name, num_episode)
