@@ -76,9 +76,6 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         if not os.path.exists(self.run_root_dir):
             raise ValueError(f"Root directory {self.run_root_dir} not found.")
 
-        # Define temp directory
-        self.temp_dir = "/tmp"
-
         # Load config files
         self.agent_assign_config = config_folder_name + "/agent_assign.yaml"
         self.agent_assign_config = os.path.join(self.current_path, self.agent_assign_config)
@@ -157,7 +154,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
                                     self.device_mask_dict, self.param_space)
 
         # Generate working directory
-        working_dir = create_work_dir(self.temp_dir)
+        working_dir = create_work_dir(self.run_root_dir)
         print(f"Initialing!!!Working directory: {working_dir}")
 
         # Update Netlist File
@@ -255,7 +252,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         operation_region_dict = {}
 
         # Create working directory
-        working_dir = create_work_dir(self.temp_dir)
+        working_dir = create_work_dir(self.run_root_dir)
         print(f"Step!!! Working directory: {working_dir} with step number: {self.step_num}")
 
         if self.action_mask:
@@ -284,7 +281,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         valid_param = None
         if self.dc_check:
             try:
-                working_dir_dc = create_work_dir(self.temp_dir)
+                working_dir_dc = create_work_dir(self.run_root_dir)
                 # Update DC Netlist File for checking operation region
                 update_netlist(working_dir_dc, self.dc_sim_config_dict, updated_param, self.unassigned_netlist_dir)
                 _ = run_dynamic_simulation(working_dir_dc, self.dc_sim_config_dict, self.zero_sim_result,
