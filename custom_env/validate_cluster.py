@@ -53,8 +53,7 @@ def run_evaluation(checkpoint_file_path, validate_file_path, config_dir_name, ru
 if __name__ == "__main__":
     print("Init Validation")
     # Get the script path
-    checkpoint_path = ("/home/wuhan/AnalogDesignAuto/AnalogDesignAuto_MultiAgent/custom_env/checkpoint_demo/"
-                       "checkpoint_f8942_v4")
+    checkpoint_path = "/home/wuhan/AnalogDesignAuto/AnalogDesignAuto_MultiAgent/custom_env/checkpoint_demo/checkpoint_f8942_v4"
     validate_file_folder = "sampled_specs_validate_v4"
     config_folder_name = "config_v4"
     run_dir_name = "run_validate"
