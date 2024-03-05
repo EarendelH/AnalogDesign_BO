@@ -14,7 +14,7 @@ def env_creator(env_config, validate_dir_name, config_dir_name, run_folder_name)
 
 
 def run_evaluation(checkpoint_file_path, validate_file_path, config_dir_name, run_folder_name, num_episodes):
-    ray.init(num_cpus=20)
+    ray.init()
 
     register_env("AnalogDesignEnv_v0", lambda env_config: env_creator(env_config, validate_file_path,
                                                                       config_dir_name, run_folder_name))
