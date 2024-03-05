@@ -7,18 +7,18 @@ from rllib_env import RllibAnalogDesignAutoEnv
 from ray.tune.registry import register_env
 
 
-def env_creator(env_config, validate_dir_name, config_dir_name, run_dir_name):
+def env_creator(env_config, validate_dir_name, config_dir_name, run_folder_name):
     return RllibAnalogDesignAutoEnv(generalize=True, specs_folder_name=validate_dir_name,
-                                    config_folder_name=config_dir_name, run_folder_name=run_dir_name,
+                                    config_folder_name=config_dir_name, run_folder_name=run_folder_name,
                                     sim_output=False, init_method='file', action_mask=True, dc_check=True)
 
 
-def run_evaluation(checkpoint_file_path, validate_file_path, config_dir_name, run_dir_name, num_episodes):
+def run_evaluation(checkpoint_file_path, validate_file_path, config_dir_name, run_folder_name, num_episodes):
     ray.init(logging_level=logging.WARNING)
 
     register_env("AnalogDesignEnv_v0", lambda env_config: env_creator(env_config, validate_file_path,
-                                                                      config_dir_name))
-    env = env_creator({}, validate_file_path, config_dir_name, run_dir_name)
+                                                                      config_dir_name, run_folder_name))
+    env = env_creator({}, validate_file_path, config_dir_name, run_folder_name)
 
     agent = Algorithm.from_checkpoint(checkpoint_file_path)
 
