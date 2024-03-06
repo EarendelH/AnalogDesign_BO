@@ -10,7 +10,7 @@ from ray.tune.registry import register_env
 def env_creator(env_config, validate_dir_name, config_dir_name, run_folder_name):
     return RllibAnalogDesignAutoEnv(generalize=True, specs_folder_name=validate_dir_name,
                                     config_folder_name=config_dir_name, run_folder_name=run_folder_name,
-                                    sim_output=False, init_method='file', action_mask=True, dc_check=True)
+                                    sim_output=False, init_method='half', action_mask=True, dc_check=True)
 
 
 def run_evaluation(checkpoint_file_path, validate_file_path, config_dir_name, run_folder_name, num_episodes):
