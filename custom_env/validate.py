@@ -22,12 +22,13 @@ def run_evaluation(checkpoint_file_path, validate_file_path, config_dir_name, ru
 
     agent = Algorithm.from_checkpoint(checkpoint_file_path)
 
+    count_terminated = 0
+    count_finished = 0
+
     for episode in range(num_episodes):
         obs, _ = env.reset()
         done = {"__all__": False}
         step = 0
-        count_terminated = 0
-        count_finished = 0
         while not done["__all__"]:
             action_dict = {}
             for agent_id, agent_obs in obs.items():
