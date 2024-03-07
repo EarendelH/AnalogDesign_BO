@@ -4,7 +4,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 from mpl_toolkits import mplot3d
 
-pickle_dir = "/Users/hanwu/Downloads/sum_v4"
+pickle_dir = input("Please input the directory of pickle files: ")
+if not os.path.exists(pickle_dir):
+    print(f"Directory {pickle_dir} does not exist.")
+    exit()
 pickle_files = os.listdir(pickle_dir)
 
 ideal_space_list = []
