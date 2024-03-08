@@ -1,5 +1,6 @@
 import numpy as np
-import matplotlib.pyplot as plt
+from extract_trace import extractTransTrace
+# from util.extract_trace import extractTransTrace
 
 
 def analyze_trans_file(file_path):
@@ -178,5 +179,52 @@ def findSlewRate(file_path):
     return {"slewRateUp": slewRateUp_val, "slewRateDown": slewRateDown_val}
 
 
-# dict = findSlewRate("/Users/hanwu/ML/AnalogDesignAuto/resultParse/spectreEnv/spectreTmpFile/tmp_202308181553507320/Trans.raw/tran.tran.tran.encode")
+# dict = findSlewRate("/Users/hanwu/ML/AnalogDesignAuto/resultParse/spectreEnv/spectreTmpFile/
+# tmp_202308181553507320/Trans.raw/tran.tran.tran.encode")
 # print(dict)
+
+
+def findShoot(filename):
+    """
+    Extract the overshoot and undershoot value from trans file
+
+    Args:
+    - filename: Path to the file to be processed.
+
+    Returns:
+    - Overshoot and undershoot value
+    """
+
+    trans_dict = extractTransTrace(filename)
+    time_series = trans_dict["time"]
+    vout_trace = trans_dict["VOUT"]
+
+    # Clip time 50us-100us and 100us-150us
+    time_clip1_index = [i for i, t in enumerate(time_series) if 50e-6 <= t <= 100e-6]
+    time_clip2_index = [i for i, t in enumerate(time_series) if 100e-6 <= t <= 150e-6]
+    time_clip1 = [time_series[i] for i in time_clip1_index]
+    time_clip2 = [time_series[i] for i in time_clip2_index]
+    vout_clip1 = [vout_trace[i] for i in time_clip1_index]
+    vout_clip2 = [vout_trace[i] for i in time_clip2_index]
+
+    # print("time_clip1: ", time_clip1)
+    # print("vout_clip1: ", vout_clip1)
+    # print("time_clip2: ", time_clip2)
+    # print("vout_clip2: ", vout_clip2)
+
+    # Calculate overshoot and undershoot,
+    # undershoot: Vout@50us -Vout_clip1_min, overshoot: Vout_clip2_max - Vout@100us
+    vout_clip1_min = np.min(vout_clip1)
+    vout_clip2_max = np.max(vout_clip2)
+    # Find the neset value to 50us and 100us
+    vout_50us = vout_trace[0]
+    vout_100us = vout_trace[0]
+
+    undershoot = vout_50us - vout_clip1_min
+    overshoot = vout_clip2_max - vout_100us
+
+    return {"overShoot": overshoot, "underShoot": undershoot}
+
+# Test Code
+# file = "/Users/hanwu/ML/AnalogDesignAuto_MultiAgent/custom_env/netlist_assign_test/Trans.raw/tran.tran.tran.encode"
+# print(findShoot(file))
