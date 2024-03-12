@@ -1,11 +1,11 @@
 // Generated for: spectre
-// Generated on: Mar 12 10:32:29 2024
+// Generated on: Mar 12 10:31:32 2024
 // Design library name: LDO
-// Design cell name: tb_Load_Reg
+// Design cell name: tb_Line_Reg
 // Design view name: schematic
 simulator lang=spectre
 global 0
-parameters IBP ILOAD=25m
+parameters VDD=3.6 IBP ILOAD=25m
 include "/data/PDK/pdk_installed/tsmc180bcd_g2/pdk/pdk_1p6m_2/tsmc18/../models/spectre/c018bcd_gen2_v1d6_usage.scs" section=pre_simu
 include "/data/PDK/pdk_installed/tsmc180bcd_g2/pdk/pdk_1p6m_2/tsmc18/../models/spectre/c018bcd_gen2_v1d6_usage.scs" section=tt_lib
 
@@ -47,9 +47,9 @@ ends EA_LDO
 // End of subcircuit definition.
 
 // Library name: LDO
-// Cell name: tb_Load_Reg
+// Cell name: tb_Line_Reg
 // View name: schematic
-V0 (VDD 0) vsource dc=3.6 type=dc
+V0 (VDD 0) vsource dc=VDD type=dc
 V2 (VREF 0) vsource dc=1.2 type=dc
 V1 (VSS 0) vsource dc=0 type=dc
 I1 (VOUT VSS) isource dc=ILOAD type=dc
@@ -68,7 +68,7 @@ simulatorOptions options psfversion="1.1.0" reltol=1e-3 vabstol=1e-6 \
     sensfile="../psf/sens.output" checklimitdest=psf 
 dcOp dc write="spectre.dc" maxiters=150 maxsteps=10000 annotate=status
 dcOpInfo info what=oppoint where=rawfile
-dc dc param=ILOAD start=0 stop=25m oppoint=rawfile maxiters=150 \
+dc dc param=VDD start=2.7 stop=4.2 oppoint=rawfile maxiters=150 \
     maxsteps=10000 annotate=status
 modelParameter info what=models where=rawfile
 element info what=inst where=rawfile
@@ -76,5 +76,4 @@ outputParameter info what=output where=rawfile
 designParamVals info what=parameters where=rawfile
 primitives info what=primitives where=rawfile
 subckts info what=subckts where=rawfile
-save I1:sink 
 saveOptions options save=allpub
