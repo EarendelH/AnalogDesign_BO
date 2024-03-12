@@ -25,7 +25,7 @@ def sample_ideal_specs(ideal_specs_config_path, sample_num, output_folder):
                 # Copy the 'objective' and 'constrain_type' directly
                 sample_detail = {
                     'objective': detail['objective'],
-                    'constrain_type': detail['constrain_type']
+                    'reward_type': detail['reward_type']
                 }
                 # Generate a random value within the bounds
                 lower_bound, upper_bound = detail['bounds']

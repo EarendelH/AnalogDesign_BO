@@ -147,7 +147,7 @@ def run_dynamic_simulation(work_dir, sim_config, zero_sim_result, show_output=Fa
                 break
 
             # Add Simulation Name before each keys in the result dictionary. Avoid error in flatten the dictionary
-            modified_result = {f"{simulation}_{key}": value for key, value in results[simulation].items()}
+            modified_result = {f"{simulation}_{key}": value for key, value in result.items()}
             results[simulation] = modified_result
 
     if fail_tag:
