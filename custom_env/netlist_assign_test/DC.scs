@@ -1,11 +1,11 @@
 // Generated for: spectre
-// Generated on: Mar  7 13:12:59 2024
+// Generated on: Mar 12 10:30:36 2024
 // Design library name: LDO
 // Design cell name: tb_DC
 // Design view name: schematic
 simulator lang=spectre
 global 0
-parameters IBP=1u
+parameters IBP
 include "/data/PDK/pdk_installed/tsmc180bcd_g2/pdk/pdk_1p6m_2/tsmc18/../models/spectre/c018bcd_gen2_v1d6_usage.scs" section=pre_simu
 include "/data/PDK/pdk_installed/tsmc180bcd_g2/pdk/pdk_1p6m_2/tsmc18/../models/spectre/c018bcd_gen2_v1d6_usage.scs" section=tt_lib
 
@@ -13,32 +13,22 @@ include "/data/PDK/pdk_installed/tsmc180bcd_g2/pdk/pdk_1p6m_2/tsmc18/../models/s
 // Cell name: EA_LDO
 // View name: schematic
 subckt EA_LDO IBP INN INP VDD VOUT VSS
-    M16 (VSS VSS VSS VSS) nch_5_mac l=1u w=2u multi=4 nf=1 sigma=1 \
-        sd=540.0n ad=9.6e-13 as=9.6e-13 pd=4.96u ps=4.96u nrd=0.135 \
-        nrs=0.135 sa=480.0n sb=480.0n sca=0 scb=0 scc=0 mismatchflag=1
     M13 (net25 net25 VSS VSS) nch_5_mac l=2u w=2u multi=1 nf=1 sigma=1 \
         sd=540.0n ad=9.6e-13 as=9.6e-13 pd=4.96u ps=4.96u nrd=0.135 \
         nrs=0.135 sa=480.0n sb=480.0n sca=0 scb=0 scc=0 mismatchflag=1
-    M12 (net19 net21 VSS VSS) nch_5_mac l=2u w=2u multi=4 nf=1 sigma=1 \
+    M12 (net19 net21 VSS VSS) nch_5_mac l=2u w=2u multi=1 nf=1 sigma=1 \
         sd=540.0n ad=9.6e-13 as=9.6e-13 pd=4.96u ps=4.96u nrd=0.135 \
         nrs=0.135 sa=480.0n sb=480.0n sca=0 scb=0 scc=0 mismatchflag=1
     M11 (net21 net21 VSS VSS) nch_5_mac l=2u w=2u multi=1 nf=1 sigma=1 \
         sd=540.0n ad=9.6e-13 as=9.6e-13 pd=4.96u ps=4.96u nrd=0.135 \
         nrs=0.135 sa=480.0n sb=480.0n sca=0 scb=0 scc=0 mismatchflag=1
-    M2 (VOUT net25 VSS VSS) nch_5_mac l=2u w=2u multi=4 nf=1 sigma=1 \
+    M2 (VOUT net25 VSS VSS) nch_5_mac l=2u w=2u multi=1 nf=1 sigma=1 \
         sd=540.0n ad=9.6e-13 as=9.6e-13 pd=4.96u ps=4.96u nrd=0.135 \
         nrs=0.135 sa=480.0n sb=480.0n sca=0 scb=0 scc=0 mismatchflag=1
-    M20 (net017 net017 net017 VDD) pch_5_mac l=500n w=2u multi=4 nf=2 \
-        sigma=1 sd=540.0n ad=5.4e-13 as=9.6e-13 pd=3.08u ps=5.92u \
-        nrd=0.135 nrs=0.135 sa=480.0n sb=480.0n sca=0 scb=0 scc=0 \
-        mismatchflag=1
-    M21 (VDD VDD VDD VDD) pch_5_mac l=1u w=1u multi=2 nf=1 sigma=1 \
-        sd=540.0n ad=4.8e-13 as=4.8e-13 pd=2.96u ps=2.96u nrd=0.27 \
-        nrs=0.27 sa=480.0n sb=480.0n sca=0 scb=0 scc=0 mismatchflag=1
-    M10 (net25 INP net017 VDD) pch_5_mac l=500n w=2u multi=2 nf=1 sigma=1 \
+    M10 (net25 INP net017 VDD) pch_5_mac l=500n w=2u multi=1 nf=1 sigma=1 \
         sd=540.0n ad=9.6e-13 as=9.6e-13 pd=4.96u ps=4.96u nrd=0.135 \
         nrs=0.135 sa=480.0n sb=480.0n sca=0 scb=0 scc=0 mismatchflag=1
-    M9 (net21 INN net017 VDD) pch_5_mac l=500n w=2u multi=2 nf=1 sigma=1 \
+    M9 (net21 INN net017 VDD) pch_5_mac l=500n w=2u multi=1 nf=1 sigma=1 \
         sd=540.0n ad=9.6e-13 as=9.6e-13 pd=4.96u ps=4.96u nrd=0.135 \
         nrs=0.135 sa=480.0n sb=480.0n sca=0 scb=0 scc=0 mismatchflag=1
     M6 (VOUT net19 VDD VDD) pch_5_mac l=2u w=2u multi=1 nf=1 sigma=1 \
@@ -50,12 +40,9 @@ subckt EA_LDO IBP INN INP VDD VOUT VSS
     M4 (IBP IBP VDD VDD) pch_5_mac l=1u w=1u multi=1 nf=1 sigma=1 \
         sd=540.0n ad=4.8e-13 as=4.8e-13 pd=2.96u ps=2.96u nrd=0.27 \
         nrs=0.27 sa=480.0n sb=480.0n sca=0 scb=0 scc=0 mismatchflag=1
-    M1 (net017 IBP VDD VDD) pch_5_mac l=1u w=1u multi=3 nf=1 sigma=1 \
+    M1 (net017 IBP VDD VDD) pch_5_mac l=1u w=1u multi=1 nf=1 sigma=1 \
         sd=540.0n ad=4.8e-13 as=4.8e-13 pd=2.96u ps=2.96u nrd=0.27 \
         nrs=0.27 sa=480.0n sb=480.0n sca=0 scb=0 scc=0 mismatchflag=1
-    M19 (VDD VDD VDD VDD) pch_5_mac l=2u w=2u multi=4 nf=1 sigma=1 \
-        sd=540.0n ad=9.6e-13 as=9.6e-13 pd=4.96u ps=4.96u nrd=0.135 \
-        nrs=0.135 sa=480.0n sb=480.0n sca=0 scb=0 scc=0 mismatchflag=1
 ends EA_LDO
 // End of subcircuit definition.
 
@@ -72,9 +59,9 @@ R0 (VOUT VFB) resistor r=12K
 R1 (VFB VSS) resistor r=24K
 C0 (VG VOUT) capacitor c=80p
 C1 (VOUT VSS) capacitor c=1n
-M0 (VOUT VG VDD VDD) pch_5 l=500n w=300.0000u m=1 nf=1 sd=540.0n \
-        ad=1.44e-10 as=1.44e-10 pd=600.96u ps=600.96u nrd=0.0009 \
-        nrs=0.0009 sa=480.0n sb=480.0n sca=0 scb=0 scc=0
+M0 (VOUT VG VDD VDD) pch_5_mac l=500n w=300.0000u multi=1 nf=1 sigma=1 \
+        sd=540.0n ad=1.44e-10 as=1.44e-10 pd=600.96u ps=600.96u nrd=0.0009 \
+        nrs=0.0009 sa=480.0n sb=480.0n sca=0 scb=0 scc=0 mismatchflag=1
 simulatorOptions options psfversion="1.1.0" reltol=1e-3 vabstol=1e-6 \
     iabstol=1e-12 temp=27 tnom=27 scalem=1.0 scale=1.0 gmin=1e-12 rforce=1 \
     maxnotes=5 maxwarns=5 digits=5 cols=80 pivrel=1e-3 \
