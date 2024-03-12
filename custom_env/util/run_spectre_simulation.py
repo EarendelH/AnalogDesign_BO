@@ -91,7 +91,8 @@ def run_dynamic_simulation(work_dir, sim_config, zero_sim_result, show_output=Fa
 
     for simulation_config in sim_config:
         simulation = simulation_config["simulation_name"]
-        assigned_netlist_filename = f"{simulation}.scs"
+        assigned_netlist_name = simulation_config[f"netlist_name"]
+        assigned_netlist_filename = f"{assigned_netlist_name}.scs"
 
         # Check if the assigned netlist file exists
         file_list = os.listdir(work_dir)
@@ -108,7 +109,7 @@ def run_dynamic_simulation(work_dir, sim_config, zero_sim_result, show_output=Fa
                            shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
         # Process the simulation files as specified in the config
-        raw_dir = os.path.join(work_dir, f"{simulation}.raw")
+        raw_dir = os.path.join(work_dir, f"{assigned_netlist_name}.raw")
         sim_result_file = simulation_config["simulation_file"]
         if not isinstance(sim_result_file, list):
             sim_result_file = [sim_result_file]
@@ -124,9 +125,9 @@ def run_dynamic_simulation(work_dir, sim_config, zero_sim_result, show_output=Fa
             # print(f"Processed file: {sim_file}")
 
             # Load the function to process the results and execute it
-            module_name = f"find{simulation}"
+            script_name = simulation_config["script_name"]
             function_name = parse_funcs[idx]
-            module = import_module(f"util.{module_name}")
+            module = import_module(f"util.{script_name}")
             # print(f"Debug!!!Current Path: {current_path}")
             # print(f"Debug!!!Work Dict: {work_dir}")
             # print(f"Debug!!!Processing file: {processed_file}")
@@ -136,14 +137,18 @@ def run_dynamic_simulation(work_dir, sim_config, zero_sim_result, show_output=Fa
             result = function(processed_file_full_path)
             results[simulation] = result
 
-            if result == 1.0 and simulation == "DC":
+            if result.values() == 1.0 and simulation == "DC":
                 fail_tag = True
                 print(f"Simulation {simulation} failed. Return zero simulation result")
                 break
-            if result == 0.0 and simulation != "DC":
+            if result.values() == 0.0 and simulation != "DC":
                 fail_tag = True
                 print(f"Simulation {simulation} failed. Return zero simulation result")
                 break
+
+            # Add Simulation Name before each keys in the result dictionary. Avoid error in flatten the dictionary
+            modified_result = {f"{simulation}_{key}": value for key, value in results[simulation].items()}
+            results[simulation] = modified_result
 
     if fail_tag:
         results = zero_sim_result
