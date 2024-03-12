@@ -1,5 +1,5 @@
-from extract_device_param_value import parse_device_values, parse_device_param, find_device_param_value
-# from util.extract_device_param_value import parse_device_values, parse_device_param, find_device_param_value
+# from extract_device_param_value import parse_device_values, parse_device_param, find_device_param_value
+from util.extract_device_param_value import parse_device_values, parse_device_param, find_device_param_value
 
 
 def findDCValue(filepath):

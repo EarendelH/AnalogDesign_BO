@@ -1,6 +1,6 @@
 import numpy as np
-from extract_trace import extractTransTrace
-# from util.extract_trace import extractTransTrace
+# from extract_trace import extractTransTrace
+from util.extract_trace import extractTransTrace
 
 
 def analyze_trans_file(file_path):
