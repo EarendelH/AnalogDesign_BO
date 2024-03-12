@@ -1,5 +1,5 @@
-# from util.extract_trace import extractTrace
-from extract_trace import extractTrace
+from util.extract_trace import extractTrace
+# from extract_trace import extractTrace
 
 
 def findLineReg(filename):
