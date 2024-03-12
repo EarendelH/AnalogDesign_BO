@@ -62,7 +62,8 @@ def extract_dcOP_data(file_path, search_keyword):
 
 def findIQ(filepath):
     search_keyword = "V0:p"
-    return extract_dcOP_data(filepath, search_keyword)
+    value = extract_dcOP_data(filepath, search_keyword)
+    return {"IQ": value}
 
 
 # Test Code
