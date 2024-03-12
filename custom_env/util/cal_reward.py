@@ -11,10 +11,9 @@ def cal_reward(ideal_specs_dict, cur_specs_dict):
 
     # Flatten cur_specs_dict
     cur_specs_flatten = {k: v for d in cur_specs_dict.values() for k, v in d.items()}
-
     rew = 0
 
-    epsilon = 0.1
+    # epsilon = 0.1
 
     for spec, detail in ideal_specs_dict.items():
 
@@ -22,36 +21,54 @@ def cal_reward(ideal_specs_dict, cur_specs_dict):
 
         ideal_spec_value = float(detail['value'])
         cur_spec_value = float(cur_specs_flatten[spec])
-        constrain_type = detail['constrain_type']
         constrain_objective = detail['objective']
 
-        if constrain_type == 'hard' and constrain_objective == "max":
+        if constrain_objective == "max":
             single_reward = min((cur_spec_value - ideal_spec_value) / (cur_spec_value + ideal_spec_value), 0.0)
-        elif constrain_type == 'hard' and constrain_objective == "min":
+        elif constrain_objective == "min":
             single_reward = min((ideal_spec_value - cur_spec_value) / (cur_spec_value + ideal_spec_value), 0.0)
-        elif constrain_type == 'soft' and constrain_objective == "min":
-            single_reward = epsilon * (ideal_spec_value - cur_spec_value) / (cur_spec_value + ideal_spec_value)
-        elif constrain_type == 'soft' and constrain_objective == "max":
-            single_reward = epsilon * (cur_spec_value - ideal_spec_value) / (cur_spec_value + ideal_spec_value)
+
+        # if constrain_type == 'hard' and constrain_objective == "max":
+        #     single_reward = min((cur_spec_value - ideal_spec_value) / (cur_spec_value + ideal_spec_value), 0.0)
+        # elif constrain_type == 'hard' and constrain_objective == "min":
+        #     single_reward = min((ideal_spec_value - cur_spec_value) / (cur_spec_value + ideal_spec_value), 0.0)
+        # elif constrain_type == 'soft' and constrain_objective == "min":
+        #     single_reward = epsilon * (ideal_spec_value - cur_spec_value) / (cur_spec_value + ideal_spec_value)
+        # elif constrain_type == 'soft' and constrain_objective == "max":
+        #     single_reward = epsilon * (cur_spec_value - ideal_spec_value) / (cur_spec_value + ideal_spec_value)
         # print(f"Debug!!! {spec}: {single_reward} ideal_spec_value: {ideal_spec_value} cur_spec_value: {
         # cur_spec_value}")
         rew += float(single_reward)
 
-    rew = rew + 15 if rew >= 0 else rew
-    # reward = float(reward)
+    if rew >= 0:
+        rew = rew + 15
+        for spec, detail in ideal_specs_dict.items():
+
+            single_reward = 0
+
+            ideal_spec_value = float(detail['value'])
+            cur_spec_value = float(cur_specs_flatten[spec])
+            reward_type = detail['reward_type']
+            constrain_objective = detail['objective']
+
+            if reward_type == "optimal":
+                if constrain_objective == "max":
+                    single_reward = (cur_spec_value - ideal_spec_value) / (cur_spec_value + ideal_spec_value)
+                elif constrain_objective == "min":
+                    single_reward = (ideal_spec_value - cur_spec_value) / (cur_spec_value + ideal_spec_value)
+
+            rew += float(single_reward)
 
     return rew
 
 
 # Test Code
-# ideal_specs = {'gainBandWidth': {'constrain_type': 'hard', 'objective': 'max', 'value': 1},
-# 'phaseMargin': {'constrain_type': 'hard', 'objective': 'max', 'value': 2}, 'powerSupplyRejectionRatio': {
-# 'constrain_type': 'hard', 'objective': 'max', 'value': 3}, 'pwr': {'constrain_type': 'soft', 'objective': 'min',
-# 'value': 4}, 'slewRateDown': {'constrain_type': 'hard', 'objective': 'max', 'value': 5}, 'slewRateUp': {
-# 'constrain_type': 'hard', 'objective': 'max', 'value': 6}}
-# cur_specs = {'DC': {'pwr': 1}, 'Stability': {
-# 'phaseMargin': 2, 'gainBandWidth': 3}, 'Trans': {'slewRateUp': 4, 'slewRateDown': 5}, 'PSRR': {
-# 'powerSupplyRejectionRatio': 6}}
+# ideal_specs = {'gainBandWidth': {'reward_type': 'optimal', 'objective': 'max', 'value': 1},
+#                'phaseMargin': {'reward_type': 'satisfactory', 'objective': 'max', 'value': 2},
+#                'powerSupplyRejectionRatio': {'reward_type': 'optimal', 'objective': 'max', 'value': 3},
+#                'pwr': {'reward_type': 'optimal', 'objective': 'min','value': 4}}
+# cur_specs = {'DC': {'pwr': 1}, 'Stability': {'phaseMargin': 100, 'gainBandWidth': 1},
+#               'PSRR': {'powerSupplyRejectionRatio': 3}}
 # reward = cal_reward(ideal_specs, cur_specs)
 # print(reward)
 
