@@ -103,9 +103,9 @@ def findSlewRate(file_path):
     falling_edges = []
 
     for i in range(1, len(signal_value) - 1):
-        if signal_value[i - 1] < mid_value and signal_value[i] > mid_value and signal_value[i + 1] > mid_value:
+        if signal_value[i - 1] < mid_value < signal_value[i] and signal_value[i + 1] > mid_value:
             rising_edges.append(i)
-        elif signal_value[i - 1] > mid_value and signal_value[i] < mid_value and signal_value[i + 1] < mid_value:
+        elif signal_value[i - 1] > mid_value > signal_value[i] and signal_value[i + 1] < mid_value:
             falling_edges.append(i)
 
     # Calculate the slew rate for each rising and falling edge
@@ -148,8 +148,8 @@ def findSlewRate(file_path):
         slew_rates_down.append(delta_v / delta_t)
 
     # Calculate the average slew rate and store in dictionaries
-    slewRateUp_val = np.mean(slew_rates_up).item() if slew_rates_up else None
-    slewRateDown_val = np.mean(slew_rates_down).item() if slew_rates_down else None
+    slew_rate_up_val = np.mean(slew_rates_up).item() if slew_rates_up else None
+    slew_rate_down_val = np.mean(slew_rates_down).item() if slew_rates_down else None
 
     # Plot the specified signal against time
     # plt.figure(figsize=(14, 6))
@@ -163,20 +163,20 @@ def findSlewRate(file_path):
     # plt.show()
 
     # If slewRateUp or slewRateDown is None, return 0
-    if slewRateUp_val is None:
-        slewRateUp_val = 0.0
+    if slew_rate_up_val is None:
+        slew_rate_up_val = 0.0
         print(f"Warning!!! slewRateUp is not found, set to 0.0")
-    if slewRateDown_val is None:
-        slewRateDown_val = 0.0
+    if slew_rate_down_val is None:
+        slew_rate_down_val = 0.0
         print(f"Warning!!! slewRateDown is not found, set to 0.0")
-    if slewRateUp_val < 0.0:
-        slewRateUp_val = 0.0
+    if slew_rate_up_val < 0.0:
+        slew_rate_up_val = 0.0
         print(f"Warning!!! slewRateUp is negative, set to 0.0")
-    if slewRateDown_val < 0.0:
-        slewRateDown_val = 0.0
+    if slew_rate_down_val < 0.0:
+        slew_rate_down_val = 0.0
         print(f"Warning!!! slewRateDown is negative, set to 0.0")
 
-    return {"slewRateUp": slewRateUp_val, "slewRateDown": slewRateDown_val}
+    return {"slewRateUp": slew_rate_up_val, "slewRateDown": slew_rate_down_val}
 
 
 # dict = findSlewRate("/Users/hanwu/ML/AnalogDesignAuto/resultParse/spectreEnv/spectreTmpFile/
@@ -202,8 +202,6 @@ def findShoot(filename):
     # Clip time 50us-100us and 100us-150us
     time_clip1_index = [i for i, t in enumerate(time_series) if 50e-6 <= t <= 100e-6]
     time_clip2_index = [i for i, t in enumerate(time_series) if 100e-6 <= t <= 150e-6]
-    time_clip1 = [time_series[i] for i in time_clip1_index]
-    time_clip2 = [time_series[i] for i in time_clip2_index]
     vout_clip1 = [vout_trace[i] for i in time_clip1_index]
     vout_clip2 = [vout_trace[i] for i in time_clip2_index]
 
