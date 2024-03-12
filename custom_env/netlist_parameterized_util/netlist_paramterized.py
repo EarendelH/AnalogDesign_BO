@@ -170,7 +170,7 @@ def netlist_parameterized(input_scs_path, output_scs_path, output_yaml_path):
             "nrd": "(nf_{0}-int(nf_{0}/2)*2)*(2.7e-07*2.7e-07/(2.7e-07+2.7e-07*(nf_{0}-1))/w_{0})+(nf_{0}+1-int((nf_{0}+1)/2)*2)*(2.7e-07/nf_{0}/w_{0})",
             "nrs": "(nf_{0}-int(nf_{0}/2)*2)*(2.7e-07*2.7e-07/(2.7e-07+2.7e-07*(nf_{0}-1))/w_{0})+(nf_{0}+1-int((nf_{0}+1)/2)*2)*(2.7e-07*2.7e-07*2.7e-07/(2.7e-07*2.7e-07*(nf_{0}-2)+2.7e-07*(2.7e-07+2.7e-07))/w_{0})",
             "sa": "1/(1 / ((4.8e-07 + l_{0}/2) + (5.4e-07 + l_{0})*(1-1)/3.5 ) )-(0.5*l_{0})",
-            "sb": "/(1 / ((4.8e-07 + l_{0}/2) + (5.4e-07 + l_{0})*(1-1)/3.5 ) )-(0.5*l_{0})"
+            "sb": "1/(1 / ((4.8e-07 + l_{0}/2) + (5.4e-07 + l_{0})*(1-1)/3.5 ) )-(0.5*l_{0})"
         },
     }
 
@@ -228,8 +228,8 @@ def netlist_parameterized(input_scs_path, output_scs_path, output_yaml_path):
 
 
 # Test Code
-input_scs = "/Users/hanwu/ML/AnalogDesignAuto_MultiAgent/custom_env/netlist_assign_test/Line_Reg_25m.scs"
-output = "/Users/hanwu/ML/AnalogDesignAuto_MultiAgent/custom_env/netlist_template/Line_Reg_25m_parameterized.scs"
+input_scs = "/Users/hanwu/ML/AnalogDesignAuto_MultiAgent/custom_env/netlist_assign_test/Trans_25m.scs"
+output = "/Users/hanwu/ML/AnalogDesignAuto_MultiAgent/custom_env/netlist_template/Trans_25m_parameterized.scs"
 output_yaml = "/Users/hanwu/ML/AnalogDesignAuto_MultiAgent/custom_env/netlist_template/param_range_template.yaml"
 dict_out = netlist_parameterized(input_scs, output, output_yaml)
 print(dict_out)
