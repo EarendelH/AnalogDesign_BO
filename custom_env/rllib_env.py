@@ -4,6 +4,7 @@ from collections import OrderedDict
 import pickle
 import datetime
 import random
+import subprocess
 
 from util.gen_action_sapce import gen_masked_action_space
 from util.gen_obs_space import gen_obs_space_w_region, flatten_obs_space_w_region
@@ -192,7 +193,10 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
 
         # Generate region observation
         try:
+            # Run psf for converting binary file to text file
+            dc_raw_result_path = os.path.join(working_dir, "DC.raw/dcOpInfo.info")
             dc_result_path = os.path.join(working_dir, "DC.raw/dcOpInfo.info.encode")
+            subprocess.run(f"psf {dc_raw_result_path} -o {dc_result_path}", shell=True)
             operation_region_dict = extract_operation_region_w_name(dc_result_path)
         except Exception as e:
             print(f"Warning!!!: {e}. No DC sim file.")
@@ -290,7 +294,9 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
                 update_netlist(working_dir_dc, self.dc_sim_config_dict, updated_param, self.unassigned_netlist_dir)
                 _ = run_dynamic_simulation(working_dir_dc, self.dc_sim_config_dict, self.zero_sim_result,
                                            self.sim_output_enable)
-                dc_result_path = os.path.join(working_dir_dc, "DC.raw/dcOpInfo.info.encode")
+                dc_raw_result_path = os.path.join(working_dir, "DC.raw/dcOpInfo.info")
+                dc_result_path = os.path.join(working_dir, "DC.raw/dcOpInfo.info.encode")
+                subprocess.run(f"psf {dc_raw_result_path} -o {dc_result_path}", shell=True)
                 operation_region_dict = extract_operation_region_w_name(dc_result_path)
                 operation_region_list = list(operation_region_dict.values())
                 print(f"Step!!!Operation region: {operation_region_list} with step number: {self.step_num}")
@@ -347,7 +353,9 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
             # Generate observation
             # Add logic to avoid exception when no DC sim file
             try:
+                dc_raw_result_path = os.path.join(working_dir, "DC.raw/dcOpInfo.info")
                 dc_result_path = os.path.join(working_dir, "DC.raw/dcOpInfo.info.encode")
+                subprocess.run(f"psf {dc_raw_result_path} -o {dc_result_path}", shell=True)
                 operation_region_dict = extract_operation_region_w_name(dc_result_path)
             except Exception as e:
                 print(f"Step Warning!!!: {e}. No DC sim file.")
