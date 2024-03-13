@@ -185,7 +185,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
                                                 self.sim_output_enable)
         # For avoid simulation error in init, use zero result instead.
         except Exception as e:
-            logging.info(f"Warning!!!: {e}. Simulation failed, use zero result instead.")
+            logging.warning(f"Warning!!!: {e}. Simulation failed, use zero result instead.")
             sim_result = self.zero_sim_result
 
         # Normalize the current ideal specs
@@ -317,7 +317,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
                 valid_param = all(item in [1, 2, 3] for item in operation_region_list)
                 # Check operation_region_dict length vs self.operation_region_dict_zero length
                 if len(operation_region_dict) != len(self.operation_region_dict_zero):
-                    logging.info(f"Warning!!!: Operation region dict length {len(operation_region_dict)} does not "
+                    logging.warning(f"Warning!!!: Operation region dict length {len(operation_region_dict)} does not "
                                  f"match with operation_region_dict_zero length {len(self.norm_ideal_specs)}.")
                     operation_region_dict = self.operation_region_dict_zero
                     valid_param = False
@@ -328,6 +328,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
                 operation_region_dict = self.operation_region_dict_zero
                 valid_param = False
 
+        # DC check fail condition
         if self.dc_check and not valid_param:
             logging.info(f"Step!!!Param failed DC check with step number: {self.step_num}")
             sim_result = self.zero_sim_result
@@ -350,6 +351,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
                 if self.step_num >= self.max_step:
                     truncated[agent_name] = True
                     self.truncateds.add(agent_name)
+        # DC Check pass or not enabled
         else:
             # Run all simulations
             # Parse the updated param and generate the netlist
@@ -374,13 +376,13 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
                 subprocess.run(f"psf {dc_raw_result_path} -o {dc_result_path}", shell=True)
                 operation_region_dict = extract_operation_region_w_name(dc_result_path)
             except Exception as e:
-                logging.info(f"Step Warning!!!: {e}. No DC sim file.")
+                logging.warning(f"Step Warning!!!: {e}. No DC sim file.")
                 operation_region_dict = self.operation_region_dict_zero
 
             # Check operation_region_dict length vs self.operation_region_dict_zero length
             if len(operation_region_dict) != len(self.operation_region_dict_zero):
-                logging.info(f"Warning!!!: Operation region dict length {len(operation_region_dict)} does not match "
-                             f"with operation_region_dict_zero length {len(self.norm_ideal_specs)}.")
+                logging.warning(f"Warning!!!: Operation region dict length {len(operation_region_dict)} does not match "
+                                f"with operation_region_dict_zero length {len(self.norm_ideal_specs)}.")
                 operation_region_dict = self.operation_region_dict_zero
 
             observation_detail = update_obs_space_w_region(self.norm_ideal_specs, norm_sim_result, updated_param,
