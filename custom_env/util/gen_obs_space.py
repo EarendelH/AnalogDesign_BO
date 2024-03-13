@@ -2,8 +2,8 @@ import gymnasium
 import numpy as np
 import yaml
 
-from util.util_func import unit_conversion
-# from util_func import unit_conversion
+# from util.util_func import unit_conversion
+from util_func import unit_conversion
 
 
 def gen_obs_space(result_config_file, param_range_config_file):
@@ -501,10 +501,13 @@ def gen_obs_space_w_region(sim_config_dict, param_range_config_dict, agent_assig
     """
 
     result_config = {}
+
     for item in sim_config_dict:
         sim_name = item['simulation_name']
         sim_item = item['simulation_item']
-        result_config[sim_name] = sim_item
+        # Rename sim_item with sim_name
+        modified_sim_item = [f"{sim_name}_" + sim_item_name for sim_item_name in sim_item]
+        result_config[sim_name] = modified_sim_item
 
     # Create spaces for ideal_specs and cur_specs
     ideal_specs_spaces = {key: gymnasium.spaces.Box(low=-1, high=1, shape=(1,), dtype=np.float32)
@@ -583,14 +586,19 @@ def flatten_obs_space_w_region(obs_space: gymnasium.spaces.Dict):
 
 
 # Test Code
-# result_config_file = "../config_3/simulation.yaml"
-# param_range_config_file = "../config_3/param_range.yaml"
-# agent_assign_yaml_file = "../config_3/agent_assign.yaml"
-# observation_space = gen_obs_space_w_region(result_config_file, param_range_config_file, agent_assign_yaml_file)
-# print(f"observation_space: {observation_space}")
-# observation_space_flat = flatten_obs_space_w_region(observation_space)
-# print(f"observation_space_flat: {observation_space_flat}")
-
+result_config_file = "../config/simulation.yaml"
+param_range_config_file = "../config/param_range.yaml"
+agent_assign_yaml_file = "../config/agent_assign.yaml"
+with open(result_config_file, 'r') as file:
+    result_config = yaml.safe_load(file)
+with open(param_range_config_file, 'r') as file:
+    param_range_config = yaml.safe_load(file)
+with open(agent_assign_yaml_file, 'r') as file:
+    agent_assign = yaml.safe_load(file)
+observation_space = gen_obs_space_w_region(result_config, param_range_config, agent_assign)
+print(f"observation_space: {observation_space}")
+observation_space_flat = flatten_obs_space_w_region(observation_space)
+print(f"observation_space_flat: {observation_space_flat}")
 # Output
 # observation_space: Dict('Agent_1': Dict('cur_param': Dict('IB': Box(1e-06, 5e-05, (1,), float32),
 # 'l_M11': Box(5e-07, 1e-05, (1,), float32), 'l_M12': Box(5e-07, 1e-05, (1,), float32), 'l_M13': Box(5e-07, 1e-05,
