@@ -59,6 +59,7 @@ def update_parameters(action_idx_dict, cur_param_dict, yaml_config):
                     updated_value = adjust_value_within_range(current_value, step_info, range_info, action, is_integer)
                     updated_params[param_key] = updated_value
         else:
+            print(f"Debug: {cur_param_dict[key]}")
             current_value = cur_param_dict[key]
             step_info = yaml_config['other_variable']['params'][0]['value']['step']
             range_info = yaml_config['other_variable']['params'][0]['value']['range']
