@@ -309,6 +309,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
                 dc_raw_result_path = os.path.join(working_dir, "DC.raw/dcOpInfo.info")
                 dc_result_path = os.path.join(working_dir, "DC.raw/dcOpInfo.info.encode")
                 subprocess.run(f"psf {dc_raw_result_path} -o {dc_result_path}", shell=True)
+                logging.debug(f"Step!!!psf command: psf {dc_raw_result_path} -o {dc_result_path}")
                 operation_region_dict = extract_operation_region_w_name(dc_result_path)
                 operation_region_list = list(operation_region_dict.values())
                 logging.info(f"Step!!!Operation region: {operation_region_list} with step number: {self.step_num}")
