@@ -586,19 +586,19 @@ def flatten_obs_space_w_region(obs_space: gymnasium.spaces.Dict):
 
 
 # Test Code
-result_config_file = "../config/simulation.yaml"
-param_range_config_file = "../config/param_range.yaml"
-agent_assign_yaml_file = "../config/agent_assign.yaml"
-with open(result_config_file, 'r') as file:
-    result_config = yaml.safe_load(file)
-with open(param_range_config_file, 'r') as file:
-    param_range_config = yaml.safe_load(file)
-with open(agent_assign_yaml_file, 'r') as file:
-    agent_assign = yaml.safe_load(file)
-observation_space = gen_obs_space_w_region(result_config, param_range_config, agent_assign)
-print(f"observation_space: {observation_space}")
-observation_space_flat = flatten_obs_space_w_region(observation_space)
-print(f"observation_space_flat: {observation_space_flat}")
+# result_config_file = "../config/simulation.yaml"
+# param_range_config_file = "../config/param_range.yaml"
+# agent_assign_yaml_file = "../config/agent_assign.yaml"
+# with open(result_config_file, 'r') as file:
+#     result_config = yaml.safe_load(file)
+# with open(param_range_config_file, 'r') as file:
+#     param_range_config = yaml.safe_load(file)
+# with open(agent_assign_yaml_file, 'r') as file:
+#     agent_assign = yaml.safe_load(file)
+# observation_space = gen_obs_space_w_region(result_config, param_range_config, agent_assign)
+# print(f"observation_space: {observation_space}")
+# observation_space_flat = flatten_obs_space_w_region(observation_space)
+# print(f"observation_space_flat: {observation_space_flat}")
 # Output
 # observation_space: Dict('Agent_1': Dict('cur_param': Dict('IB': Box(1e-06, 5e-05, (1,), float32),
 # 'l_M11': Box(5e-07, 1e-05, (1,), float32), 'l_M12': Box(5e-07, 1e-05, (1,), float32), 'l_M13': Box(5e-07, 1e-05,
