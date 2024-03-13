@@ -300,6 +300,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         if self.dc_check:
             try:
                 working_dir_dc = create_work_dir(self.run_root_dir)
+                logging.info(f"Step!!!DC Check Working directory: {working_dir_dc} with step number: {self.step_num}")
                 # Update DC Netlist File for checking operation region
                 update_netlist(working_dir_dc, self.dc_sim_config_dict, updated_param, self.unassigned_netlist_dir)
                 _ = run_dynamic_simulation(working_dir_dc, self.dc_sim_config_dict, self.zero_sim_result,
