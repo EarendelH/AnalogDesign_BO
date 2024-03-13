@@ -130,7 +130,7 @@ def update_netlist(work_dir, sim_config, param_dict, unassigned_netlist_dir_path
     :param unassigned_netlist_dir_path:  unassigned netlist file path
     :return: Assigned SCS file
     """
-
+    print(f"Debug in update_netlist, sim_config: {sim_config}")
     for simulation_config in sim_config:
         sim_name = simulation_config["simulation_name"]
         unassigned_netlist_filename = f"{sim_name}_parameterized.scs"
@@ -138,6 +138,7 @@ def update_netlist(work_dir, sim_config, param_dict, unassigned_netlist_dir_path
         unassigned_netlist_file_path = os.path.join(unassigned_netlist_dir_path, unassigned_netlist_filename)
         assigned_netlist_file_path = os.path.join(work_dir, assigned_netlist_filename)
         assign_param2netlist(param_dict, unassigned_netlist_file_path, assigned_netlist_file_path)
+        print(f"Debug in update_netlist, assigned netlist file: {assigned_netlist_file_path}")
 
         if not os.path.exists(assigned_netlist_file_path):
             print(f"Netlist file assign fail, try to assign again.")

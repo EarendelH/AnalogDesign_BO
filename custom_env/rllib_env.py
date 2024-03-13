@@ -205,14 +205,15 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
             dc_result_path = os.path.join(working_dir, "DC.raw/dcOpInfo.info.encode")
             subprocess.run(f"psf {dc_raw_result_path} -o {dc_result_path}", shell=True)
             operation_region_dict = extract_operation_region_w_name(dc_result_path)
+            logging.debug(f"Initialing!!!Operation region: {operation_region_dict}")
         except Exception as e:
-            logging.info(f"Warning!!!: {e}. No DC sim file.")
+            logging.warning(f"Resting!!!: {e}. No DC sim file.")
             operation_region_dict = self.operation_region_dict_zero
 
         # Check operation_region_dict length vs self.operation_region_dict_zero length
         if len(operation_region_dict) != len(self.operation_region_dict_zero):
-            logging.info(f"Warning!!!: Operation region dict length {len(operation_region_dict)} does not match with "
-                         f"operation_region_dict_zero length {len(self.norm_ideal_specs)}.")
+            logging.warning(f"Resting!!!: Operation region dict length {len(operation_region_dict)} does not match with "
+                            f"operation_region_dict_zero length {len(self.norm_ideal_specs)}.")
             operation_region_dict = self.operation_region_dict_zero
 
         # Generate observation
