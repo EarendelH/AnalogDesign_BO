@@ -5,6 +5,7 @@ import pickle
 import datetime
 import random
 import subprocess
+import logging
 
 from util.gen_action_sapce import gen_masked_action_space
 from util.gen_obs_space import gen_obs_space_w_region, flatten_obs_space_w_region
@@ -22,6 +23,8 @@ from util.init_param import gen_init_param
 from util.extract_device_param_value import extract_operation_region_w_name
 
 from ray.rllib.env.multi_agent_env import MultiAgentEnv
+
+logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
 
 class RllibAnalogDesignAutoEnv(MultiAgentEnv):
@@ -116,6 +119,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
 
         # Generate param space
         self.param_space = gen_param_space(self.param_range_dict)
+        logging.debug(f"param_space: {self.param_space}")
 
         # Create an empty dict for operation region
         self.operation_region_dict_zero = {}
@@ -134,9 +138,10 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         self.observation_space = flatten_obs_space_w_region(gen_obs_space_w_region(self.sim_config_dict,
                                                                                    self.param_range_dict,
                                                                                    agent_assign_dict))
-        # print(f"observation_space: {self.observation_space}")
+        logging.debug(f"observation_space: {self.observation_space}")
         self._action_space_in_preferred_format = True
         self.action_space = gen_masked_action_space(action_mask, self.device_mask_dict, agent_assign_dict)
+        logging.debug(f"action_space: {self.action_space}")
 
         self.resetted = False
 
@@ -148,15 +153,16 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
 
         # Set the ideal specs based on the generalize flag
         self.ideal_specs = generalize_config(self.generalize, self.ideal_specs_path)
-        print(f"Initialing!!!Generalize flag: {self.generalize}")
-        print(f"Initialing!!!Ideal specs: {self.ideal_specs}")
+        logging.info(f"Initialing!!!Generalize flag: {self.generalize}")
+        logging.info(f"Initialing!!!Ideal specs: {self.ideal_specs}")
 
         init_param = gen_init_param(self.init_method, self.predefined_init_param, self.action_mask,
                                     self.device_mask_dict, self.param_space)
+        logging.debug(f"Initialing!!!Init param: {init_param}")
 
         # Generate working directory
         working_dir = create_work_dir(self.run_root_dir)
-        print(f"Initialing!!!Working directory: {working_dir}")
+        logging.info(f"Initialing!!!Working directory: {working_dir}")
 
         # Update Netlist File
         update_netlist(working_dir, self.sim_config_dict, init_param, self.unassigned_netlist_dir)
@@ -172,24 +178,25 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
             # Add Simulation Name before each keys in the result dictionary. Avoid error in flatten the dictionary
             modified_result = {f"{sim_name}_{key}": value for key, value in self.zero_sim_result[sim_name].items()}
             self.zero_sim_result[sim_name] = modified_result
+        logging.debug(f"Initialing!!!Zero sim result: {self.zero_sim_result}")
 
         try:
             sim_result = run_dynamic_simulation(working_dir, self.sim_config_dict, self.zero_sim_result,
                                                 self.sim_output_enable)
         # For avoid simulation error in init, use zero result instead.
         except Exception as e:
-            print(f"Warning!!!: {e}. Simulation failed, use zero result instead.")
+            logging.info(f"Warning!!!: {e}. Simulation failed, use zero result instead.")
             sim_result = self.zero_sim_result
 
         # Normalize the current ideal specs
-        print(f"Initialing!!!Ideal specs: {self.ideal_specs}")
+        logging.info(f"Initialing!!!Ideal specs: {self.ideal_specs}")
         self.norm_ideal_specs = norm_ideal_spec(self.ideal_specs, self.norm_specs)
-        # print(f"Initialing!!!Normalized ideal specs: {self.norm_ideal_specs}")
+        logging.debug(f"Initialing!!!Normalized ideal specs: {self.norm_ideal_specs}")
 
         # Normalize the current simulation specs
-        print(f"Initialing!!!Simulation result: {sim_result}")
+        logging.info(f"Initialing!!!Simulation result: {sim_result}")
         norm_sim_result = norm_sim_spec(sim_result, self.norm_specs)
-        # print(f"Initialing!!!Normalized simulation result: {norm_sim_result}")
+        logging.debug(f"Initialing!!!Normalized simulation result: {norm_sim_result}")
 
         # Generate region observation
         try:
@@ -199,26 +206,28 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
             subprocess.run(f"psf {dc_raw_result_path} -o {dc_result_path}", shell=True)
             operation_region_dict = extract_operation_region_w_name(dc_result_path)
         except Exception as e:
-            print(f"Warning!!!: {e}. No DC sim file.")
+            logging.info(f"Warning!!!: {e}. No DC sim file.")
             operation_region_dict = self.operation_region_dict_zero
 
         # Check operation_region_dict length vs self.operation_region_dict_zero length
         if len(operation_region_dict) != len(self.operation_region_dict_zero):
-            print(f"Warning!!!: Operation region dict length {len(operation_region_dict)} does not match with "
-                  f"operation_region_dict_zero length {len(self.norm_ideal_specs)}.")
+            logging.info(f"Warning!!!: Operation region dict length {len(operation_region_dict)} does not match with "
+                         f"operation_region_dict_zero length {len(self.norm_ideal_specs)}.")
             operation_region_dict = self.operation_region_dict_zero
 
         # Generate observation
         observation_detail = update_obs_space_w_region(self.norm_ideal_specs, norm_sim_result, init_param,
                                                        operation_region_dict)
+        logging.debug(f"Initialing!!!Observation detail: {observation_detail}")
         observation = flatten_observation_w_region(observation_detail)
+        logging.debug(f"Initialing!!!Flatten Observation: {observation}")
 
         # Share all observations among agents
         observations = {agent: observation for agent in self.agents}
 
         # Test Rew func
         rew = cal_reward(self.ideal_specs, sim_result)
-        print(f"Debug!!!Initialing!!!Reward result: {rew}")
+        logging.info(f"Debug!!!Initialing!!!Reward result: {rew}")
 
         self.cur_param = init_param
 
@@ -261,7 +270,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
 
         # Create working directory
         working_dir = create_work_dir(self.run_root_dir)
-        print(f"Step!!! Working directory: {working_dir} with step number: {self.step_num}")
+        logging.info(f"Step!!! Working directory: {working_dir} with step number: {self.step_num}")
 
         if self.action_mask:
             for key in self.device_mask_dict:
@@ -280,6 +289,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
 
         # Update param with new action
         updated_param = update_parameters(all_action_flatten, self.cur_param, self.param_range_config)
+        logging.debug(f"Step!!!Updated param: {updated_param} with step number: {self.step_num}")
 
         # Update current param
         self.cur_param = updated_param
@@ -299,34 +309,37 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
                 subprocess.run(f"psf {dc_raw_result_path} -o {dc_result_path}", shell=True)
                 operation_region_dict = extract_operation_region_w_name(dc_result_path)
                 operation_region_list = list(operation_region_dict.values())
-                print(f"Step!!!Operation region: {operation_region_list} with step number: {self.step_num}")
+                logging.info(f"Step!!!Operation region: {operation_region_list} with step number: {self.step_num}")
                 # 0 cut-off, 1 triode, 2 saturation, 3 sub-th, 4 breakdown
                 # Check whether all transistors are in saturation/sub-threshold/triode region
                 valid_param = all(item in [1, 2, 3] for item in operation_region_list)
                 # Check operation_region_dict length vs self.operation_region_dict_zero length
                 if len(operation_region_dict) != len(self.operation_region_dict_zero):
-                    print(f"Warning!!!: Operation region dict length {len(operation_region_dict)} does not match with "
-                          f"operation_region_dict_zero length {len(self.norm_ideal_specs)}.")
+                    logging.info(f"Warning!!!: Operation region dict length {len(operation_region_dict)} does not "
+                                 f"match with operation_region_dict_zero length {len(self.norm_ideal_specs)}.")
                     operation_region_dict = self.operation_region_dict_zero
                     valid_param = False
                 # Delete working temp directory, if it exists
                 # delete_work_dir(working_dir_dc)
             except Exception as e:
-                print(f"Warning!!!: {e}. Failed to run DC check with step number: {self.step_num}")
+                logging.info(f"Warning!!!: {e}. Failed to run DC check with step number: {self.step_num}")
                 operation_region_dict = self.operation_region_dict_zero
                 valid_param = False
 
         if self.dc_check and not valid_param:
-            print(f"Step!!!Param failed DC check with step number: {self.step_num}")
+            logging.info(f"Step!!!Param failed DC check with step number: {self.step_num}")
             sim_result = self.zero_sim_result
             norm_sim_result = norm_sim_spec(sim_result, self.norm_specs)
             observation_detail = update_obs_space_w_region(self.norm_ideal_specs, norm_sim_result, updated_param,
                                                            operation_region_dict)
+            logging.debug(f"Step!!!DC Check fail. Observation detail: {observation_detail} "
+                          f"with step number: {self.step_num}")
             observation = flatten_observation_w_region(observation_detail)
+            logging.debug(f"Step!!!DC Check fail. Flatten Observation: {observation} with step number: {self.step_num}")
             observations = {agent: observation for agent in self.agents}
             rew = {a: -10 for a in self.agents}
 
-            print(f"Step!!!DC Check fail.Reward result: {rew} with step number: {self.step_num}")
+            logging.info(f"Step!!!DC Check fail.Reward result: {rew} with step number: {self.step_num}")
 
             terminated = {a: False for a in self.agents}
 
@@ -346,8 +359,9 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
             def _run_simulation_with_retry():
                 return run_dynamic_simulation(working_dir, self.sim_config_dict, self.zero_sim_result,
                                               self.sim_output_enable)
+
             sim_result = _run_simulation_with_retry()
-            print(f"Step!!!Simulation result: {sim_result} with step number: {self.step_num}")
+            logging.info(f"Step!!!Simulation result: {sim_result} with step number: {self.step_num}")
             norm_sim_result = norm_sim_spec(sim_result, self.norm_specs)
 
             # Generate observation
@@ -358,18 +372,20 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
                 subprocess.run(f"psf {dc_raw_result_path} -o {dc_result_path}", shell=True)
                 operation_region_dict = extract_operation_region_w_name(dc_result_path)
             except Exception as e:
-                print(f"Step Warning!!!: {e}. No DC sim file.")
+                logging.info(f"Step Warning!!!: {e}. No DC sim file.")
                 operation_region_dict = self.operation_region_dict_zero
 
             # Check operation_region_dict length vs self.operation_region_dict_zero length
             if len(operation_region_dict) != len(self.operation_region_dict_zero):
-                print(f"Warning!!!: Operation region dict length {len(operation_region_dict)} does not match with "
-                      f"operation_region_dict_zero length {len(self.norm_ideal_specs)}.")
+                logging.info(f"Warning!!!: Operation region dict length {len(operation_region_dict)} does not match "
+                             f"with operation_region_dict_zero length {len(self.norm_ideal_specs)}.")
                 operation_region_dict = self.operation_region_dict_zero
 
             observation_detail = update_obs_space_w_region(self.norm_ideal_specs, norm_sim_result, updated_param,
                                                            operation_region_dict)
+            logging.debug(f"Step!!!Observation detail: {observation_detail} with step number: {self.step_num}")
             observation = flatten_observation_w_region(observation_detail)
+            logging.debug(f"Step!!!Flatten Observation: {observation} with step number: {self.step_num}")
 
             # Share all observations
             observations = {agent: observation for agent in self.agents}
@@ -379,7 +395,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
             rew_single = cal_reward(self.ideal_specs, sim_result)
             for agent_name in rew:
                 rew[agent_name] = rew_single
-            print(f"Step!!!Reward result: {rew_single} with step number: {self.step_num}")
+            logging.info(f"Step!!!Reward result: {rew_single} with step number: {self.step_num}")
 
             # Determine termination or truncations
             terminated = {a: False for a in self.agents}
@@ -399,8 +415,8 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         terminated["__all__"] = len(self.terminateds) == len(self.agents)
         truncated["__all__"] = len(self.truncateds) == len(self.agents)
 
-        print(f"Step!!!terminated: {terminated} with step number: {self.step_num}")
-        print(f"Step!!!truncated: {truncated} with step number: {self.step_num}")
+        logging.info(f"Step!!!terminated: {terminated} with step number: {self.step_num}")
+        logging.info(f"Step!!!truncated: {truncated} with step number: {self.step_num}")
 
         step_data = {
             'step_num': self.step_num,
