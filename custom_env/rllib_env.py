@@ -309,7 +309,6 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
                 dc_raw_result_path = os.path.join(working_dir_dc, "DC.raw/dcOpInfo.info")
                 dc_result_path = os.path.join(working_dir_dc, "DC.raw/dcOpInfo.info.encode")
                 subprocess.run(f"psf {dc_raw_result_path} -o {dc_result_path}", shell=True)
-                logging.debug(f"Step!!!psf command: psf {dc_raw_result_path} -o {dc_result_path}")
                 operation_region_dict = extract_operation_region_w_name(dc_result_path)
                 operation_region_list = list(operation_region_dict.values())
                 logging.info(f"Step!!!Operation region: {operation_region_list} with step number: {self.step_num}")
@@ -325,7 +324,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
                 # Delete working temp directory, if it exists
                 # delete_work_dir(working_dir_dc)
             except Exception as e:
-                logging.info(f"Warning!!!: {e}. Failed to run DC check with step number: {self.step_num}")
+                logging.warning(f"Warning!!!: {e}. Failed to run DC check with step number: {self.step_num}")
                 operation_region_dict = self.operation_region_dict_zero
                 valid_param = False
 
