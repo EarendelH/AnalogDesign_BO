@@ -131,6 +131,7 @@ def update_netlist(work_dir, sim_config, param_dict, unassigned_netlist_dir_path
     :return: Assigned SCS file
     """
     for simulation_config in sim_config:
+
         sim_name = simulation_config["simulation_name"]
         unassigned_netlist_filename = f"{sim_name}_parameterized.scs"
         assigned_netlist_filename = f"{sim_name}.scs"
