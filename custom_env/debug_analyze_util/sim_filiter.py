@@ -70,18 +70,16 @@ def filter_data(df, results):
     # Ask the user if they want to continue filtering
     continue_filter = input("Do you want to continue filtering? (y/n): ")
     if continue_filter.lower() == 'y':
-        filter_data(filtered_df, filtered_results)  # Recursive call to continue filtering
+        filter_data(filtered_df, filtered_results)
     else:
-        display_or_save_data(filtered_df)
+        display_or_save_data(filtered_df, filtered_results)
 
 
 def display_or_save_data(df, results):
     choice = input("Do you want to display the results or save them to a CSV file? (display/save): ")
     if choice.lower() == 'save':
         formula = input("Enter the FoM formula using the performance parameters: ")
-        # Extract parameters from the results DataFrame
         params = results.columns
-        # Ensure the formula contains all parameters
         if all(param in formula for param in params):
             sorted_df = calculate_and_sort_by_fom(df, formula, params)
             file_path = input("Enter the file path to save the CSV: ")
