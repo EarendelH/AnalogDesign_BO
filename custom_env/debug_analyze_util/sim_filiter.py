@@ -4,7 +4,8 @@ import numpy as np
 
 
 def calculate_fom(row):
-    fom = row['phaseMargin'] * np.log10(row['gainBandWidth']) * row['powerSupplyRejectionRatio'] / row['pwr']
+    fom = (row['result']['phaseMargin'] * np.log10(row['result']['gainBandWidth']) *
+           row['result']['powerSupplyRejectionRatio'] / row['result']['pwr'])
     return fom
 
 
