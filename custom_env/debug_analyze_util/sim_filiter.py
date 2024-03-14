@@ -1,6 +1,7 @@
 import pandas as pd
 from joblib import load
-import numpy
+import numpy as np
+
 
 def load_data(joblib_file_path):
     # Load data from the specified joblib file
@@ -56,19 +57,16 @@ def filter_data(df, results):
         display_or_save_data(filtered_df)
 
 
-def calculate_fom(row):
-    return (row['phaseMargin']*numpy.log10(row['gainBandWidth'])*row['powerSupplyRejectionRatio']) / row['pwr']
-
-
 def display_or_save_data(df):
+    # 假设FoM的计算公式如下：FoM = (ColumnA * ColumnB) / ColumnC
+    # 确保这里的列名与您的DataFrame中的列名匹配
+    df['FoM'] = (df['phaseMargin'] * np.log10(df['gainBandWidth']) * df['powerSupplyRejectionRatio']) / df['pwr']
+    df_sorted = df.sort_values(by='FoM', ascending=False)
+
     choice = input("Do you want to display the results or save them to a CSV file? (display/save): ")
     if choice.lower() == 'display':
-        print(df.to_string())
+        print(df_sorted.to_string())
     elif choice.lower() == 'save':
-        # 在保存之前计算FoM并排序
-        df['FoM'] = df.apply(calculate_fom, axis=1)
-        df_sorted = df.sort_values(by='FoM', ascending=False)
-
         file_path = input("Enter the file path to save the CSV: ")
         df_sorted.to_csv(file_path, index=False)
         print(f"Data saved to {file_path}")
