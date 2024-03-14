@@ -58,9 +58,7 @@ def filter_data(df, results):
 
 
 def display_or_save_data(df):
-    # 假设FoM的计算公式如下：FoM = (ColumnA * ColumnB) / ColumnC
-    # 确保这里的列名与您的DataFrame中的列名匹配
-    df['FoM'] = (df['phaseMargin'] * np.log10(df['gainBandWidth']) * df['powerSupplyRejectionRatio']) / df['pwr']
+    df['FoM'] = (df.columns['phaseMargin'] * np.log10(df.columns['gainBandWidth']) * df.columns['powerSupplyRejectionRatio']) / df.columns['pwr']
     df_sorted = df.sort_values(by='FoM', ascending=False)
 
     choice = input("Do you want to display the results or save them to a CSV file? (display/save): ")
@@ -78,5 +76,6 @@ def display_or_save_data(df):
 if __name__ == "__main__":
     joblib_file = input("Joblib file path: ")
     df, results = load_data(joblib_file)
+    print()
     summarize_data(results)
     filter_data(df, results)
