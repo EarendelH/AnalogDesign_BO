@@ -3,13 +3,14 @@ from joblib import load
 import numpy as np
 
 
+def calculate_fom(row):
+    fom = row['phaseMargin'] * np.log10(row['gainBandWidth']) * row['powerSupplyRejectionRatio'] / row['pwr']
+    return fom
+
+
 def load_data(joblib_file_path):
-    # Load data from the specified joblib file
     data = load(joblib_file_path)
-    # Convert loaded data into a DataFrame
-    # Assuming each item in 'data' is a dictionary with 'result' and 'param'
     df = pd.DataFrame(data)
-    # Extracting results into a separate DataFrame for easier manipulation
     results = pd.json_normalize(df['result'])
     return df, results
 
@@ -58,7 +59,7 @@ def filter_data(df, results):
 
 
 def display_or_save_data(df):
-    df['FoM'] = (df.columns['phaseMargin'] * np.log10(df.columns['gainBandWidth']) * df.columns['powerSupplyRejectionRatio']) / df.columns['pwr']
+    df['FoM'] = df.apply(calculate_fom, axis=1)
     df_sorted = df.sort_values(by='FoM', ascending=False)
 
     choice = input("Do you want to display the results or save them to a CSV file? (display/save): ")
@@ -72,11 +73,8 @@ def display_or_save_data(df):
         print("Invalid option. Please choose 'display' or 'save'.")
 
 
-# Main script
 if __name__ == "__main__":
     joblib_file = input("Joblib file path: ")
     df, results = load_data(joblib_file)
-    print(f"Loaded {len(df)} data groups from {joblib_file}")
-    print(f"Performance parameters: {', '.join(results.columns)}")
     summarize_data(results)
     filter_data(df, results)
