@@ -22,6 +22,25 @@ def summarize_data(df):
             print(f"{column}: Min = {df[column].min()}, Max = {df[column].max()}")
     print(f"Number of data groups: {len(df)}")
 
+def calculate_and_sort_by_fom(df, formula, params):
+    try:
+        # Generate random positive float values for each parameter
+        random_values = {param: np.random.rand() for param in params}
+        # Test formula calculation with random values
+        test_value = eval(formula, {}, random_values)
+        if isinstance(test_value, float):
+            # Calculate FoM for each row in DataFrame
+            df['FoM'] = df.apply(lambda row: eval(formula, {}, row), axis=1)
+            # Sort DataFrame by FoM
+            sorted_df = df.sort_values(by='FoM', ascending=False)
+            return sorted_df
+        else:
+            print("The formula did not evaluate to a float. Please check your formula.")
+            return df
+    except Exception as e:
+        print(f"Error calculating or sorting by FoM: {e}")
+        return df
+
 
 def filter_data(df, results):
     # Display a list of performance parameters for the user to choose from
@@ -56,14 +75,22 @@ def filter_data(df, results):
         display_or_save_data(filtered_df)
 
 
-def display_or_save_data(df):
+def display_or_save_data(df, results):
     choice = input("Do you want to display the results or save them to a CSV file? (display/save): ")
-    if choice.lower() == 'display':
+    if choice.lower() == 'save':
+        formula = input("Enter the FoM formula using the performance parameters: ")
+        # Extract parameters from the results DataFrame
+        params = results.columns
+        # Ensure the formula contains all parameters
+        if all(param in formula for param in params):
+            sorted_df = calculate_and_sort_by_fom(df, formula, params)
+            file_path = input("Enter the file path to save the CSV: ")
+            sorted_df.to_csv(file_path, index=False)
+            print(f"Data saved to {file_path}")
+        else:
+            print("The formula must include all performance parameters.")
+    elif choice.lower() == 'display':
         print(df.to_string())
-    elif choice.lower() == 'save':
-        file_path = input("Enter the file path to save the CSV: ")
-        df.to_csv(file_path, index=False)
-        print(f"Data saved to {file_path}")
     else:
         print("Invalid option. Please choose 'display' or 'save'.")
 
