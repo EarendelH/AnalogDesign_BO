@@ -1,7 +1,6 @@
-import numpy as np
 import pandas as pd
 from joblib import load
-
+import numpy
 
 def load_data(joblib_file_path):
     # Load data from the specified joblib file
@@ -22,25 +21,6 @@ def summarize_data(df):
         if pd.api.types.is_numeric_dtype(df[column]):
             print(f"{column}: Min = {df[column].min()}, Max = {df[column].max()}")
     print(f"Number of data groups: {len(df)}")
-
-def calculate_and_sort_by_fom(df, formula, params):
-    try:
-        # Generate random positive float values for each parameter
-        random_values = {param: np.random.rand() for param in params}
-        # Test formula calculation with random values
-        test_value = eval(formula, {}, random_values)
-        if isinstance(test_value, float):
-            # Calculate FoM for each row in DataFrame
-            df['FoM'] = df.apply(lambda row: eval(formula, {}, row), axis=1)
-            # Sort DataFrame by FoM
-            sorted_df = df.sort_values(by='FoM', ascending=False)
-            return sorted_df
-        else:
-            print("The formula did not evaluate to a float. Please check your formula.")
-            return df
-    except Exception as e:
-        print(f"Error calculating or sorting by FoM: {e}")
-        return df
 
 
 def filter_data(df, results):
@@ -71,25 +51,27 @@ def filter_data(df, results):
     # Ask the user if they want to continue filtering
     continue_filter = input("Do you want to continue filtering? (y/n): ")
     if continue_filter.lower() == 'y':
-        filter_data(filtered_df, filtered_results)
+        filter_data(filtered_df, filtered_results)  # Recursive call to continue filtering
     else:
-        display_or_save_data(filtered_df, filtered_results)
+        display_or_save_data(filtered_df)
 
 
-def display_or_save_data(df, results):
+def calculate_fom(row):
+    return (row['phaseMargin']*numpy.log10(row['gainBandWidth'])*row['powerSupplyRejectionRatio']) / row['pwr']
+
+
+def display_or_save_data(df):
     choice = input("Do you want to display the results or save them to a CSV file? (display/save): ")
-    if choice.lower() == 'save':
-        formula = input("Enter the FoM formula using the performance parameters: ")
-        params = results.columns
-        if all(param in formula for param in params):
-            sorted_df = calculate_and_sort_by_fom(df, formula, params)
-            file_path = input("Enter the file path to save the CSV: ")
-            sorted_df.to_csv(file_path, index=False)
-            print(f"Data saved to {file_path}")
-        else:
-            print("The formula must include all performance parameters.")
-    elif choice.lower() == 'display':
+    if choice.lower() == 'display':
         print(df.to_string())
+    elif choice.lower() == 'save':
+        # 在保存之前计算FoM并排序
+        df['FoM'] = df.apply(calculate_fom, axis=1)
+        df_sorted = df.sort_values(by='FoM', ascending=False)
+
+        file_path = input("Enter the file path to save the CSV: ")
+        df_sorted.to_csv(file_path, index=False)
+        print(f"Data saved to {file_path}")
     else:
         print("Invalid option. Please choose 'display' or 'save'.")
 
