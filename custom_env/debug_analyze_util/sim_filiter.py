@@ -76,6 +76,7 @@ def display_or_save_data(df):
 if __name__ == "__main__":
     joblib_file = input("Joblib file path: ")
     df, results = load_data(joblib_file)
-    print()
+    print(f"Loaded {len(df)} data groups from {joblib_file}")
+    print(f"Performance parameters: {', '.join(results.columns)}")
     summarize_data(results)
     filter_data(df, results)
