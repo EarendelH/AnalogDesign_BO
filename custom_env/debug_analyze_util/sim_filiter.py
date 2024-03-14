@@ -59,6 +59,7 @@ def filter_data(df, results):
 
 
 def display_or_save_data(df):
+    print(f"Columns: {df.columns.to_list()}")
     df['FoM'] = df.apply(calculate_fom, axis=1)
     df_sorted = df.sort_values(by='FoM', ascending=False)
 
