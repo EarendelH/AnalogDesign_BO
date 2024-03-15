@@ -435,6 +435,6 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
             pickle.dump(self.trajectory_data, f)
 
         # Delete working temp directory, if it exists
-        # delete_work_dir(working_dir)
+        delete_work_dir(working_dir)
 
         return observations, rew, terminated, truncated, info
