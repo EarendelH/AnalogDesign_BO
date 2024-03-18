@@ -200,26 +200,21 @@ def findShoot(filename):
     vout_trace = trans_dict["VOUT"]
 
     # Clip time 50us-100us and 100us-150us
-    time_clip1_index = [i for i, t in enumerate(time_series) if 50e-6 <= t <= 100e-6]
-    time_clip2_index = [i for i, t in enumerate(time_series) if 100e-6 <= t <= 150e-6]
-    vout_clip1 = [vout_trace[i] for i in time_clip1_index]
-    vout_clip2 = [vout_trace[i] for i in time_clip2_index]
-
-    # print("time_clip1: ", time_clip1)
-    # print("vout_clip1: ", vout_clip1)
-    # print("time_clip2: ", time_clip2)
-    # print("vout_clip2: ", vout_clip2)
+    time_undershoot_index = [i for i, t in enumerate(time_series) if 50e-6 <= t <= 100e-6]
+    time_overshoot_index = [i for i, t in enumerate(time_series) if 100e-6 <= t <= 150e-6]
+    vout_undershoot = [vout_trace[i] for i in time_undershoot_index]
+    vout_overshoot = [vout_trace[i] for i in time_overshoot_index]
 
     # Calculate overshoot and undershoot,
     # undershoot: Vout@50us -Vout_clip1_min, overshoot: Vout_clip2_max - Vout@100us
-    vout_clip1_min = np.min(vout_clip1)
-    vout_clip2_max = np.max(vout_clip2)
+    vout_undershoot_min = np.min(vout_undershoot)
+    vout_overshoot_max = np.max(vout_overshoot)
     # Find the neset value to 50us and 100us
-    vout_50us = vout_trace[0]
-    vout_100us = vout_trace[0]
+    vout_undershoot_base = vout_undershoot[0]
+    vout_overshoot_base = vout_overshoot[0]
 
-    undershoot = vout_50us - vout_clip1_min
-    overshoot = vout_clip2_max - vout_100us
+    undershoot = vout_undershoot_base - vout_undershoot_min
+    overshoot = vout_overshoot_max - vout_overshoot_base
 
     return {"overShoot": overshoot, "underShoot": undershoot}
 
