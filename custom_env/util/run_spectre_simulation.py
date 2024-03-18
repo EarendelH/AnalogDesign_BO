@@ -86,7 +86,7 @@ def run_dynamic_simulation(work_dir, sim_config, zero_sim_result, show_output=Fa
     :return: Arranged simulation results
     """
 
-    results = {}
+    results = zero_sim_result
     fail_tag = None
 
     for simulation_config in sim_config:
@@ -111,6 +111,7 @@ def run_dynamic_simulation(work_dir, sim_config, zero_sim_result, show_output=Fa
         # Process the simulation files as specified in the config
         raw_dir = os.path.join(work_dir, f"{assigned_netlist_name}.raw")
         sim_result_file = simulation_config["simulation_file"]
+        # Convert to list if it is not
         if not isinstance(sim_result_file, list):
             sim_result_file = [sim_result_file]
         parse_funcs = simulation_config["parse_func"]
@@ -140,17 +141,19 @@ def run_dynamic_simulation(work_dir, sim_config, zero_sim_result, show_output=Fa
             if result.values() == 1.0 and simulation == "DC":
                 fail_tag = True
                 print(f"Simulation {simulation} failed. Return zero simulation result")
+                print(f"Partial result success: {results}")
                 break
             if result.values() == 0.0 and simulation != "DC":
                 fail_tag = True
                 print(f"Simulation {simulation} failed. Return zero simulation result")
+                print(f"Partial result success: {results}")
                 break
 
             # Add Simulation Name before each keys in the result dictionary. Avoid error in flatten the dictionary
             modified_result = {f"{simulation}_{key}": value for key, value in result.items()}
             results[simulation] = modified_result
+        # Break the loop if fail_tag is True
+        if fail_tag:
+            break
 
-    if fail_tag:
-        results = zero_sim_result
-
-    return results
+    return results, fail_tag
