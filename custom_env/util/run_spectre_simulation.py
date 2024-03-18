@@ -138,12 +138,12 @@ def run_dynamic_simulation(work_dir, sim_config, zero_sim_result, show_output=Fa
             result = function(processed_file_full_path)
             results[simulation] = result
 
-            if result.values() == 1.0 and simulation == "DC":
+            if any(value == 1.0 for value in result.values()) and simulation == "DC":
                 fail_tag = True
                 print(f"Simulation {simulation} failed. Return zero simulation result")
                 print(f"Partial result success: {results}")
                 break
-            if result.values() == 0.0 and simulation != "DC":
+            if any(value == 0.0 for value in result.values()) and simulation != "DC":
                 fail_tag = True
                 print(f"Simulation {simulation} failed. Return zero simulation result")
                 print(f"Partial result success: {results}")
