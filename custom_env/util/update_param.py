@@ -69,35 +69,31 @@ def update_parameters(action_idx_dict, cur_param_dict, yaml_config):
 
 
 # Test Code
-# action_idx = OrderedDict( [('M13', array([2, 1, 2])), ('M14', array([2, 2, 1])), ('M16', array([2, 0,
-# 1])), ('M23', array([0, 1, 0])), ('M24', array([2, 2, 0])), ('M25', array([0, 0, 2])), ('M35', array([2, 0, 0])),
-# ('M36', array([2, 0, 2])), ('M17', array([0, 1, 2])), ('M18', array([1, 0, 2])), ('M11', array([1, 2, 2])), ('M12',
-# array([1, 0, 1])), ('M19', array([1, 0, 2])), ('M20', array([2, 0, 0])), ('M21', array([0, 1, 2])), ('M22',
-# array([1, 1, 1])), ('IB', array([1]))])
-# cur_param_dict = OrderedDict( [('w_M14_per_finger', '5.0u'), ('l_M14',
-# '5.0u'), ('nf_M14', '10'), ('w_M35_per_finger', '5.0u'), ('l_M35', '5.0u'), ('nf_M35', '10'), ('w_M25_per_finger',
-# '5.0u'), ('l_M25', '5.0u'), ('nf_M25', '10'), ('w_M13_per_finger', '5.0u'), ('l_M13', '5.0u'), ('nf_M13', '10'),
-# ('w_M12_per_finger', '5.0u'), ('l_M12', '5.0u'), ('nf_M12', '10'), ('w_M11_per_finger', '5.0u'), ('l_M11', '5.0u'),
-# ('nf_M11', '10'), ('w_M20_per_finger', '5.0u'), ('l_M20', '5.0u'), ('nf_M20', '10'), ('w_M19_per_finger', '5.0u'),
-# ('l_M19', '5.0u'), ('nf_M19', '10'), ('w_M36_per_finger', '5.0u'), ('l_M36', '5.0u'), ('nf_M36', '10'),
-# ('w_M16_per_finger', '5.0u'), ('l_M16', '5.0u'), ('nf_M16', '10'), ('w_M24_per_finger', '5.0u'), ('l_M24', '5.0u'),
-# ('nf_M24', '10'), ('w_M23_per_finger', '5.0u'), ('l_M23', '5.0u'), ('nf_M23', '10'), ('w_M22_per_finger', '5.0u'),
-# ('l_M22', '5.0u'), ('nf_M22', '10'), ('w_M21_per_finger', '5.0u'), ('l_M21', '5.0u'), ('nf_M21', '10'),
-# ('w_M18_per_finger', '5.0u'), ('l_M18', '5.0u'), ('nf_M18', '10'), ('w_M17_per_finger', '5.0u'), ('l_M17', '5.0u'),
-# ('nf_M17', '10'), ('IB', '25.0u')])
-# yaml_config = yaml.safe_load(open("../config_3/param_range.yaml",
-# 'r'))
+
+# action_idx = OrderedDict([('IBP', array([2])), ('M1', array([1, 1, 0])), ('M4', array([1, 1, 0])), ('M5', array([1,
+# 2, 2])), ('M6', array([1, 2, 2])), ('M9', array([1, 2, 2])), ('M10', array([1, 2, 2])), ('M12', array([1, 0, 2])),
+# ('M11', array([1, 0, 2])), ('M13', array([1, 0, 2])), ('M2', array([1, 0, 2])), ('CM', array([2])), ('M0',
+# array([0, 2, 2])), ('R0', array([1])), ('R1', array([0]))])
+# cur_param_dict = {'IBP': '1u', 'R0': '1.2k',
+# 'R1': '2.4k', 'CM': '80.0p', 'w_M13_per_finger': '2.0u', 'l_M13': '2.0u', 'nf_M13': 1, 'w_M12_per_finger': '2.0u',
+# 'l_M12': '2.0u', 'nf_M12': 4, 'w_M11_per_finger': '2.0u', 'l_M11': '2.0u', 'nf_M11': 1, 'w_M2_per_finger': '2.0u',
+# 'l_M2': '2.0u', 'nf_M2': 4, 'w_M10_per_finger': '2.0u', 'l_M10': '0.5u', 'nf_M10': 2, 'w_M9_per_finger': '2.0u',
+# 'l_M9': '0.5u', 'nf_M9': 2, 'w_M6_per_finger': '2.0u', 'l_M6': '2.0u', 'nf_M6': 1, 'w_M5_per_finger': '2.0u',
+# 'l_M5': '2.0u', 'nf_M5': 1, 'w_M4_per_finger': '1.0u', 'l_M4': '1.0u', 'nf_M4': 1, 'w_M1_per_finger': '1.0u',
+# 'l_M1': '1.0u', 'nf_M1': 3, 'w_M0_per_finger': '300.0u', 'l_M0': '0.5u', 'nf_M0': 1}
+# yaml_config =
+# "../config/param_range.yaml"
 # updated_params = update_parameters(action_idx, cur_param_dict, yaml_config)
 # print(updated_params)
 
-# Output output = OrderedDict([('w_M13_per_finger', "5.5u"), ('l_M13', '5.0u'), ('nf_M13', '11'),
-# ('w_M14_per_finger', '5.5u'), ('l_M14', '5.5u'), ('nf_M14', '10'), ('w_M16_per_finger', '5.5u'), ('l_M16', '4.5u'),
-# ('nf_M16', '10'), ('w_M23_per_finger', '4.5u'), ('l_M23', '5.0u'), ('nf_M23', '9'), ('w_M24_per_finger', '5.5u'),
-# ('l_M24', '5.5u'), ('nf_M24', '9'), ('w_M25_per_finger', '4.5u'), ('l_M25', '4.5u'), ('nf_M25', '11'),
-# ('w_M35_per_finger', '5.5u'), ('l_M35', '4.5u'), ('nf_M35', '9'), ('w_M36_per_finger', '5.5u'), ('l_M36', '4.5u'),
-# ('nf_M36', '11'), ('w_M17_per_finger', '4.5u'), ('l_M17', '5.0u'), ('nf_M17', '11'), ('w_M18_per_finger', '5.0u'),
-# ('l_M18', '4.5u'), ('nf_M18', '11'), ('w_M11_per_finger', '5.0u'), ('l_M11', '5.5u'), ('nf_M11', '11'),
-# ('w_M12_per_finger', '5.0u'), ('l_M12', '4.5u'), ('nf_M12', '10'), ('w_M19_per_finger', '5.0u'), ('l_M19', '4.5u'),
-# ('nf_M19', '11'), ('w_M20_per_finger', '5.5u'), ('l_M20', '4.5u'), ('nf_M20', '9'), ('w_M21_per_finger', '4.5u'),
-# ('l_M21', '5.0u'), ('nf_M21', '11'), ('w_M22_per_finger', '5.0u'), ('l_M22', '5.0u'), ('nf_M22', '10'), ('IB',
-# '25.0u')])
+# Output
+
+# OrderedDict([('IBP', '2.0u'), ('w_M1_per_finger', '1.0u'), ('l_M1', '1.0u'), ('nf_M1', '2'), ('w_M4_per_finger',
+# '1.0u'), ('l_M4', '1.0u'), ('nf_M4', '1'), ('w_M5_per_finger', '2.0u'), ('l_M5', '2.5u'), ('nf_M5', '2'),
+# ('w_M6_per_finger', '2.0u'), ('l_M6', '2.5u'), ('nf_M6', '2'), ('w_M9_per_finger', '2.0u'), ('l_M9', '1.0u'),
+# ('nf_M9', '3'), ('w_M10_per_finger', '2.0u'), ('l_M10', '1.0u'), ('nf_M10', '3'), ('w_M12_per_finger', '2.0u'),
+# ('l_M12', '1.5u'), ('nf_M12', '5'), ('w_M11_per_finger', '2.0u'), ('l_M11', '1.5u'), ('nf_M11', '2'),
+# ('w_M13_per_finger', '2.0u'), ('l_M13', '1.5u'), ('nf_M13', '2'), ('w_M2_per_finger', '2.0u'), ('l_M2', '1.5u'),
+# ('nf_M2', '5'), ('CM', '5.0p'), ('w_M0_per_finger', '250.0u'), ('l_M0', '1.0u'), ('nf_M0', '2'), ('R0', '1.2k'),
+# ('R1', '1.4k')])
+

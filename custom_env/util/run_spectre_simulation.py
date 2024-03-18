@@ -103,9 +103,9 @@ def run_dynamic_simulation(work_dir, sim_config, zero_sim_result, show_output=Fa
         # print(f"Execute command: spectre -64 {os.path.join(work_dir, assigned_netlist_filename)}")
         # print(f"Run spectre simulation for: {simulation}")
         if show_output:
-            subprocess.run(f"spectre -64 {os.path.join(work_dir, assigned_netlist_filename)}", shell=True)
+            subprocess.run(f"spectre -64 +aps {os.path.join(work_dir, assigned_netlist_filename)}", shell=True)
         else:
-            subprocess.run(f"spectre -64 {os.path.join(work_dir, assigned_netlist_filename)}",
+            subprocess.run(f"spectre -64 +aps {os.path.join(work_dir, assigned_netlist_filename)}",
                            shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
         # Process the simulation files as specified in the config
