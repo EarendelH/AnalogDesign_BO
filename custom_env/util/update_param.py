@@ -41,6 +41,7 @@ def adjust_value_within_range(value: str, step: str, range_limits: list, action:
 
 # Main function: Update parameters based on the action_idx_dict and cur_param_dict
 def update_parameters(action_idx_dict, cur_param_dict, yaml_config):
+
     updated_params = OrderedDict()
 
     with open(yaml_config, 'r') as file:
@@ -60,8 +61,15 @@ def update_parameters(action_idx_dict, cur_param_dict, yaml_config):
                     updated_params[param_key] = updated_value
         else:
             current_value = cur_param_dict[key]
-            step_info = yaml_config['other_variable']['params'][0]['value']['step']
-            range_info = yaml_config['other_variable']['params'][0]['value']['range']
+            param_index = None
+            for index, value in enumerate(yaml_config['other_variable']['params']):
+                if value['variable_name'] == key:
+                    param_index = index
+                    break
+                else:
+                    continue
+            step_info = yaml_config['other_variable']['params'][param_index]['value']['step']
+            range_info = yaml_config['other_variable']['params'][param_index]['value']['range']
             updated_value = adjust_value_within_range(current_value, step_info, range_info, actions[0])
             updated_params[key] = updated_value
 
@@ -70,19 +78,26 @@ def update_parameters(action_idx_dict, cur_param_dict, yaml_config):
 
 # Test Code
 
-# action_idx = OrderedDict([('IBP', array([2])), ('M1', array([1, 1, 0])), ('M4', array([1, 1, 0])), ('M5', array([1,
-# 2, 2])), ('M6', array([1, 2, 2])), ('M9', array([1, 2, 2])), ('M10', array([1, 2, 2])), ('M12', array([1, 0, 2])),
-# ('M11', array([1, 0, 2])), ('M13', array([1, 0, 2])), ('M2', array([1, 0, 2])), ('CM', array([2])), ('M0',
-# array([0, 2, 2])), ('R0', array([1])), ('R1', array([0]))])
-# cur_param_dict = {'IBP': '1u', 'R0': '1.2k',
-# 'R1': '2.4k', 'CM': '80.0p', 'w_M13_per_finger': '2.0u', 'l_M13': '2.0u', 'nf_M13': 1, 'w_M12_per_finger': '2.0u',
-# 'l_M12': '2.0u', 'nf_M12': 4, 'w_M11_per_finger': '2.0u', 'l_M11': '2.0u', 'nf_M11': 1, 'w_M2_per_finger': '2.0u',
-# 'l_M2': '2.0u', 'nf_M2': 4, 'w_M10_per_finger': '2.0u', 'l_M10': '0.5u', 'nf_M10': 2, 'w_M9_per_finger': '2.0u',
-# 'l_M9': '0.5u', 'nf_M9': 2, 'w_M6_per_finger': '2.0u', 'l_M6': '2.0u', 'nf_M6': 1, 'w_M5_per_finger': '2.0u',
-# 'l_M5': '2.0u', 'nf_M5': 1, 'w_M4_per_finger': '1.0u', 'l_M4': '1.0u', 'nf_M4': 1, 'w_M1_per_finger': '1.0u',
-# 'l_M1': '1.0u', 'nf_M1': 3, 'w_M0_per_finger': '300.0u', 'l_M0': '0.5u', 'nf_M0': 1}
-# yaml_config =
-# "../config/param_range.yaml"
+# action_idx = OrderedDict([('IBP', array([2])), ('M1', array([2, 2, 0])), ('M4', array([0, 1, 0])), ('M5', array([0,
+# 0, 2])), ('M6', array([0, 0, 2])), ('M9', array([1, 1, 2])), ('M10', array([1, 1, 2])), ('M12', array([2, 0, 1])),
+# ('M11', array([2, 0, 1])), ('M13', array([2, 0, 1])), ('M2', array([2, 0, 1])), ('CM', array([0])), ('M0',
+# array([2, 0, 0])), ('R0', array([0])), ('R1', array([1]))])
+
+# cur_param_dict = {'IBP': '1u', 'R0': '12.0k', 'R1': '24.0k', 'CM': '80.0p', 'w_M13_per_finger': '2.0u',
+# 'l_M13': '2.0u', 'nf_M13': 1, 'w_M12_per_finger': '2.0u', 'l_M12': '2.0u', 'nf_M12': 4, 'w_M11_per_finger': '2.0u',
+# 'l_M11': '2.0u', 'nf_M11': 1, 'w_M2_per_finger': '2.0u', 'l_M2': '2.0u', 'nf_M2': 4, 'w_M10_per_finger': '2.0u',
+# 'l_M10': '0.5u', 'nf_M10': 2, 'w_M9_per_finger': '2.0u', 'l_M9': '0.5u', 'nf_M9': 2, 'w_M6_per_finger': '2.0u',
+# 'l_M6': '2.0u', 'nf_M6': 1, 'w_M5_per_finger': '2.0u', 'l_M5': '2.0u', 'nf_M5': 1, 'w_M4_per_finger': '1.0u',
+# 'l_M4': '1.0u', 'nf_M4': 1, 'w_M1_per_finger': '1.0u', 'l_M1': '1.0u', 'nf_M1': 3, 'w_M0_per_finger': '300.0u',
+# 'l_M0': '0.5u', 'nf_M0': 1}
+
+# yaml_config = "../config/param_range.yaml"
+# updated_params = update_parameters(action_idx, cur_param_dict, yaml_config)
+# print(updated_params)
+
+# action_idx = OrderedDict([('CM', array([2]))])
+# cur_param_dict = {'CM': '20.0p'}
+# yaml_config = "../config/param_range.yaml"
 # updated_params = update_parameters(action_idx, cur_param_dict, yaml_config)
 # print(updated_params)
 
