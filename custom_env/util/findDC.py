@@ -62,7 +62,11 @@ def extract_dcOP_data(file_path, search_keyword):
 
 def findIQ(filepath):
     search_keyword = "V0:p"
-    value = extract_dcOP_data(filepath, search_keyword)
+    try:
+        value = extract_dcOP_data(filepath, search_keyword)
+    except Exception as e:
+        print(f"Warning: {e}. Setting IQ to default (1.0).")
+        value = 1.0
     return {"IQ": value}
 
 
