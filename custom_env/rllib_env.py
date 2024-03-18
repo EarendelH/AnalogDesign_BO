@@ -181,8 +181,8 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         logging.debug(f"Initialing!!!Zero sim result: {self.zero_sim_result}")
 
         try:
-            sim_result = run_dynamic_simulation(working_dir, self.sim_config_dict, self.zero_sim_result,
-                                                self.sim_output_enable)
+            sim_result, _ = run_dynamic_simulation(working_dir, self.sim_config_dict, self.zero_sim_result,
+                                                   self.sim_output_enable)
         # For avoid simulation error in init, use zero result instead.
         except Exception as e:
             logging.warning(f"Warning!!!: {e}. Simulation failed, use zero result instead.")
@@ -364,7 +364,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
                 return run_dynamic_simulation(working_dir, self.sim_config_dict, self.zero_sim_result,
                                               self.sim_output_enable)
 
-            sim_result = _run_simulation_with_retry()
+            sim_result, fail_tage = _run_simulation_with_retry()
             logging.info(f"Step!!!Simulation result: {sim_result} with step number: {self.step_num}")
             norm_sim_result = norm_sim_spec(sim_result, self.norm_specs)
 
@@ -396,7 +396,11 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
 
             # Calculate reward
             rew = {a: -10 for a in self.agents}
-            rew_single = cal_reward(self.ideal_specs, sim_result)
+            if fail_tage:
+                rew_single = -10
+                logging.warning(f"Step!!!Reward is given to min due to some simulation failed")
+            else:
+                rew_single = cal_reward(self.ideal_specs, sim_result)
             for agent_name in rew:
                 rew[agent_name] = rew_single
             logging.info(f"Step!!!Reward result: {rew_single} with step number: {self.step_num}")
