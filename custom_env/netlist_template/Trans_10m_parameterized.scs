@@ -5,7 +5,7 @@
 // Design view name: schematic
 simulator lang=spectre
 global 0
-parameters I_MAX=10m IBP w_M13 l_M13 nf_M13 w_M12 l_M12 nf_M12 w_M11 l_M11 nf_M11 w_M2 l_M2 nf_M2 w_M10 l_M10 nf_M10 w_M9 l_M9 nf_M9 w_M6 l_M6 nf_M6 w_M5 l_M5 nf_M5 w_M4 l_M4 nf_M4 w_M1 l_M1 nf_M1 w_M0 l_M0 nf_M0
+parameters I_MAX=10m CM R0 R1 IBP w_M13 l_M13 nf_M13 w_M12 l_M12 nf_M12 w_M11 l_M11 nf_M11 w_M2 l_M2 nf_M2 w_M10 l_M10 nf_M10 w_M9 l_M9 nf_M9 w_M6 l_M6 nf_M6 w_M5 l_M5 nf_M5 w_M4 l_M4 nf_M4 w_M1 l_M1 nf_M1 w_M0 l_M0 nf_M0
 include "/data/PDK/pdk_installed/tsmc180bcd_g2/pdk/pdk_1p6m_2/tsmc18/../models/spectre/c018bcd_gen2_v1d6_usage.scs" section=pre_simu
 include "/data/PDK/pdk_installed/tsmc180bcd_g2/pdk/pdk_1p6m_2/tsmc18/../models/spectre/c018bcd_gen2_v1d6_usage.scs" section=tt_lib
 // Library name: LDO
@@ -33,9 +33,9 @@ V1 (VSS 0) vsource dc=0 type=dc
 I0 (IBP 0) isource dc=IBP type=dc
 M0 (VOUT VG VDD VDD) pch_5_mac l=l_M0 w=w_M0 multi=1 nf=nf_M0 sigma=1 sd=540.0n ad=((nf_M0-int(nf_M0/2)*2)*(4.8e-07+((nf_M0-1)*5.4e-07)/2+0)+(nf_M0+1-int((nf_M0+1)/2)*2)*((nf_M0/2)*5.4e-07))*w_M0 as=((nf_M0-int(nf_M0/2)*2)*(4.8e-07+((nf_M0-1)*5.4e-07)/2+0)+(nf_M0+1-int((nf_M0+1)/2)*2)*(4.8e-07+4.8e-07+(nf_M0/2-1)*5.4e-07+0+0))*w_M0 pd=(nf_M0-int(nf_M0/2)*2)*((4.8e-07+((nf_M0-1)*5.4e-07)/2+0)*2+(nf_M0+1)*w_M0)+(nf_M0+1-int((nf_M0+1)/2)*2)*(((nf_M0/2)*5.4e-07)*2+nf_M0*w_M0) ps=(nf_M0-int(nf_M0/2)*2)*((4.8e-07+((nf_M0-1)*5.4e-07)/2+0)*2+(nf_M0+1)*w_M0)+(nf_M0+1-int((nf_M0+1)/2)*2)*((4.8e-07+4.8e-07+(nf_M0/2-1)*5.4e-07+0+0)*2+(nf_M0+2)*w_M0) nrd=(nf_M0-int(nf_M0/2)*2)*(2.7e-07*2.7e-07/(2.7e-07+2.7e-07*(nf_M0-1))/w_M0)+(nf_M0+1-int((nf_M0+1)/2)*2)*(2.7e-07/nf_M0/w_M0) nrs=(nf_M0-int(nf_M0/2)*2)*(2.7e-07*2.7e-07/(2.7e-07+2.7e-07*(nf_M0-1))/w_M0)+(nf_M0+1-int((nf_M0+1)/2)*2)*(2.7e-07*2.7e-07*2.7e-07/(2.7e-07*2.7e-07*(nf_M0-2)+2.7e-07*(2.7e-07+2.7e-07))/w_M0) sa=1/(1 / ((4.8e-07 + l_M0/2) + (5.4e-07 + l_M0)*(1-1)/3.5 ) )-(0.5*l_M0) sb=1/(1 / ((4.8e-07 + l_M0/2) + (5.4e-07 + l_M0)*(1-1)/3.5 ) )-(0.5*l_M0) sca=0 scb=0 scc=0 mismatchflag=1
 I18 (IBP VREF VFB VDD VG VSS) EA_LDO
-R0 (VOUT VFB) resistor r=12K
-R1 (VFB VSS) resistor r=24K
-C0 (VG VOUT) capacitor c=80p
+R0 (VOUT VFB) resistor r=R0
+R1 (VFB VSS) resistor r=R1
+C0 (VG VOUT) capacitor c=CM
 C1 (VOUT VSS) capacitor c=1n
 I19 (VOUT VSS) isource type=pulse val0=1u val1=I_MAX period=100u delay=50u \
         rise=1n fall=1n width=50u
