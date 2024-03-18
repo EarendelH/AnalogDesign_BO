@@ -24,7 +24,7 @@ from util.extract_device_param_value import extract_operation_region_w_name
 
 from ray.rllib.env.multi_agent_env import MultiAgentEnv
 
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
 
 class RllibAnalogDesignAutoEnv(MultiAgentEnv):
