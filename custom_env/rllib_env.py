@@ -24,7 +24,7 @@ from util.extract_device_param_value import extract_operation_region_w_name
 
 from ray.rllib.env.multi_agent_env import MultiAgentEnv
 
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
 
 class RllibAnalogDesignAutoEnv(MultiAgentEnv):
@@ -192,9 +192,11 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         logging.info(f"Initialing!!!Ideal specs: {self.ideal_specs}")
         self.norm_ideal_specs = norm_ideal_spec(self.ideal_specs, self.norm_specs)
         logging.debug(f"Initialing!!!Normalized ideal specs: {self.norm_ideal_specs}")
+        logging.debug(f"Initialing!!!Ideal specs: {self.ideal_specs}")
 
         # Normalize the current simulation specs
         logging.info(f"Initialing!!!Simulation result: {sim_result}")
+        logging.debug(f"Initialing!!!Ideal specs: {self.ideal_specs}")
         norm_sim_result = norm_sim_spec(sim_result, self.norm_specs)
         logging.debug(f"Initialing!!!Normalized simulation result: {norm_sim_result}")
 
@@ -335,6 +337,8 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         if self.dc_check and not valid_param:
             logging.info(f"Step!!!Param failed DC check with step number: {self.step_num}")
             sim_result = self.zero_sim_result
+            logging.debug(f"Debug, sim_result is {sim_result}")
+            logging.debug(f"Debug, self.norm_specs is {self.norm_specs}")
             norm_sim_result = norm_sim_spec(sim_result, self.norm_specs)
             observation_detail = update_obs_space_w_region(self.norm_ideal_specs, norm_sim_result, updated_param,
                                                            operation_region_dict)
@@ -369,6 +373,8 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
 
             sim_result, fail_tage = _run_simulation_with_retry()
             logging.info(f"Step!!!Simulation result: {sim_result} with step number: {self.step_num}")
+            logging.debug(f"Debug, sim_result is {sim_result}")
+            logging.debug(f"Debug, self.norm_specs is {self.norm_specs}")
             norm_sim_result = norm_sim_spec(sim_result, self.norm_specs)
 
             # Generate observation
