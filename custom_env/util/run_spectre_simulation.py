@@ -138,6 +138,10 @@ def run_dynamic_simulation(work_dir, sim_config, zero_sim_result, show_output=Fa
             result = function(processed_file_full_path)
             results[simulation] = result
 
+            # Add Simulation Name before each keys in the result dictionary. Avoid error in flatten the dictionary
+            modified_result = {f"{simulation}_{key}": value for key, value in result.items()}
+            results[simulation] = modified_result
+
             if any(value == 1.0 for value in result.values()) and simulation == "DC":
                 fail_tag = True
                 print(f"Simulation {simulation} failed. Return zero simulation result")
@@ -149,9 +153,6 @@ def run_dynamic_simulation(work_dir, sim_config, zero_sim_result, show_output=Fa
                 print(f"Partial result success: {results}")
                 break
 
-            # Add Simulation Name before each keys in the result dictionary. Avoid error in flatten the dictionary
-            modified_result = {f"{simulation}_{key}": value for key, value in result.items()}
-            results[simulation] = modified_result
         # Break the loop if fail_tag is True
         if fail_tag:
             break
