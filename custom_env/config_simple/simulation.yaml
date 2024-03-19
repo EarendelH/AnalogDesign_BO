@@ -28,23 +28,8 @@
   parse_func: findLineReg
   simulation_item:
     - lineReg
-- simulation_name: Line_Reg_25m
-  netlist_name: Line_Reg_25m
-  simulation_file: dc.dc
-  script_name: findLineReg
-  parse_func: findLineReg
-  simulation_item:
-    - lineReg
 - simulation_name: Trans_10m
   netlist_name: Trans_10m
-  simulation_file: tran.tran.tran
-  script_name: findTrans
-  parse_func: findShoot
-  simulation_item:
-    - overShoot
-    - underShoot
-- simulation_name: Trans_25m
-  netlist_name: Trans_25m
   simulation_file: tran.tran.tran
   script_name: findTrans
   parse_func: findShoot

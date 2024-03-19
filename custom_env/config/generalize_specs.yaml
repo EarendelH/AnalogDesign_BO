@@ -45,6 +45,13 @@ Line_Reg_1u:
     bounds:
     - 0.00005
     - 0.0005
+Line_Reg_25m:
+  Line_Reg_25m_lineReg:
+    objective: min
+    reward_type: optimal
+    bounds:
+    - 0.01
+    - 0.1
 Trans_10m:
   Trans_10m_overShoot:
     objective: min
@@ -58,3 +65,16 @@ Trans_10m:
     bounds:
     - 0.1
     - 1.0
+Trans_25m:
+  Trans_25m_overShoot:
+    objective: min
+    reward_type: optimal
+    bounds:
+    - 0.5
+    - 2.0
+  Trans_25m_underShoot:
+    objective: min
+    reward_type: optimal
+    bounds:
+    - 0.5
+    - 2.0
