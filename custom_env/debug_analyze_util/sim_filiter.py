@@ -63,30 +63,33 @@ def filter_data(df, results):
     # Ask the user if they want to continue filtering
     continue_filter = input("Do you want to continue filtering? (y/n): ")
     if continue_filter.lower() == 'y':
-        filter_data(filtered_df, filtered_results)  # Recursive call to continue filtering
+        filter_data(filtered_df, filtered_results)
     else:
         display_or_save_data(filtered_df)
 
 
 def display_or_save_data(df):
-    print(f"Columns: {df.columns.to_list()}")
-    use_fom = input("Do you want to calculate and sort by Figure of Merit (FoM)? (y/n): ")
-    if use_fom.lower() == 'y':
+    # Asking user if they want to calculate and display data by FoM
+    df_sorted = None
+    fom_choice = input("Do you want to calculate and display data by Figure of Merit (FoM)? (y/n): ")
+    if fom_choice.lower() == 'y':
+        # User inputs the FoM formula
         formula = input("Please enter the formula for FoM, using variable names as they appear in the data: ")
-        df['FoM'] = df.apply(lambda row: calculate_fom(row, formula), axis=1)
+        df['FoM'] = df.apply(calculate_fom, formula=formula, axis=1)
         df_sorted = df.sort_values(by='FoM', ascending=False)
-        df_to_use = df_sorted
+        print(df_sorted.to_string())
     else:
-        df_to_use = df
+        print(df.to_string())
 
-    choice = input("Do you want to display the results or save them to a CSV file? (display/save): ")
-    if choice.lower() == 'display':
-        print(df_to_use.to_string())
-    elif choice.lower() == 'save':
+    save_choice = input("Do you want to display the results or save them to a CSV file? (display/save): ")
+    if save_choice.lower() == 'save':
         file_path = input("Enter the file path to save the CSV: ")
-        df_to_use.to_csv(file_path, index=False)
+        if fom_choice.lower() == 'y':
+            df_sorted.to_csv(file_path, index=False)
+        else:
+            df.to_csv(file_path, index=False)
         print(f"Data saved to {file_path}")
-    else:
+    elif save_choice.lower() != 'display':
         print("Invalid option. Please choose 'display' or 'save'.")
 
 
