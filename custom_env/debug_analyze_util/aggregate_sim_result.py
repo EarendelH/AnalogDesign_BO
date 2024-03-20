@@ -20,23 +20,19 @@ def process_file(file_path):
         initial_sim_result = flatten_result(data['initial_data']['sim_result'])
         init_param = data['initial_data']['init_param']
         init_data = {'result': initial_sim_result, 'param': init_param}
-        # Convert to list
         sum_data = [init_data]
 
-        # Iterate over the steps data, store the result and the updated param
         for step in data['steps_data']:
             step_sim_result = flatten_result(step['sim_result'])
             step_param = step['updated_param']
             step_data = {'result': step_sim_result, 'param': step_param}
             sum_data.append(step_data)
 
-        # Print list size
         print(f"Processed {file_path} with {len(sum_data)} steps.")
-
         return sum_data
-    except EOFError:
-        print(f"Error reading file: {file_path}. File may be empty or corrupted.")
-        return None, None
+    except (EOFError, pickle.UnpicklingError, Exception) as e:
+        print(f"Error processing file: {file_path}. Skipping. Error: {e}")
+        return None
 
 
 def scan_and_aggregate_metrics(input_folder, output_file):
@@ -56,7 +52,6 @@ def scan_and_aggregate_metrics(input_folder, output_file):
                 aggregated_metrics.extend(sum_data)
             print(f"Processed {i}/{len(file_paths)} files.")
 
-    # Print all aggregated metrics size
     print(f"Aggregated {len(aggregated_metrics)} metrics.")
 
     with open(output_file, 'wb') as f:
