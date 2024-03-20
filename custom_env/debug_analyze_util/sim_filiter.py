@@ -3,10 +3,19 @@ from joblib import load
 import numpy as np
 
 
-def calculate_fom(row):
-    fom = (row['result']['phaseMargin'] * np.log10(row['result']['gainBandWidth']) *
-           row['result']['powerSupplyRejectionRatio'] / row['result']['pwr'])
-    return fom
+def calculate_fom(row, formula):
+    # Transform the formula by substituting variable names with row accessors
+    transformed_formula = formula.replace("(", "['").replace(")", "']")
+    for variable in row['result'].keys():
+        transformed_formula = transformed_formula.replace(variable, f"row['result']['{variable}']")
+
+    # Calculate FoM using the transformed formula
+    try:
+        fom = eval(transformed_formula)
+        return fom
+    except Exception as e:
+        print(f"Error calculating FoM: {e}")
+        return np.nan
 
 
 def load_data(joblib_file_path):
@@ -61,15 +70,21 @@ def filter_data(df, results):
 
 def display_or_save_data(df):
     print(f"Columns: {df.columns.to_list()}")
-    df['FoM'] = df.apply(calculate_fom, axis=1)
-    df_sorted = df.sort_values(by='FoM', ascending=False)
+    use_fom = input("Do you want to calculate and sort by Figure of Merit (FoM)? (y/n): ")
+    if use_fom.lower() == 'y':
+        formula = input("Please enter the formula for FoM, using variable names as they appear in the data: ")
+        df['FoM'] = df.apply(lambda row: calculate_fom(row, formula), axis=1)
+        df_sorted = df.sort_values(by='FoM', ascending=False)
+        df_to_use = df_sorted
+    else:
+        df_to_use = df
 
     choice = input("Do you want to display the results or save them to a CSV file? (display/save): ")
     if choice.lower() == 'display':
-        print(df_sorted.to_string())
+        print(df_to_use.to_string())
     elif choice.lower() == 'save':
         file_path = input("Enter the file path to save the CSV: ")
-        df_sorted.to_csv(file_path, index=False)
+        df_to_use.to_csv(file_path, index=False)
         print(f"Data saved to {file_path}")
     else:
         print("Invalid option. Please choose 'display' or 'save'.")
