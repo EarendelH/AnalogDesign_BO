@@ -229,7 +229,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         observations = {agent: observation for agent in self.agents}
 
         # Test Rew func
-        rew = cal_reward(self.ideal_specs, sim_result)
+        rew = cal_reward(self.ideal_specs, sim_result, self.norm_specs)
         logging.info(f"Debug!!!Initialing!!!Reward result: {rew}")
 
         self.cur_param = init_param
@@ -409,7 +409,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
                 rew_single = -10
                 logging.warning(f"Step!!!Reward is given to min due to some simulation failed")
             else:
-                rew_single = cal_reward(self.ideal_specs, sim_result)
+                rew_single = cal_reward(self.ideal_specs, sim_result, self.norm_specs)
             for agent_name in rew:
                 rew[agent_name] = rew_single
             logging.info(f"Step!!!Reward result: {rew_single} with step number: {self.step_num}")
