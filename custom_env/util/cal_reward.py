@@ -54,16 +54,16 @@ def cal_reward(ideal_specs_dict, cur_specs_dict, norm_specs_dict):
 
 
 # Test Code
-ideal_specs = {'gainBandWidth': {'reward_type': 'optimal', 'objective': 'max', 'value': 1},
-               'phaseMargin': {'reward_type': 'satisfactory', 'objective': 'max', 'value': 2},
-               'powerSupplyRejectionRatio': {'reward_type': 'optimal', 'objective': 'max', 'value': 3},
-               'pwr': {'reward_type': 'optimal', 'objective': 'min','value': 4}}
-cur_specs = {'DC': {'pwr': 1}, 'Stability': {'phaseMargin': 2, 'gainBandWidth': 3},
-              'PSRR': {'powerSupplyRejectionRatio': 4}}
-norm_specs = {'DC': {'pwr': 2}, 'Stability': {'phaseMargin': 2, 'gainBandWidth': 3},
-              'PSRR': {'powerSupplyRejectionRatio': 4}}
-reward = cal_reward(ideal_specs, cur_specs, norm_specs)
-print(reward)
+# ideal_specs = {'gainBandWidth': {'reward_type': 'optimal', 'objective': 'max', 'value': 1},
+#                'phaseMargin': {'reward_type': 'satisfactory', 'objective': 'max', 'value': 2},
+#                'powerSupplyRejectionRatio': {'reward_type': 'optimal', 'objective': 'max', 'value': 3},
+#                'pwr': {'reward_type': 'optimal', 'objective': 'min','value': 4}}
+# cur_specs = {'DC': {'pwr': 1}, 'Stability': {'phaseMargin': 2, 'gainBandWidth': 3},
+#               'PSRR': {'powerSupplyRejectionRatio': 4}}
+# norm_specs = {'DC': {'pwr': 2}, 'Stability': {'phaseMargin': 2, 'gainBandWidth': 3},
+#               'PSRR': {'powerSupplyRejectionRatio': 4}}
+# reward = cal_reward(ideal_specs, cur_specs, norm_specs)
+# print(reward)
 
 # Output
 # -0.20600000000000002
