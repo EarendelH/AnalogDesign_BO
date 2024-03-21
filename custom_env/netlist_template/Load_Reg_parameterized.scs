@@ -5,7 +5,7 @@
 // Design view name: schematic
 simulator lang=spectre
 global 0
-parameters IBP ILOAD=25m CM R0 R1 w_M13 l_M13 nf_M13 w_M12 l_M12 nf_M12 w_M11 l_M11 nf_M11 w_M2 l_M2 nf_M2 w_M10 l_M10 nf_M10 w_M9 l_M9 nf_M9 w_M6 l_M6 nf_M6 w_M5 l_M5 nf_M5 w_M4 l_M4 nf_M4 w_M1 l_M1 nf_M1 w_M0 l_M0 nf_M0
+parameters IBP ILOAD=10m CM R0 R1 w_M13 l_M13 nf_M13 w_M12 l_M12 nf_M12 w_M11 l_M11 nf_M11 w_M2 l_M2 nf_M2 w_M10 l_M10 nf_M10 w_M9 l_M9 nf_M9 w_M6 l_M6 nf_M6 w_M5 l_M5 nf_M5 w_M4 l_M4 nf_M4 w_M1 l_M1 nf_M1 w_M0 l_M0 nf_M0
 include "/data/PDK/pdk_installed/tsmc180bcd_g2/pdk/pdk_1p6m_2/tsmc18/../models/spectre/c018bcd_gen2_v1d6_usage.scs" section=pre_simu
 include "/data/PDK/pdk_installed/tsmc180bcd_g2/pdk/pdk_1p6m_2/tsmc18/../models/spectre/c018bcd_gen2_v1d6_usage.scs" section=tt_lib
 // Library name: LDO
@@ -44,7 +44,7 @@ simulatorOptions options psfversion="1.1.0" reltol=1e-3 vabstol=1e-6 \
     sensfile="../psf/sens.output" checklimitdest=psf 
 dcOp dc write="spectre.dc" maxiters=150 maxsteps=10000 annotate=status
 dcOpInfo info what=oppoint where=rawfile
-dc dc param=ILOAD start=0 stop=25m oppoint=rawfile maxiters=150 \
+dc dc param=ILOAD start=0 stop=10m oppoint=rawfile maxiters=150 \
     maxsteps=10000 annotate=status
 modelParameter info what=models where=rawfile
 element info what=inst where=rawfile
