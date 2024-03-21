@@ -10,7 +10,7 @@ Stability_1u:
     objective: max
     reward_type: optimal
     bounds:
-    - 75000.0
+    - 50000.0
     - 200000.0
   Stability_1u_phaseMargin:
     objective: max
@@ -23,7 +23,7 @@ Stability_10m:
     objective: max
     reward_type: optimal
     bounds:
-    - 75000.0
+    - 50000.0
     - 200000.0
   Stability_10m_phaseMargin:
     objective: max
@@ -36,8 +36,8 @@ Load_Reg:
     objective: min
     reward_type: optimal
     bounds:
-    - 0.05
-    - 0.3
+    - 0.1
+    - 0.8
 Line_Reg_1u:
   Line_Reg_1u_lineReg:
     objective: min
@@ -50,8 +50,8 @@ Line_Reg_10m:
     objective: min
     reward_type: optimal
     bounds:
-    - 0.01
-    - 0.1
+    - 0.0001
+    - 0.001
 Trans_5m:
   Trans_5m_overShoot:
     objective: min
@@ -71,10 +71,10 @@ Trans_10m:
     reward_type: optimal
     bounds:
     - 0.5
-    - 2.0
+    - 1.5
   Trans_10m_underShoot:
     objective: min
     reward_type: optimal
     bounds:
     - 0.5
-    - 2.0
+    - 1.5
