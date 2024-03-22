@@ -7,7 +7,7 @@ import random
 import subprocess
 import logging
 
-from util.gen_action_sapce import gen_masked_action_space
+from util.gen_action_space import gen_masked_action_space
 from util.gen_obs_space import gen_obs_space_w_region, flatten_obs_space_w_region
 from util.gen_param_space import gen_param_space
 from util.util_func import create_work_dir

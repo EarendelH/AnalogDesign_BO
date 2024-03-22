@@ -6,7 +6,7 @@ import datetime
 import random
 import shutil
 
-from util.gen_action_sapce import gen_masked_action_space
+from util.gen_action_space import gen_masked_action_space
 # from util.gen_obs_space import gen_obs_space_extend, flatten_obs_space
 # from util.gen_obs_space import gen_obs_space_w_type, flatten_obs_space_w_type
 # from util.gen_obs_space import gen_obs_space_simple
