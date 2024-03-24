@@ -180,15 +180,15 @@ def gen_masked_continuous_action_space(action_mask_flag, device_mask_dict, agent
 
 # Test Code
 
-agent_assign_yaml_path = "../config/agent_assign.yaml"
-with open(agent_assign_yaml_path, 'r') as file:
-    agent_assign_dict = yaml.safe_load(file)
-device_mask_yaml_path = "../config/device_mask.yaml"
-with open(device_mask_yaml_path, 'r') as file:
-    device_mask_dict = yaml.safe_load(file)
-action_space_dict = gen_masked_continuous_action_space(True, device_mask_dict, agent_assign_dict)
-print(action_space_dict)
-print(action_space_dict.sample())
+# agent_assign_yaml_path = "../config/agent_assign.yaml"
+# with open(agent_assign_yaml_path, 'r') as file:
+#     agent_assign_dict = yaml.safe_load(file)
+# device_mask_yaml_path = "../config/device_mask.yaml"
+# with open(device_mask_yaml_path, 'r') as file:
+#     device_mask_dict = yaml.safe_load(file)
+# action_space_dict = gen_masked_continuous_action_space(True, device_mask_dict, agent_assign_dict)
+# print(action_space_dict)
+# print(action_space_dict.sample())
 
 # Output
 
