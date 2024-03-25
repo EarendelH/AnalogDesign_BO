@@ -27,7 +27,7 @@ def process_file(file_path):
             step_sim_result = flatten_result(step['sim_result'])
             step_param = step['updated_param']
             step_rew = step['rew']
-            step_data = {'result': step_sim_result, 'param': step_param, 'rew': init_rew}
+            step_data = {'result': step_sim_result, 'param': step_param, 'rew': step_rew}
             sum_data.append(step_data)
 
         print(f"Processed {file_path} with {len(sum_data)} steps.")
