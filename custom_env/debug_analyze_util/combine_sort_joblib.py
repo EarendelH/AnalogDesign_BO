@@ -20,3 +20,7 @@ for file_name in os.listdir(folder_path):
 
 # Sort the list of dictionaries by the 'rew' value in descending order
 sorted_dict_list = sorted(dict_list, key=lambda x: x['rew'], reverse=True)
+
+# Save the sorted list of dictionaries to a new joblib file
+output_file = input("Please enter the name of the new joblib file to save the sorted data: ")
+joblib.dump(sorted_dict_list, output_file)
