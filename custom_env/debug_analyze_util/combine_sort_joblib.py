@@ -11,7 +11,8 @@ def merge_and_sort_joblib(folder_path):
             data = load(file_path)
             all_data.append(data)
 
-    all_data = sorted(all_data, key=lambda x: x['rew'], reverse=True)
+    # Sort all_data by the 'rew' key
+    all_data.sort(key=lambda x: x['rew'], reverse=True)
 
     return all_data
 
