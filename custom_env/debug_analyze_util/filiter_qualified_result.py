@@ -26,6 +26,6 @@ if __name__ == "__main__":
     if len(sys.argv) != 2:
         print("Usage: python script.py <input_joblib_file>")
         sys.exit(1)
-    threshold_value = input("Please enter the threshold value for filtering: ")
+    threshold_value = input("Please enter the threshold reward value for filtering: ")
     input_file = sys.argv[1]
     filter_data(input_file, float(threshold_value))
