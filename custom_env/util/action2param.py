@@ -88,6 +88,12 @@ def parse_action2param(value_range, step, action_value, is_intege):
     original_value = min_value + (max_value - min_value) * action_value
     nearest_value = min_value + round((original_value - min_value) / step) * step
 
+    # Check within the range
+    if nearest_value < min_value:
+        nearest_value = min_value
+    if nearest_value > max_value:
+        nearest_value = max_value
+
     if is_intege:
         nearest_value = str(int(nearest_value))
     else:

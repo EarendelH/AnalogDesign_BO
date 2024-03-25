@@ -1,5 +1,6 @@
 from joblib import load, dump
 import sys
+import pandas as pd
 
 
 def filter_data(input_file, threshold):
@@ -9,14 +10,26 @@ def filter_data(input_file, threshold):
 
     for item in data:
         if item['rew'] >= threshold:
-            print(f"Filtered data: {item}")
+            # print(f"Filtered data: {item}")
             filtered_data.append(item)
 
-    save = input("Do you want to save the filtered data to a new joblib file? (y/n): ")
-    if save.lower() == 'y':
+    sorted_list = sorted(filtered_data, key=lambda x: x['rew'], reverse=True)
+
+    save_joblib = input("Do you want to save the filtered data to a new joblib file? (y/n): ")
+    if save_joblib.lower() == 'y':
         output_file = input("Please enter the name of the new joblib file: ")
-        dump(filtered_data, output_file)
+        dump(sorted_list, output_file)
         print(f"Filtered data has been saved to {output_file}.")
+    else:
+        print("Filtered data has not been saved.")
+        sys.exit(0)
+
+    # Save csv file
+    save_csv = input("Do you want to save the filtered data to a new csv file? (y/n): ")
+    if save_csv.lower() == 'y':
+        df = pd.DataFrame(sorted_list)
+        output_csv_path = input("Please enter the name of the new csv file to save the sorted data: ")
+        df.to_csv(output_csv_path, index=False)
     else:
         print("Filtered data has not been saved.")
         sys.exit(0)
