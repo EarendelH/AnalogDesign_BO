@@ -292,7 +292,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
                 all_action_flatten[key] = value
 
         # Update param with new action
-        logging.debug(f"Step!!!All action flatten: {all_action_flatten}")
+        logging.info(f"Step!!!All action flatten: {all_action_flatten}")
         logging.debug(f"Step!!!Current param: {self.cur_param}")
         logging.debug(f"Step!!!Param range config: {self.param_range_config}")
         # updated_param = update_parameters(all_action_flatten, self.cur_param, self.param_range_config)
