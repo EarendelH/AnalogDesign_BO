@@ -6,7 +6,6 @@ dir_path = input("Please enter the path to the folder containing the joblib file
 
 all_data = []
 
-# 遍历文件夹中的所有文件
 for file in os.listdir(dir_path):
     if file.endswith(".joblib"):
         data = joblib.load(os.path.join(dir_path, file))
