@@ -4,17 +4,18 @@ import pandas as pd
 
 
 def merge_and_sort_joblib(folder_path):
-    all_data = []
 
-    for file in os.listdir(folder_path):
-        if file.endswith('.joblib'):
-            file_path = os.path.join(folder_path, file)
-            data = load(file_path)
-            all_data.append(data)
+    files = os.listdir(folder_path)
+    files = [os.path.join(folder_path, f) for f in files if f.endswith('.joblib')]
 
-    # Sort all_data by the 'rew' key
+    data = []
+    for file in files:
+        data.append(load(file))
 
-    return all_data
+    merged_data = [item for sublist in data for item in sublist]
+    sorted_list = sorted(merged_data, key=lambda x: x['rew'], reverse=True)
+
+    return sorted_list
 
 
 folder_path = input("Please enter the path to the folder containing the joblib files: ")
