@@ -17,7 +17,7 @@ def merge_and_sort_joblib(folder_path):
 
 
 folder_path = input("Please enter the path to the folder containing the joblib files: ")
-sorted_data = merge_and_sort_joblibs(folder_path)
+sorted_data = merge_and_sort_joblib(folder_path)
 
 output_path = input("Please enter the name of the new joblib file to save the sorted data: ")
 dump(sorted_data, output_path)
