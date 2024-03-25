@@ -4,32 +4,27 @@ import yaml
 import copy
 
 
-def action2param(device_mask_flag, device_mask_dict, action_space, param_rang_dict):
+def action2param(device_mask_flag, device_mask_dict, flatten_action, param_rang_dict):
     """
     Generate param with given continuous action.
     :param device_mask_flag:
     :param device_mask_dict:
-    :param action_space:
+    :param flatten_action:
     :param param_rang_dict:
     :return: param_dict
     """
 
-    # Flatten action space
-    flatten_action_space = {}
-    for _, value in action_space.items():
-        flatten_action_space.update(value)
-
     # print(flatten_action_space)
 
     # Extend action space via mask config
-    masked_action_space = copy.deepcopy(flatten_action_space)
+    masked_action_space = copy.deepcopy(flatten_action)
 
     if device_mask_flag:
-        for master_device in flatten_action_space:
+        for master_device in flatten_action:
             if master_device in device_mask_dict:
                 slave_devices = device_mask_dict[master_device]
                 for slave_device in slave_devices:
-                    param_value = flatten_action_space[master_device]
+                    param_value = flatten_action[master_device]
                     masked_action_space[slave_device] = param_value
 
     # print(masked_action_space)
