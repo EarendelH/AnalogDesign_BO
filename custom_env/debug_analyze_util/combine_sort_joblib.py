@@ -1,5 +1,6 @@
 import os
 from joblib import load, dump
+import pandas as pd
 
 
 def merge_and_sort_joblib(folder_path):
@@ -12,7 +13,6 @@ def merge_and_sort_joblib(folder_path):
             all_data.append(data)
 
     # Sort all_data by the 'rew' key
-    all_data.sort(key=lambda x: x['rew'], reverse=True)
 
     return all_data
 
@@ -22,3 +22,8 @@ sorted_data = merge_and_sort_joblib(folder_path)
 
 output_path = input("Please enter the name of the new joblib file to save the sorted data: ")
 dump(sorted_data, output_path)
+
+# Save csv file
+df = pd.DataFrame(sorted_data)
+output_csv_path = input("Please enter the name of the new csv file to save the sorted data: ")
+df.to_csv(output_csv_path, index=False)
