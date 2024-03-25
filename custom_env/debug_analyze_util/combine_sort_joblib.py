@@ -2,25 +2,17 @@ import joblib
 import os
 
 # Define the folder containing the joblib files
-folder_path = input("Please enter the path to the folder containing the joblib files: ")
+dir_path = input("Please enter the path to the folder containing the joblib files: ")
 
-# Initialize an empty list to store the dictionaries
-dict_list = []
+all_data = []
 
-# Iterate over each file in the folder
-for file_name in os.listdir(folder_path):
-    # Check if the file is a joblib file
-    if file_name.endswith('.joblib'):
-        # Construct the full path of the file
-        file_path = os.path.join(folder_path, file_name)
-        # Load the dictionary from the joblib file
-        data = joblib.load(file_path)
-        # Append the loaded dictionary to the list
-        dict_list.append(data)
+# 遍历文件夹中的所有文件
+for file in os.listdir(dir_path):
+    if file.endswith(".joblib"):
+        data = joblib.load(os.path.join(dir_path, file))
+        all_data.append(data)
 
-# Sort the list of dictionaries by the 'rew' value in descending order
-sorted_dict_list = sorted(dict_list, key=lambda x: x['rew'], reverse=True)
-
+all_data.sort(key=lambda x: x["rew"], reverse=True)
 # Save the sorted list of dictionaries to a new joblib file
 output_file = input("Please enter the name of the new joblib file to save the sorted data: ")
-joblib.dump(sorted_dict_list, output_file)
+joblib.dump(all_data, output_file)
