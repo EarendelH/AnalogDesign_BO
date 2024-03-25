@@ -67,7 +67,6 @@ def scan_and_aggregate_metrics(input_folder, output_file):
         dump(aggregated_metrics, f)
 
 
-
 if __name__ == "__main__":
     if len(sys.argv) != 3:
         print("Usage: python script.py <input_folder> <output_file>")
