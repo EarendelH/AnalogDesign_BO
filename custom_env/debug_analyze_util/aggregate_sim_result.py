@@ -26,7 +26,7 @@ def process_file(file_path):
         for step in data['steps_data']:
             step_sim_result = flatten_result(step['sim_result'])
             step_param = step['updated_param']
-            step_rew = step['rew']
+            step_rew = step['rew']['Agent_1']
             step_data = {'result': step_sim_result, 'param': step_param, 'rew': step_rew}
             sum_data.append(step_data)
 
