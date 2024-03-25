@@ -11,9 +11,7 @@ def merge_and_sort_joblib(folder_path):
             data = load(file_path)
             all_data.append(data)
 
-    sorted_data = sorted(all_data, key=lambda x: x['rew'], reverse=True)
-
-    return sorted_data
+    return all_data
 
 
 folder_path = input("Please enter the path to the folder containing the joblib files: ")
