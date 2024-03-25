@@ -19,13 +19,15 @@ def process_file(file_path):
             data = pickle.load(f)
         initial_sim_result = flatten_result(data['initial_data']['sim_result'])
         init_param = data['initial_data']['init_param']
-        init_data = {'result': initial_sim_result, 'param': init_param}
+        init_rew = data['initial_data']['rew']
+        init_data = {'result': initial_sim_result, 'param': init_param, 'rew': init_rew}
         sum_data = [init_data]
 
         for step in data['steps_data']:
             step_sim_result = flatten_result(step['sim_result'])
             step_param = step['updated_param']
-            step_data = {'result': step_sim_result, 'param': step_param}
+            step_rew = step['rew']
+            step_data = {'result': step_sim_result, 'param': step_param, 'rew': init_rew}
             sum_data.append(step_data)
 
         print(f"Processed {file_path} with {len(sum_data)} steps.")
@@ -37,25 +39,33 @@ def process_file(file_path):
 
 def scan_and_aggregate_metrics(input_folder, output_file):
     aggregated_metrics = []
-    file_paths = [os.path.join(root, file)
-                  for root, dirs, files in os.walk(input_folder)
-                  for file in files if file.endswith('.pkl')]
+    file_info = []
+    for root, dirs, files in os.walk(input_folder):
+        for file in files:
+            if file.endswith('.pkl'):
+                file_path = os.path.join(root, file)
+                last_modified_time = os.path.getmtime(file_path)
+                file_info.append((file_path, last_modified_time))
 
-    print(f"Found {len(file_paths)} pickle files.")
+    file_info.sort(key=lambda x: x[1])
+    sorted_file_paths = [info[0] for info in file_info]
+
+    print(f"Found {len(sorted_file_paths)} pickle files.")
 
     with ThreadPoolExecutor() as executor:
-        future_to_file = {executor.submit(process_file, file_path): file_path for file_path in file_paths}
+        future_to_file = {executor.submit(process_file, file_path): file_path for file_path in sorted_file_paths}
         for i, future in enumerate(as_completed(future_to_file), 1):
             file_path = future_to_file[future]
             sum_data = future.result()
             if sum_data is not None:
                 aggregated_metrics.extend(sum_data)
-            print(f"Processed {i}/{len(file_paths)} files.")
+            print(f"Processed {i}/{len(sorted_file_paths)} files.")
 
     print(f"Aggregated {len(aggregated_metrics)} metrics.")
 
     with open(output_file, 'wb') as f:
         dump(aggregated_metrics, f)
+
 
 
 if __name__ == "__main__":
