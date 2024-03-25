@@ -8,6 +8,7 @@ def filter_data(input_file, threshold):
     filtered_data = []
 
     for item in data:
+        print(f"Original data: {item}")
         if item['rew'] >= threshold:
             print(f"Filtered data: {item}")
             filtered_data.append(item)
