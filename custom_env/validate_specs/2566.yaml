@@ -1,28 +1,48 @@
 DC_IQ:
   objective: min
   reward_type: optimal
-  value: 5.0630665728392445e-05
+  value: 0.0003127867344928334
+Line_Reg_10m_lineReg:
+  objective: min
+  reward_type: optimal
+  value: 0.00028526664305072617
 Line_Reg_1u_lineReg:
   objective: min
   reward_type: optimal
-  value: 0.00032175553971911544
+  value: 0.00032042062599413167
 Load_Reg_loadReg:
   objective: min
   reward_type: optimal
-  value: 0.18396413566391517
+  value: 0.7969172517624095
+Stability_10m_gainBandWidth:
+  objective: max
+  reward_type: optimal
+  value: 86220.65784782868
+Stability_10m_phaseMargin:
+  objective: max
+  reward_type: satisfactory
+  value: 56.72249560721785
 Stability_1u_gainBandWidth:
   objective: max
   reward_type: optimal
-  value: 185985.68799524204
+  value: 78351.94532136191
 Stability_1u_phaseMargin:
   objective: max
   reward_type: satisfactory
-  value: 33.88673874786779
+  value: 49.902475517130156
+Trans_10m_overShoot:
+  objective: min
+  reward_type: optimal
+  value: 1.0542197881357702
+Trans_10m_underShoot:
+  objective: min
+  reward_type: optimal
+  value: 1.2007855809288368
 Trans_5m_overShoot:
   objective: min
   reward_type: optimal
-  value: 0.5497244509407828
+  value: 0.9417159143715494
 Trans_5m_underShoot:
   objective: min
   reward_type: optimal
-  value: 0.6183723193502646
+  value: 0.5555331670476935
