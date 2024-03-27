@@ -297,7 +297,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         logging.debug(f"Step!!!Param range config: {self.param_range_config}")
         # updated_param = update_parameters(all_action_flatten, self.cur_param, self.param_range_config)
         updated_param = action2param(self.action_mask, self.device_mask_dict, all_action_flatten, self.param_range_dict)
-        logging.debug(f"Step!!!Updated param: {updated_param} with step number: {self.step_num}")
+        logging.info(f"Step!!!Updated param: {updated_param} with step number: {self.step_num}")
 
         # Update current param
         self.cur_param = updated_param
