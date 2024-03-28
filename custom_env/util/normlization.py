@@ -35,10 +35,22 @@ def norm_sim_spec(sim_specs, norm_specs):
     return norm_cur_specs
 
 # Test Code
-# input_specs = {'gainBandWidth': {'constrain_type': 'hard', 'objective': 'max', 'value': 919974068.633527}, 'phaseMargin': {'constrain_type': 'hard', 'objective': 'max', 'value': 74.04052105931964}, 'powerSupplyRejectionRatio': {'constrain_type': 'hard', 'objective': 'max', 'value': 92.7820345842324}, 'pwr': {'constrain_type': 'soft', 'objective': 'min', 'value': 0.0001202291774645289}, 'slewRateDown': {'constrain_type': 'hard', 'objective': 'max', 'value': 6131225.304059564}, 'slewRateUp': {'constrain_type': 'hard', 'objective': 'max', 'value': 4413834.613031412}}
-# norm_specs = {'DC': {'pwr': 0.005}, 'PSRR': {'powerSupplyRejectionRatio': 45}, 'Stability': {'gainBandWidth': 500000000.0, 'phaseMargin': 45.0}, 'Trans': {'slewRateDown': 5000000.0, 'slewRateUp': 5000000.0}}
+
+# input_specs = {'gainBandWidth': {'constrain_type': 'hard', 'objective': 'max', 'value': 919974068.633527},
+# 'phaseMargin': {'constrain_type': 'hard', 'objective': 'max', 'value': 74.04052105931964},
+# 'powerSupplyRejectionRatio': {'constrain_type': 'hard', 'objective': 'max', 'value': 92.7820345842324},
+# 'pwr': {'constrain_type': 'soft', 'objective': 'min', 'value': 0.0001202291774645289}, 'slewRateDown': {
+# 'constrain_type': 'hard', 'objective': 'max', 'value': 6131225.304059564}, 'slewRateUp': {'constrain_type': 'hard',
+# 'objective': 'max', 'value': 4413834.613031412}}
+
+# norm_specs = {'DC': {'pwr': 0.005}, 'PSRR': {'powerSupplyRejectionRatio': 45}, 'Stability': {'gainBandWidth':
+# 500000000.0, 'phaseMargin': 45.0}, 'Trans': {'slewRateDown': 5000000.0, 'slewRateUp': 5000000.0}}
+
 # norm_cur_specs = normalization(input_specs, norm_specs)
 # print(norm_cur_specs)
 
 # Output
-# {'DC': {'pwr': 0.7397158473551917}, 'Stability': {'phaseMargin': -1.0, 'gainBandWidth': -1.0}, 'Trans': {'slewRateUp': 0.061953253129130345, 'slewRateDown': -0.03778817406269507}, 'PSRR': {'powerSupplyRejectionRatio': -0.8186872669975925}}
+
+# {'DC': {'pwr': 0.7397158473551917}, 'Stability': {'phaseMargin': -1.0, 'gainBandWidth': -1.0}, 'Trans': {
+# 'slewRateUp': 0.061953253129130345, 'slewRateDown': -0.03778817406269507}, 'PSRR': {'powerSupplyRejectionRatio':
+# -0.8186872669975925}}
