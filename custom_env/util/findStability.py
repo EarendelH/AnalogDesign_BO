@@ -1,5 +1,6 @@
 import re
 
+
 def findLoopGain(filename):
     with open(filename, 'r') as file:
         lines = file.readlines()
@@ -53,8 +54,5 @@ def findPhaseMarginAndGBW(filename):
 
 
 # Test the function with the provided file
-# value_dict = findPhaseMarginAndGBW("/Users/hanwu/ML/AnalogDesignAuto_MultiAgent/custom_env/netlist_assign_test/STB.raw/stb.margin.stb.encode")
-# print(value_dict)
-
-# value_dict = findLoopGain("/Users/hanwu/ML/AnalogDesignAuto/resultParse/spectreEnv/spectreTmpFile/tmp_202308211608431287/Stability.raw/stb.stb.encode")
+# value_dict = findPhaseMarginAndGBW("/Users/hanwu/ML/AnalogDesignAuto_MultiAgent/custom_env/netlist_assign_test/STB_200m.raw/stb.margin.stb.encode")
 # print(value_dict)

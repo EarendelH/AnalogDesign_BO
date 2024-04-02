@@ -33,5 +33,5 @@ def findLineReg(filename):
     return {"lineReg": line_reg}
 
 # Test Code
-# file = "/Users/hanwu/ML/AnalogDesignAuto_MultiAgent/custom_env/netlist_assign_test/Line_Reg.raw/dc.dc.encode"
+# file = "/Users/hanwu/ML/AnalogDesignAuto_MultiAgent/custom_env/netlist_assign_test/Line_Reg_500u.raw/dc.dc.encode"
 # print(findLineReg(file))
