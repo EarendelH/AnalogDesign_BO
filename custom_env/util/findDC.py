@@ -61,7 +61,7 @@ def extract_dcOP_data(file_path, search_keyword):
 
 
 def findIQ(filepath):
-    search_keyword = "V0:p"
+    search_keyword = "VIN2:p"
     try:
         value = extract_dcOP_data(filepath, search_keyword)
     except Exception as e:

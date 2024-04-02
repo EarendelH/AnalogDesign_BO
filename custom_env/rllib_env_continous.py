@@ -88,6 +88,8 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         self.param_range_config = os.path.join(self.current_path, self.param_range_config)
         self.sim_config = config_folder_name + "/simulation.yaml"
         self.sim_config = os.path.join(self.current_path, self.sim_config)
+        self.dc_sim_config = config_folder_name + "/simulation_region.yaml"
+        self.dc_sim_config = os.path.join(self.current_path, self.dc_sim_config)
         self.predefined_init_param = config_folder_name + "/init_param.yaml"
         self.predefined_init_param = os.path.join(self.current_path, self.predefined_init_param)
         self.device_mask_config = config_folder_name + "/device_mask.yaml"
@@ -103,7 +105,6 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         with open(self.sim_config, 'r') as file:
             self.sim_config_dict = yaml.safe_load(file)
         # Generate DC sim config
-        self.dc_sim_config_dict = [item for item in self.sim_config_dict if item['simulation_name'] == 'DC']
         with open(self.norm_specs_file, 'r') as file:
             self.norm_specs = yaml.safe_load(file)
         with open(self.param_range_config, 'r') as file:
@@ -112,6 +113,8 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
             agent_assign_dict = yaml.safe_load(file)
         with open(self.device_mask_config, 'r') as file:
             self.device_mask_dict = yaml.safe_load(file)
+        with open(self.dc_sim_config, 'r') as file:
+            self.dc_sim_config_dict = yaml.safe_load(file)
 
         # RLlib config
         self.possible_agents = list(agent_assign_dict.keys())
@@ -162,11 +165,11 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         logging.debug(f"Initialing!!!Init param: {init_param}")
 
         # Generate working directory
-        working_dir = create_work_dir(self.run_root_dir)
-        logging.info(f"Initialing!!!Working directory: {working_dir}")
+        working_dir_reset = create_work_dir(self.run_root_dir)
+        logging.info(f"Initialing!!!Working directory: {working_dir_reset}")
 
         # Update Netlist File
-        update_netlist(working_dir, self.sim_config_dict, init_param, self.unassigned_netlist_dir)
+        update_netlist(working_dir_reset, self.sim_config_dict, init_param, self.unassigned_netlist_dir)
 
         # For avoid simulation error in step, generate a default result with zero value but correct key in step method
         self.zero_sim_result = {}
@@ -182,7 +185,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         logging.debug(f"Initialing!!!Zero sim result: {self.zero_sim_result}")
 
         try:
-            sim_result, _ = run_dynamic_simulation(working_dir, self.sim_config_dict, self.zero_sim_result,
+            sim_result, _ = run_dynamic_simulation(working_dir_reset, self.sim_config_dict, self.zero_sim_result,
                                                    self.sim_output_enable)
         # For avoid simulation error in init, use zero result instead.
         except Exception as e:
@@ -204,24 +207,30 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         # Generate region observation
         try:
             # Run psf for converting binary file to text file
-            dc_raw_result_path = os.path.join(working_dir, "DC.raw/dcOpInfo.info")
-            dc_result_path = os.path.join(working_dir, "DC.raw/dcOpInfo.info.encode")
-            subprocess.run(f"psf {dc_raw_result_path} -o {dc_result_path}", shell=True)
-            operation_region_dict = extract_operation_region_w_name(dc_result_path)
-            logging.debug(f"Initialing!!!Operation region: {operation_region_dict}")
+            working_dir_reset_dc = create_work_dir(self.run_root_dir)
+            logging.info(f"Initialing!!!DC Check working directory: {working_dir_reset_dc}")
+            update_netlist(working_dir_reset_dc, self.dc_sim_config_dict, init_param, self.unassigned_netlist_dir)
+            _ = run_dynamic_simulation(working_dir_reset_dc, self.dc_sim_config_dict, self.zero_sim_result,
+                                       self.sim_output_enable)
+            dc_reset_raw_result_path = os.path.join(working_dir_reset_dc, "DC.raw/dcOpInfo.info")
+            dc_reset_result_path = os.path.join(working_dir_reset_dc, "DC.raw/dcOpInfo.info.encode")
+            subprocess.run(f"psf {dc_reset_raw_result_path} -o {dc_reset_result_path}", shell=True)
+            reset_operation_region_dict = extract_operation_region_w_name(dc_reset_result_path)
+            logging.debug(f"Initialing!!!Operation region: {reset_operation_region_dict}")
+            delete_work_dir(working_dir_reset_dc)
         except Exception as e:
             logging.warning(f"Resting!!!: {e}. No DC sim file.")
-            operation_region_dict = self.operation_region_dict_zero
+            reset_operation_region_dict = self.operation_region_dict_zero
 
         # Check operation_region_dict length vs self.operation_region_dict_zero length
-        if len(operation_region_dict) != len(self.operation_region_dict_zero):
-            logging.warning(f"Resting!!!: Operation region dict length {len(operation_region_dict)} does not match with "
+        if len(reset_operation_region_dict) != len(self.operation_region_dict_zero):
+            logging.warning(f"Resting!!!: Operation region dict length {len(reset_operation_region_dict)} does not match with "
                             f"operation_region_dict_zero length {len(self.norm_ideal_specs)}.")
-            operation_region_dict = self.operation_region_dict_zero
+            reset_operation_region_dict = self.operation_region_dict_zero
 
         # Generate observation
         observation_detail = update_obs_space_w_region(self.norm_ideal_specs, norm_sim_result, init_param,
-                                                       operation_region_dict)
+                                                       reset_operation_region_dict)
         logging.debug(f"Initialing!!!Observation detail: {observation_detail}")
         observation = flatten_observation_w_region(observation_detail)
         logging.debug(f"Initialing!!!Flatten Observation: {observation}")
@@ -261,7 +270,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
             pickle.dump(self.trajectory_data, f)
 
         # Delete working temp directory, if it exists
-        # delete_work_dir(working_dir)
+        delete_work_dir(working_dir_reset)
 
         return observations, info
 
@@ -273,8 +282,8 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         operation_region_dict = {}
 
         # Create working directory
-        working_dir = create_work_dir(self.run_root_dir)
-        logging.info(f"Step!!! Working directory: {working_dir} with step number: {self.step_num}")
+        working_dir_step = create_work_dir(self.run_root_dir)
+        logging.info(f"Step!!! Working directory: {working_dir_step} with step number: {self.step_num}")
 
         if self.action_mask:
             for key in self.device_mask_dict:
@@ -307,14 +316,15 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         valid_param = None
         if self.dc_check:
             try:
-                working_dir_dc = create_work_dir(self.run_root_dir)
-                logging.info(f"Step!!!DC Check Working directory: {working_dir_dc} with step number: {self.step_num}")
+                working_dir_step_dc = create_work_dir(self.run_root_dir)
+                logging.info(f"Step!!!DC Check Working directory: {working_dir_step_dc} "
+                             f"with step number: {self.step_num}")
                 # Update DC Netlist File for checking operation region
-                update_netlist(working_dir_dc, self.dc_sim_config_dict, updated_param, self.unassigned_netlist_dir)
-                _ = run_dynamic_simulation(working_dir_dc, self.dc_sim_config_dict, self.zero_sim_result,
+                update_netlist(working_dir_step_dc, self.dc_sim_config_dict, updated_param, self.unassigned_netlist_dir)
+                _ = run_dynamic_simulation(working_dir_step_dc, self.dc_sim_config_dict, self.zero_sim_result,
                                            self.sim_output_enable)
-                dc_raw_result_path = os.path.join(working_dir_dc, "DC.raw/dcOpInfo.info")
-                dc_result_path = os.path.join(working_dir_dc, "DC.raw/dcOpInfo.info.encode")
+                dc_raw_result_path = os.path.join(working_dir_step_dc, "DC.raw/dcOpInfo.info")
+                dc_result_path = os.path.join(working_dir_step_dc, "DC.raw/dcOpInfo.info.encode")
                 subprocess.run(f"psf {dc_raw_result_path} -o {dc_result_path}", shell=True)
                 operation_region_dict = extract_operation_region_w_name(dc_result_path)
                 operation_region_list = list(operation_region_dict.values())
@@ -329,7 +339,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
                     operation_region_dict = self.operation_region_dict_zero
                     valid_param = False
                 # Delete working temp directory, if it exists
-                # delete_work_dir(working_dir_dc)
+                delete_work_dir(working_dir_step_dc)
             except Exception as e:
                 logging.warning(f"Warning!!!: {e}. Failed to run DC check with step number: {self.step_num}")
                 operation_region_dict = self.operation_region_dict_zero
@@ -364,13 +374,13 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         else:
             # Run all simulations
             # Parse the updated param and generate the netlist
-            update_netlist(working_dir, self.sim_config_dict, updated_param, self.unassigned_netlist_dir)
+            update_netlist(working_dir_step, self.sim_config_dict, updated_param, self.unassigned_netlist_dir)
 
             # Run spectre simulation and normalize the result
             # Define a private function for retrying
             @retry_decorator(retry_count=2, delay_seconds=0.5, default_value=self.zero_sim_result)
             def _run_simulation_with_retry():
-                return run_dynamic_simulation(working_dir, self.sim_config_dict, self.zero_sim_result,
+                return run_dynamic_simulation(working_dir_step, self.sim_config_dict, self.zero_sim_result,
                                               self.sim_output_enable)
 
             sim_result, fail_tage = _run_simulation_with_retry()
@@ -382,10 +392,16 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
             # Generate observation
             # Add logic to avoid exception when no DC sim file
             try:
-                dc_raw_result_path = os.path.join(working_dir, "DC.raw/dcOpInfo.info")
-                dc_result_path = os.path.join(working_dir, "DC.raw/dcOpInfo.info.encode")
+                working_dir_step_dc_passed = create_work_dir(self.run_root_dir)
+                update_netlist(working_dir_step_dc_passed, self.dc_sim_config_dict, updated_param,
+                               self.unassigned_netlist_dir)
+                _ = run_dynamic_simulation(working_dir_step_dc_passed, self.dc_sim_config_dict, self.zero_sim_result,
+                                           self.sim_output_enable)
+                dc_raw_result_path = os.path.join(working_dir_step_dc_passed, "DC.raw/dcOpInfo.info")
+                dc_result_path = os.path.join(working_dir_step_dc_passed, "DC.raw/dcOpInfo.info.encode")
                 subprocess.run(f"psf {dc_raw_result_path} -o {dc_result_path}", shell=True)
                 operation_region_dict = extract_operation_region_w_name(dc_result_path)
+                delete_work_dir(working_dir_step_dc_passed)
             except Exception as e:
                 logging.warning(f"Step Warning!!!: {e}. No DC sim file.")
                 operation_region_dict = self.operation_region_dict_zero
@@ -450,6 +466,6 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
             pickle.dump(self.trajectory_data, f)
 
         # Delete working temp directory, if it exists
-        delete_work_dir(working_dir)
+        delete_work_dir(working_dir_step)
 
         return observations, rew, terminated, truncated, info

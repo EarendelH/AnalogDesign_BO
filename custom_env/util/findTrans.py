@@ -200,8 +200,8 @@ def findShoot(filename):
     vout_trace = trans_dict["VOUT"]
 
     # Clip time 50us-100us and 100us-150us
-    time_undershoot_index = [i for i, t in enumerate(time_series) if 50e-6 <= t <= 100e-6]
-    time_overshoot_index = [i for i, t in enumerate(time_series) if 100e-6 <= t <= 150e-6]
+    time_undershoot_index = [i for i, t in enumerate(time_series) if 2e-6 <= t <= 12e-6]
+    time_overshoot_index = [i for i, t in enumerate(time_series) if 12e-6 <= t <= 20e-6]
     vout_undershoot = [vout_trace[i] for i in time_undershoot_index]
     vout_overshoot = [vout_trace[i] for i in time_overshoot_index]
 

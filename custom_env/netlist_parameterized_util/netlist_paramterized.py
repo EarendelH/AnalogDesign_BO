@@ -227,9 +227,15 @@ def netlist_parameterized(input_scs_path, output_scs_path, output_yaml_path):
     return data_dict
 
 
-# Test Code
-input_scs = "/Users/hanwu/ML/AnalogDesignAuto_MultiAgent/custom_env/netlist_assign_test/Trans_25m.scs"
-output = "/Users/hanwu/ML/AnalogDesignAuto_MultiAgent/custom_env/netlist_template/Trans_25m_parameterized.scs"
-output_yaml = "/Users/hanwu/ML/AnalogDesignAuto_MultiAgent/custom_env/netlist_template/param_range_template.yaml"
-dict_out = netlist_parameterized(input_scs, output, output_yaml)
-print(dict_out)
+if __name__ == "__main__":
+    input_scs_folder = "/Users/hanwu/ML/AnalogDesignAuto_MultiAgent/custom_env/netlist_assign_test"
+    output_scs_folder = "/Users/hanwu/ML/AnalogDesignAuto_MultiAgent/custom_env/netlist_template"
+    for file in os.listdir(input_scs_folder):
+        if file.endswith(".scs"):
+            input_scs = os.path.join(input_scs_folder, file)
+            output_scs_name = file.replace(".scs", "_parameterized.scs")
+            output_scs = os.path.join(output_scs_folder, output_scs_name)
+            output_yaml = os.path.join(output_scs_folder, "param_range_template.yaml")
+            netlist_parameterized(input_scs, output_scs, output_yaml)
+            print(f"File {file} is processed.")
+    print("All files are processed.")

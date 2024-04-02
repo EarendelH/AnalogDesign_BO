@@ -1,0 +1,164 @@
+// Generated for: spectre
+// Generated on: Apr  1 22:39:25 2024
+// Design library name: LDO_SSF
+// Design cell name: tb_LDO_STB_200m
+// Design view name: schematic
+simulator lang=spectre
+global 0
+parameters CAP_CMP RES_CMP IBN_EA IBN_REF ILOAD=200m VDD=2
+include "/data/PDK/pdk_installed/tsmc180bcd_g2/pdk/pdk_1p6m_2/tsmc18/../models/spectre/c018bcd_gen2_v1d6_usage.scs" section=pre_simu
+include "/data/PDK/pdk_installed/tsmc180bcd_g2/pdk/pdk_1p6m_2/tsmc18/../models/spectre/c018bcd_gen2_v1d6_usage.scs" section=tt_lib
+
+// Library name: LDO_SSF
+// Cell name: EA_Core
+// View name: schematic
+subckt EA_Core IBN_EA IBP_EA_2U_1 IBP_EA_2U_2 VDD VEA VFB VG VREF VSS
+    M1 (net125 VFB net66 net66) nch_mac l=500n w=5u m=6 nf=1 sd=540.0n \
+        ad=2.4e-12 as=2.4e-12 pd=10.96u ps=10.96u nrd=0.054 nrs=0.054 \
+        sa=480.0n sb=480.0n sca=0 scb=0 scc=0
+    M2 (net128 VREF net66 net66) nch_mac l=500n w=5u m=6 nf=1 sd=540.0n \
+        ad=2.4e-12 as=2.4e-12 pd=10.96u ps=10.96u nrd=0.054 nrs=0.054 \
+        sa=480.0n sb=480.0n sca=0 scb=0 scc=0
+    M25 (VG IBP_BUF2 VSS VSS) nch_mac l=180.0n w=4u m=1 nf=1 sd=540.0n \
+        ad=1.92e-12 as=1.92e-12 pd=8.96u ps=8.96u nrd=0.0675 nrs=0.0675 \
+        sa=480.0n sb=480.0n sca=0 scb=0 scc=0
+    M18 (VEA VBN_CAS net127 VSS) nch_mac l=180.0n w=2u m=2 nf=1 sd=540.0n \
+        ad=9.6e-13 as=9.6e-13 pd=4.96u ps=4.96u nrd=0.135 nrs=0.135 \
+        sa=480.0n sb=480.0n sca=0 scb=0 scc=0
+    M17 (net126 VBN_CAS net124 VSS) nch_mac l=180.0n w=2u m=2 nf=1 sd=540.0n \
+        ad=9.6e-13 as=9.6e-13 pd=4.96u ps=4.96u nrd=0.135 nrs=0.135 \
+        sa=480.0n sb=480.0n sca=0 scb=0 scc=0
+    M16 (IBN_EA IBN_EA VSS VSS) nch_mac l=1u w=2u m=5 nf=1 sd=540.0n \
+        ad=9.6e-13 as=9.6e-13 pd=4.96u ps=4.96u nrd=0.135 nrs=0.135 \
+        sa=480.0n sb=480.0n sca=0 scb=0 scc=0
+    M7 (net127 net126 VSS VSS) nch_mac l=1u w=2u m=1 nf=1 sd=540.0n ad=9.6e-13 \
+        as=9.6e-13 pd=4.96u ps=4.96u nrd=0.135 nrs=0.135 sa=480.0n \
+        sb=480.0n sca=0 scb=0 scc=0
+    M6 (net124 net126 VSS VSS) nch_mac l=1u w=2u m=1 nf=1 sd=540.0n ad=9.6e-13 \
+        as=9.6e-13 pd=4.96u ps=4.96u nrd=0.135 nrs=0.135 sa=480.0n \
+        sb=480.0n sca=0 scb=0 scc=0
+    M20 (VBN_CAS VBN_CAS net098 VSS) nch_mac l=4u w=800n m=1 nf=1 sd=540.0n \
+        ad=3.84e-13 as=3.84e-13 pd=2.56u ps=2.56u nrd=0.3375 nrs=0.3375 \
+        sa=480.0n sb=480.0n sca=0 scb=0 scc=0
+    M12 (IBP_BUF2 IBN_EA VSS VSS) nch_mac l=1u w=2u m=1 nf=1 sd=540.0n \
+        ad=9.6e-13 as=9.6e-13 pd=4.96u ps=4.96u nrd=0.135 nrs=0.135 \
+        sa=480.0n sb=480.0n sca=0 scb=0 scc=0
+    M8 (IBP_BUF1 IBN_EA VSS VSS) nch_mac l=1u w=2u m=1 nf=1 sd=540.0n \
+        ad=9.6e-13 as=9.6e-13 pd=4.96u ps=4.96u nrd=0.135 nrs=0.135 \
+        sa=480.0n sb=480.0n sca=0 scb=0 scc=0
+    M13 (net66 IBN_EA VSS VSS) nch_mac l=1u w=2u m=5 nf=1 sd=540.0n ad=9.6e-13 \
+        as=9.6e-13 pd=4.96u ps=4.96u nrd=0.135 nrs=0.135 sa=480.0n \
+        sb=480.0n sca=0 scb=0 scc=0
+    M4 (VBP_TAIL IBN_EA VSS VSS) nch_mac l=1u w=2u m=1 nf=1 sd=540.0n \
+        ad=9.6e-13 as=9.6e-13 pd=4.96u ps=4.96u nrd=0.135 nrs=0.135 \
+        sa=480.0n sb=480.0n sca=0 scb=0 scc=0
+    M23 (net098 VBN_CAS VSS VSS) nch_mac l=4u w=800n m=1 nf=1 sd=540.0n \
+        ad=3.84e-13 as=3.84e-13 pd=2.56u ps=2.56u nrd=0.3375 nrs=0.3375 \
+        sa=480.0n sb=480.0n sca=0 scb=0 scc=0
+    M24 (VEA IBP_EA_2U_2 net128 VDD) pch_mac l=180.0n w=4u m=2 nf=1 sd=540.0n \
+        ad=1.92e-12 as=1.92e-12 pd=8.96u ps=8.96u nrd=0.0675 nrs=0.0675 \
+        sa=480.0n sb=480.0n sca=0 scb=0 scc=0
+    M19 (net126 IBP_EA_2U_2 net125 VDD) pch_mac l=180.0n w=4u m=2 nf=1 \
+        sd=540.0n ad=1.92e-12 as=1.92e-12 pd=8.96u ps=8.96u nrd=0.0675 \
+        nrs=0.0675 sa=480.0n sb=480.0n sca=0 scb=0 scc=0
+    M15 (VBP_TAIL VBP_TAIL VDD VDD) pch_mac l=500n w=4u m=1 nf=1 sd=540.0n \
+        ad=1.92e-12 as=1.92e-12 pd=8.96u ps=8.96u nrd=0.0675 nrs=0.0675 \
+        sa=480.0n sb=480.0n sca=0 scb=0 scc=0
+    M14 (net125 VBP_TAIL VDD VDD) pch_mac l=500n w=4u m=3 nf=1 sd=540.0n \
+        ad=1.92e-12 as=1.92e-12 pd=8.96u ps=8.96u nrd=0.0675 nrs=0.0675 \
+        sa=480.0n sb=480.0n sca=0 scb=0 scc=0
+    M26 (net128 VBP_TAIL VDD VDD) pch_mac l=500n w=4u m=3 nf=1 sd=540.0n \
+        ad=1.92e-12 as=1.92e-12 pd=8.96u ps=8.96u nrd=0.0675 nrs=0.0675 \
+        sa=480.0n sb=480.0n sca=0 scb=0 scc=0
+    M9 (VG IBP_BUF1 VDD VDD) pch_mac l=500n w=2u m=2 nf=1 sd=540.0n ad=9.6e-13 \
+        as=9.6e-13 pd=4.96u ps=4.96u nrd=0.135 nrs=0.135 sa=480.0n \
+        sb=480.0n sca=0 scb=0 scc=0
+    M5 (IBP_BUF1 IBP_BUF1 VDD VDD) pch_mac l=500n w=2u m=1 nf=1 sd=540.0n \
+        ad=9.6e-13 as=9.6e-13 pd=4.96u ps=4.96u nrd=0.135 nrs=0.135 \
+        sa=480.0n sb=480.0n sca=0 scb=0 scc=0
+    M3 (IBP_BUF2 VEA VG VDD) pch_mac l=180.0n w=2u m=4 nf=1 sd=540.0n \
+        ad=9.6e-13 as=9.6e-13 pd=4.96u ps=4.96u nrd=0.135 nrs=0.135 \
+        sa=480.0n sb=480.0n sca=0 scb=0 scc=0
+    M21 (IBP_EA_2U_1 IBP_EA_2U_1 VDD VDD) pch_mac l=1u w=1u m=1 nf=1 sd=540.0n \
+        ad=4.8e-13 as=4.8e-13 pd=2.96u ps=2.96u nrd=0.27 nrs=0.27 \
+        sa=480.0n sb=480.0n sca=0 scb=0 scc=0
+    M11 (IBP_EA_2U_2 IBP_EA_2U_2 net091 VDD) pch_mac l=4u w=800n m=1 nf=1 \
+        sd=540.0n ad=3.84e-13 as=3.84e-13 pd=2.56u ps=2.56u nrd=0.3375 \
+        nrs=0.3375 sa=480.0n sb=480.0n sca=0 scb=0 scc=0
+    M10 (net091 IBP_EA_2U_2 VDD VDD) pch_mac l=4u w=800n m=1 nf=1 sd=540.0n \
+        ad=3.84e-13 as=3.84e-13 pd=2.56u ps=2.56u nrd=0.3375 nrs=0.3375 \
+        sa=480.0n sb=480.0n sca=0 scb=0 scc=0
+    M22 (VBN_CAS IBP_EA_2U_1 VDD VDD) pch_mac l=1u w=1u m=3 nf=1 sd=540.0n \
+        ad=4.8e-13 as=4.8e-13 pd=2.96u ps=2.96u nrd=0.27 nrs=0.27 \
+        sa=480.0n sb=480.0n sca=0 scb=0 scc=0
+ends EA_Core
+// End of subcircuit definition.
+
+// Library name: LDO_SSF
+// Cell name: EA_Bias
+// View name: schematic
+subckt EA_Bias IBN_REF IBP_EA_2U_1 IBP_EA_2U_2 VDD VSS
+    M29 (IBP_EA_2U_1 net016 net028 VSS) nch_mac l=1u w=1u m=1 nf=1 sd=540.0n \
+        ad=4.8e-13 as=4.8e-13 pd=2.96u ps=2.96u nrd=0.27 nrs=0.27 \
+        sa=480.0n sb=480.0n sca=0 scb=0 scc=0
+    M35 (net016 net016 net031 VSS) nch_mac l=4u w=800n m=1 nf=1 sd=540.0n \
+        ad=3.84e-13 as=3.84e-13 pd=2.56u ps=2.56u nrd=0.3375 nrs=0.3375 \
+        sa=480.0n sb=480.0n sca=0 scb=0 scc=0
+    M30 (net028 IBN_REF VSS VSS) nch_mac l=1u w=1u m=1 nf=1 sd=540.0n \
+        ad=4.8e-13 as=4.8e-13 pd=2.96u ps=2.96u nrd=0.27 nrs=0.27 \
+        sa=480.0n sb=480.0n sca=0 scb=0 scc=0
+    M36 (net069 IBN_REF VSS VSS) nch_mac l=1u w=1u m=1 nf=1 sd=540.0n \
+        ad=4.8e-13 as=4.8e-13 pd=2.96u ps=2.96u nrd=0.27 nrs=0.27 \
+        sa=480.0n sb=480.0n sca=0 scb=0 scc=0
+    M27 (IBN_REF IBN_REF VSS VSS) nch_mac l=1u w=1u m=1 nf=1 sd=540.0n \
+        ad=4.8e-13 as=4.8e-13 pd=2.96u ps=2.96u nrd=0.27 nrs=0.27 \
+        sa=480.0n sb=480.0n sca=0 scb=0 scc=0
+    M31 (net031 net016 VSS VSS) nch_mac l=4u w=800n m=1 nf=1 sd=540.0n \
+        ad=3.84e-13 as=3.84e-13 pd=2.56u ps=2.56u nrd=0.3375 nrs=0.3375 \
+        sa=480.0n sb=480.0n sca=0 scb=0 scc=0
+    M33 (IBP_EA_2U_2 net016 net030 VSS) nch_mac l=1u w=1u m=1 nf=1 sd=540.0n \
+        ad=4.8e-13 as=4.8e-13 pd=2.96u ps=2.96u nrd=0.27 nrs=0.27 \
+        sa=480.0n sb=480.0n sca=0 scb=0 scc=0
+    M28 (net030 IBN_REF VSS VSS) nch_mac l=1u w=1u m=1 nf=1 sd=540.0n \
+        ad=4.8e-13 as=4.8e-13 pd=2.96u ps=2.96u nrd=0.27 nrs=0.27 \
+        sa=480.0n sb=480.0n sca=0 scb=0 scc=0
+    M32 (net016 net069 VDD VDD) pch_mac l=500n w=1u m=2 nf=1 sd=540.0n \
+        ad=4.8e-13 as=4.8e-13 pd=2.96u ps=2.96u nrd=0.27 nrs=0.27 \
+        sa=480.0n sb=480.0n sca=0 scb=0 scc=0
+    M34 (net069 net069 VDD VDD) pch_mac l=500n w=1u m=1 nf=1 sd=540.0n \
+        ad=4.8e-13 as=4.8e-13 pd=2.96u ps=2.96u nrd=0.27 nrs=0.27 \
+        sa=480.0n sb=480.0n sca=0 scb=0 scc=0
+ends EA_Bias
+// End of subcircuit definition.
+
+// Library name: LDO_SSF
+// Cell name: tb_LDO_STB_200m
+// View name: schematic
+I8 (IBN_EA IBP_EA_2U_1 IBP_EA_2U_2 VDD VEA net05 VG VREF VSS) EA_Core
+VIN2 (VDD 0) vsource dc=VDD type=dc
+V3 (VSS 0) vsource dc=0 type=dc
+V2 (VREF VSS) vsource dc=1.2 type=dc
+I12 (VREF IBN_REF) isource dc=IBN_REF type=dc
+I4 (VREF IBN_EA) isource dc=IBN_EA type=dc
+I1 (VOUT VSS) isource dc=ILOAD type=dc
+C1 (VEA net016) capacitor c=CAP_CMP
+C0 (VOUT VSS) capacitor c=10n
+R0 (net016 VOUT) resistor r=RES_CMP
+R1 (VSS VOUT) resistor r=100K
+I9 (IBN_REF IBP_EA_2U_1 IBP_EA_2U_2 VDD VSS) EA_Bias
+IPRB0 (VOUT net05) iprobe
+M0 (VOUT VG VDD VDD) pch_mac l=180.0n w=12.000m m=1 nf=600 sd=540.0n \
+        ad=3.24e-09 as=3.2484e-09 pd=12.324m ps=12.3648m nrd=2.25e-05 \
+        nrs=2.25e-05 sa=480.0n sb=480.0n sca=0 scb=0 scc=0
+simulatorOptions options psfversion="1.1.0" reltol=1e-3 vabstol=1e-6 \
+    iabstol=1e-12 temp=27 tnom=27 scalem=1.0 scale=1.0 gmin=1e-12 rforce=1 \
+    maxnotes=5 maxwarns=5 digits=5 cols=80 pivrel=1e-3 \
+    sensfile="../psf/sens.output" checklimitdest=psf 
+stb stb start=1 stop=1G probe=IPRB0 localgnd=VSS annotate=status 
+modelParameter info what=models where=rawfile
+element info what=inst where=rawfile
+outputParameter info what=output where=rawfile
+designParamVals info what=parameters where=rawfile
+primitives info what=primitives where=rawfile
+subckts info what=subckts where=rawfile
+saveOptions options save=allpub
