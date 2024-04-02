@@ -547,7 +547,7 @@ def gen_obs_space_w_region(sim_config_dict, param_range_config_dict, agent_assig
     for group_name in agent_assign_dict.keys():
         obs_space[group_name] = obs_space_single
 
-    print(f"Debug in gen_obs_space,\n obs_space: {obs_space_single}")
+    # print(f"Debug in gen_obs_space,\n obs_space: {obs_space_single}")
 
     return obs_space
 
