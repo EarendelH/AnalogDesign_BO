@@ -33,6 +33,8 @@ def adjust_value_within_range(value: str, step: str, range_limits: list, action:
     elif action == 1:  # Keep the same
         pass
 
+    value_num = round(value_num, 1)
+
     if is_integer:  # Convert to integer if needed
         value_num = int(round(value_num))
 
