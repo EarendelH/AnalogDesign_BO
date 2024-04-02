@@ -1,0 +1,6046 @@
+HEADER
+"PSFversion" "1.00"
+"simulator" "spectre"
+"version" "18.1.0.335.isr6"
+"date" "11:05:43 AM, Tue Apr 2, 2024"
+"design" "// Generated for: spectre"
+"analysis type" "info"
+"analysis name" "designParamVals"
+"analysis description" "Circuit Information"
+"xVecSorted" "unknown"
+"tolerance.relative" 0.00100000
+TYPE
+"top-level" STRUCT(
+"temp" FLOAT DOUBLE
+"tnom" FLOAT DOUBLE
+"time" FLOAT DOUBLE
+"RES_CMP" FLOAT DOUBLE
+"CAP_CMP" FLOAT DOUBLE
+"IBN_EA" FLOAT DOUBLE
+"IBN_REF" FLOAT DOUBLE
+"ILOAD" FLOAT DOUBLE
+"VDD" FLOAT DOUBLE
+"ccoflag" FLOAT DOUBLE
+"ccoflag_5" FLOAT DOUBLE
+"ccoflag_5_fgd" FLOAT DOUBLE
+"ccoflag_5_lvt" FLOAT DOUBLE
+"ccoflag_5_switch" FLOAT DOUBLE
+"ccoflag_5vna" FLOAT DOUBLE
+"ccoflag_dep5" FLOAT DOUBLE
+"ccoflag_na" FLOAT DOUBLE
+"noiseflagn" FLOAT DOUBLE
+"noiseflagp" FLOAT DOUBLE
+"noiseflagn_mc" FLOAT DOUBLE
+"noiseflagp_mc" FLOAT DOUBLE
+"sigma_factor_flicker" FLOAT DOUBLE
+"mismatchflag_mos" FLOAT DOUBLE
+"ov_ratio" FLOAT DOUBLE
+"par1n" FLOAT DOUBLE
+"par2n" FLOAT DOUBLE
+"par1p" FLOAT DOUBLE
+"par2p" FLOAT DOUBLE
+"toxn" FLOAT DOUBLE
+"dxln" FLOAT DOUBLE
+"dxwn" FLOAT DOUBLE
+"dvthn" FLOAT DOUBLE
+"dlvthn" FLOAT DOUBLE
+"dwvthn" FLOAT DOUBLE
+"dpvthn" FLOAT DOUBLE
+"deta0n" FLOAT DOUBLE
+"dleta0n" FLOAT DOUBLE
+"dpeta0n" FLOAT DOUBLE
+"dpclmn" FLOAT DOUBLE
+"dlpclmn" FLOAT DOUBLE
+"dppclmn" FLOAT DOUBLE
+"dpdiblc2n" FLOAT DOUBLE
+"dlpdiblc2n" FLOAT DOUBLE
+"dppdiblc2n" FLOAT DOUBLE
+"dvoffn" FLOAT DOUBLE
+"dlvoffn" FLOAT DOUBLE
+"dpvoffn" FLOAT DOUBLE
+"dcitn" FLOAT DOUBLE
+"dlcitn" FLOAT DOUBLE
+"dpcitn" FLOAT DOUBLE
+"du0n" FLOAT DOUBLE
+"dlu0n" FLOAT DOUBLE
+"dpu0n" FLOAT DOUBLE
+"dvsatn" FLOAT DOUBLE
+"dlvsatn" FLOAT DOUBLE
+"dpvsatn" FLOAT DOUBLE
+"da0n" FLOAT DOUBLE
+"dla0n" FLOAT DOUBLE
+"dpa0n" FLOAT DOUBLE
+"cjn" FLOAT DOUBLE
+"cjswn" FLOAT DOUBLE
+"cjswgn" FLOAT DOUBLE
+"dk2" FLOAT DOUBLE
+"dlk2" FLOAT DOUBLE
+"cgon" FLOAT DOUBLE
+"cgln" FLOAT DOUBLE
+"dlcn" FLOAT DOUBLE
+"cfn" FLOAT DOUBLE
+"toxp" FLOAT DOUBLE
+"dxlp" FLOAT DOUBLE
+"dxwp" FLOAT DOUBLE
+"dvthp" FLOAT DOUBLE
+"dlvthp" FLOAT DOUBLE
+"dwvthp" FLOAT DOUBLE
+"dlpdiblc2p" FLOAT DOUBLE
+"dwpdiblc2p" FLOAT DOUBLE
+"dppdiblc2p" FLOAT DOUBLE
+"dlpclmp" FLOAT DOUBLE
+"dwpclmp" FLOAT DOUBLE
+"dppclmp" FLOAT DOUBLE
+"dleta0p" FLOAT DOUBLE
+"dweta0p" FLOAT DOUBLE
+"dpeta0p" FLOAT DOUBLE
+"dlcitp" FLOAT DOUBLE
+"dwcitp" FLOAT DOUBLE
+"dpcitp" FLOAT DOUBLE
+"dlnfactorp" FLOAT DOUBLE
+"du0p" FLOAT DOUBLE
+"dlu0p" FLOAT DOUBLE
+"dwu0p" FLOAT DOUBLE
+"dwk2p" FLOAT DOUBLE
+"dvoffp" FLOAT DOUBLE
+"dlvoffp" FLOAT DOUBLE
+"dwvoffp" FLOAT DOUBLE
+"dpvoffp" FLOAT DOUBLE
+"dagsp" FLOAT DOUBLE
+"dlvsatp" FLOAT DOUBLE
+"dwvsatp" FLOAT DOUBLE
+"dpvsatp" FLOAT DOUBLE
+"dk2p" FLOAT DOUBLE
+"dlk2p" FLOAT DOUBLE
+"cjp" FLOAT DOUBLE
+"cjswp" FLOAT DOUBLE
+"cjswgp" FLOAT DOUBLE
+"dlcp" FLOAT DOUBLE
+"cgop" FLOAT DOUBLE
+"cglp" FLOAT DOUBLE
+"cfp" FLOAT DOUBLE
+"c1fn" FLOAT DOUBLE
+"c2fn" FLOAT DOUBLE
+"c3fn" FLOAT DOUBLE
+"c1fp" FLOAT DOUBLE
+"c2fp" FLOAT DOUBLE
+"c3fp" FLOAT DOUBLE
+"arearation" FLOAT DOUBLE
+"noian" FLOAT DOUBLE
+"noibn" FLOAT DOUBLE
+"noicn" FLOAT DOUBLE
+"arearatiop" FLOAT DOUBLE
+"noiap" FLOAT DOUBLE
+"noibp" FLOAT DOUBLE
+"noicp" FLOAT DOUBLE
+"mismatchflag_mos_5" FLOAT DOUBLE
+"ov_ratio_5" FLOAT DOUBLE
+"sigma_factor_flicker_5" FLOAT DOUBLE
+"noiseflagn_mc_5" FLOAT DOUBLE
+"noiseflagn_5" FLOAT DOUBLE
+"noiseflagp_mc_5" FLOAT DOUBLE
+"noiseflagp_5" FLOAT DOUBLE
+"par1n_5" FLOAT DOUBLE
+"par2n_5" FLOAT DOUBLE
+"par3n_5" FLOAT DOUBLE
+"par4n_5" FLOAT DOUBLE
+"par5n_5" FLOAT DOUBLE
+"par1p_5" FLOAT DOUBLE
+"par2p_5" FLOAT DOUBLE
+"par3p_5" FLOAT DOUBLE
+"par4p_5" FLOAT DOUBLE
+"par5p_5" FLOAT DOUBLE
+"toxn_5" FLOAT DOUBLE
+"dvthn_5" FLOAT DOUBLE
+"dlvthn_5" FLOAT DOUBLE
+"dwvthn_5" FLOAT DOUBLE
+"dpvthn_5" FLOAT DOUBLE
+"dxln_5" FLOAT DOUBLE
+"dxwn_5" FLOAT DOUBLE
+"cjn_5" FLOAT DOUBLE
+"cjswn_5" FLOAT DOUBLE
+"cjswgn_5" FLOAT DOUBLE
+"cgon_5" FLOAT DOUBLE
+"cgln_5" FLOAT DOUBLE
+"cfn_5" FLOAT DOUBLE
+"du0n_5" FLOAT DOUBLE
+"dlu0n_5" FLOAT DOUBLE
+"dwu0n_5" FLOAT DOUBLE
+"dpu0n_5" FLOAT DOUBLE
+"dlvsatn_5" FLOAT DOUBLE
+"dpvsatn_5" FLOAT DOUBLE
+"dk2n_5" FLOAT DOUBLE
+"dlk2n_5" FLOAT DOUBLE
+"dwk2n_5" FLOAT DOUBLE
+"dpk2n_5" FLOAT DOUBLE
+"dbeta0n_5" FLOAT DOUBLE
+"dpbeta0n_5" FLOAT DOUBLE
+"dpdiblc2n_5" FLOAT DOUBLE
+"dlpdiblc2n_5" FLOAT DOUBLE
+"dwpdiblc2n_5" FLOAT DOUBLE
+"dppdiblc2n_5" FLOAT DOUBLE
+"dagsn_5" FLOAT DOUBLE
+"dwagsn_5" FLOAT DOUBLE
+"deta0n_5" FLOAT DOUBLE
+"dweta0n_5" FLOAT DOUBLE
+"dppclmn_5" FLOAT DOUBLE
+"dla0n_5" FLOAT DOUBLE
+"dlua1n_5" FLOAT DOUBLE
+"toxp_5" FLOAT DOUBLE
+"dvthp_5" FLOAT DOUBLE
+"dlvthp_5" FLOAT DOUBLE
+"dwvthp_5" FLOAT DOUBLE
+"dpvthp_5" FLOAT DOUBLE
+"dxlp_5" FLOAT DOUBLE
+"dxwp_5" FLOAT DOUBLE
+"cjp_5" FLOAT DOUBLE
+"cjswp_5" FLOAT DOUBLE
+"cjswgp_5" FLOAT DOUBLE
+"cgop_5" FLOAT DOUBLE
+"cglp_5" FLOAT DOUBLE
+"cfp_5" FLOAT DOUBLE
+"du0p_5" FLOAT DOUBLE
+"dlu0p_5" FLOAT DOUBLE
+"dwu0p_5" FLOAT DOUBLE
+"dpu0p_5" FLOAT DOUBLE
+"dk2p_5" FLOAT DOUBLE
+"dlk2p_5" FLOAT DOUBLE
+"dwk2p_5" FLOAT DOUBLE
+"dpk2p_5" FLOAT DOUBLE
+"dlvsatp_5" FLOAT DOUBLE
+"dpvsatp_5" FLOAT DOUBLE
+"dbeta0p_5" FLOAT DOUBLE
+"dpbeta0p_5" FLOAT DOUBLE
+"dpdiblc2p_5" FLOAT DOUBLE
+"dpclmp_5" FLOAT DOUBLE
+"dwpclmp_5" FLOAT DOUBLE
+"dagsp_5" FLOAT DOUBLE
+"dwagsp_5" FLOAT DOUBLE
+"dla0p_5" FLOAT DOUBLE
+"dpatp_5" FLOAT DOUBLE
+"c1fn_5" FLOAT DOUBLE
+"c2fn_5" FLOAT DOUBLE
+"c3fn_5" FLOAT DOUBLE
+"fn_corner_a_0n_5" FLOAT DOUBLE
+"fn_corner_a_1n_5" FLOAT DOUBLE
+"fn_corner_a_2n_5" FLOAT DOUBLE
+"fn_corner_a_4n_5" FLOAT DOUBLE
+"fn_local_ration_5" FLOAT DOUBLE
+"fn_strenchn_5" FLOAT DOUBLE
+"arearation_5" FLOAT DOUBLE
+"fn_local_facn_5" FLOAT DOUBLE
+"fn_global_facn_5" FLOAT DOUBLE
+"fn_total_facn_5" FLOAT DOUBLE
+"fn_msn_5" FLOAT DOUBLE
+"noian_5" FLOAT DOUBLE
+"noibn_5" FLOAT DOUBLE
+"noicn_5" FLOAT DOUBLE
+"c1fp_5" FLOAT DOUBLE
+"c2fp_5" FLOAT DOUBLE
+"c3fp_5" FLOAT DOUBLE
+"fn_corner_a_0p_5" FLOAT DOUBLE
+"fn_corner_a_1p_5" FLOAT DOUBLE
+"fn_corner_a_2p_5" FLOAT DOUBLE
+"fn_corner_a_4p_5" FLOAT DOUBLE
+"fn_local_ratiop_5" FLOAT DOUBLE
+"fn_strenchp_5" FLOAT DOUBLE
+"arearatiop_5" FLOAT DOUBLE
+"fn_local_facp_5" FLOAT DOUBLE
+"fn_global_facp_5" FLOAT DOUBLE
+"fn_total_facp_5" FLOAT DOUBLE
+"fn_msp_5" FLOAT DOUBLE
+"noiap_5" FLOAT DOUBLE
+"noibp_5" FLOAT DOUBLE
+"noicp_5" FLOAT DOUBLE
+"mismatchflag_mos_5_fgd" FLOAT DOUBLE
+"ov_ratio_5_fgd" FLOAT DOUBLE
+"par1p_pch5ngd" FLOAT DOUBLE
+"par2p_pch5ngd" FLOAT DOUBLE
+"par3p_pch5ngd" FLOAT DOUBLE
+"par4p_pch5ngd" FLOAT DOUBLE
+"par5p_pch5ngd" FLOAT DOUBLE
+"par1n_nch5ngd" FLOAT DOUBLE
+"par2n_nch5ngd" FLOAT DOUBLE
+"par3n_nch5ngd" FLOAT DOUBLE
+"par4n_nch5ngd" FLOAT DOUBLE
+"par5n_nch5ngd" FLOAT DOUBLE
+"par1p_pch5fgd" FLOAT DOUBLE
+"par2p_pch5fgd" FLOAT DOUBLE
+"par3p_pch5fgd" FLOAT DOUBLE
+"par4p_pch5fgd" FLOAT DOUBLE
+"par5p_pch5fgd" FLOAT DOUBLE
+"par1n_nch5fgd" FLOAT DOUBLE
+"par2n_nch5fgd" FLOAT DOUBLE
+"par3n_nch5fgd" FLOAT DOUBLE
+"par4n_nch5fgd" FLOAT DOUBLE
+"par5n_nch5fgd" FLOAT DOUBLE
+"cfn_nch5ngd" FLOAT DOUBLE
+"cgln_nch5ngd" FLOAT DOUBLE
+"cgon_nch5ngd" FLOAT DOUBLE
+"cjn_nch5ngd" FLOAT DOUBLE
+"cjswn_nch5ngd" FLOAT DOUBLE
+"cjswgn_nch5ngd" FLOAT DOUBLE
+"dagsn_nch5ngd" FLOAT DOUBLE
+"deta0n_nch5ngd" FLOAT DOUBLE
+"dk2n_nch5ngd" FLOAT DOUBLE
+"dlk2n_nch5ngd" FLOAT DOUBLE
+"dpk2n_nch5ngd" FLOAT DOUBLE
+"dla0n_nch5ngd" FLOAT DOUBLE
+"dlua1n_nch5ngd" FLOAT DOUBLE
+"dlvsatn_nch5ngd" FLOAT DOUBLE
+"dpdiblc2n_nch5ngd" FLOAT DOUBLE
+"dlpdiblc2n_nch5ngd" FLOAT DOUBLE
+"dppdiblc2n_nch5ngd" FLOAT DOUBLE
+"dppclmn_nch5ngd" FLOAT DOUBLE
+"dpvsatn_nch5ngd" FLOAT DOUBLE
+"du0n_nch5ngd" FLOAT DOUBLE
+"dlu0n_nch5ngd" FLOAT DOUBLE
+"dpu0n_nch5ngd" FLOAT DOUBLE
+"dvthn_nch5ngd" FLOAT DOUBLE
+"dlvthn_nch5ngd" FLOAT DOUBLE
+"dpvthn_nch5ngd" FLOAT DOUBLE
+"dwagsn_nch5ngd" FLOAT DOUBLE
+"dweta0n_nch5ngd" FLOAT DOUBLE
+"dwk2n_nch5ngd" FLOAT DOUBLE
+"dwpdiblc2n_nch5ngd" FLOAT DOUBLE
+"dwu0n_nch5ngd" FLOAT DOUBLE
+"dwvthn_nch5ngd" FLOAT DOUBLE
+"dxln_nch5ngd" FLOAT DOUBLE
+"dxwn_nch5ngd" FLOAT DOUBLE
+"toxn_nch5ngd" FLOAT DOUBLE
+"cgbn_nch5ngd" FLOAT DOUBLE
+"ktfacn_nch5ngd" FLOAT DOUBLE
+"cfn_nch5fgd" FLOAT DOUBLE
+"cgln_nch5fgd" FLOAT DOUBLE
+"cgon_nch5fgd" FLOAT DOUBLE
+"cjn_nch5fgd" FLOAT DOUBLE
+"cjswn_nch5fgd" FLOAT DOUBLE
+"cjswgn_nch5fgd" FLOAT DOUBLE
+"dagsn_nch5fgd" FLOAT DOUBLE
+"deta0n_nch5fgd" FLOAT DOUBLE
+"dk2n_nch5fgd" FLOAT DOUBLE
+"dlk2n_nch5fgd" FLOAT DOUBLE
+"dpk2n_nch5fgd" FLOAT DOUBLE
+"dla0n_nch5fgd" FLOAT DOUBLE
+"dlua1n_nch5fgd" FLOAT DOUBLE
+"dlvsatn_nch5fgd" FLOAT DOUBLE
+"dpdiblc2n_nch5fgd" FLOAT DOUBLE
+"dlpdiblc2n_nch5fgd" FLOAT DOUBLE
+"dppdiblc2n_nch5fgd" FLOAT DOUBLE
+"dppclmn_nch5fgd" FLOAT DOUBLE
+"dpvsatn_nch5fgd" FLOAT DOUBLE
+"du0n_nch5fgd" FLOAT DOUBLE
+"dlu0n_nch5fgd" FLOAT DOUBLE
+"dpu0n_nch5fgd" FLOAT DOUBLE
+"dvthn_nch5fgd" FLOAT DOUBLE
+"dlvthn_nch5fgd" FLOAT DOUBLE
+"dpvthn_nch5fgd" FLOAT DOUBLE
+"dwagsn_nch5fgd" FLOAT DOUBLE
+"dweta0n_nch5fgd" FLOAT DOUBLE
+"dwk2n_nch5fgd" FLOAT DOUBLE
+"dwpdiblc2n_nch5fgd" FLOAT DOUBLE
+"dwu0n_nch5fgd" FLOAT DOUBLE
+"dwvthn_nch5fgd" FLOAT DOUBLE
+"dxln_nch5fgd" FLOAT DOUBLE
+"dxwn_nch5fgd" FLOAT DOUBLE
+"toxn_nch5fgd" FLOAT DOUBLE
+"cgbn_nch5fgd" FLOAT DOUBLE
+"ktfacn_nch5fgd" FLOAT DOUBLE
+"cfp_pch5ngd" FLOAT DOUBLE
+"cglp_pch5ngd" FLOAT DOUBLE
+"cgop_pch5ngd" FLOAT DOUBLE
+"cjp_pch5ngd" FLOAT DOUBLE
+"cjswp_pch5ngd" FLOAT DOUBLE
+"cjswgp_pch5ngd" FLOAT DOUBLE
+"dagsp_pch5ngd" FLOAT DOUBLE
+"dbeta0p_pch5ngd" FLOAT DOUBLE
+"dpbeta0p_pch5ngd" FLOAT DOUBLE
+"dk2p_pch5ngd" FLOAT DOUBLE
+"dlk2p_pch5ngd" FLOAT DOUBLE
+"dpk2p_pch5ngd" FLOAT DOUBLE
+"dla0p_pch5ngd" FLOAT DOUBLE
+"dlvsatp_pch5ngd" FLOAT DOUBLE
+"dpatp_pch5ngd" FLOAT DOUBLE
+"dpclmp_pch5ngd" FLOAT DOUBLE
+"dpdiblc2p_pch5ngd" FLOAT DOUBLE
+"dpvsatp_pch5ngd" FLOAT DOUBLE
+"du0p_pch5ngd" FLOAT DOUBLE
+"dlu0p_pch5ngd" FLOAT DOUBLE
+"dpu0p_pch5ngd" FLOAT DOUBLE
+"dvthp_pch5ngd" FLOAT DOUBLE
+"dlvthp_pch5ngd" FLOAT DOUBLE
+"dpvthp_pch5ngd" FLOAT DOUBLE
+"dwagsp_pch5ngd" FLOAT DOUBLE
+"dwk2p_pch5ngd" FLOAT DOUBLE
+"dwpclmp_pch5ngd" FLOAT DOUBLE
+"dwu0p_pch5ngd" FLOAT DOUBLE
+"dwvthp_pch5ngd" FLOAT DOUBLE
+"dxlp_pch5ngd" FLOAT DOUBLE
+"dxwp_pch5ngd" FLOAT DOUBLE
+"toxp_pch5ngd" FLOAT DOUBLE
+"cgbp_pch5ngd" FLOAT DOUBLE
+"ktfacp_pch5ngd" FLOAT DOUBLE
+"cfp_pch5fgd" FLOAT DOUBLE
+"cglp_pch5fgd" FLOAT DOUBLE
+"cgop_pch5fgd" FLOAT DOUBLE
+"cjp_pch5fgd" FLOAT DOUBLE
+"cjswp_pch5fgd" FLOAT DOUBLE
+"cjswgp_pch5fgd" FLOAT DOUBLE
+"dagsp_pch5fgd" FLOAT DOUBLE
+"dbeta0p_pch5fgd" FLOAT DOUBLE
+"dpbeta0p_pch5fgd" FLOAT DOUBLE
+"dk2p_pch5fgd" FLOAT DOUBLE
+"dlk2p_pch5fgd" FLOAT DOUBLE
+"dpk2p_pch5fgd" FLOAT DOUBLE
+"dla0p_pch5fgd" FLOAT DOUBLE
+"dlvsatp_pch5fgd" FLOAT DOUBLE
+"dpatp_pch5fgd" FLOAT DOUBLE
+"dpclmp_pch5fgd" FLOAT DOUBLE
+"dpdiblc2p_pch5fgd" FLOAT DOUBLE
+"dpvsatp_pch5fgd" FLOAT DOUBLE
+"du0p_pch5fgd" FLOAT DOUBLE
+"dlu0p_pch5fgd" FLOAT DOUBLE
+"dpu0p_pch5fgd" FLOAT DOUBLE
+"dvthp_pch5fgd" FLOAT DOUBLE
+"dlvthp_pch5fgd" FLOAT DOUBLE
+"dpvthp_pch5fgd" FLOAT DOUBLE
+"dwagsp_pch5fgd" FLOAT DOUBLE
+"dwk2p_pch5fgd" FLOAT DOUBLE
+"dwpclmp_pch5fgd" FLOAT DOUBLE
+"dwu0p_pch5fgd" FLOAT DOUBLE
+"dwvthp_pch5fgd" FLOAT DOUBLE
+"dxlp_pch5fgd" FLOAT DOUBLE
+"dxwp_pch5fgd" FLOAT DOUBLE
+"toxp_pch5fgd" FLOAT DOUBLE
+"cgbp_pch5fgd" FLOAT DOUBLE
+"ktfacp_pch5fgd" FLOAT DOUBLE
+"mismatchflag_mos_5_lvt" FLOAT DOUBLE
+"ov_ratio_5_lvt" FLOAT DOUBLE
+"par1n_lvt" FLOAT DOUBLE
+"par2n_lvt" FLOAT DOUBLE
+"par3n_lvt" FLOAT DOUBLE
+"par4n_lvt" FLOAT DOUBLE
+"par5n_lvt" FLOAT DOUBLE
+"toxn_5_lvt" FLOAT DOUBLE
+"dxln_5_lvt" FLOAT DOUBLE
+"dxwn_5_lvt" FLOAT DOUBLE
+"cgon_5_lvt" FLOAT DOUBLE
+"cgln_5_lvt" FLOAT DOUBLE
+"ddlcn_5_lvt" FLOAT DOUBLE
+"cjn_5_lvt" FLOAT DOUBLE
+"cjswn_5_lvt" FLOAT DOUBLE
+"cjswgn_5_lvt" FLOAT DOUBLE
+"cfn_5_lvt" FLOAT DOUBLE
+"dvthn_5_lvt" FLOAT DOUBLE
+"dlvthn_5_lvt" FLOAT DOUBLE
+"dwvthn_5_lvt" FLOAT DOUBLE
+"dpvthn_5_lvt" FLOAT DOUBLE
+"dk2n_5_lvt" FLOAT DOUBLE
+"dlk2n_5_lvt" FLOAT DOUBLE
+"dwk2n_5_lvt" FLOAT DOUBLE
+"dpk2n_5_lvt" FLOAT DOUBLE
+"du0n_5_lvt" FLOAT DOUBLE
+"dlu0n_5_lvt" FLOAT DOUBLE
+"dwu0n_5_lvt" FLOAT DOUBLE
+"dpu0n_5_lvt" FLOAT DOUBLE
+"dagsn_5_lvt" FLOAT DOUBLE
+"dwagsn_5_lvt" FLOAT DOUBLE
+"dvsatn_5_lvt" FLOAT DOUBLE
+"dlvsatn_5_lvt" FLOAT DOUBLE
+"dwvsatn_5_lvt" FLOAT DOUBLE
+"dpvsatn_5_lvt" FLOAT DOUBLE
+"dpdiblc2n_5_lvt" FLOAT DOUBLE
+"dlpdiblc2n_5_lvt" FLOAT DOUBLE
+"dwpdiblc2n_5_lvt" FLOAT DOUBLE
+"dppdiblc2n_5_lvt" FLOAT DOUBLE
+"dketan_5_lvt" FLOAT DOUBLE
+"dlketan_5_lvt" FLOAT DOUBLE
+"duc1n_5_lvt" FLOAT DOUBLE
+"dluc1n_5_lvt" FLOAT DOUBLE
+"dwuc1n_5_lvt" FLOAT DOUBLE
+"dpuc1n_5_lvt" FLOAT DOUBLE
+"dua1n_5_lvt" FLOAT DOUBLE
+"dlua1n_5_lvt" FLOAT DOUBLE
+"dub1n_5_lvt" FLOAT DOUBLE
+"dlub1n_5_lvt" FLOAT DOUBLE
+"dpub1n_5_lvt" FLOAT DOUBLE
+"datn_5_lvt" FLOAT DOUBLE
+"dlatn_5_lvt" FLOAT DOUBLE
+"dwatn_5_lvt" FLOAT DOUBLE
+"dpatn_5_lvt" FLOAT DOUBLE
+"par1p_lvt" FLOAT DOUBLE
+"par2p_lvt" FLOAT DOUBLE
+"par3p_lvt" FLOAT DOUBLE
+"par4p_lvt" FLOAT DOUBLE
+"par5p_lvt" FLOAT DOUBLE
+"toxp_5_lvt" FLOAT DOUBLE
+"dxlp_5_lvt" FLOAT DOUBLE
+"dxwp_5_lvt" FLOAT DOUBLE
+"cgop_5_lvt" FLOAT DOUBLE
+"cglp_5_lvt" FLOAT DOUBLE
+"cjp_5_lvt" FLOAT DOUBLE
+"cjswp_5_lvt" FLOAT DOUBLE
+"cjswgp_5_lvt" FLOAT DOUBLE
+"cfp_5_lvt" FLOAT DOUBLE
+"dvthp_5_lvt" FLOAT DOUBLE
+"dlvthp_5_lvt" FLOAT DOUBLE
+"dwvthp_5_lvt" FLOAT DOUBLE
+"dpvthp_5_lvt" FLOAT DOUBLE
+"dk2p_5_lvt" FLOAT DOUBLE
+"dlk2p_5_lvt" FLOAT DOUBLE
+"dwk2p_5_lvt" FLOAT DOUBLE
+"dpk2p_5_lvt" FLOAT DOUBLE
+"du0p_5_lvt" FLOAT DOUBLE
+"dlu0p_5_lvt" FLOAT DOUBLE
+"dwu0p_5_lvt" FLOAT DOUBLE
+"dpu0p_5_lvt" FLOAT DOUBLE
+"dagsp_5_lvt" FLOAT DOUBLE
+"dlagsp_5_lvt" FLOAT DOUBLE
+"dwagsp_5_lvt" FLOAT DOUBLE
+"dpagsp_5_lvt" FLOAT DOUBLE
+"dvsatp_5_lvt" FLOAT DOUBLE
+"dlvsatp_5_lvt" FLOAT DOUBLE
+"dwvsatp_5_lvt" FLOAT DOUBLE
+"dpvsatp_5_lvt" FLOAT DOUBLE
+"dpdiblc2p_5_lvt" FLOAT DOUBLE
+"dlpdiblc2p_5_lvt" FLOAT DOUBLE
+"dwpdiblc2p_5_lvt" FLOAT DOUBLE
+"dppdiblc2p_5_lvt" FLOAT DOUBLE
+"dketap_5_lvt" FLOAT DOUBLE
+"dlketap_5_lvt" FLOAT DOUBLE
+"dub1p_5_lvt" FLOAT DOUBLE
+"dlub1p_5_lvt" FLOAT DOUBLE
+"dwub1p_5_lvt" FLOAT DOUBLE
+"dpub1p_5_lvt" FLOAT DOUBLE
+"datp_5_lvt" FLOAT DOUBLE
+"dlatp_5_lvt" FLOAT DOUBLE
+"dwatp_5_lvt" FLOAT DOUBLE
+"dpatp_5_lvt" FLOAT DOUBLE
+"dpcitp_5_lvt" FLOAT DOUBLE
+"dpclmp_5_lvt" FLOAT DOUBLE
+"dlpclmp_5_lvt" FLOAT DOUBLE
+"dwpclmp_5_lvt" FLOAT DOUBLE
+"dppclmp_5_lvt" FLOAT DOUBLE
+"da0p_5_lvt" FLOAT DOUBLE
+"dla0p_5_lvt" FLOAT DOUBLE
+"dwa0p_5_lvt" FLOAT DOUBLE
+"dpa0p_5_lvt" FLOAT DOUBLE
+"deta0p_5_lvt" FLOAT DOUBLE
+"dleta0p_5_lvt" FLOAT DOUBLE
+"dweta0p_5_lvt" FLOAT DOUBLE
+"dpeta0p_5_lvt" FLOAT DOUBLE
+"shflag_5_switch" FLOAT DOUBLE
+"esoaflag_5_switch" FLOAT DOUBLE
+"ov_ratio_5_switch" FLOAT DOUBLE
+"toxn_nch5switch" FLOAT DOUBLE
+"dxln_nch5switch" FLOAT DOUBLE
+"dxwn_nch5switch" FLOAT DOUBLE
+"cfn_nch5switch" FLOAT DOUBLE
+"cgbn_nch5switch" FLOAT DOUBLE
+"cgdn_nch5switch" FLOAT DOUBLE
+"cgdln_nch5switch" FLOAT DOUBLE
+"cgsn_nch5switch" FLOAT DOUBLE
+"cgsln_nch5switch" FLOAT DOUBLE
+"cjdn_nch5switch" FLOAT DOUBLE
+"cjsn_nch5switch" FLOAT DOUBLE
+"cjswdn_nch5switch" FLOAT DOUBLE
+"cjswgdn_nch5switch" FLOAT DOUBLE
+"cjswgsn_nch5switch" FLOAT DOUBLE
+"cjswsn_nch5switch" FLOAT DOUBLE
+"dvthn_nch5switch" FLOAT DOUBLE
+"dwvthn_nch5switch" FLOAT DOUBLE
+"du0n_nch5switch" FLOAT DOUBLE
+"dwu0n_nch5switch" FLOAT DOUBLE
+"drdn_nch5switch" FLOAT DOUBLE
+"drdwn_nch5switch" FLOAT DOUBLE
+"drswn_nch5switch" FLOAT DOUBLE
+"dvsatn_nch5switch" FLOAT DOUBLE
+"datn_nch5switch" FLOAT DOUBLE
+"da0n_nch5switch" FLOAT DOUBLE
+"toxp_pch5switchslit" FLOAT DOUBLE
+"dxlp_pch5switchslit" FLOAT DOUBLE
+"dxwp_pch5switchslit" FLOAT DOUBLE
+"cfp_pch5switchslit" FLOAT DOUBLE
+"cjdp_pch5switchslit" FLOAT DOUBLE
+"cjsp_pch5switchslit" FLOAT DOUBLE
+"cjswdp_pch5switchslit" FLOAT DOUBLE
+"cjswsp_pch5switchslit" FLOAT DOUBLE
+"cjswgdp_pch5switchslit" FLOAT DOUBLE
+"cjswgsp_pch5switchslit" FLOAT DOUBLE
+"cgdlp_pch5switchslit" FLOAT DOUBLE
+"cgdop_pch5switchslit" FLOAT DOUBLE
+"cgslp_pch5switchslit" FLOAT DOUBLE
+"cgsop_pch5switchslit" FLOAT DOUBLE
+"cgbp_pch5switchslit" FLOAT DOUBLE
+"dvthp_pch5switchslit" FLOAT DOUBLE
+"dwvthp_pch5switchslit" FLOAT DOUBLE
+"du0p_pch5switchslit" FLOAT DOUBLE
+"dwu0p_pch5switchslit" FLOAT DOUBLE
+"dvsatp_pch5switchslit" FLOAT DOUBLE
+"dwvsatp_pch5switchslit" FLOAT DOUBLE
+"dutep_pch5switchslit" FLOAT DOUBLE
+"datp_pch5switchslit" FLOAT DOUBLE
+"drdp_pch5switchslit" FLOAT DOUBLE
+"dgidp_pch5switchslit" FLOAT DOUBLE
+"mismatchflag_mos_5vna" FLOAT DOUBLE
+"ov_ratio_5vna" FLOAT DOUBLE
+"par1n_5vna" FLOAT DOUBLE
+"par2n_5vna" FLOAT DOUBLE
+"par3n_5vna" FLOAT DOUBLE
+"par4n_5vna" FLOAT DOUBLE
+"par5n_5vna" FLOAT DOUBLE
+"toxn_5vna" FLOAT DOUBLE
+"dxln_5vna" FLOAT DOUBLE
+"dxwn_5vna" FLOAT DOUBLE
+"cjn_5vna" FLOAT DOUBLE
+"cjswn_5vna" FLOAT DOUBLE
+"cjswgn_5vna" FLOAT DOUBLE
+"cgon_5vna" FLOAT DOUBLE
+"cgln_5vna" FLOAT DOUBLE
+"cfn_5vna" FLOAT DOUBLE
+"dagsn_5vna" FLOAT DOUBLE
+"dwagsn_5vna" FLOAT DOUBLE
+"dk2n_5vna" FLOAT DOUBLE
+"dlk2n_5vna" FLOAT DOUBLE
+"dwk2n_5vna" FLOAT DOUBLE
+"dpk2n_5vna" FLOAT DOUBLE
+"dlkt2n_5vna" FLOAT DOUBLE
+"dpclmn_5vna" FLOAT DOUBLE
+"dwpclmn_5vna" FLOAT DOUBLE
+"dpdiblc2n_5vna" FLOAT DOUBLE
+"dlpdiblc2n_5vna" FLOAT DOUBLE
+"dwpdiblc2n_5vna" FLOAT DOUBLE
+"dppdiblc2n_5vna" FLOAT DOUBLE
+"du0n_5vna" FLOAT DOUBLE
+"dlu0n_5vna" FLOAT DOUBLE
+"dwu0n_5vna" FLOAT DOUBLE
+"dpu0n_5vna" FLOAT DOUBLE
+"dvsatn_5vna" FLOAT DOUBLE
+"dwvsatn_5vna" FLOAT DOUBLE
+"dvthn_5vna" FLOAT DOUBLE
+"dlvthn_5vna" FLOAT DOUBLE
+"dwvthn_5vna" FLOAT DOUBLE
+"dpvthn_5vna" FLOAT DOUBLE
+"ov_ratio_cap" FLOAT DOUBLE
+"cmv_bb_cgmin" FLOAT DOUBLE
+"cmv_bb_dcg" FLOAT DOUBLE
+"mismatchflag_cap5" FLOAT DOUBLE
+"ov_ratio_cap_5" FLOAT DOUBLE
+"par5_nmoscap" FLOAT DOUBLE
+"dxln_var5" FLOAT DOUBLE
+"dxwn_var5" FLOAT DOUBLE
+"cgminn_var5" FLOAT DOUBLE
+"dcgn_var5" FLOAT DOUBLE
+"mismatchflag_bip" FLOAT DOUBLE
+"ov_ratio_bip" FLOAT DOUBLE
+"par_bjtp1" FLOAT DOUBLE
+"par_bjtp2" FLOAT DOUBLE
+"bfa" FLOAT DOUBLE
+"isa" FLOAT DOUBLE
+"nfa" FLOAT DOUBLE
+"rba" FLOAT DOUBLE
+"rea" FLOAT DOUBLE
+"rca" FLOAT DOUBLE
+"rbma" FLOAT DOUBLE
+"cjea" FLOAT DOUBLE
+"cjca" FLOAT DOUBLE
+"mismatchflag_bip5_poly" FLOAT DOUBLE
+"ov_ratio_bip5_poly" FLOAT DOUBLE
+"par_bjt_bip5_poly1" FLOAT DOUBLE
+"par_bjt_bip5_poly2" FLOAT DOUBLE
+"bfb5_poly" FLOAT DOUBLE
+"isb5_poly" FLOAT DOUBLE
+"nfb5_poly" FLOAT DOUBLE
+"rbb5_poly" FLOAT DOUBLE
+"reb5_poly" FLOAT DOUBLE
+"rcb5_poly" FLOAT DOUBLE
+"rbmb5_poly" FLOAT DOUBLE
+"cjeb5_poly" FLOAT DOUBLE
+"cjcb5_poly" FLOAT DOUBLE
+"mismatchflag_bip5_rpo" FLOAT DOUBLE
+"ov_ratio_bip5_rpo" FLOAT DOUBLE
+"par_bjt_bip5_rpo1" FLOAT DOUBLE
+"par_bjt_bip5_rpo2" FLOAT DOUBLE
+"bfb5_rpo" FLOAT DOUBLE
+"isb5_rpo" FLOAT DOUBLE
+"nfb5_rpo" FLOAT DOUBLE
+"rbb5_rpo" FLOAT DOUBLE
+"reb5_rpo" FLOAT DOUBLE
+"rcb5_rpo" FLOAT DOUBLE
+"rbmb5_rpo" FLOAT DOUBLE
+"cjeb5_rpo" FLOAT DOUBLE
+"cjcb5_rpo" FLOAT DOUBLE
+"mismatchflag_bip_hv" FLOAT DOUBLE
+"ov_ratio_bip_hv" FLOAT DOUBLE
+"par_hv_bjtn1" FLOAT DOUBLE
+"par_hv_bjtn2" FLOAT DOUBLE
+"par_hv_bjtn3" FLOAT DOUBLE
+"par_hv_bjtn4" FLOAT DOUBLE
+"par_hv_bjtp1" FLOAT DOUBLE
+"par_hv_bjtp2" FLOAT DOUBLE
+"par_hv_bjtp3" FLOAT DOUBLE
+"par_hv_bjtp4" FLOAT DOUBLE
+"is_d_hv_bip_hv" FLOAT DOUBLE
+"x_jsw_d_hv_bip_hv" FLOAT DOUBLE
+"n_d_hv_bip_hv" FLOAT DOUBLE
+"rs_d_hv_bip_hv" FLOAT DOUBLE
+"cj_d_hv_bip_hv" FLOAT DOUBLE
+"cjsw_d_hv_bip_hv" FLOAT DOUBLE
+"bf_npwhvnwnbl10" FLOAT DOUBLE
+"bf_npwhvnwnbl5" FLOAT DOUBLE
+"bf_npwhvnwnbl2" FLOAT DOUBLE
+"ne_npwhvnwnbl" FLOAT DOUBLE
+"is_npwhvnwnbl" FLOAT DOUBLE
+"nf_npwhvnwnbl" FLOAT DOUBLE
+"rb_npwhvnwnbl" FLOAT DOUBLE
+"re_npwhvnwnbl" FLOAT DOUBLE
+"rc_npwhvnwnbl" FLOAT DOUBLE
+"rbm_npwhvnwnbl" FLOAT DOUBLE
+"cje_npwhvnwnbl" FLOAT DOUBLE
+"cjc_npwhvnwnbl" FLOAT DOUBLE
+"bf_npwhvnwnbl10_ga_bgr8_1" FLOAT DOUBLE
+"bf_npwhvnwnbl10_ga_bgr8_8" FLOAT DOUBLE
+"ne_npwhvnwnbl10_ga_bgr8" FLOAT DOUBLE
+"bf_nwhvpwnbl10_gb_bgr8_7t_1" FLOAT DOUBLE
+"bf_nwhvpwnbl10_gb_bgr8_7t_8" FLOAT DOUBLE
+"ne_nwhvpwnbl_gb_bgr8_7t" FLOAT DOUBLE
+"is_nwhvpwnbl_gb_bgr8_7t" FLOAT DOUBLE
+"nf_nwhvpwnbl_gb_bgr8_7t" FLOAT DOUBLE
+"rb_nwhvpwnbl_gb_bgr8_7t" FLOAT DOUBLE
+"re_nwhvpwnbl_gb_bgr8_7t" FLOAT DOUBLE
+"rc_nwhvpwnbl_gb_bgr8_7t" FLOAT DOUBLE
+"rbm_nwhvpwnbl_gb_bgr8_7t" FLOAT DOUBLE
+"cje_nwhvpwnbl_gb_bgr8_7t" FLOAT DOUBLE
+"cjc_nwhvpwnbl_gb_bgr8_7t" FLOAT DOUBLE
+"cjs_nwhvpwnbl_gb_bgr8_7t" FLOAT DOUBLE
+"bf_pbhvnwpsub10_gb_bgr8_5t" FLOAT DOUBLE
+"bf_pbhvnwpsub10_gb_bgr8_5t_8" FLOAT DOUBLE
+"is_pbhvnwpsub_gb_bgr8_5t" FLOAT DOUBLE
+"nf_pbhvnwpsub_gb_bgr8_5t" FLOAT DOUBLE
+"rb_pbhvnwpsub_gb_bgr8_5t" FLOAT DOUBLE
+"re_pbhvnwpsub_gb_bgr8_5t" FLOAT DOUBLE
+"rc_pbhvnwpsub_gb_bgr8_5t" FLOAT DOUBLE
+"rbm_pbhvnwpsub_gb_bgr8_5t" FLOAT DOUBLE
+"cje_pbhvnwpsub_gb_bgr8_5t" FLOAT DOUBLE
+"cjc_pbhvnwpsub_gb_bgr8_5t" FLOAT DOUBLE
+"bf_pbhvnwpsub10_ga" FLOAT DOUBLE
+"bf_pbhvnwpsub5_ga" FLOAT DOUBLE
+"bf_pbhvnwpsub2_ga" FLOAT DOUBLE
+"is_pbhvnwpsub_ga" FLOAT DOUBLE
+"nf_pbhvnwpsub_ga" FLOAT DOUBLE
+"rb_pbhvnwpsub_ga" FLOAT DOUBLE
+"re_pbhvnwpsub_ga" FLOAT DOUBLE
+"rc_pbhvnwpsub_ga" FLOAT DOUBLE
+"rbm_pbhvnwpsub_ga" FLOAT DOUBLE
+"cje_pbhvnwpsub_ga" FLOAT DOUBLE
+"cjc_pbhvnwpsub_ga" FLOAT DOUBLE
+"bf_pbhvnwnblshp5_lat_ga" FLOAT DOUBLE
+"bf_pbhvnwnblshp2_lat_ga" FLOAT DOUBLE
+"ne_pbhvnwnblshp5_lat_ga" FLOAT DOUBLE
+"ne_pbhvnwnblshp2_lat_ga" FLOAT DOUBLE
+"is_pbhvnwnblshp_lat_ga" FLOAT DOUBLE
+"nf_pbhvnwnblshp_lat_ga" FLOAT DOUBLE
+"rb_pbhvnwnblshp_lat_ga" FLOAT DOUBLE
+"re_pbhvnwnblshp_lat_ga" FLOAT DOUBLE
+"rc_pbhvnwnblshp_lat_ga" FLOAT DOUBLE
+"rbm_pbhvnwnblshp_lat_ga" FLOAT DOUBLE
+"cje_pbhvnwnblshp_lat_ga" FLOAT DOUBLE
+"cjc_pbhvnwnblshp_lat_ga" FLOAT DOUBLE
+"bf_nhvpwnblgb10" FLOAT DOUBLE
+"bf_nhvpwnblgb5" FLOAT DOUBLE
+"bf_nhvpwnblgb2" FLOAT DOUBLE
+"ne_nhvpwnblgb" FLOAT DOUBLE
+"is_nhvpwnblgb" FLOAT DOUBLE
+"nf_nhvpwnblgb" FLOAT DOUBLE
+"rb_nhvpwnblgb" FLOAT DOUBLE
+"re_nhvpwnblgb" FLOAT DOUBLE
+"rc_nhvpwnblgb" FLOAT DOUBLE
+"rbm_nhvpwnblgb" FLOAT DOUBLE
+"cje_nhvpwnblgb" FLOAT DOUBLE
+"cjc_nhvpwnblgb" FLOAT DOUBLE
+"bf_nwhvpwnbl10" FLOAT DOUBLE
+"bf_nwhvpwnbl5" FLOAT DOUBLE
+"bf_nwhvpwnbl2" FLOAT DOUBLE
+"ne_nwhvpwnbl" FLOAT DOUBLE
+"is_nwhvpwnbl" FLOAT DOUBLE
+"nf_nwhvpwnbl" FLOAT DOUBLE
+"rb_nwhvpwnbl" FLOAT DOUBLE
+"re_nwhvpwnbl" FLOAT DOUBLE
+"rc_nwhvpwnbl" FLOAT DOUBLE
+"rbm_nwhvpwnbl" FLOAT DOUBLE
+"cje_nwhvpwnbl" FLOAT DOUBLE
+"cjc_nwhvpwnbl" FLOAT DOUBLE
+"bf_pbhvnwpsub10_gb" FLOAT DOUBLE
+"bf_pbhvnwpsub5_gb" FLOAT DOUBLE
+"bf_pbhvnwpsub2_gb" FLOAT DOUBLE
+"is_pbhvnwpsub_gb" FLOAT DOUBLE
+"nf_pbhvnwpsub_gb" FLOAT DOUBLE
+"rb_pbhvnwpsub_gb" FLOAT DOUBLE
+"re_pbhvnwpsub_gb" FLOAT DOUBLE
+"rc_pbhvnwpsub_gb" FLOAT DOUBLE
+"rbm_pbhvnwpsub_gb" FLOAT DOUBLE
+"cje_pbhvnwpsub_gb" FLOAT DOUBLE
+"cjc_pbhvnwpsub_gb" FLOAT DOUBLE
+"bf_phvnwdpw10" FLOAT DOUBLE
+"bf_phvnwdpw5" FLOAT DOUBLE
+"bf_phvnwdpw2" FLOAT DOUBLE
+"is_phvnwdpw" FLOAT DOUBLE
+"nf_phvnwdpw" FLOAT DOUBLE
+"rb_phvnwdpw" FLOAT DOUBLE
+"re_phvnwdpw" FLOAT DOUBLE
+"rc_phvnwdpw" FLOAT DOUBLE
+"rbm_phvnwdpw" FLOAT DOUBLE
+"cje_phvnwdpw" FLOAT DOUBLE
+"cjc_phvnwdpw" FLOAT DOUBLE
+"bf_pbhvnwnblhvpw5_lat_gb" FLOAT DOUBLE
+"bf_pbhvnwnblhvpw2_lat_gb" FLOAT DOUBLE
+"ne_pbhvnwnblhvpw5_lat_gb" FLOAT DOUBLE
+"ne_pbhvnwnblhvpw2_lat_gb" FLOAT DOUBLE
+"is_pbhvnwnblhvpw_lat_gb" FLOAT DOUBLE
+"nf_pbhvnwnblhvpw_lat_gb" FLOAT DOUBLE
+"rb_pbhvnwnblhvpw_lat_gb" FLOAT DOUBLE
+"re_pbhvnwnblhvpw_lat_gb" FLOAT DOUBLE
+"rc_pbhvnwnblhvpw_lat_gb" FLOAT DOUBLE
+"rbm_pbhvnwnblhvpw_lat_gb" FLOAT DOUBLE
+"cje_pbhvnwnblhvpw_lat_gb" FLOAT DOUBLE
+"cjc_pbhvnwnblhvpw_lat_gb" FLOAT DOUBLE
+"bf_npwhvnwnbl10_ga_poly_4t" FLOAT DOUBLE
+"bf_npwhvnwnbl5_ga_poly_4t" FLOAT DOUBLE
+"bf_npwhvnwnbl2_ga_poly_4t" FLOAT DOUBLE
+"ne_npwhvnwnbl_ga_poly_4t" FLOAT DOUBLE
+"is_npwhvnwnbl_ga_poly_4t" FLOAT DOUBLE
+"nf_npwhvnwnbl_ga_poly_4t" FLOAT DOUBLE
+"rb_npwhvnwnbl_ga_poly_4t" FLOAT DOUBLE
+"re_npwhvnwnbl_ga_poly_4t" FLOAT DOUBLE
+"rc_npwhvnwnbl_ga_poly_4t" FLOAT DOUBLE
+"rbm_npwhvnwnbl_ga_poly_4t" FLOAT DOUBLE
+"cje_npwhvnwnbl_ga_poly_4t" FLOAT DOUBLE
+"cjc_npwhvnwnbl_ga_poly_4t" FLOAT DOUBLE
+"bf_nwhvpwnbl10_gb_poly_4t" FLOAT DOUBLE
+"bf_nwhvpwnbl5_gb_poly_4t" FLOAT DOUBLE
+"bf_nwhvpwnbl2_gb_poly_4t" FLOAT DOUBLE
+"ne_nwhvpwnbl_gb_poly_4t" FLOAT DOUBLE
+"is_nwhvpwnbl_gb_poly_4t" FLOAT DOUBLE
+"nf_nwhvpwnbl_gb_poly_4t" FLOAT DOUBLE
+"rb_nwhvpwnbl_gb_poly_4t" FLOAT DOUBLE
+"re_nwhvpwnbl_gb_poly_4t" FLOAT DOUBLE
+"rc_nwhvpwnbl_gb_poly_4t" FLOAT DOUBLE
+"rbm_nwhvpwnbl_gb_poly_4t" FLOAT DOUBLE
+"cje_nwhvpwnbl_gb_poly_4t" FLOAT DOUBLE
+"cjc_nwhvpwnbl_gb_poly_4t" FLOAT DOUBLE
+"mismatchflag_bip_rpo" FLOAT DOUBLE
+"ov_ratio_bip_rpo" FLOAT DOUBLE
+"par_bjt_bip_rpo1" FLOAT DOUBLE
+"par_bjt_bip_rpo2" FLOAT DOUBLE
+"bfb_rpo" FLOAT DOUBLE
+"isb_rpo" FLOAT DOUBLE
+"nfb_rpo" FLOAT DOUBLE
+"rbb_rpo" FLOAT DOUBLE
+"reb_rpo" FLOAT DOUBLE
+"rcb_rpo" FLOAT DOUBLE
+"rbmb_rpo" FLOAT DOUBLE
+"cjeb_rpo" FLOAT DOUBLE
+"cjcb_rpo" FLOAT DOUBLE
+"mismatchflag_mos_dep5" FLOAT DOUBLE
+"ov_ratio_dep5" FLOAT DOUBLE
+"par1n_dep5" FLOAT DOUBLE
+"par2n_dep5" FLOAT DOUBLE
+"par3n_dep5" FLOAT DOUBLE
+"par4n_dep5" FLOAT DOUBLE
+"par5n_dep5" FLOAT DOUBLE
+"toxn_dep5" FLOAT DOUBLE
+"dxln_dep5" FLOAT DOUBLE
+"dxwn_dep5" FLOAT DOUBLE
+"dvthn_dep5" FLOAT DOUBLE
+"dlvthn_dep5" FLOAT DOUBLE
+"dwvthn_dep5" FLOAT DOUBLE
+"dpvthn_dep5" FLOAT DOUBLE
+"cjn_dep5" FLOAT DOUBLE
+"cjswn_dep5" FLOAT DOUBLE
+"cjswgn_dep5" FLOAT DOUBLE
+"cgon_dep5" FLOAT DOUBLE
+"cgln_dep5" FLOAT DOUBLE
+"cfn_dep5" FLOAT DOUBLE
+"du0n_dep5" FLOAT DOUBLE
+"dlu0n_dep5" FLOAT DOUBLE
+"dwu0n_dep5" FLOAT DOUBLE
+"dpu0n_dep5" FLOAT DOUBLE
+"dagsn_dep5" FLOAT DOUBLE
+"dwagsn_dep5" FLOAT DOUBLE
+"dvsatn_dep5" FLOAT DOUBLE
+"dlpdiblc2n_dep5" FLOAT DOUBLE
+"dwpdiblc2n_dep5" FLOAT DOUBLE
+"dpvsatn_dep5" FLOAT DOUBLE
+"dppdiblc2n_dep5" FLOAT DOUBLE
+"dk2n_dep5" FLOAT DOUBLE
+"dlk2n_dep5" FLOAT DOUBLE
+"dwk2n_dep5" FLOAT DOUBLE
+"dpk2n_dep5" FLOAT DOUBLE
+"dub1n_dep5" FLOAT DOUBLE
+"dlub1n_dep5" FLOAT DOUBLE
+"dlucn_dep5" FLOAT DOUBLE
+"duc1n_dep5" FLOAT DOUBLE
+"dpucn_dep5" FLOAT DOUBLE
+"is_d" FLOAT DOUBLE
+"jsw_d" FLOAT DOUBLE
+"n_d" FLOAT DOUBLE
+"rs_d" FLOAT DOUBLE
+"cj_d" FLOAT DOUBLE
+"cjsw_d" FLOAT DOUBLE
+"is_d_5" FLOAT DOUBLE
+"x_jsw_d_5" FLOAT DOUBLE
+"n_d_5" FLOAT DOUBLE
+"rs_d_5" FLOAT DOUBLE
+"cj_d_5" FLOAT DOUBLE
+"cjsw_d_5" FLOAT DOUBLE
+"is_d_esd" FLOAT DOUBLE
+"x_jsw_d_esd" FLOAT DOUBLE
+"n_d_esd" FLOAT DOUBLE
+"rs_d_esd" FLOAT DOUBLE
+"cj_d_esd" FLOAT DOUBLE
+"cjsw_d_esd" FLOAT DOUBLE
+"bv_d_esd_ga_6" FLOAT DOUBLE
+"bv_d_esd_ga_8" FLOAT DOUBLE
+"bv_d_esd_ga_12_tlm" FLOAT DOUBLE
+"bv_d_esd_ga_12_v2" FLOAT DOUBLE
+"bv_d_esd_ga_16_tlm" FLOAT DOUBLE
+"bv_d_esd_ga_nbl_16_v2" FLOAT DOUBLE
+"bv_d_esd_ga_nbl_20_tlm" FLOAT DOUBLE
+"bv_d_esd_ga_nbl_20_v2" FLOAT DOUBLE
+"bv_d_esd_ga_nbl_24_tlm" FLOAT DOUBLE
+"bv_d_esd_ga_nbl_24_v2" FLOAT DOUBLE
+"bv_d_esd_ga_nbl_29_tlm" FLOAT DOUBLE
+"bv_d_esd_ga_nbl_29_v2" FLOAT DOUBLE
+"bv_d_esd_gb_20" FLOAT DOUBLE
+"bv_d_esd_gb_24" FLOAT DOUBLE
+"bv_d_esd_gb_36" FLOAT DOUBLE
+"bv_d_esd_gb_45" FLOAT DOUBLE
+"bv_d_esd_gb_55" FLOAT DOUBLE
+"bv_d_esd_gb_65" FLOAT DOUBLE
+"bv_pbhvnwnbl_esd_shp_ga" FLOAT DOUBLE
+"bv_hvpwnblhvnw_esd_hvpw_gb" FLOAT DOUBLE
+"is_d_hv" FLOAT DOUBLE
+"x_jsw_d_hv" FLOAT DOUBLE
+"n_d_hv" FLOAT DOUBLE
+"rs_d_hv" FLOAT DOUBLE
+"cj_d_hv" FLOAT DOUBLE
+"cjsw_d_hv" FLOAT DOUBLE
+"bv_d_hv" FLOAT DOUBLE
+"bv_d_hv2" FLOAT DOUBLE
+"bv_d_hv3" FLOAT DOUBLE
+"is_d_sbd" FLOAT DOUBLE
+"n_d_sbd" FLOAT DOUBLE
+"x_jsw_sbd" FLOAT DOUBLE
+"rs_d_sbd" FLOAT DOUBLE
+"cj_d_sbd" FLOAT DOUBLE
+"cjsw_d_sbd" FLOAT DOUBLE
+"n_sd_12" FLOAT DOUBLE
+"is_sd_12" FLOAT DOUBLE
+"jsw_sd_12" FLOAT DOUBLE
+"rs_sd_12" FLOAT DOUBLE
+"cj_sd_12" FLOAT DOUBLE
+"cjsw_sd_12" FLOAT DOUBLE
+"bv_sd_12" FLOAT DOUBLE
+"n_sd_16" FLOAT DOUBLE
+"cj_sd_16" FLOAT DOUBLE
+"cjsw_sd_16" FLOAT DOUBLE
+"is_sd_16" FLOAT DOUBLE
+"jsw_sd_16" FLOAT DOUBLE
+"rs_sd_16" FLOAT DOUBLE
+"bv_sd_16" FLOAT DOUBLE
+"n_sd_24" FLOAT DOUBLE
+"cj_sd_24" FLOAT DOUBLE
+"cjsw_sd_24" FLOAT DOUBLE
+"is_sd_24" FLOAT DOUBLE
+"jsw_sd_24" FLOAT DOUBLE
+"rs_sd_24" FLOAT DOUBLE
+"bv_sd_24" FLOAT DOUBLE
+"n_sd_30" FLOAT DOUBLE
+"cj_sd_30" FLOAT DOUBLE
+"cjsw_sd_30" FLOAT DOUBLE
+"is_sd_30" FLOAT DOUBLE
+"jsw_sd_30" FLOAT DOUBLE
+"rs_sd_30" FLOAT DOUBLE
+"bv_sd_30" FLOAT DOUBLE
+"n_sd_36" FLOAT DOUBLE
+"cj_sd_36" FLOAT DOUBLE
+"cjsw_sd_36" FLOAT DOUBLE
+"is_sd_36" FLOAT DOUBLE
+"jsw_sd_36" FLOAT DOUBLE
+"rs_sd_36" FLOAT DOUBLE
+"bv_sd_36" FLOAT DOUBLE
+"is_zd" FLOAT DOUBLE
+"x_jsw_zd" FLOAT DOUBLE
+"n_zd" FLOAT DOUBLE
+"rs_zd" FLOAT DOUBLE
+"cj_zd" FLOAT DOUBLE
+"cjsw_zd" FLOAT DOUBLE
+"bv_zd" FLOAT DOUBLE
+"bv_zd_gb" FLOAT DOUBLE
+"mismatchflag_disres" FLOAT DOUBLE
+"par_res_dis" FLOAT DOUBLE
+"r_rnod_dis" FLOAT DOUBLE
+"r_rnodw_dis" FLOAT DOUBLE
+"r_rpod_dis" FLOAT DOUBLE
+"r_rpodw_dis" FLOAT DOUBLE
+"r_rnpo1_dis" FLOAT DOUBLE
+"r_rnpo1w_dis" FLOAT DOUBLE
+"r_rppo1_dis" FLOAT DOUBLE
+"r_rppo1w_dis" FLOAT DOUBLE
+"r_rnodrpo_dis" FLOAT DOUBLE
+"rend_rnodrpo_dis" FLOAT DOUBLE
+"dxl_rnodrpo_dis" FLOAT DOUBLE
+"x_dxw_rnodrpo_dis" FLOAT DOUBLE
+"r_rpodrpo_dis" FLOAT DOUBLE
+"rend_rpodrpo_dis" FLOAT DOUBLE
+"dxl_rpodrpo_dis" FLOAT DOUBLE
+"x_dxw_rpodrpo_dis" FLOAT DOUBLE
+"r_rnpo1rpo_dis" FLOAT DOUBLE
+"rend_rnpo1rpo_dis" FLOAT DOUBLE
+"dxl_rnpo1rpo_dis" FLOAT DOUBLE
+"x_dxw_rnpo1rpo_dis" FLOAT DOUBLE
+"r_rppo1rpo_dis" FLOAT DOUBLE
+"rend_rppo1rpo_dis" FLOAT DOUBLE
+"dxl_rppo1rpo_dis" FLOAT DOUBLE
+"x_dxw_rppo1rpo_dis" FLOAT DOUBLE
+"r_rppolyhri_dis" FLOAT DOUBLE
+"rend_rppolyhri_dis" FLOAT DOUBLE
+"dxl_rppolyhri_dis" FLOAT DOUBLE
+"x_dxw_rppolyhri_dis" FLOAT DOUBLE
+"r_rppolyhri3k_dis" FLOAT DOUBLE
+"rend_rppolyhri3k_dis" FLOAT DOUBLE
+"x_dxl_rppolyhri3k_dis" FLOAT DOUBLE
+"x_dxw_rppolyhri3k_dis" FLOAT DOUBLE
+"r_nodrpo_pure5v_dis" FLOAT DOUBLE
+"rend_nodrpo_pure5v_dis" FLOAT DOUBLE
+"dxl_nodrpo_pure5v_dis" FLOAT DOUBLE
+"x_dxw_nodrpo_pure5v_dis" FLOAT DOUBLE
+"r_podrpo_pure5v_dis" FLOAT DOUBLE
+"rend_podrpo_pure5v_dis" FLOAT DOUBLE
+"dxl_podrpo_pure5v_dis" FLOAT DOUBLE
+"x_dxw_podrpo_pure5v_dis" FLOAT DOUBLE
+"r_npolyrpo_pure5v_dis" FLOAT DOUBLE
+"rend_npolyrpo_pure5v_dis" FLOAT DOUBLE
+"dxl_npolyrpo_pure5v_dis" FLOAT DOUBLE
+"x_dxw_npolyrpo_pure5v_dis" FLOAT DOUBLE
+"r_ppolyrpo_pure5v_dis" FLOAT DOUBLE
+"rend_ppolyrpo_pure5v_dis" FLOAT DOUBLE
+"dxl_ppolyrpo_pure5v_dis" FLOAT DOUBLE
+"x_dxw_ppolyrpo_pure5v_dis" FLOAT DOUBLE
+"r_rppolywo_serp_dis" FLOAT DOUBLE
+"rend_rppolywo_serp_dis" FLOAT DOUBLE
+"dxl_rppolywo_serp_dis" FLOAT DOUBLE
+"x_dxw_rppolywo_serp_dis" FLOAT DOUBLE
+"r_rppolyhri_serp_dis" FLOAT DOUBLE
+"rend_rppolyhri_serp_dis" FLOAT DOUBLE
+"dxl_rppolyhri_serp_dis" FLOAT DOUBLE
+"x_dxw_rppolyhri_serp_dis" FLOAT DOUBLE
+"r_rnwsti_dis" FLOAT DOUBLE
+"rend_rnwsti_dis" FLOAT DOUBLE
+"r_rnwsti_pure5v_dis" FLOAT DOUBLE
+"rend_rnwsti_pure5v_dis" FLOAT DOUBLE
+"r_rnwod_dis" FLOAT DOUBLE
+"rend_rnwod_dis" FLOAT DOUBLE
+"r_rnwod_pure5v_dis" FLOAT DOUBLE
+"rend_rnwod_pure5v_dis" FLOAT DOUBLE
+"ca_pofox" FLOAT DOUBLE
+"cf_polfox" FLOAT DOUBLE
+"cf_posfox" FLOAT DOUBLE
+"ca_pofox_r" FLOAT DOUBLE
+"cf_polfox_r" FLOAT DOUBLE
+"mismatchflag_fmom" FLOAT DOUBLE
+"ov_ratio_fmom" FLOAT DOUBLE
+"par_fmom" FLOAT DOUBLE
+"par_fmom1" FLOAT DOUBLE
+"par_fmom2" FLOAT DOUBLE
+"fmom_fac" FLOAT DOUBLE
+"fmom_fac2" FLOAT DOUBLE
+"fmom_fac_tm_m1_0d23" FLOAT DOUBLE
+"fmom_fac2_tm_m1_0d23" FLOAT DOUBLE
+"fmom_fac_m1_0d23" FLOAT DOUBLE
+"fmom_fac2_m1_0d23" FLOAT DOUBLE
+"fmom_fac_tm_m1_0d28" FLOAT DOUBLE
+"fmom_fac2_tm_m1_0d28" FLOAT DOUBLE
+"fmom_fac_m1_0d28" FLOAT DOUBLE
+"fmom_fac2_m1_0d28" FLOAT DOUBLE
+"drrflag_hv" FLOAT DOUBLE
+"esoaflag_hv" FLOAT DOUBLE
+"mismatchflag_hv" FLOAT DOUBLE
+"ov_ratio_hv" FLOAT DOUBLE
+"shflag_hv" FLOAT DOUBLE
+"par1n_hv" FLOAT DOUBLE
+"par2n_hv" FLOAT DOUBLE
+"par3n_hv" FLOAT DOUBLE
+"par4n_hv" FLOAT DOUBLE
+"par5n_hv" FLOAT DOUBLE
+"par6n_hv" FLOAT DOUBLE
+"par1p_hv" FLOAT DOUBLE
+"par2p_hv" FLOAT DOUBLE
+"par3p_hv" FLOAT DOUBLE
+"par4p_hv" FLOAT DOUBLE
+"par5p_hv" FLOAT DOUBLE
+"cgdn_nld6g5adenbl" FLOAT DOUBLE
+"cgdln_nld6g5adenbl" FLOAT DOUBLE
+"cgsn_nld6g5adenbl" FLOAT DOUBLE
+"cgsln_nld6g5adenbl" FLOAT DOUBLE
+"cjdn_nld6g5adenbl" FLOAT DOUBLE
+"cjsn_nld6g5adenbl" FLOAT DOUBLE
+"cjswdn_nld6g5adenbl" FLOAT DOUBLE
+"cjswgdn_nld6g5adenbl" FLOAT DOUBLE
+"cjswgsn_nld6g5adenbl" FLOAT DOUBLE
+"cjswsn_nld6g5adenbl" FLOAT DOUBLE
+"da0n_nld6g5adenbl" FLOAT DOUBLE
+"dcgbn_nld6g5adenbl" FLOAT DOUBLE
+"drdwn_nld6g5adenbl" FLOAT DOUBLE
+"drswn_nld6g5adenbl" FLOAT DOUBLE
+"du0n_nld6g5adenbl" FLOAT DOUBLE
+"dvsatn_nld6g5adenbl" FLOAT DOUBLE
+"dvthn_nld6g5adenbl" FLOAT DOUBLE
+"dwa0n_nld6g5adenbl" FLOAT DOUBLE
+"dwatn_nld6g5adenbl" FLOAT DOUBLE
+"dwpdiblc2n_nld6g5adenbl" FLOAT DOUBLE
+"dwrdwn_nld6g5adenbl" FLOAT DOUBLE
+"dwrswn_nld6g5adenbl" FLOAT DOUBLE
+"dwu0n_nld6g5adenbl" FLOAT DOUBLE
+"dwua1n_nld6g5adenbl" FLOAT DOUBLE
+"dwvsatn_nld6g5adenbl" FLOAT DOUBLE
+"dwvthn_nld6g5adenbl" FLOAT DOUBLE
+"dxln_nld6g5adenbl" FLOAT DOUBLE
+"dxwn_nld6g5adenbl" FLOAT DOUBLE
+"toxn_nld6g5adenbl" FLOAT DOUBLE
+"toxn_nld6g5adeiso" FLOAT DOUBLE
+"dxln_nld6g5adeiso" FLOAT DOUBLE
+"dxwn_nld6g5adeiso" FLOAT DOUBLE
+"cgdn_nld6g5adeiso" FLOAT DOUBLE
+"cgsn_nld6g5adeiso" FLOAT DOUBLE
+"cjdn_nld6g5adeiso" FLOAT DOUBLE
+"cjsn_nld6g5adeiso" FLOAT DOUBLE
+"cjswdn_nld6g5adeiso" FLOAT DOUBLE
+"cjswgdn_nld6g5adeiso" FLOAT DOUBLE
+"cjswgsn_nld6g5adeiso" FLOAT DOUBLE
+"cjswsn_nld6g5adeiso" FLOAT DOUBLE
+"da0n_nld6g5adeiso" FLOAT DOUBLE
+"drdwn_nld6g5adeiso" FLOAT DOUBLE
+"drswn_nld6g5adeiso" FLOAT DOUBLE
+"du0n_nld6g5adeiso" FLOAT DOUBLE
+"dvsatn_nld6g5adeiso" FLOAT DOUBLE
+"dvthn_nld6g5adeiso" FLOAT DOUBLE
+"dwa0n_nld6g5adeiso" FLOAT DOUBLE
+"dwatn_nld6g5adeiso" FLOAT DOUBLE
+"dwpdiblc2n_nld6g5adeiso" FLOAT DOUBLE
+"dwrdwn_nld6g5adeiso" FLOAT DOUBLE
+"dwrswn_nld6g5adeiso" FLOAT DOUBLE
+"dwu0n_nld6g5adeiso" FLOAT DOUBLE
+"dwua1n_nld6g5adeiso" FLOAT DOUBLE
+"dwvsatn_nld6g5adeiso" FLOAT DOUBLE
+"dwvthn_nld6g5adeiso" FLOAT DOUBLE
+"dcgbn_nld6g5adeiso" FLOAT DOUBLE
+"cgdln_nld6g5adeiso" FLOAT DOUBLE
+"cgsln_nld6g5adeiso" FLOAT DOUBLE
+"toxn_nld6g5asanbl" FLOAT DOUBLE
+"dxln_nld6g5asanbl" FLOAT DOUBLE
+"dxwn_nld6g5asanbl" FLOAT DOUBLE
+"cjdn_nld6g5asanbl" FLOAT DOUBLE
+"cjswdn_nld6g5asanbl" FLOAT DOUBLE
+"cjswgdn_nld6g5asanbl" FLOAT DOUBLE
+"cjsn_nld6g5asanbl" FLOAT DOUBLE
+"cjswsn_nld6g5asanbl" FLOAT DOUBLE
+"cjswgsn_nld6g5asanbl" FLOAT DOUBLE
+"cgdn_nld6g5asanbl" FLOAT DOUBLE
+"cgsn_nld6g5asanbl" FLOAT DOUBLE
+"cgdln_nld6g5asanbl" FLOAT DOUBLE
+"cgsln_nld6g5asanbl" FLOAT DOUBLE
+"dvthn_nld6g5asanbl" FLOAT DOUBLE
+"dwvthn_nld6g5asanbl" FLOAT DOUBLE
+"dvsatn_nld6g5asanbl" FLOAT DOUBLE
+"dwvsatn_nld6g5asanbl" FLOAT DOUBLE
+"du0n_nld6g5asanbl" FLOAT DOUBLE
+"dwu0n_nld6g5asanbl" FLOAT DOUBLE
+"drdwn_nld6g5asanbl" FLOAT DOUBLE
+"drswn_nld6g5asanbl" FLOAT DOUBLE
+"dwrdwn_nld6g5asanbl" FLOAT DOUBLE
+"dwrswn_nld6g5asanbl" FLOAT DOUBLE
+"da0_nld6g5asanbl" FLOAT DOUBLE
+"dwa0_nld6g5asanbl" FLOAT DOUBLE
+"dcgbn_nld6g5asanbl" FLOAT DOUBLE
+"cgdn_nld6g5asaiso" FLOAT DOUBLE
+"cgsn_nld6g5asaiso" FLOAT DOUBLE
+"cjdn_nld6g5asaiso" FLOAT DOUBLE
+"cjsn_nld6g5asaiso" FLOAT DOUBLE
+"cjswdn_nld6g5asaiso" FLOAT DOUBLE
+"cjswgdn_nld6g5asaiso" FLOAT DOUBLE
+"cjswgsn_nld6g5asaiso" FLOAT DOUBLE
+"cjswsn_nld6g5asaiso" FLOAT DOUBLE
+"dcgbn_nld6g5asaiso" FLOAT DOUBLE
+"drdwn_nld6g5asaiso" FLOAT DOUBLE
+"drswn_nld6g5asaiso" FLOAT DOUBLE
+"du0n_nld6g5asaiso" FLOAT DOUBLE
+"dvsatn_nld6g5asaiso" FLOAT DOUBLE
+"dvthn_nld6g5asaiso" FLOAT DOUBLE
+"dwa0n_nld6g5asaiso" FLOAT DOUBLE
+"dwrdwn_nld6g5asaiso" FLOAT DOUBLE
+"dwrswn_nld6g5asaiso" FLOAT DOUBLE
+"dwu0n_nld6g5asaiso" FLOAT DOUBLE
+"dwvsatn_nld6g5asaiso" FLOAT DOUBLE
+"dwvthn_nld6g5asaiso" FLOAT DOUBLE
+"dxln_nld6g5asaiso" FLOAT DOUBLE
+"dxwn_nld6g5asaiso" FLOAT DOUBLE
+"toxn_nld6g5asaiso" FLOAT DOUBLE
+"cgdln_nld6g5asaiso" FLOAT DOUBLE
+"cgsln_nld6g5asaiso" FLOAT DOUBLE
+"cgdln_nld8g5anbl" FLOAT DOUBLE
+"cgdn_nld8g5anbl" FLOAT DOUBLE
+"cgsln_nld8g5anbl" FLOAT DOUBLE
+"cgsn_nld8g5anbl" FLOAT DOUBLE
+"cjdn_nld8g5anbl" FLOAT DOUBLE
+"cjsn_nld8g5anbl" FLOAT DOUBLE
+"cjswdn_nld8g5anbl" FLOAT DOUBLE
+"cjswgdn_nld8g5anbl" FLOAT DOUBLE
+"cjswgsn_nld8g5anbl" FLOAT DOUBLE
+"cjswsn_nld8g5anbl" FLOAT DOUBLE
+"da0n_nld8g5anbl" FLOAT DOUBLE
+"dcgbn_nld8g5anbl" FLOAT DOUBLE
+"dpdiblc2n_nld8g5anbl" FLOAT DOUBLE
+"drdwn_nld8g5anbl" FLOAT DOUBLE
+"drswn_nld8g5anbl" FLOAT DOUBLE
+"du0n_nld8g5anbl" FLOAT DOUBLE
+"dvsatn_nld8g5anbl" FLOAT DOUBLE
+"dvthn_nld8g5anbl" FLOAT DOUBLE
+"dwa0n_nld8g5anbl" FLOAT DOUBLE
+"dwpdiblc2n_nld8g5anbl" FLOAT DOUBLE
+"dwrdwn_nld8g5anbl" FLOAT DOUBLE
+"dwrswn_nld8g5anbl" FLOAT DOUBLE
+"dwu0n_nld8g5anbl" FLOAT DOUBLE
+"dwvsatn_nld8g5anbl" FLOAT DOUBLE
+"dwvthn_nld8g5anbl" FLOAT DOUBLE
+"dxln_nld8g5anbl" FLOAT DOUBLE
+"dxwn_nld8g5anbl" FLOAT DOUBLE
+"toxn_nld8g5anbl" FLOAT DOUBLE
+"drdn_nld8g5anbl" FLOAT DOUBLE
+"toxn_nld8g5aiso" FLOAT DOUBLE
+"dxln_nld8g5aiso" FLOAT DOUBLE
+"dxwn_nld8g5aiso" FLOAT DOUBLE
+"cgdn_nld8g5aiso" FLOAT DOUBLE
+"cgsn_nld8g5aiso" FLOAT DOUBLE
+"cjdn_nld8g5aiso" FLOAT DOUBLE
+"cjsn_nld8g5aiso" FLOAT DOUBLE
+"cjswdn_nld8g5aiso" FLOAT DOUBLE
+"cjswgdn_nld8g5aiso" FLOAT DOUBLE
+"cjswgsn_nld8g5aiso" FLOAT DOUBLE
+"cjswsn_nld8g5aiso" FLOAT DOUBLE
+"da0n_nld8g5aiso" FLOAT DOUBLE
+"datn_nld8g5aiso" FLOAT DOUBLE
+"dcgbn_nld8g5aiso" FLOAT DOUBLE
+"dcitn_nld8g5aiso" FLOAT DOUBLE
+"dpdiblc2n_nld8g5aiso" FLOAT DOUBLE
+"drdwn_nld8g5aiso" FLOAT DOUBLE
+"drswn_nld8g5aiso" FLOAT DOUBLE
+"du0n_nld8g5aiso" FLOAT DOUBLE
+"dvsatn_nld8g5aiso" FLOAT DOUBLE
+"dvthn_nld8g5aiso" FLOAT DOUBLE
+"dwa0n_nld8g5aiso" FLOAT DOUBLE
+"dwatn_nld8g5aiso" FLOAT DOUBLE
+"dwcitn_nld8g5aiso" FLOAT DOUBLE
+"dwpdiblc2n_nld8g5aiso" FLOAT DOUBLE
+"dwrdwn_nld8g5aiso" FLOAT DOUBLE
+"dwrswn_nld8g5aiso" FLOAT DOUBLE
+"dwu0n_nld8g5aiso" FLOAT DOUBLE
+"dwvsatn_nld8g5aiso" FLOAT DOUBLE
+"dwvthn_nld8g5aiso" FLOAT DOUBLE
+"drdn_nld8g5aiso" FLOAT DOUBLE
+"dprt_nld8g5aiso" FLOAT DOUBLE
+"dbgidl_nld8g5aiso" FLOAT DOUBLE
+"dwbgidl_nld8g5aiso" FLOAT DOUBLE
+"dcgdl_nld8g5aiso" FLOAT DOUBLE
+"dcgsl_nld8g5aiso" FLOAT DOUBLE
+"toxn_nld12g5anbl" FLOAT DOUBLE
+"dxln_nld12g5anbl" FLOAT DOUBLE
+"dxwn_nld12g5anbl" FLOAT DOUBLE
+"cjdn_nld12g5anbl" FLOAT DOUBLE
+"cjswdn_nld12g5anbl" FLOAT DOUBLE
+"cjswgdn_nld12g5anbl" FLOAT DOUBLE
+"cjsn_nld12g5anbl" FLOAT DOUBLE
+"cjswsn_nld12g5anbl" FLOAT DOUBLE
+"cjswgsn_nld12g5anbl" FLOAT DOUBLE
+"cgdn_nld12g5anbl" FLOAT DOUBLE
+"cgsn_nld12g5anbl" FLOAT DOUBLE
+"dvthn_nld12g5anbl" FLOAT DOUBLE
+"dwvthn_nld12g5anbl" FLOAT DOUBLE
+"du0n_nld12g5anbl" FLOAT DOUBLE
+"dwu0n_nld12g5anbl" FLOAT DOUBLE
+"dvsatn_nld12g5anbl" FLOAT DOUBLE
+"dwvsatn_nld12g5anbl" FLOAT DOUBLE
+"dagsn_nld12g5anbl" FLOAT DOUBLE
+"dwagsn_nld12g5anbl" FLOAT DOUBLE
+"drdwn_nld12g5anbl" FLOAT DOUBLE
+"dwrdwn_nld12g5anbl" FLOAT DOUBLE
+"drswn_nld12g5anbl" FLOAT DOUBLE
+"dwrswn_nld12g5anbl" FLOAT DOUBLE
+"dua1n_nld12g5anbl" FLOAT DOUBLE
+"drdn_nld12g5anbl" FLOAT DOUBLE
+"cgdln_nld12g5anbl" FLOAT DOUBLE
+"cgsln_nld12g5anbl" FLOAT DOUBLE
+"cgbn_nld12g5anbl" FLOAT DOUBLE
+"toxn_nld12g5aiso" FLOAT DOUBLE
+"dxln_nld12g5aiso" FLOAT DOUBLE
+"dxwn_nld12g5aiso" FLOAT DOUBLE
+"cjdn_nld12g5aiso" FLOAT DOUBLE
+"cjswdn_nld12g5aiso" FLOAT DOUBLE
+"cjswgdn_nld12g5aiso" FLOAT DOUBLE
+"cjsn_nld12g5aiso" FLOAT DOUBLE
+"cjswsn_nld12g5aiso" FLOAT DOUBLE
+"cjswgsn_nld12g5aiso" FLOAT DOUBLE
+"cgdon_nld12g5aiso" FLOAT DOUBLE
+"cgson_nld12g5aiso" FLOAT DOUBLE
+"cgdln_nld12g5aiso" FLOAT DOUBLE
+"cgsln_nld12g5aiso" FLOAT DOUBLE
+"drdn_nld12g5aiso" FLOAT DOUBLE
+"dvthn_nld12g5aiso" FLOAT DOUBLE
+"dwvthn_nld12g5aiso" FLOAT DOUBLE
+"du0n_nld12g5aiso" FLOAT DOUBLE
+"dwu0n_nld12g5aiso" FLOAT DOUBLE
+"drdwn_nld12g5aiso" FLOAT DOUBLE
+"dwrdwn_nld12g5aiso" FLOAT DOUBLE
+"drswn_nld12g5aiso" FLOAT DOUBLE
+"dwrswn_nld12g5aiso" FLOAT DOUBLE
+"dvsatn_nld12g5aiso" FLOAT DOUBLE
+"dwvsatn_nld12g5aiso" FLOAT DOUBLE
+"dwuten_nld12g5aiso" FLOAT DOUBLE
+"cgbn_nld12g5aiso" FLOAT DOUBLE
+"pbjtflag_hv" FLOAT DOUBLE
+"dbfn_hvnwdpwnbl_nld12g5aiso" FLOAT DOUBLE
+"dnen_hvnwdpwnbl_nld12g5aiso" FLOAT DOUBLE
+"disn_hvnwdpwnbl_nld12g5aiso" FLOAT DOUBLE
+"dnn_hvnwdpwnbl_nld12g5aiso" FLOAT DOUBLE
+"drbn_hvnwdpwnbl_nld12g5aiso" FLOAT DOUBLE
+"dren_hvnwdpwnbl_nld12g5aiso" FLOAT DOUBLE
+"drcn_hvnwdpwnbl_nld12g5aiso" FLOAT DOUBLE
+"dnkfn_hvnwdpwnbl_nld12g5aiso" FLOAT DOUBLE
+"dikfn_hvnwdpwnbl_nld12g5aiso" FLOAT DOUBLE
+"dbfn_dpwnblpsub_nld12g5aiso" FLOAT DOUBLE
+"dnen_dpwnblpsub_nld12g5aiso" FLOAT DOUBLE
+"disn_dpwnblpsub_nld12g5aiso" FLOAT DOUBLE
+"dnn_dpwnblpsub_nld12g5aiso" FLOAT DOUBLE
+"drbn_dpwnblpsub_nld12g5aiso" FLOAT DOUBLE
+"dren_dpwnblpsub_nld12g5aiso" FLOAT DOUBLE
+"drcn_dpwnblpsub_nld12g5aiso" FLOAT DOUBLE
+"dnkfn_dpwnblpsub_nld12g5aiso" FLOAT DOUBLE
+"dikfn_dpwnblpsub_nld12g5aiso" FLOAT DOUBLE
+"toxn_nld16g5anbl" FLOAT DOUBLE
+"dxln_nld16g5anbl" FLOAT DOUBLE
+"dxwn_nld16g5anbl" FLOAT DOUBLE
+"cjdn_nld16g5anbl" FLOAT DOUBLE
+"cjswdn_nld16g5anbl" FLOAT DOUBLE
+"cjswgdn_nld16g5anbl" FLOAT DOUBLE
+"cjsn_nld16g5anbl" FLOAT DOUBLE
+"cjswsn_nld16g5anbl" FLOAT DOUBLE
+"cjswgsn_nld16g5anbl" FLOAT DOUBLE
+"cgdn_nld16g5anbl" FLOAT DOUBLE
+"cgsn_nld16g5anbl" FLOAT DOUBLE
+"dvthn_nld16g5anbl" FLOAT DOUBLE
+"dwvthn_nld16g5anbl" FLOAT DOUBLE
+"du0n_nld16g5anbl" FLOAT DOUBLE
+"dwu0n_nld16g5anbl" FLOAT DOUBLE
+"dvsatn_nld16g5anbl" FLOAT DOUBLE
+"dwvsatn_nld16g5anbl" FLOAT DOUBLE
+"dagsn_nld16g5anbl" FLOAT DOUBLE
+"dwagsn_nld16g5anbl" FLOAT DOUBLE
+"drdwn_nld16g5anbl" FLOAT DOUBLE
+"dwrdwn_nld16g5anbl" FLOAT DOUBLE
+"drswn_nld16g5anbl" FLOAT DOUBLE
+"dwrswn_nld16g5anbl" FLOAT DOUBLE
+"drdn_nld16g5anbl" FLOAT DOUBLE
+"cgdln_nld16g5anbl" FLOAT DOUBLE
+"cgsln_nld16g5anbl" FLOAT DOUBLE
+"cgbn_nld16g5anbl" FLOAT DOUBLE
+"toxn_nld16g5aiso" FLOAT DOUBLE
+"dxln_nld16g5aiso" FLOAT DOUBLE
+"dxwn_nld16g5aiso" FLOAT DOUBLE
+"cjdn_nld16g5aiso" FLOAT DOUBLE
+"cjswdn_nld16g5aiso" FLOAT DOUBLE
+"cjswgdn_nld16g5aiso" FLOAT DOUBLE
+"cjsn_nld16g5aiso" FLOAT DOUBLE
+"cjswsn_nld16g5aiso" FLOAT DOUBLE
+"cjswgsn_nld16g5aiso" FLOAT DOUBLE
+"dvthn_nld16g5aiso" FLOAT DOUBLE
+"dwvthn_nld16g5aiso" FLOAT DOUBLE
+"du0n_nld16g5aiso" FLOAT DOUBLE
+"drdwn_nld16g5aiso" FLOAT DOUBLE
+"dwrdwn_nld16g5aiso" FLOAT DOUBLE
+"drswn_nld16g5aiso" FLOAT DOUBLE
+"dwrswn_nld16g5aiso" FLOAT DOUBLE
+"dvoffn_nld16g5aiso" FLOAT DOUBLE
+"dvsatn_nld16g5aiso" FLOAT DOUBLE
+"cgdon_nld16g5aiso" FLOAT DOUBLE
+"cgson_nld16g5aiso" FLOAT DOUBLE
+"cgdln_nld16g5aiso" FLOAT DOUBLE
+"cgsln_nld16g5aiso" FLOAT DOUBLE
+"drdn_nld16g5aiso" FLOAT DOUBLE
+"dwvsatn_nld16g5aiso" FLOAT DOUBLE
+"duc1n_nld16g5aiso" FLOAT DOUBLE
+"cgbn_nld16g5aiso" FLOAT DOUBLE
+"cgbn_nld20g5anbl" FLOAT DOUBLE
+"cgdn_nld20g5anbl" FLOAT DOUBLE
+"cgdln_nld20g5anbl" FLOAT DOUBLE
+"cgsn_nld20g5anbl" FLOAT DOUBLE
+"cgsln_nld20g5anbl" FLOAT DOUBLE
+"cjdn_nld20g5anbl" FLOAT DOUBLE
+"cjsn_nld20g5anbl" FLOAT DOUBLE
+"cjswdn_nld20g5anbl" FLOAT DOUBLE
+"cjswgdn_nld20g5anbl" FLOAT DOUBLE
+"cjswgsn_nld20g5anbl" FLOAT DOUBLE
+"cjswsn_nld20g5anbl" FLOAT DOUBLE
+"drdn_nld20g5anbl" FLOAT DOUBLE
+"drdwn_nld20g5anbl" FLOAT DOUBLE
+"drswn_nld20g5anbl" FLOAT DOUBLE
+"du0n_nld20g5anbl" FLOAT DOUBLE
+"dvsatn_nld20g5anbl" FLOAT DOUBLE
+"dvthn_nld20g5anbl" FLOAT DOUBLE
+"dwrdwn_nld20g5anbl" FLOAT DOUBLE
+"dwrswn_nld20g5anbl" FLOAT DOUBLE
+"dwu0n_nld20g5anbl" FLOAT DOUBLE
+"dwub1n_nld20g5anbl" FLOAT DOUBLE
+"dwvsatn_nld20g5anbl" FLOAT DOUBLE
+"dwvthn_nld20g5anbl" FLOAT DOUBLE
+"dxln_nld20g5anbl" FLOAT DOUBLE
+"dxwn_nld20g5anbl" FLOAT DOUBLE
+"toxn_nld20g5anbl" FLOAT DOUBLE
+"toxn_nld20g5aiso" FLOAT DOUBLE
+"dxln_nld20g5aiso" FLOAT DOUBLE
+"dxwn_nld20g5aiso" FLOAT DOUBLE
+"cjdn_nld20g5aiso" FLOAT DOUBLE
+"cjswdn_nld20g5aiso" FLOAT DOUBLE
+"cjswgdn_nld20g5aiso" FLOAT DOUBLE
+"cjsn_nld20g5aiso" FLOAT DOUBLE
+"cjswsn_nld20g5aiso" FLOAT DOUBLE
+"cjswgsn_nld20g5aiso" FLOAT DOUBLE
+"cgdn_nld20g5aiso" FLOAT DOUBLE
+"cgsn_nld20g5aiso" FLOAT DOUBLE
+"cgdln_nld20g5aiso" FLOAT DOUBLE
+"cgsln_nld20g5aiso" FLOAT DOUBLE
+"dvthn_nld20g5aiso" FLOAT DOUBLE
+"dwvthn_nld20g5aiso" FLOAT DOUBLE
+"du0n_nld20g5aiso" FLOAT DOUBLE
+"dwu0n_nld20g5aiso" FLOAT DOUBLE
+"drdwn_nld20g5aiso" FLOAT DOUBLE
+"dwrdwn_nld20g5aiso" FLOAT DOUBLE
+"drswn_nld20g5aiso" FLOAT DOUBLE
+"dwrswn_nld20g5aiso" FLOAT DOUBLE
+"dvsatn_nld20g5aiso" FLOAT DOUBLE
+"dwvsatn_nld20g5aiso" FLOAT DOUBLE
+"dwatn_nld20g5aiso" FLOAT DOUBLE
+"dagsn_nld20g5aiso" FLOAT DOUBLE
+"dwagsn_nld20g5aiso" FLOAT DOUBLE
+"dua1n_nld20g5aiso" FLOAT DOUBLE
+"dwua1n_nld20g5aiso" FLOAT DOUBLE
+"dwub1n_nld20g5aiso" FLOAT DOUBLE
+"dwprtn_nld20g5aiso" FLOAT DOUBLE
+"dkt1n_nld20g5aiso" FLOAT DOUBLE
+"drdn_nld20g5aiso" FLOAT DOUBLE
+"da0n_nld20g5aiso" FLOAT DOUBLE
+"dcgbn_nld20g5aiso" FLOAT DOUBLE
+"dbfn_hvnwdpwnbl_nld20g5aiso" FLOAT DOUBLE
+"dnen_hvnwdpwnbl_nld20g5aiso" FLOAT DOUBLE
+"disn_hvnwdpwnbl_nld20g5aiso" FLOAT DOUBLE
+"dnn_hvnwdpwnbl_nld20g5aiso" FLOAT DOUBLE
+"drbn_hvnwdpwnbl_nld20g5aiso" FLOAT DOUBLE
+"dren_hvnwdpwnbl_nld20g5aiso" FLOAT DOUBLE
+"drcn_hvnwdpwnbl_nld20g5aiso" FLOAT DOUBLE
+"dnkfn_hvnwdpwnbl_nld20g5aiso" FLOAT DOUBLE
+"dikfn_hvnwdpwnbl_nld20g5aiso" FLOAT DOUBLE
+"dbfn_dpwnblpsub_nld20g5aiso" FLOAT DOUBLE
+"dnen_dpwnblpsub_nld20g5aiso" FLOAT DOUBLE
+"disn_dpwnblpsub_nld20g5aiso" FLOAT DOUBLE
+"dnn_dpwnblpsub_nld20g5aiso" FLOAT DOUBLE
+"drbn_dpwnblpsub_nld20g5aiso" FLOAT DOUBLE
+"dren_dpwnblpsub_nld20g5aiso" FLOAT DOUBLE
+"drcn_dpwnblpsub_nld20g5aiso" FLOAT DOUBLE
+"dnkfn_dpwnblpsub_nld20g5aiso" FLOAT DOUBLE
+"dikfn_dpwnblpsub_nld20g5aiso" FLOAT DOUBLE
+"toxn_nld24g5anbl" FLOAT DOUBLE
+"dxln_nld24g5anbl" FLOAT DOUBLE
+"dxwn_nld24g5anbl" FLOAT DOUBLE
+"cgbn_nld24g5anbl" FLOAT DOUBLE
+"cgdn_nld24g5anbl" FLOAT DOUBLE
+"cgdln_nld24g5anbl" FLOAT DOUBLE
+"cgsn_nld24g5anbl" FLOAT DOUBLE
+"cgsln_nld24g5anbl" FLOAT DOUBLE
+"cjdn_nld24g5anbl" FLOAT DOUBLE
+"cjsn_nld24g5anbl" FLOAT DOUBLE
+"cjswdn_nld24g5anbl" FLOAT DOUBLE
+"cjswgdn_nld24g5anbl" FLOAT DOUBLE
+"cjswgsn_nld24g5anbl" FLOAT DOUBLE
+"cjswsn_nld24g5anbl" FLOAT DOUBLE
+"dvthn_nld24g5anbl" FLOAT DOUBLE
+"dwvthn_nld24g5anbl" FLOAT DOUBLE
+"du0n_nld24g5anbl" FLOAT DOUBLE
+"dwu0n_nld24g5anbl" FLOAT DOUBLE
+"dvsatn_nld24g5anbl" FLOAT DOUBLE
+"dwvsatn_nld24g5anbl" FLOAT DOUBLE
+"da0n_nld24g5anbl" FLOAT DOUBLE
+"dwa0n_nld24g5anbl" FLOAT DOUBLE
+"drdn_nld24g5anbl" FLOAT DOUBLE
+"drdwn_nld24g5anbl" FLOAT DOUBLE
+"drswn_nld24g5anbl" FLOAT DOUBLE
+"dwrdwn_nld24g5anbl" FLOAT DOUBLE
+"dwrswn_nld24g5anbl" FLOAT DOUBLE
+"toxn_na6g5anbl" FLOAT DOUBLE
+"dxln_na6g5anbl" FLOAT DOUBLE
+"dxwn_na6g5anbl" FLOAT DOUBLE
+"cjdn_na6g5anbl" FLOAT DOUBLE
+"cjswdn_na6g5anbl" FLOAT DOUBLE
+"cjswgdn_na6g5anbl" FLOAT DOUBLE
+"cjsn_na6g5anbl" FLOAT DOUBLE
+"cjswsn_na6g5anbl" FLOAT DOUBLE
+"cjswgsn_na6g5anbl" FLOAT DOUBLE
+"cgdn_na6g5anbl" FLOAT DOUBLE
+"cgsn_na6g5anbl" FLOAT DOUBLE
+"cgdln_na6g5anbl" FLOAT DOUBLE
+"cgsln_na6g5anbl" FLOAT DOUBLE
+"dvthn_na6g5anbl" FLOAT DOUBLE
+"dlvthn_na6g5anbl" FLOAT DOUBLE
+"dwvthn_na6g5anbl" FLOAT DOUBLE
+"dpvthn_na6g5anbl" FLOAT DOUBLE
+"dlvsatn_na6g5anbl" FLOAT DOUBLE
+"dpvsatn_na6g5anbl" FLOAT DOUBLE
+"du0n_na6g5anbl" FLOAT DOUBLE
+"dwu0n_na6g5anbl" FLOAT DOUBLE
+"dagsn_na6g5anbl" FLOAT DOUBLE
+"dwagsn_na6g5anbl" FLOAT DOUBLE
+"drdwn_na6g5anbl" FLOAT DOUBLE
+"drswn_na6g5anbl" FLOAT DOUBLE
+"dlrdwn_na6g5anbl" FLOAT DOUBLE
+"dlrswn_na6g5anbl" FLOAT DOUBLE
+"dprdwn_na6g5anbl" FLOAT DOUBLE
+"dprswn_na6g5anbl" FLOAT DOUBLE
+"dcgbn_na6g5anbl" FLOAT DOUBLE
+"toxn_nda6g3a" FLOAT DOUBLE
+"dxln_nda6g3a" FLOAT DOUBLE
+"dxwn_nda6g3a" FLOAT DOUBLE
+"cjdn_nda6g3a" FLOAT DOUBLE
+"cjswdn_nda6g3a" FLOAT DOUBLE
+"cjswgdn_nda6g3a" FLOAT DOUBLE
+"cjsn_nda6g3a" FLOAT DOUBLE
+"cjswsn_nda6g3a" FLOAT DOUBLE
+"cjswgsn_nda6g3a" FLOAT DOUBLE
+"cgdn_nda6g3a" FLOAT DOUBLE
+"cgsn_nda6g3a" FLOAT DOUBLE
+"cgdln_nda6g3a" FLOAT DOUBLE
+"cgsln_nda6g3a" FLOAT DOUBLE
+"dvthn_nda6g3a" FLOAT DOUBLE
+"dlvthn_nda6g3a" FLOAT DOUBLE
+"dwvthn_nda6g3a" FLOAT DOUBLE
+"dpvthn_nda6g3a" FLOAT DOUBLE
+"du0n_nda6g3a" FLOAT DOUBLE
+"dlu0n_nda6g3a" FLOAT DOUBLE
+"dwu0n_nda6g3a" FLOAT DOUBLE
+"dpu0n_nda6g3a" FLOAT DOUBLE
+"dagsn_nda6g3a" FLOAT DOUBLE
+"dwagsn_nda6g3a" FLOAT DOUBLE
+"drdwn_nda6g3a" FLOAT DOUBLE
+"drswn_nda6g3a" FLOAT DOUBLE
+"dvsatn_nda6g3a" FLOAT DOUBLE
+"dlvsatn_nda6g3a" FLOAT DOUBLE
+"dpvsatn_nda6g3a" FLOAT DOUBLE
+"dkt1n_nda6g3a" FLOAT DOUBLE
+"dlkt1n_nda6g3a" FLOAT DOUBLE
+"dwkt1n_nda6g3a" FLOAT DOUBLE
+"dpkt1n_nda6g3a" FLOAT DOUBLE
+"dua1n_nda6g3a" FLOAT DOUBLE
+"dlua1n_nda6g3a" FLOAT DOUBLE
+"dpdiblc2n_nda6g3a" FLOAT DOUBLE
+"dlpdiblc2n_nda6g3a" FLOAT DOUBLE
+"dwpdiblc2n_nda6g3a" FLOAT DOUBLE
+"dppdiblc2n_nda6g3a" FLOAT DOUBLE
+"dcgbn_nda6g3a" FLOAT DOUBLE
+"toxn_nda20g3a" FLOAT DOUBLE
+"dxln_nda20g3a" FLOAT DOUBLE
+"dxwn_nda20g3a" FLOAT DOUBLE
+"cjdn_nda20g3a" FLOAT DOUBLE
+"cjswdn_nda20g3a" FLOAT DOUBLE
+"cjswgdn_nda20g3a" FLOAT DOUBLE
+"cjsn_nda20g3a" FLOAT DOUBLE
+"cjswsn_nda20g3a" FLOAT DOUBLE
+"cjswgsn_nda20g3a" FLOAT DOUBLE
+"cgdn_nda20g3a" FLOAT DOUBLE
+"cgsn_nda20g3a" FLOAT DOUBLE
+"dvthn_nda20g3a" FLOAT DOUBLE
+"dlvthn_nda20g3a" FLOAT DOUBLE
+"dwvthn_nda20g3a" FLOAT DOUBLE
+"dpvthn_nda20g3a" FLOAT DOUBLE
+"du0n_nda20g3a" FLOAT DOUBLE
+"dlu0n_nda20g3a" FLOAT DOUBLE
+"dwu0n_nda20g3a" FLOAT DOUBLE
+"dpu0n_nda20g3a" FLOAT DOUBLE
+"dagsn_nda20g3a" FLOAT DOUBLE
+"dwagsn_nda20g3a" FLOAT DOUBLE
+"drdwn_nda20g3a" FLOAT DOUBLE
+"drswn_nda20g3a" FLOAT DOUBLE
+"dprdwn_nda20g3a" FLOAT DOUBLE
+"dprswn_nda20g3a" FLOAT DOUBLE
+"dvsatn_nda20g3a" FLOAT DOUBLE
+"dlvsatn_nda20g3a" FLOAT DOUBLE
+"dwvsatn_nda20g3a" FLOAT DOUBLE
+"dpvsatn_nda20g3a" FLOAT DOUBLE
+"dk2n_nda20g3a" FLOAT DOUBLE
+"dlk2n_nda20g3a" FLOAT DOUBLE
+"dwk2n_nda20g3a" FLOAT DOUBLE
+"dpk2n_nda20g3a" FLOAT DOUBLE
+"datn_nda20g3a" FLOAT DOUBLE
+"dpatn_nda20g3a" FLOAT DOUBLE
+"dlucn_nda20g3a" FLOAT DOUBLE
+"dlua1n_nda20g3a" FLOAT DOUBLE
+"dlub1n_nda20g3a" FLOAT DOUBLE
+"dluc1n_nda20g3a" FLOAT DOUBLE
+"dpuc1n_nda20g3a" FLOAT DOUBLE
+"drdn_nda20g3a" FLOAT DOUBLE
+"cgdln_nda20g3a" FLOAT DOUBLE
+"cgsln_nda20g3a" FLOAT DOUBLE
+"cgbn_nda20g3a" FLOAT DOUBLE
+"toxn_nda29g3anbl" FLOAT DOUBLE
+"dxln_nda29g3anbl" FLOAT DOUBLE
+"dxwn_nda29g3anbl" FLOAT DOUBLE
+"cjdn_nda29g3anbl" FLOAT DOUBLE
+"cjswdn_nda29g3anbl" FLOAT DOUBLE
+"cjswgdn_nda29g3anbl" FLOAT DOUBLE
+"cjsn_nda29g3anbl" FLOAT DOUBLE
+"cjswsn_nda29g3anbl" FLOAT DOUBLE
+"cjswgsn_nda29g3anbl" FLOAT DOUBLE
+"cgdn_nda29g3anbl" FLOAT DOUBLE
+"cgsn_nda29g3anbl" FLOAT DOUBLE
+"cgdln_nda29g3anbl" FLOAT DOUBLE
+"cgsln_nda29g3anbl" FLOAT DOUBLE
+"drdn_nda29g3anbl" FLOAT DOUBLE
+"cgbn_nda29g3anbl" FLOAT DOUBLE
+"dvthn_nda29g3anbl" FLOAT DOUBLE
+"dlvthn_nda29g3anbl" FLOAT DOUBLE
+"dwvthn_nda29g3anbl" FLOAT DOUBLE
+"dpvthn_nda29g3anbl" FLOAT DOUBLE
+"du0n_nda29g3anbl" FLOAT DOUBLE
+"dlu0n_nda29g3anbl" FLOAT DOUBLE
+"dwu0n_nda29g3anbl" FLOAT DOUBLE
+"dpu0n_nda29g3anbl" FLOAT DOUBLE
+"dagsn_nda29g3anbl" FLOAT DOUBLE
+"dlagsn_nda29g3anbl" FLOAT DOUBLE
+"dwagsn_nda29g3anbl" FLOAT DOUBLE
+"dpagsn_nda29g3anbl" FLOAT DOUBLE
+"drdwn_nda29g3anbl" FLOAT DOUBLE
+"drswn_nda29g3anbl" FLOAT DOUBLE
+"dvsatn_nda29g3anbl" FLOAT DOUBLE
+"dlvsatn_nda29g3anbl" FLOAT DOUBLE
+"dwvsatn_nda29g3anbl" FLOAT DOUBLE
+"dpvsatn_nda29g3anbl" FLOAT DOUBLE
+"dk2n_nda29g3anbl" FLOAT DOUBLE
+"dlk2n_nda29g3anbl" FLOAT DOUBLE
+"dwk2n_nda29g3anbl" FLOAT DOUBLE
+"dpk2n_nda29g3anbl" FLOAT DOUBLE
+"da0n_nda29g3anbl" FLOAT DOUBLE
+"dla0n_nda29g3anbl" FLOAT DOUBLE
+"dwa0n_nda29g3anbl" FLOAT DOUBLE
+"dpa0n_nda29g3anbl" FLOAT DOUBLE
+"dkt1n_nda29g3anbl" FLOAT DOUBLE
+"dlkt1n_nda29g3anbl" FLOAT DOUBLE
+"dwkt1n_nda29g3anbl" FLOAT DOUBLE
+"dpkt1n_nda29g3anbl" FLOAT DOUBLE
+"datn_nda29g3anbl" FLOAT DOUBLE
+"dlatn_nda29g3anbl" FLOAT DOUBLE
+"dwatn_nda29g3anbl" FLOAT DOUBLE
+"dpatn_nda29g3anbl" FLOAT DOUBLE
+"ducn_nda29g3anbl" FLOAT DOUBLE
+"dlucn_nda29g3anbl" FLOAT DOUBLE
+"dwucn_nda29g3anbl" FLOAT DOUBLE
+"dpucn_nda29g3anbl" FLOAT DOUBLE
+"duc1n_nda29g3anbl" FLOAT DOUBLE
+"dluc1n_nda29g3anbl" FLOAT DOUBLE
+"dwuc1n_nda29g3anbl" FLOAT DOUBLE
+"dpuc1n_nda29g3anbl" FLOAT DOUBLE
+"dketan_nda29g3anbl" FLOAT DOUBLE
+"dlketan_nda29g3anbl" FLOAT DOUBLE
+"dwketan_nda29g3anbl" FLOAT DOUBLE
+"dpketan_nda29g3anbl" FLOAT DOUBLE
+"toxn_na29g5a" FLOAT DOUBLE
+"dxln_na29g5a" FLOAT DOUBLE
+"dxwn_na29g5a" FLOAT DOUBLE
+"cjdn_na29g5a" FLOAT DOUBLE
+"cjswdn_na29g5a" FLOAT DOUBLE
+"cjswgdn_na29g5a" FLOAT DOUBLE
+"cjsn_na29g5a" FLOAT DOUBLE
+"cjswsn_na29g5a" FLOAT DOUBLE
+"cjswgsn_na29g5a" FLOAT DOUBLE
+"cgdn_na29g5a" FLOAT DOUBLE
+"cgsn_na29g5a" FLOAT DOUBLE
+"cgbn_na29g5a" FLOAT DOUBLE
+"cgdln_na29g5a" FLOAT DOUBLE
+"cgsln_na29g5a" FLOAT DOUBLE
+"dvthn_na29g5a" FLOAT DOUBLE
+"dlvthn_na29g5a" FLOAT DOUBLE
+"dwvthn_na29g5a" FLOAT DOUBLE
+"dpvthn_na29g5a" FLOAT DOUBLE
+"du0n_na29g5a" FLOAT DOUBLE
+"dlu0n_na29g5a" FLOAT DOUBLE
+"dwu0n_na29g5a" FLOAT DOUBLE
+"dpu0n_na29g5a" FLOAT DOUBLE
+"drdwn_na29g5a" FLOAT DOUBLE
+"drswn_na29g5a" FLOAT DOUBLE
+"drdn_na29g5a" FLOAT DOUBLE
+"dprtn_na29g5a" FLOAT DOUBLE
+"dagsn_na29g5a" FLOAT DOUBLE
+"dwagsn_na29g5a" FLOAT DOUBLE
+"dvsatn_na29g5a" FLOAT DOUBLE
+"dlvsatn_na29g5a" FLOAT DOUBLE
+"dwvsatn_na29g5a" FLOAT DOUBLE
+"dpvsatn_na29g5a" FLOAT DOUBLE
+"dptvoffn_na29g5a" FLOAT DOUBLE
+"datn_na29g5a" FLOAT DOUBLE
+"dlatn_na29g5a" FLOAT DOUBLE
+"dwatn_na29g5a" FLOAT DOUBLE
+"dpatn_na29g5a" FLOAT DOUBLE
+"dpua1n_na29g5a" FLOAT DOUBLE
+"dlua1n_na29g5a" FLOAT DOUBLE
+"dlucn_na29g5a" FLOAT DOUBLE
+"toxp_pa6g5adenbl" FLOAT DOUBLE
+"dxlp_pa6g5adenbl" FLOAT DOUBLE
+"dxwp_pa6g5adenbl" FLOAT DOUBLE
+"cjdp_pa6g5adenbl" FLOAT DOUBLE
+"cjswdp_pa6g5adenbl" FLOAT DOUBLE
+"cjswgdp_pa6g5adenbl" FLOAT DOUBLE
+"cjsp_pa6g5adenbl" FLOAT DOUBLE
+"cjswsp_pa6g5adenbl" FLOAT DOUBLE
+"cjswgsp_pa6g5adenbl" FLOAT DOUBLE
+"cgdp_pa6g5adenbl" FLOAT DOUBLE
+"cgsp_pa6g5adenbl" FLOAT DOUBLE
+"dvthp_pa6g5adenbl" FLOAT DOUBLE
+"dlvthp_pa6g5adenbl" FLOAT DOUBLE
+"dwvthp_pa6g5adenbl" FLOAT DOUBLE
+"dpvthp_pa6g5adenbl" FLOAT DOUBLE
+"dvsatp_pa6g5adenbl" FLOAT DOUBLE
+"dlvsatp_pa6g5adenbl" FLOAT DOUBLE
+"dwvsatp_pa6g5adenbl" FLOAT DOUBLE
+"dpvsatp_pa6g5adenbl" FLOAT DOUBLE
+"du0p_pa6g5adenbl" FLOAT DOUBLE
+"dlu0p_pa6g5adenbl" FLOAT DOUBLE
+"dwu0p_pa6g5adenbl" FLOAT DOUBLE
+"dpu0p_pa6g5adenbl" FLOAT DOUBLE
+"dagsp_pa6g5adenbl" FLOAT DOUBLE
+"dlagsp_pa6g5adenbl" FLOAT DOUBLE
+"dwagsp_pa6g5adenbl" FLOAT DOUBLE
+"dpagsp_pa6g5adenbl" FLOAT DOUBLE
+"drdwp_pa6g5adenbl" FLOAT DOUBLE
+"drswp_pa6g5adenbl" FLOAT DOUBLE
+"datp_pa6g5adenbl" FLOAT DOUBLE
+"cgdlp_pa6g5adenbl" FLOAT DOUBLE
+"cgslp_pa6g5adenbl" FLOAT DOUBLE
+"cgbp_pa6g5adenbl" FLOAT DOUBLE
+"toxp_pa6g5asanbl" FLOAT DOUBLE
+"dxlp_pa6g5asanbl" FLOAT DOUBLE
+"dxwp_pa6g5asanbl" FLOAT DOUBLE
+"cjdp_pa6g5asanbl" FLOAT DOUBLE
+"cjswdp_pa6g5asanbl" FLOAT DOUBLE
+"cjswgdp_pa6g5asanbl" FLOAT DOUBLE
+"cjsp_pa6g5asanbl" FLOAT DOUBLE
+"cjswsp_pa6g5asanbl" FLOAT DOUBLE
+"cjswgsp_pa6g5asanbl" FLOAT DOUBLE
+"cgdp_pa6g5asanbl" FLOAT DOUBLE
+"cgsp_pa6g5asanbl" FLOAT DOUBLE
+"cgdlp_pa6g5asanbl" FLOAT DOUBLE
+"cgslp_pa6g5asanbl" FLOAT DOUBLE
+"dvthp_pa6g5asanbl" FLOAT DOUBLE
+"dlvthp_pa6g5asanbl" FLOAT DOUBLE
+"dwvthp_pa6g5asanbl" FLOAT DOUBLE
+"dpvthp_pa6g5asanbl" FLOAT DOUBLE
+"dlvsatp_pa6g5asanbl" FLOAT DOUBLE
+"dpvsatp_pa6g5asanbl" FLOAT DOUBLE
+"du0p_pa6g5asanbl" FLOAT DOUBLE
+"dwu0p_pa6g5asanbl" FLOAT DOUBLE
+"dagsp_pa6g5asanbl" FLOAT DOUBLE
+"dwagsp_pa6g5asanbl" FLOAT DOUBLE
+"drdwp_pa6g5asanbl" FLOAT DOUBLE
+"drswp_pa6g5asanbl" FLOAT DOUBLE
+"dlrdwp_pa6g5asanbl" FLOAT DOUBLE
+"dlrswp_pa6g5asanbl" FLOAT DOUBLE
+"dprdwp_pa6g5asanbl" FLOAT DOUBLE
+"dprswp_pa6g5asanbl" FLOAT DOUBLE
+"dwvsatp_pa6g5asanbl" FLOAT DOUBLE
+"dwrdwp_pa6g5asanbl" FLOAT DOUBLE
+"dluc1p_pa6g5asanbl" FLOAT DOUBLE
+"dcgbp_pa6g5asanbl" FLOAT DOUBLE
+"toxp_pa8g5anbl" FLOAT DOUBLE
+"dxlp_pa8g5anbl" FLOAT DOUBLE
+"dxwp_pa8g5anbl" FLOAT DOUBLE
+"cjdp_pa8g5anbl" FLOAT DOUBLE
+"cjswdp_pa8g5anbl" FLOAT DOUBLE
+"cjswgdp_pa8g5anbl" FLOAT DOUBLE
+"cjsp_pa8g5anbl" FLOAT DOUBLE
+"cjswsp_pa8g5anbl" FLOAT DOUBLE
+"cjswgsp_pa8g5anbl" FLOAT DOUBLE
+"cgdp_pa8g5anbl" FLOAT DOUBLE
+"cgsp_pa8g5anbl" FLOAT DOUBLE
+"cgdlp_pa8g5anbl" FLOAT DOUBLE
+"cgslp_pa8g5anbl" FLOAT DOUBLE
+"dvthp_pa8g5anbl" FLOAT DOUBLE
+"dlvthp_pa8g5anbl" FLOAT DOUBLE
+"dwvthp_pa8g5anbl" FLOAT DOUBLE
+"dpvthp_pa8g5anbl" FLOAT DOUBLE
+"dlvsatp_pa8g5anbl" FLOAT DOUBLE
+"dpvsatp_pa8g5anbl" FLOAT DOUBLE
+"du0p_pa8g5anbl" FLOAT DOUBLE
+"dlu0p_pa8g5anbl" FLOAT DOUBLE
+"dwu0p_pa8g5anbl" FLOAT DOUBLE
+"dpu0p_pa8g5anbl" FLOAT DOUBLE
+"dagsp_pa8g5anbl" FLOAT DOUBLE
+"dlagsp_pa8g5anbl" FLOAT DOUBLE
+"dwagsp_pa8g5anbl" FLOAT DOUBLE
+"dpagsp_pa8g5anbl" FLOAT DOUBLE
+"drdwp_pa8g5anbl" FLOAT DOUBLE
+"drswp_pa8g5anbl" FLOAT DOUBLE
+"dlkt1p_pa8g5anbl" FLOAT DOUBLE
+"dlua1p_pa8g5anbl" FLOAT DOUBLE
+"dluc1p_pa8g5anbl" FLOAT DOUBLE
+"dcgbp_pa8g5anbl" FLOAT DOUBLE
+"toxp_pa12g5anbl" FLOAT DOUBLE
+"dxlp_pa12g5anbl" FLOAT DOUBLE
+"dxwp_pa12g5anbl" FLOAT DOUBLE
+"cjdp_pa12g5anbl" FLOAT DOUBLE
+"cjswdp_pa12g5anbl" FLOAT DOUBLE
+"cjswgdp_pa12g5anbl" FLOAT DOUBLE
+"cjsp_pa12g5anbl" FLOAT DOUBLE
+"cjswsp_pa12g5anbl" FLOAT DOUBLE
+"cjswgsp_pa12g5anbl" FLOAT DOUBLE
+"cgdp_pa12g5anbl" FLOAT DOUBLE
+"cgsp_pa12g5anbl" FLOAT DOUBLE
+"cgdlp_pa12g5anbl" FLOAT DOUBLE
+"cgslp_pa12g5anbl" FLOAT DOUBLE
+"dvthp_pa12g5anbl" FLOAT DOUBLE
+"dlvthp_pa12g5anbl" FLOAT DOUBLE
+"dwvthp_pa12g5anbl" FLOAT DOUBLE
+"dpvthp_pa12g5anbl" FLOAT DOUBLE
+"du0p_pa12g5anbl" FLOAT DOUBLE
+"dlu0p_pa12g5anbl" FLOAT DOUBLE
+"dwu0p_pa12g5anbl" FLOAT DOUBLE
+"dpu0p_pa12g5anbl" FLOAT DOUBLE
+"drdwp_pa12g5anbl" FLOAT DOUBLE
+"drswp_pa12g5anbl" FLOAT DOUBLE
+"dprtp_pa12g5anbl" FLOAT DOUBLE
+"dagsp_pa12g5anbl" FLOAT DOUBLE
+"dwagsp_pa12g5anbl" FLOAT DOUBLE
+"dvsatp_pa12g5anbl" FLOAT DOUBLE
+"dwvsatp_pa12g5anbl" FLOAT DOUBLE
+"dpvsatp_pa12g5anbl" FLOAT DOUBLE
+"drdp_pa12g5anbl" FLOAT DOUBLE
+"cgbp_pa12g5anbl" FLOAT DOUBLE
+"dpatp_pa12g5anbl" FLOAT DOUBLE
+"dlatp_pa12g5anbl" FLOAT DOUBLE
+"datp_pa12g5anbl" FLOAT DOUBLE
+"dpkt1p_pa12g5anbl" FLOAT DOUBLE
+"dlvsatp_pa12g5anbl" FLOAT DOUBLE
+"toxp_pa16g5anbl" FLOAT DOUBLE
+"dxlp_pa16g5anbl" FLOAT DOUBLE
+"dxwp_pa16g5anbl" FLOAT DOUBLE
+"cjdp_pa16g5anbl" FLOAT DOUBLE
+"cjswdp_pa16g5anbl" FLOAT DOUBLE
+"cjswgdp_pa16g5anbl" FLOAT DOUBLE
+"cjsp_pa16g5anbl" FLOAT DOUBLE
+"cjswsp_pa16g5anbl" FLOAT DOUBLE
+"cjswgsp_pa16g5anbl" FLOAT DOUBLE
+"cgdp_pa16g5anbl" FLOAT DOUBLE
+"cgsp_pa16g5anbl" FLOAT DOUBLE
+"cgdlp_pa16g5anbl" FLOAT DOUBLE
+"cgslp_pa16g5anbl" FLOAT DOUBLE
+"dvthp_pa16g5anbl" FLOAT DOUBLE
+"dlvthp_pa16g5anbl" FLOAT DOUBLE
+"dwvthp_pa16g5anbl" FLOAT DOUBLE
+"dpvthp_pa16g5anbl" FLOAT DOUBLE
+"dvsatp_pa16g5anbl" FLOAT DOUBLE
+"dpvsatp_pa16g5anbl" FLOAT DOUBLE
+"du0p_pa16g5anbl" FLOAT DOUBLE
+"dlu0p_pa16g5anbl" FLOAT DOUBLE
+"dwu0p_pa16g5anbl" FLOAT DOUBLE
+"dpu0p_pa16g5anbl" FLOAT DOUBLE
+"dagsp_pa16g5anbl" FLOAT DOUBLE
+"dlagsp_pa16g5anbl" FLOAT DOUBLE
+"dwagsp_pa16g5anbl" FLOAT DOUBLE
+"dla0p_pa16g5anbl" FLOAT DOUBLE
+"drdwp_pa16g5anbl" FLOAT DOUBLE
+"drswp_pa16g5anbl" FLOAT DOUBLE
+"dlub1p_pa16g5anbl" FLOAT DOUBLE
+"dwub1p_pa16g5anbl" FLOAT DOUBLE
+"dpub1p_pa16g5anbl" FLOAT DOUBLE
+"dpuc1p_pa16g5anbl" FLOAT DOUBLE
+"datp_pa16g5anbl" FLOAT DOUBLE
+"dlatp_pa16g5anbl" FLOAT DOUBLE
+"dpatp_pa16g5anbl" FLOAT DOUBLE
+"dlvsatp_pa16g5anbl" FLOAT DOUBLE
+"dwvsatp_pa16g5anbl" FLOAT DOUBLE
+"dlkt1p_pa16g5anbl" FLOAT DOUBLE
+"dptvoffp_pa16g5anbl" FLOAT DOUBLE
+"dvoffp_pa16g5anbl" FLOAT DOUBLE
+"dlvoffp_pa16g5anbl" FLOAT DOUBLE
+"drdp_pa16g5anbl" FLOAT DOUBLE
+"cgbp_pa16g5anbl" FLOAT DOUBLE
+"toxp_pa20g5anbl" FLOAT DOUBLE
+"dxlp_pa20g5anbl" FLOAT DOUBLE
+"dxwp_pa20g5anbl" FLOAT DOUBLE
+"cjdp_pa20g5anbl" FLOAT DOUBLE
+"cjswdp_pa20g5anbl" FLOAT DOUBLE
+"cjswgdp_pa20g5anbl" FLOAT DOUBLE
+"cjsp_pa20g5anbl" FLOAT DOUBLE
+"cjswsp_pa20g5anbl" FLOAT DOUBLE
+"cjswgsp_pa20g5anbl" FLOAT DOUBLE
+"cgdop_pa20g5anbl" FLOAT DOUBLE
+"cgsop_pa20g5anbl" FLOAT DOUBLE
+"dvthp_pa20g5anbl" FLOAT DOUBLE
+"dlvthp_pa20g5anbl" FLOAT DOUBLE
+"dwvthp_pa20g5anbl" FLOAT DOUBLE
+"dpvthp_pa20g5anbl" FLOAT DOUBLE
+"dvsatp_pa20g5anbl" FLOAT DOUBLE
+"dpvsatp_pa20g5anbl" FLOAT DOUBLE
+"du0p_pa20g5anbl" FLOAT DOUBLE
+"dlu0p_pa20g5anbl" FLOAT DOUBLE
+"dwu0p_pa20g5anbl" FLOAT DOUBLE
+"dpu0p_pa20g5anbl" FLOAT DOUBLE
+"dagsp_pa20g5anbl" FLOAT DOUBLE
+"dwagsp_pa20g5anbl" FLOAT DOUBLE
+"dla0p_pa20g5anbl" FLOAT DOUBLE
+"drdwp_pa20g5anbl" FLOAT DOUBLE
+"drswp_pa20g5anbl" FLOAT DOUBLE
+"dpkt1p_pa20g5anbl" FLOAT DOUBLE
+"dpatp_pa20g5anbl" FLOAT DOUBLE
+"drdp_pa20g5anbl" FLOAT DOUBLE
+"cgdlp_pa20g5anbl" FLOAT DOUBLE
+"cgslp_pa20g5anbl" FLOAT DOUBLE
+"cgbp_pa20g5anbl" FLOAT DOUBLE
+"toxp_pa29g5anbl" FLOAT DOUBLE
+"dxlp_pa29g5anbl" FLOAT DOUBLE
+"dxwp_pa29g5anbl" FLOAT DOUBLE
+"cjdp_pa29g5anbl" FLOAT DOUBLE
+"cjswdp_pa29g5anbl" FLOAT DOUBLE
+"cjswgdp_pa29g5anbl" FLOAT DOUBLE
+"cjsp_pa29g5anbl" FLOAT DOUBLE
+"cjswsp_pa29g5anbl" FLOAT DOUBLE
+"cjswgsp_pa29g5anbl" FLOAT DOUBLE
+"cgdp_pa29g5anbl" FLOAT DOUBLE
+"cgsp_pa29g5anbl" FLOAT DOUBLE
+"dvthp_pa29g5anbl" FLOAT DOUBLE
+"dlvthp_pa29g5anbl" FLOAT DOUBLE
+"dwvthp_pa29g5anbl" FLOAT DOUBLE
+"dpvthp_pa29g5anbl" FLOAT DOUBLE
+"dvsatp_pa29g5anbl" FLOAT DOUBLE
+"dlvsatp_pa29g5anbl" FLOAT DOUBLE
+"dwvsatp_pa29g5anbl" FLOAT DOUBLE
+"dpvsatp_pa29g5anbl" FLOAT DOUBLE
+"du0p_pa29g5anbl" FLOAT DOUBLE
+"dlu0p_pa29g5anbl" FLOAT DOUBLE
+"dwu0p_pa29g5anbl" FLOAT DOUBLE
+"dpu0p_pa29g5anbl" FLOAT DOUBLE
+"dagsp_pa29g5anbl" FLOAT DOUBLE
+"dlagsp_pa29g5anbl" FLOAT DOUBLE
+"dwagsp_pa29g5anbl" FLOAT DOUBLE
+"dpagsp_pa29g5anbl" FLOAT DOUBLE
+"drdwp_pa29g5anbl" FLOAT DOUBLE
+"drswp_pa29g5anbl" FLOAT DOUBLE
+"drdp_pa29g5anbl" FLOAT DOUBLE
+"datp_pa29g5anbl" FLOAT DOUBLE
+"dlatp_pa29g5anbl" FLOAT DOUBLE
+"dwatp_pa29g5anbl" FLOAT DOUBLE
+"dpatp_pa29g5anbl" FLOAT DOUBLE
+"cgdlp_pa29g5anbl" FLOAT DOUBLE
+"cgslp_pa29g5anbl" FLOAT DOUBLE
+"cgbp_pa29g5anbl" FLOAT DOUBLE
+"toxn_nld20g5b" FLOAT DOUBLE
+"dxln_nld20g5b" FLOAT DOUBLE
+"dxwn_nld20g5b" FLOAT DOUBLE
+"cgdn_nld20g5b" FLOAT DOUBLE
+"cgdln_nld20g5b" FLOAT DOUBLE
+"cgsn_nld20g5b" FLOAT DOUBLE
+"cgsln_nld20g5b" FLOAT DOUBLE
+"cjdn_nld20g5b" FLOAT DOUBLE
+"cjsn_nld20g5b" FLOAT DOUBLE
+"cjswdn_nld20g5b" FLOAT DOUBLE
+"cjswgdn_nld20g5b" FLOAT DOUBLE
+"cjswgsn_nld20g5b" FLOAT DOUBLE
+"cjswsn_nld20g5b" FLOAT DOUBLE
+"datn_nld20g5b" FLOAT DOUBLE
+"dk2n_nld20g5b" FLOAT DOUBLE
+"drdwn_nld20g5b" FLOAT DOUBLE
+"drswn_nld20g5b" FLOAT DOUBLE
+"du0n_nld20g5b" FLOAT DOUBLE
+"dua1n_nld20g5b" FLOAT DOUBLE
+"dub1n_nld20g5b" FLOAT DOUBLE
+"dvsatn_nld20g5b" FLOAT DOUBLE
+"dvthn_nld20g5b" FLOAT DOUBLE
+"dwatn_nld20g5b" FLOAT DOUBLE
+"dwkt1n_nld20g5b" FLOAT DOUBLE
+"dwu0n_nld20g5b" FLOAT DOUBLE
+"dwub1n_nld20g5b" FLOAT DOUBLE
+"dwvsatn_nld20g5b" FLOAT DOUBLE
+"dwvthn_nld20g5b" FLOAT DOUBLE
+"dcgbn_nld20g5b" FLOAT DOUBLE
+"dgidn_nld20g5b" FLOAT DOUBLE
+"drdn_nld20g5b" FLOAT DOUBLE
+"da0n_nld20g5b" FLOAT DOUBLE
+"dkt1n_nld20g5b" FLOAT DOUBLE
+"dkt2n_nld20g5b" FLOAT DOUBLE
+"duc1n_nld20g5b" FLOAT DOUBLE
+"toxn_nld24g5b" FLOAT DOUBLE
+"dxln_nld24g5b" FLOAT DOUBLE
+"dxwn_nld24g5b" FLOAT DOUBLE
+"cjdn_nld24g5b" FLOAT DOUBLE
+"cjswdn_nld24g5b" FLOAT DOUBLE
+"cjswgdn_nld24g5b" FLOAT DOUBLE
+"cjsn_nld24g5b" FLOAT DOUBLE
+"cjswgsn_nld24g5b" FLOAT DOUBLE
+"cjswsn_nld24g5b" FLOAT DOUBLE
+"cgdn_nld24g5b" FLOAT DOUBLE
+"cgsn_nld24g5b" FLOAT DOUBLE
+"dvthn_nld24g5b" FLOAT DOUBLE
+"da0n_nld24g5b" FLOAT DOUBLE
+"da1n_nld24g5b" FLOAT DOUBLE
+"da2n_nld24g5b" FLOAT DOUBLE
+"dagsn_nld24g5b" FLOAT DOUBLE
+"datn_nld24g5b" FLOAT DOUBLE
+"drdwn_nld24g5b" FLOAT DOUBLE
+"drswn_nld24g5b" FLOAT DOUBLE
+"du0n_nld24g5b" FLOAT DOUBLE
+"duan_nld24g5b" FLOAT DOUBLE
+"dub1n_nld24g5b" FLOAT DOUBLE
+"dubn_nld24g5b" FLOAT DOUBLE
+"duc1n_nld24g5b" FLOAT DOUBLE
+"dvsatn_nld24g5b" FLOAT DOUBLE
+"dwa0n_nld24g5b" FLOAT DOUBLE
+"dwa1n_nld24g5b" FLOAT DOUBLE
+"dwagsn_nld24g5b" FLOAT DOUBLE
+"dwatn_nld24g5b" FLOAT DOUBLE
+"dwrdwn_nld24g5b" FLOAT DOUBLE
+"dwrswn_nld24g5b" FLOAT DOUBLE
+"dwu0n_nld24g5b" FLOAT DOUBLE
+"dwuan_nld24g5b" FLOAT DOUBLE
+"dwub1n_nld24g5b" FLOAT DOUBLE
+"dwubn_nld24g5b" FLOAT DOUBLE
+"dwuc1n_nld24g5b" FLOAT DOUBLE
+"dwvsatn_nld24g5b" FLOAT DOUBLE
+"dwvthn_nld24g5b" FLOAT DOUBLE
+"dkt2n_nld24g5b" FLOAT DOUBLE
+"cgdln_nld24g5b" FLOAT DOUBLE
+"cgsln_nld24g5b" FLOAT DOUBLE
+"drdn_nld24g5b" FLOAT DOUBLE
+"dgidn_nld24g5b" FLOAT DOUBLE
+"cgbn_nld24g5b" FLOAT DOUBLE
+"dkt1n_nld24g5b" FLOAT DOUBLE
+"toxn_nda24g3b" FLOAT DOUBLE
+"dxln_nda24g3b" FLOAT DOUBLE
+"dxwn_nda24g3b" FLOAT DOUBLE
+"cjdn_nda24g3b" FLOAT DOUBLE
+"cjswdn_nda24g3b" FLOAT DOUBLE
+"cjswgdn_nda24g3b" FLOAT DOUBLE
+"cjsn_nda24g3b" FLOAT DOUBLE
+"cjswsn_nda24g3b" FLOAT DOUBLE
+"cjswgsn_nda24g3b" FLOAT DOUBLE
+"cgdn_nda24g3b" FLOAT DOUBLE
+"cgsn_nda24g3b" FLOAT DOUBLE
+"dvthn_nda24g3b" FLOAT DOUBLE
+"dlvthn_nda24g3b" FLOAT DOUBLE
+"dwvthn_nda24g3b" FLOAT DOUBLE
+"dpvthn_nda24g3b" FLOAT DOUBLE
+"du0n_nda24g3b" FLOAT DOUBLE
+"dlu0n_nda24g3b" FLOAT DOUBLE
+"dwu0n_nda24g3b" FLOAT DOUBLE
+"dpu0n_nda24g3b" FLOAT DOUBLE
+"dagsn_nda24g3b" FLOAT DOUBLE
+"dwagsn_nda24g3b" FLOAT DOUBLE
+"drdwn_nda24g3b" FLOAT DOUBLE
+"drswn_nda24g3b" FLOAT DOUBLE
+"dprdwn_nda24g3b" FLOAT DOUBLE
+"dprswn_nda24g3b" FLOAT DOUBLE
+"dvsatn_nda24g3b" FLOAT DOUBLE
+"dlvsatn_nda24g3b" FLOAT DOUBLE
+"dwvsatn_nda24g3b" FLOAT DOUBLE
+"dpvsatn_nda24g3b" FLOAT DOUBLE
+"dk2n_nda24g3b" FLOAT DOUBLE
+"dlk2n_nda24g3b" FLOAT DOUBLE
+"dwk2n_nda24g3b" FLOAT DOUBLE
+"dpk2n_nda24g3b" FLOAT DOUBLE
+"datn_nda24g3b" FLOAT DOUBLE
+"dlagsn_nda24g3b" FLOAT DOUBLE
+"dkt1n_nda24g3b" FLOAT DOUBLE
+"dpdiblc2n_nda24g3b" FLOAT DOUBLE
+"dlpdiblc2n_nda24g3b" FLOAT DOUBLE
+"dwpdiblc2n_nda24g3b" FLOAT DOUBLE
+"dppdiblc2n_nda24g3b" FLOAT DOUBLE
+"dua1n_nda24g3b" FLOAT DOUBLE
+"duan_nda24g3b" FLOAT DOUBLE
+"dubn_nda24g3b" FLOAT DOUBLE
+"dlatn_nda24g3b" FLOAT DOUBLE
+"dlucn_nda24g3b" FLOAT DOUBLE
+"dketan_nda24g3b" FLOAT DOUBLE
+"dlketan_nda24g3b" FLOAT DOUBLE
+"drdn_nda24g3b" FLOAT DOUBLE
+"cgdln_nda24g3b" FLOAT DOUBLE
+"cgsln_nda24g3b" FLOAT DOUBLE
+"cgbn_nda24g3b" FLOAT DOUBLE
+"toxn_nld36g5b" FLOAT DOUBLE
+"dxln_nld36g5b" FLOAT DOUBLE
+"dxwn_nld36g5b" FLOAT DOUBLE
+"cjdn_nld36g5b" FLOAT DOUBLE
+"cjswdn_nld36g5b" FLOAT DOUBLE
+"cjswgdn_nld36g5b" FLOAT DOUBLE
+"cjsn_nld36g5b" FLOAT DOUBLE
+"cjswsn_nld36g5b" FLOAT DOUBLE
+"cjswgsn_nld36g5b" FLOAT DOUBLE
+"cgdn_nld36g5b" FLOAT DOUBLE
+"cgsn_nld36g5b" FLOAT DOUBLE
+"cgdln_nld36g5b" FLOAT DOUBLE
+"cgsln_nld36g5b" FLOAT DOUBLE
+"dvthn_nld36g5b" FLOAT DOUBLE
+"dlvthn_nld36g5b" FLOAT DOUBLE
+"dwvthn_nld36g5b" FLOAT DOUBLE
+"dpvthn_nld36g5b" FLOAT DOUBLE
+"du0n_nld36g5b" FLOAT DOUBLE
+"dlu0n_nld36g5b" FLOAT DOUBLE
+"dwu0n_nld36g5b" FLOAT DOUBLE
+"dpu0n_nld36g5b" FLOAT DOUBLE
+"dagsn_nld36g5b" FLOAT DOUBLE
+"dwagsn_nld36g5b" FLOAT DOUBLE
+"drdwn_nld36g5b" FLOAT DOUBLE
+"drswn_nld36g5b" FLOAT DOUBLE
+"dwrdwn_nld36g5b" FLOAT DOUBLE
+"dwrswn_nld36g5b" FLOAT DOUBLE
+"dvsatn_nld36g5b" FLOAT DOUBLE
+"dwvsatn_nld36g5b" FLOAT DOUBLE
+"dpvsatn_nld36g5b" FLOAT DOUBLE
+"drdn_nld36g5b" FLOAT DOUBLE
+"dgidn_nld36g5b" FLOAT DOUBLE
+"datn_nld36g5b" FLOAT DOUBLE
+"dwatn_nld36g5b" FLOAT DOUBLE
+"dtvoffn_nld36g5b" FLOAT DOUBLE
+"da1n_nld36g5b" FLOAT DOUBLE
+"duten_nld36g5b" FLOAT DOUBLE
+"dcgbn_nld36g5b" FLOAT DOUBLE
+"toxn_nld45g5b" FLOAT DOUBLE
+"dxln_nld45g5b" FLOAT DOUBLE
+"dxwn_nld45g5b" FLOAT DOUBLE
+"cjdn_nld45g5b" FLOAT DOUBLE
+"cjswdn_nld45g5b" FLOAT DOUBLE
+"cjswgdn_nld45g5b" FLOAT DOUBLE
+"cjsn_nld45g5b" FLOAT DOUBLE
+"cjswsn_nld45g5b" FLOAT DOUBLE
+"cjswgsn_nld45g5b" FLOAT DOUBLE
+"cgsn_nld45g5b" FLOAT DOUBLE
+"cgdn_nld45g5b" FLOAT DOUBLE
+"cgdln_nld45g5b" FLOAT DOUBLE
+"cgsln_nld45g5b" FLOAT DOUBLE
+"dvthn_nld45g5b" FLOAT DOUBLE
+"dwvthn_nld45g5b" FLOAT DOUBLE
+"du0n_nld45g5b" FLOAT DOUBLE
+"dwu0n_nld45g5b" FLOAT DOUBLE
+"dagsn_nld45g5b" FLOAT DOUBLE
+"dwagsn_nld45g5b" FLOAT DOUBLE
+"drdwn_nld45g5b" FLOAT DOUBLE
+"drswn_nld45g5b" FLOAT DOUBLE
+"dvsatn_nld45g5b" FLOAT DOUBLE
+"drdn_nld45g5b" FLOAT DOUBLE
+"da0n_nld45g5b" FLOAT DOUBLE
+"dwa0n_nld45g5b" FLOAT DOUBLE
+"datn_nld45g5b" FLOAT DOUBLE
+"dwatn_nld45g5b" FLOAT DOUBLE
+"dkt1n_nld45g5b" FLOAT DOUBLE
+"dwkt1n_nld45g5b" FLOAT DOUBLE
+"dtvoffn_nld45g5b" FLOAT DOUBLE
+"dwtvoffn_nld45g5b" FLOAT DOUBLE
+"dcgbn_nld45g5b" FLOAT DOUBLE
+"toxn_na70g5b" FLOAT DOUBLE
+"dxln_na70g5b" FLOAT DOUBLE
+"dxwn_na70g5b" FLOAT DOUBLE
+"cjdn_na70g5b" FLOAT DOUBLE
+"cjswdn_na70g5b" FLOAT DOUBLE
+"cjswgdn_na70g5b" FLOAT DOUBLE
+"cjsn_na70g5b" FLOAT DOUBLE
+"cjswsn_na70g5b" FLOAT DOUBLE
+"cjswgsn_na70g5b" FLOAT DOUBLE
+"cgdn_na70g5b" FLOAT DOUBLE
+"cgsn_na70g5b" FLOAT DOUBLE
+"dvthn_na70g5b" FLOAT DOUBLE
+"dlvthn_na70g5b" FLOAT DOUBLE
+"dwvthn_na70g5b" FLOAT DOUBLE
+"dpvthn_na70g5b" FLOAT DOUBLE
+"du0n_na70g5b" FLOAT DOUBLE
+"dlu0n_na70g5b" FLOAT DOUBLE
+"dwu0n_na70g5b" FLOAT DOUBLE
+"dpu0n_na70g5b" FLOAT DOUBLE
+"dagsn_na70g5b" FLOAT DOUBLE
+"dlagsn_na70g5b" FLOAT DOUBLE
+"dwagsn_na70g5b" FLOAT DOUBLE
+"dpagsn_na70g5b" FLOAT DOUBLE
+"dvsatn_na70g5b" FLOAT DOUBLE
+"dlvsatn_na70g5b" FLOAT DOUBLE
+"dpvsatn_na70g5b" FLOAT DOUBLE
+"drdwn_na70g5b" FLOAT DOUBLE
+"drswn_na70g5b" FLOAT DOUBLE
+"datn_na70g5b" FLOAT DOUBLE
+"dlatn_na70g5b" FLOAT DOUBLE
+"dwatn_na70g5b" FLOAT DOUBLE
+"dpatn_na70g5b" FLOAT DOUBLE
+"dwkt1n_na70g5b" FLOAT DOUBLE
+"dpkt1n_na70g5b" FLOAT DOUBLE
+"drdn_na70g5b" FLOAT DOUBLE
+"drthn_na70g5b" FLOAT DOUBLE
+"dcgbn_na70g5b" FLOAT DOUBLE
+"cgdln_na70g5b" FLOAT DOUBLE
+"cgsln_na70g5b" FLOAT DOUBLE
+"toxp_pa20g5b" FLOAT DOUBLE
+"dxlp_pa20g5b" FLOAT DOUBLE
+"dxwp_pa20g5b" FLOAT DOUBLE
+"cjdp_pa20g5b" FLOAT DOUBLE
+"cjswdp_pa20g5b" FLOAT DOUBLE
+"cjswgdp_pa20g5b" FLOAT DOUBLE
+"cjsp_pa20g5b" FLOAT DOUBLE
+"cjswsp_pa20g5b" FLOAT DOUBLE
+"cjswgsp_pa20g5b" FLOAT DOUBLE
+"cgdp_pa20g5b" FLOAT DOUBLE
+"cgsp_pa20g5b" FLOAT DOUBLE
+"dvthp_pa20g5b" FLOAT DOUBLE
+"dlvthp_pa20g5b" FLOAT DOUBLE
+"dwvthp_pa20g5b" FLOAT DOUBLE
+"dpvthp_pa20g5b" FLOAT DOUBLE
+"dvsatp_pa20g5b" FLOAT DOUBLE
+"dpvsatp_pa20g5b" FLOAT DOUBLE
+"du0p_pa20g5b" FLOAT DOUBLE
+"dlu0p_pa20g5b" FLOAT DOUBLE
+"dwu0p_pa20g5b" FLOAT DOUBLE
+"dpu0p_pa20g5b" FLOAT DOUBLE
+"dagsp_pa20g5b" FLOAT DOUBLE
+"dwagsp_pa20g5b" FLOAT DOUBLE
+"dla0p_pa20g5b" FLOAT DOUBLE
+"drdwp_pa20g5b" FLOAT DOUBLE
+"drswp_pa20g5b" FLOAT DOUBLE
+"dlvsatp_pa20g5b" FLOAT DOUBLE
+"dwvsatp_pa20g5b" FLOAT DOUBLE
+"dprdwp_pa20g5b" FLOAT DOUBLE
+"dlagsp_pa20g5b" FLOAT DOUBLE
+"dpagsp_pa20g5b" FLOAT DOUBLE
+"dpkt1p_pa20g5b" FLOAT DOUBLE
+"dprswp_pa20g5b" FLOAT DOUBLE
+"dpatp_pa20g5b" FLOAT DOUBLE
+"drdp_pa20g5b" FLOAT DOUBLE
+"dwpdiblc2p_pa20g5b" FLOAT DOUBLE
+"dk2p_pa20g5b" FLOAT DOUBLE
+"dlk2p_pa20g5b" FLOAT DOUBLE
+"dwk2p_pa20g5b" FLOAT DOUBLE
+"dpk2p_pa20g5b" FLOAT DOUBLE
+"dlucp_pa20g5b" FLOAT DOUBLE
+"dpucp_pa20g5b" FLOAT DOUBLE
+"dlketap_pa20g5b" FLOAT DOUBLE
+"dpketap_pa20g5b" FLOAT DOUBLE
+"dcgbp_pa20g5b" FLOAT DOUBLE
+"cgdlp_pa20g5b" FLOAT DOUBLE
+"cgslp_pa20g5b" FLOAT DOUBLE
+"toxp_pa36g5b" FLOAT DOUBLE
+"dxlp_pa36g5b" FLOAT DOUBLE
+"dxwp_pa36g5b" FLOAT DOUBLE
+"cjdp_pa36g5b" FLOAT DOUBLE
+"cjswdp_pa36g5b" FLOAT DOUBLE
+"cjswgdp_pa36g5b" FLOAT DOUBLE
+"cjsp_pa36g5b" FLOAT DOUBLE
+"cjswsp_pa36g5b" FLOAT DOUBLE
+"cjswgsp_pa36g5b" FLOAT DOUBLE
+"cgdp_pa36g5b" FLOAT DOUBLE
+"cgsp_pa36g5b" FLOAT DOUBLE
+"dvthp_pa36g5b" FLOAT DOUBLE
+"dlvthp_pa36g5b" FLOAT DOUBLE
+"dwvthp_pa36g5b" FLOAT DOUBLE
+"dpvthp_pa36g5b" FLOAT DOUBLE
+"dvsatp_pa36g5b" FLOAT DOUBLE
+"dpvsatp_pa36g5b" FLOAT DOUBLE
+"du0p_pa36g5b" FLOAT DOUBLE
+"dlu0p_pa36g5b" FLOAT DOUBLE
+"dwu0p_pa36g5b" FLOAT DOUBLE
+"dpu0p_pa36g5b" FLOAT DOUBLE
+"dagsp_pa36g5b" FLOAT DOUBLE
+"dwagsp_pa36g5b" FLOAT DOUBLE
+"dla0p_pa36g5b" FLOAT DOUBLE
+"drdwp_pa36g5b" FLOAT DOUBLE
+"drswp_pa36g5b" FLOAT DOUBLE
+"dlvsatp_pa36g5b" FLOAT DOUBLE
+"dprdwp_pa36g5b" FLOAT DOUBLE
+"dlagsp_pa36g5b" FLOAT DOUBLE
+"dpkt1p_pa36g5b" FLOAT DOUBLE
+"dprswp_pa36g5b" FLOAT DOUBLE
+"dk2p_pa36g5b" FLOAT DOUBLE
+"dlk2p_pa36g5b" FLOAT DOUBLE
+"dwk2p_pa36g5b" FLOAT DOUBLE
+"dpk2p_pa36g5b" FLOAT DOUBLE
+"dlatp_pa36g5b" FLOAT DOUBLE
+"drdp_pa36g5b" FLOAT DOUBLE
+"dcgbp_pa36g5b" FLOAT DOUBLE
+"cgdlp_pa36g5b" FLOAT DOUBLE
+"cgslp_pa36g5b" FLOAT DOUBLE
+"toxp_pa45g5b" FLOAT DOUBLE
+"dxlp_pa45g5b" FLOAT DOUBLE
+"dxwp_pa45g5b" FLOAT DOUBLE
+"cjdp_pa45g5b" FLOAT DOUBLE
+"cjswdp_pa45g5b" FLOAT DOUBLE
+"cjswgdp_pa45g5b" FLOAT DOUBLE
+"cjsp_pa45g5b" FLOAT DOUBLE
+"cjswsp_pa45g5b" FLOAT DOUBLE
+"cjswgsp_pa45g5b" FLOAT DOUBLE
+"cgdp_pa45g5b" FLOAT DOUBLE
+"cgsp_pa45g5b" FLOAT DOUBLE
+"dvthp_pa45g5b" FLOAT DOUBLE
+"dlvthp_pa45g5b" FLOAT DOUBLE
+"dwvthp_pa45g5b" FLOAT DOUBLE
+"dpvthp_pa45g5b" FLOAT DOUBLE
+"dvsatp_pa45g5b" FLOAT DOUBLE
+"dlvsatp_pa45g5b" FLOAT DOUBLE
+"dwvsatp_pa45g5b" FLOAT DOUBLE
+"dpvsatp_pa45g5b" FLOAT DOUBLE
+"du0p_pa45g5b" FLOAT DOUBLE
+"dlu0p_pa45g5b" FLOAT DOUBLE
+"dwu0p_pa45g5b" FLOAT DOUBLE
+"dpu0p_pa45g5b" FLOAT DOUBLE
+"dagsp_pa45g5b" FLOAT DOUBLE
+"dlagsp_pa45g5b" FLOAT DOUBLE
+"dwagsp_pa45g5b" FLOAT DOUBLE
+"dpagsp_pa45g5b" FLOAT DOUBLE
+"datp_pa45g5b" FLOAT DOUBLE
+"dlatp_pa45g5b" FLOAT DOUBLE
+"dwatp_pa45g5b" FLOAT DOUBLE
+"dpatp_pa45g5b" FLOAT DOUBLE
+"drdwp_pa45g5b" FLOAT DOUBLE
+"drswp_pa45g5b" FLOAT DOUBLE
+"drdp_pa45g5b" FLOAT DOUBLE
+"dprdwp_pa45g5b" FLOAT DOUBLE
+"dk2p_pa45g5b" FLOAT DOUBLE
+"dppdiblc2p_pa45g5b" FLOAT DOUBLE
+"dlketap_pa45g5b" FLOAT DOUBLE
+"dcgbp_pa45g5b" FLOAT DOUBLE
+"cgdlp_pa45g5b" FLOAT DOUBLE
+"cgslp_pa45g5b" FLOAT DOUBLE
+"toxp_pa55g5b" FLOAT DOUBLE
+"dxlp_pa55g5b" FLOAT DOUBLE
+"dxwp_pa55g5b" FLOAT DOUBLE
+"cjdp_pa55g5b" FLOAT DOUBLE
+"cjswdp_pa55g5b" FLOAT DOUBLE
+"cjswgdp_pa55g5b" FLOAT DOUBLE
+"cjsp_pa55g5b" FLOAT DOUBLE
+"cjswsp_pa55g5b" FLOAT DOUBLE
+"cjswgsp_pa55g5b" FLOAT DOUBLE
+"cgsp_pa55g5b" FLOAT DOUBLE
+"cgdp_pa55g5b" FLOAT DOUBLE
+"dvthp_pa55g5b" FLOAT DOUBLE
+"dlvthp_pa55g5b" FLOAT DOUBLE
+"dwvthp_pa55g5b" FLOAT DOUBLE
+"dpvthp_pa55g5b" FLOAT DOUBLE
+"dvsatp_pa55g5b" FLOAT DOUBLE
+"dlvsatp_pa55g5b" FLOAT DOUBLE
+"dwvsatp_pa55g5b" FLOAT DOUBLE
+"dpvsatp_pa55g5b" FLOAT DOUBLE
+"du0p_pa55g5b" FLOAT DOUBLE
+"dlu0p_pa55g5b" FLOAT DOUBLE
+"dwu0p_pa55g5b" FLOAT DOUBLE
+"dpu0p_pa55g5b" FLOAT DOUBLE
+"dagsp_pa55g5b" FLOAT DOUBLE
+"dlagsp_pa55g5b" FLOAT DOUBLE
+"dwagsp_pa55g5b" FLOAT DOUBLE
+"dpagsp_pa55g5b" FLOAT DOUBLE
+"drdwp_pa55g5b" FLOAT DOUBLE
+"drswp_pa55g5b" FLOAT DOUBLE
+"datp_pa55g5b" FLOAT DOUBLE
+"drdp_pa55g5b" FLOAT DOUBLE
+"dprdwp_pa55g5b" FLOAT DOUBLE
+"dk2p_pa55g5b" FLOAT DOUBLE
+"dlpdiblc2p_pa55g5b" FLOAT DOUBLE
+"dlucp_pa55g5b" FLOAT DOUBLE
+"dcgbp_pa55g5b" FLOAT DOUBLE
+"cgdlp_pa55g5b" FLOAT DOUBLE
+"cgslp_pa55g5b" FLOAT DOUBLE
+"toxp_pa70g5b" FLOAT DOUBLE
+"dxlp_pa70g5b" FLOAT DOUBLE
+"dxwp_pa70g5b" FLOAT DOUBLE
+"cjdp_pa70g5b" FLOAT DOUBLE
+"cjswdp_pa70g5b" FLOAT DOUBLE
+"cjswgdp_pa70g5b" FLOAT DOUBLE
+"cjsp_pa70g5b" FLOAT DOUBLE
+"cjswsp_pa70g5b" FLOAT DOUBLE
+"cjswgsp_pa70g5b" FLOAT DOUBLE
+"cgdp_pa70g5b" FLOAT DOUBLE
+"cgsp_pa70g5b" FLOAT DOUBLE
+"dvthp_pa70g5b" FLOAT DOUBLE
+"dlvthp_pa70g5b" FLOAT DOUBLE
+"dwvthp_pa70g5b" FLOAT DOUBLE
+"dpvthp_pa70g5b" FLOAT DOUBLE
+"dvsatp_pa70g5b" FLOAT DOUBLE
+"dlvsatp_pa70g5b" FLOAT DOUBLE
+"dwvsatp_pa70g5b" FLOAT DOUBLE
+"dpvsatp_pa70g5b" FLOAT DOUBLE
+"du0p_pa70g5b" FLOAT DOUBLE
+"dlu0p_pa70g5b" FLOAT DOUBLE
+"dwu0p_pa70g5b" FLOAT DOUBLE
+"dpu0p_pa70g5b" FLOAT DOUBLE
+"dagsp_pa70g5b" FLOAT DOUBLE
+"dlagsp_pa70g5b" FLOAT DOUBLE
+"dwagsp_pa70g5b" FLOAT DOUBLE
+"dpagsp_pa70g5b" FLOAT DOUBLE
+"drdwp_pa70g5b" FLOAT DOUBLE
+"drswp_pa70g5b" FLOAT DOUBLE
+"dprdwp_pa70g5b" FLOAT DOUBLE
+"dk2p_pa70g5b" FLOAT DOUBLE
+"drdp_pa70g5b" FLOAT DOUBLE
+"dcgbp_pa70g5b" FLOAT DOUBLE
+"cgdlp_pa70g5b" FLOAT DOUBLE
+"cgslp_pa70g5b" FLOAT DOUBLE
+"toxn_nda45g3b" FLOAT DOUBLE
+"dxln_nda45g3b" FLOAT DOUBLE
+"dxwn_nda45g3b" FLOAT DOUBLE
+"dvthn_nda45g3b" FLOAT DOUBLE
+"dlvth0n_nda45g3b" FLOAT DOUBLE
+"dwvth0n_nda45g3b" FLOAT DOUBLE
+"dpvth0n_nda45g3b" FLOAT DOUBLE
+"du0n_nda45g3b" FLOAT DOUBLE
+"dlu0n_nda45g3b" FLOAT DOUBLE
+"dwu0n_nda45g3b" FLOAT DOUBLE
+"dpu0n_nda45g3b" FLOAT DOUBLE
+"duan_nda45g3b" FLOAT DOUBLE
+"dwuan_nda45g3b" FLOAT DOUBLE
+"drdwn_nda45g3b" FLOAT DOUBLE
+"drswn_nda45g3b" FLOAT DOUBLE
+"dprdwn_nda45g3b" FLOAT DOUBLE
+"dagsn_nda45g3b" FLOAT DOUBLE
+"dlagsn_nda45g3b" FLOAT DOUBLE
+"dwagsn_nda45g3b" FLOAT DOUBLE
+"dpagsn_nda45g3b" FLOAT DOUBLE
+"dvsatn_nda45g3b" FLOAT DOUBLE
+"dlvsatn_nda45g3b" FLOAT DOUBLE
+"dpvsatn_nda45g3b" FLOAT DOUBLE
+"dlprtn_nda45g3b" FLOAT DOUBLE
+"datn_nda45g3b" FLOAT DOUBLE
+"dlatn_nda45g3b" FLOAT DOUBLE
+"dpatn_nda45g3b" FLOAT DOUBLE
+"duten_nda45g3b" FLOAT DOUBLE
+"dua1n_nda45g3b" FLOAT DOUBLE
+"dwua1n_nda45g3b" FLOAT DOUBLE
+"dub1n_nda45g3b" FLOAT DOUBLE
+"cgdn_nda45g3b" FLOAT DOUBLE
+"cgsn_nda45g3b" FLOAT DOUBLE
+"cjdn_nda45g3b" FLOAT DOUBLE
+"cjswdn_nda45g3b" FLOAT DOUBLE
+"cjswgdn_nda45g3b" FLOAT DOUBLE
+"cjsn_nda45g3b" FLOAT DOUBLE
+"cjswsn_nda45g3b" FLOAT DOUBLE
+"cjswgsn_nda45g3b" FLOAT DOUBLE
+"drdn_nda45g3b" FLOAT DOUBLE
+"cgdln_nda45g3b" FLOAT DOUBLE
+"cgsln_nda45g3b" FLOAT DOUBLE
+"cgbn_nda45g3b" FLOAT DOUBLE
+"toxn_na45g5b" FLOAT DOUBLE
+"dxln_na45g5b" FLOAT DOUBLE
+"dxwn_na45g5b" FLOAT DOUBLE
+"cjsn_na45g5b" FLOAT DOUBLE
+"cjdn_na45g5b" FLOAT DOUBLE
+"cjswsn_na45g5b" FLOAT DOUBLE
+"cjswdn_na45g5b" FLOAT DOUBLE
+"cjswgsn_na45g5b" FLOAT DOUBLE
+"cjswgdn_na45g5b" FLOAT DOUBLE
+"cgdn_na45g5b" FLOAT DOUBLE
+"cgsn_na45g5b" FLOAT DOUBLE
+"cgdln_na45g5b" FLOAT DOUBLE
+"cgsln_na45g5b" FLOAT DOUBLE
+"drdn_na45g5b" FLOAT DOUBLE
+"cgbn_na45g5b" FLOAT DOUBLE
+"dgidn_na45g5b" FLOAT DOUBLE
+"dvthn_na45g5b" FLOAT DOUBLE
+"dlvthn_na45g5b" FLOAT DOUBLE
+"dwvthn_na45g5b" FLOAT DOUBLE
+"dpvthn_na45g5b" FLOAT DOUBLE
+"du0n_na45g5b" FLOAT DOUBLE
+"dlu0n_na45g5b" FLOAT DOUBLE
+"dwu0n_na45g5b" FLOAT DOUBLE
+"dpu0n_na45g5b" FLOAT DOUBLE
+"drdwn_na45g5b" FLOAT DOUBLE
+"drswn_na45g5b" FLOAT DOUBLE
+"dprtn_na45g5b" FLOAT DOUBLE
+"dagsn_na45g5b" FLOAT DOUBLE
+"dwagsn_na45g5b" FLOAT DOUBLE
+"dvsatn_na45g5b" FLOAT DOUBLE
+"dwvsatn_na45g5b" FLOAT DOUBLE
+"dlatn_na45g5b" FLOAT DOUBLE
+"dvoffn_na45g5b" FLOAT DOUBLE
+"dlvoffn_na45g5b" FLOAT DOUBLE
+"dwvoffn_na45g5b" FLOAT DOUBLE
+"dpvoffn_na45g5b" FLOAT DOUBLE
+"dltvoffn_na45g5b" FLOAT DOUBLE
+"dlua1n_na45g5b" FLOAT DOUBLE
+"dlub1n_na45g5b" FLOAT DOUBLE
+"dk2n_na45g5b" FLOAT DOUBLE
+"toxn_nld55g5b" FLOAT DOUBLE
+"dxln_nld55g5b" FLOAT DOUBLE
+"dxwn_nld55g5b" FLOAT DOUBLE
+"cgdn_nld55g5b" FLOAT DOUBLE
+"cgdln_nld55g5b" FLOAT DOUBLE
+"cgsn_nld55g5b" FLOAT DOUBLE
+"cgsln_nld55g5b" FLOAT DOUBLE
+"cgbn_nld55g5b" FLOAT DOUBLE
+"cjdn_nld55g5b" FLOAT DOUBLE
+"cjsn_nld55g5b" FLOAT DOUBLE
+"cjswdn_nld55g5b" FLOAT DOUBLE
+"cjswgdn_nld55g5b" FLOAT DOUBLE
+"cjswgsn_nld55g5b" FLOAT DOUBLE
+"cjswsn_nld55g5b" FLOAT DOUBLE
+"dvthn_nld55g5b" FLOAT DOUBLE
+"dwvthn_nld55g5b" FLOAT DOUBLE
+"drdn_nld55g5b" FLOAT DOUBLE
+"drdwn_nld55g5b" FLOAT DOUBLE
+"drswn_nld55g5b" FLOAT DOUBLE
+"du0n_nld55g5b" FLOAT DOUBLE
+"dwu0n_nld55g5b" FLOAT DOUBLE
+"dvsatn_nld55g5b" FLOAT DOUBLE
+"dwvsatn_nld55g5b" FLOAT DOUBLE
+"datn_nld55g5b" FLOAT DOUBLE
+"dkt1n_nld55g5b" FLOAT DOUBLE
+"dua1n_nld55g5b" FLOAT DOUBLE
+"toxn_nld65g5b" FLOAT DOUBLE
+"dxwn_nld65g5b" FLOAT DOUBLE
+"dxln_nld65g5b" FLOAT DOUBLE
+"cgdn_nld65g5b" FLOAT DOUBLE
+"cgdln_nld65g5b" FLOAT DOUBLE
+"cgsn_nld65g5b" FLOAT DOUBLE
+"cgsln_nld65g5b" FLOAT DOUBLE
+"cjdn_nld65g5b" FLOAT DOUBLE
+"cjsn_nld65g5b" FLOAT DOUBLE
+"cjswdn_nld65g5b" FLOAT DOUBLE
+"cjswgdn_nld65g5b" FLOAT DOUBLE
+"cjswgsn_nld65g5b" FLOAT DOUBLE
+"cjswsn_nld65g5b" FLOAT DOUBLE
+"cgbn_nld65g5b" FLOAT DOUBLE
+"drdn_nld65g5b" FLOAT DOUBLE
+"dvthn_nld65g5b" FLOAT DOUBLE
+"dwvthn_nld65g5b" FLOAT DOUBLE
+"drdwn_nld65g5b" FLOAT DOUBLE
+"drswn_nld65g5b" FLOAT DOUBLE
+"dwrdwn_nld65g5b" FLOAT DOUBLE
+"dwrswn_nld65g5b" FLOAT DOUBLE
+"du0n_nld65g5b" FLOAT DOUBLE
+"dwu0n_nld65g5b" FLOAT DOUBLE
+"dvsatn_nld65g5b" FLOAT DOUBLE
+"dwvsatn_nld65g5b" FLOAT DOUBLE
+"dprtn_nld65g5b" FLOAT DOUBLE
+"datn_nld65g5b" FLOAT DOUBLE
+"dwatn_nld65g5b" FLOAT DOUBLE
+"da0n_nld65g5b" FLOAT DOUBLE
+"dwa0n_nld65g5b" FLOAT DOUBLE
+"cgsn_nda65g3b" FLOAT DOUBLE
+"cgdn_nda65g3b" FLOAT DOUBLE
+"cgsln_nda65g3b" FLOAT DOUBLE
+"cgdln_nda65g3b" FLOAT DOUBLE
+"cjdn_nda65g3b" FLOAT DOUBLE
+"cjsn_nda65g3b" FLOAT DOUBLE
+"cjswdn_nda65g3b" FLOAT DOUBLE
+"cjswgdn_nda65g3b" FLOAT DOUBLE
+"cjswgsn_nda65g3b" FLOAT DOUBLE
+"cjswsn_nda65g3b" FLOAT DOUBLE
+"dagsn_nda65g3b" FLOAT DOUBLE
+"dlatn_nda65g3b" FLOAT DOUBLE
+"dlpdiblc2n_nda65g3b" FLOAT DOUBLE
+"dlprtn_nda65g3b" FLOAT DOUBLE
+"drdwn_nda65g3b" FLOAT DOUBLE
+"dprdwn_nda65g3b" FLOAT DOUBLE
+"drswn_nda65g3b" FLOAT DOUBLE
+"dprswn_nda65g3b" FLOAT DOUBLE
+"du0n_nda65g3b" FLOAT DOUBLE
+"dlu0n_nda65g3b" FLOAT DOUBLE
+"dpu0n_nda65g3b" FLOAT DOUBLE
+"duan_nda65g3b" FLOAT DOUBLE
+"dluan_nda65g3b" FLOAT DOUBLE
+"dua1n_nda65g3b" FLOAT DOUBLE
+"dvsatn_nda65g3b" FLOAT DOUBLE
+"dlvsatn_nda65g3b" FLOAT DOUBLE
+"dpvsatn_nda65g3b" FLOAT DOUBLE
+"dvthn_nda65g3b" FLOAT DOUBLE
+"dlvthn_nda65g3b" FLOAT DOUBLE
+"dpvthn_nda65g3b" FLOAT DOUBLE
+"dwagsn_nda65g3b" FLOAT DOUBLE
+"dwkt1n_nda65g3b" FLOAT DOUBLE
+"dwu0n_nda65g3b" FLOAT DOUBLE
+"dwua1n_nda65g3b" FLOAT DOUBLE
+"dwvthn_nda65g3b" FLOAT DOUBLE
+"dxln_nda65g3b" FLOAT DOUBLE
+"dxwn_nda65g3b" FLOAT DOUBLE
+"toxn_nda65g3b" FLOAT DOUBLE
+"dgidn_nda65g3b" FLOAT DOUBLE
+"drdn_nda65g3b" FLOAT DOUBLE
+"cgbn_nda65g3b" FLOAT DOUBLE
+"dlua1n_nda65g3b" FLOAT DOUBLE
+"dpua1n_nda65g3b" FLOAT DOUBLE
+"dpatn_nda65g3b" FLOAT DOUBLE
+"da0n_nda65g3b" FLOAT DOUBLE
+"dla0n_nda65g3b" FLOAT DOUBLE
+"dwa0n_nda65g3b" FLOAT DOUBLE
+"dpa0n_nda65g3b" FLOAT DOUBLE
+"ss_flagn_nda65g3b" FLOAT DOUBLE
+"fs_flagn_nda65g3b" FLOAT DOUBLE
+"ff_flagn_nda65g3b" FLOAT DOUBLE
+"sf_flagn_nda65g3b" FLOAT DOUBLE
+"cgdn_nld7g5anblmr" FLOAT DOUBLE
+"cgsn_nld7g5anblmr" FLOAT DOUBLE
+"cgdln_nld7g5anblmr" FLOAT DOUBLE
+"cgsln_nld7g5anblmr" FLOAT DOUBLE
+"cjdn_nld7g5anblmr" FLOAT DOUBLE
+"cjsn_nld7g5anblmr" FLOAT DOUBLE
+"cjswdn_nld7g5anblmr" FLOAT DOUBLE
+"cjswgdn_nld7g5anblmr" FLOAT DOUBLE
+"cjswgsn_nld7g5anblmr" FLOAT DOUBLE
+"cjswsn_nld7g5anblmr" FLOAT DOUBLE
+"drdwn_nld7g5anblmr" FLOAT DOUBLE
+"drswn_nld7g5anblmr" FLOAT DOUBLE
+"du0n_nld7g5anblmr" FLOAT DOUBLE
+"dvsatn_nld7g5anblmr" FLOAT DOUBLE
+"dvthn_nld7g5anblmr" FLOAT DOUBLE
+"dwrdwn_nld7g5anblmr" FLOAT DOUBLE
+"dwrswn_nld7g5anblmr" FLOAT DOUBLE
+"dwu0n_nld7g5anblmr" FLOAT DOUBLE
+"dwvsatn_nld7g5anblmr" FLOAT DOUBLE
+"dwvthn_nld7g5anblmr" FLOAT DOUBLE
+"dwprtn_nld7g5anblmr" FLOAT DOUBLE
+"dwatn_nld7g5anblmr" FLOAT DOUBLE
+"dwkt1n_nld7g5anblmr" FLOAT DOUBLE
+"dxln_nld7g5anblmr" FLOAT DOUBLE
+"dxwn_nld7g5anblmr" FLOAT DOUBLE
+"toxn_nld7g5anblmr" FLOAT DOUBLE
+"drdn_nld7g5anblmr" FLOAT DOUBLE
+"cgbn_nld7g5anblmr" FLOAT DOUBLE
+"toxn_nld12g5anblmr" FLOAT DOUBLE
+"dxln_nld12g5anblmr" FLOAT DOUBLE
+"dxwn_nld12g5anblmr" FLOAT DOUBLE
+"cjdn_nld12g5anblmr" FLOAT DOUBLE
+"cjswdn_nld12g5anblmr" FLOAT DOUBLE
+"cjswgdn_nld12g5anblmr" FLOAT DOUBLE
+"cjsn_nld12g5anblmr" FLOAT DOUBLE
+"cjswsn_nld12g5anblmr" FLOAT DOUBLE
+"cjswgsn_nld12g5anblmr" FLOAT DOUBLE
+"cgdon_nld12g5anblmr" FLOAT DOUBLE
+"cgson_nld12g5anblmr" FLOAT DOUBLE
+"cgdln_nld12g5anblmr" FLOAT DOUBLE
+"cgsln_nld12g5anblmr" FLOAT DOUBLE
+"cgbn_nld12g5anblmr" FLOAT DOUBLE
+"dvthn_nld12g5anblmr" FLOAT DOUBLE
+"dwvthn_nld12g5anblmr" FLOAT DOUBLE
+"du0n_nld12g5anblmr" FLOAT DOUBLE
+"dwu0n_nld12g5anblmr" FLOAT DOUBLE
+"dvsatn_nld12g5anblmr" FLOAT DOUBLE
+"dwvsatn_nld12g5anblmr" FLOAT DOUBLE
+"drdwn_nld12g5anblmr" FLOAT DOUBLE
+"drswn_nld12g5anblmr" FLOAT DOUBLE
+"dwrdwn_nld12g5anblmr" FLOAT DOUBLE
+"dwrswn_nld12g5anblmr" FLOAT DOUBLE
+"drd1n_nld12g5anblmr" FLOAT DOUBLE
+"drd2n_nld12g5anblmr" FLOAT DOUBLE
+"dgidn_nld12g5anblmr" FLOAT DOUBLE
+"dub1n_nld12g5anblmr" FLOAT DOUBLE
+"toxn_nld12g5anblhp" FLOAT DOUBLE
+"dxln_nld12g5anblhp" FLOAT DOUBLE
+"dxwn_nld12g5anblhp" FLOAT DOUBLE
+"cjdn_nld12g5anblhp" FLOAT DOUBLE
+"cjswdn_nld12g5anblhp" FLOAT DOUBLE
+"cjswgdn_nld12g5anblhp" FLOAT DOUBLE
+"cjsn_nld12g5anblhp" FLOAT DOUBLE
+"cjswsn_nld12g5anblhp" FLOAT DOUBLE
+"cjswgsn_nld12g5anblhp" FLOAT DOUBLE
+"cgdon_nld12g5anblhp" FLOAT DOUBLE
+"cgson_nld12g5anblhp" FLOAT DOUBLE
+"cgdln_nld12g5anblhp" FLOAT DOUBLE
+"cgsln_nld12g5anblhp" FLOAT DOUBLE
+"cgbn_nld12g5anblhp" FLOAT DOUBLE
+"dvthn_nld12g5anblhp" FLOAT DOUBLE
+"dwvthn_nld12g5anblhp" FLOAT DOUBLE
+"du0n_nld12g5anblhp" FLOAT DOUBLE
+"dwu0n_nld12g5anblhp" FLOAT DOUBLE
+"dvsatn_nld12g5anblhp" FLOAT DOUBLE
+"dwvsatn_nld12g5anblhp" FLOAT DOUBLE
+"drdwn_nld12g5anblhp" FLOAT DOUBLE
+"drswn_nld12g5anblhp" FLOAT DOUBLE
+"dwrdwn_nld12g5anblhp" FLOAT DOUBLE
+"dwrswn_nld12g5anblhp" FLOAT DOUBLE
+"drdn_nld12g5anblhp" FLOAT DOUBLE
+"dgidn_nld12g5anblhp" FLOAT DOUBLE
+"toxn_nld12g5aisohp" FLOAT DOUBLE
+"dxln_nld12g5aisohp" FLOAT DOUBLE
+"dxwn_nld12g5aisohp" FLOAT DOUBLE
+"cjdn_nld12g5aisohp" FLOAT DOUBLE
+"cjswdn_nld12g5aisohp" FLOAT DOUBLE
+"cjswgdn_nld12g5aisohp" FLOAT DOUBLE
+"cjsn_nld12g5aisohp" FLOAT DOUBLE
+"cjswsn_nld12g5aisohp" FLOAT DOUBLE
+"cjswgsn_nld12g5aisohp" FLOAT DOUBLE
+"cgdon_nld12g5aisohp" FLOAT DOUBLE
+"cgson_nld12g5aisohp" FLOAT DOUBLE
+"cgdln_nld12g5aisohp" FLOAT DOUBLE
+"cgsln_nld12g5aisohp" FLOAT DOUBLE
+"dvthn_nld12g5aisohp" FLOAT DOUBLE
+"dwvthn_nld12g5aisohp" FLOAT DOUBLE
+"du0n_nld12g5aisohp" FLOAT DOUBLE
+"dwu0n_nld12g5aisohp" FLOAT DOUBLE
+"dvsatn_nld12g5aisohp" FLOAT DOUBLE
+"dwvsatn_nld12g5aisohp" FLOAT DOUBLE
+"dagsn_nld12g5aisohp" FLOAT DOUBLE
+"dwagsn_nld12g5aisohp" FLOAT DOUBLE
+"drdwn_nld12g5aisohp" FLOAT DOUBLE
+"dwrdwn_nld12g5aisohp" FLOAT DOUBLE
+"drswn_nld12g5aisohp" FLOAT DOUBLE
+"dwrswn_nld12g5aisohp" FLOAT DOUBLE
+"dua1n_nld12g5aisohp" FLOAT DOUBLE
+"drdn_nld12g5aisohp" FLOAT DOUBLE
+"ducn_nld12g5aisohp" FLOAT DOUBLE
+"dcgbn_nld12g5aisohp" FLOAT DOUBLE
+"toxn_na7g5anblmr" FLOAT DOUBLE
+"dxln_na7g5anblmr" FLOAT DOUBLE
+"dxwn_na7g5anblmr" FLOAT DOUBLE
+"cgbn_na7g5anblmr" FLOAT DOUBLE
+"cgsn_na7g5anblmr" FLOAT DOUBLE
+"cgdn_na7g5anblmr" FLOAT DOUBLE
+"cjdn_na7g5anblmr" FLOAT DOUBLE
+"cjsn_na7g5anblmr" FLOAT DOUBLE
+"cjswdn_na7g5anblmr" FLOAT DOUBLE
+"cjswgdn_na7g5anblmr" FLOAT DOUBLE
+"cjswgsn_na7g5anblmr" FLOAT DOUBLE
+"cjswsn_na7g5anblmr" FLOAT DOUBLE
+"dvthn_na7g5anblmr" FLOAT DOUBLE
+"dlvthn_na7g5anblmr" FLOAT DOUBLE
+"dwvthn_na7g5anblmr" FLOAT DOUBLE
+"dpvthn_na7g5anblmr" FLOAT DOUBLE
+"drdwn_na7g5anblmr" FLOAT DOUBLE
+"dprdwn_na7g5anblmr" FLOAT DOUBLE
+"drswn_na7g5anblmr" FLOAT DOUBLE
+"dprswn_na7g5anblmr" FLOAT DOUBLE
+"du0n_na7g5anblmr" FLOAT DOUBLE
+"dlu0n_na7g5anblmr" FLOAT DOUBLE
+"dwu0n_na7g5anblmr" FLOAT DOUBLE
+"dpu0n_na7g5anblmr" FLOAT DOUBLE
+"dagsn_na7g5anblmr" FLOAT DOUBLE
+"dlagsn_na7g5anblmr" FLOAT DOUBLE
+"dwagsn_na7g5anblmr" FLOAT DOUBLE
+"dvsatn_na7g5anblmr" FLOAT DOUBLE
+"dlvsatn_na7g5anblmr" FLOAT DOUBLE
+"dpvsatn_na7g5anblmr" FLOAT DOUBLE
+"ducn_na7g5anblmr" FLOAT DOUBLE
+"dk2n_na7g5anblmr" FLOAT DOUBLE
+"drd1n_na7g5anblmr" FLOAT DOUBLE
+"drd2n_na7g5anblmr" FLOAT DOUBLE
+"datn_na7g5anblmr" FLOAT DOUBLE
+"dlatn_na7g5anblmr" FLOAT DOUBLE
+"dwatn_na7g5anblmr" FLOAT DOUBLE
+"dpatn_na7g5anblmr" FLOAT DOUBLE
+"cgdln_na7g5anblmr" FLOAT DOUBLE
+"cgsln_na7g5anblmr" FLOAT DOUBLE
+"toxn_na12g5anblmr" FLOAT DOUBLE
+"dxln_na12g5anblmr" FLOAT DOUBLE
+"dxwn_na12g5anblmr" FLOAT DOUBLE
+"cgsn_na12g5anblmr" FLOAT DOUBLE
+"cgsln_na12g5anblmr" FLOAT DOUBLE
+"cgdn_na12g5anblmr" FLOAT DOUBLE
+"cgdln_na12g5anblmr" FLOAT DOUBLE
+"cgbn_na12g5anblmr" FLOAT DOUBLE
+"cjdn_na12g5anblmr" FLOAT DOUBLE
+"cjsn_na12g5anblmr" FLOAT DOUBLE
+"cjswdn_na12g5anblmr" FLOAT DOUBLE
+"cjswgdn_na12g5anblmr" FLOAT DOUBLE
+"cjswgsn_na12g5anblmr" FLOAT DOUBLE
+"cjswsn_na12g5anblmr" FLOAT DOUBLE
+"dvthn_na12g5anblmr" FLOAT DOUBLE
+"dlvthn_na12g5anblmr" FLOAT DOUBLE
+"dwvthn_na12g5anblmr" FLOAT DOUBLE
+"dpvthn_na12g5anblmr" FLOAT DOUBLE
+"drdwn_na12g5anblmr" FLOAT DOUBLE
+"drswn_na12g5anblmr" FLOAT DOUBLE
+"du0n_na12g5anblmr" FLOAT DOUBLE
+"dlu0n_na12g5anblmr" FLOAT DOUBLE
+"dwu0n_na12g5anblmr" FLOAT DOUBLE
+"dpu0n_na12g5anblmr" FLOAT DOUBLE
+"dagsn_na12g5anblmr" FLOAT DOUBLE
+"dwagsn_na12g5anblmr" FLOAT DOUBLE
+"dvsatn_na12g5anblmr" FLOAT DOUBLE
+"dlvsatn_na12g5anblmr" FLOAT DOUBLE
+"dwvsatn_na12g5anblmr" FLOAT DOUBLE
+"dpvsatn_na12g5anblmr" FLOAT DOUBLE
+"drd1n_na12g5anblmr" FLOAT DOUBLE
+"drd2n_na12g5anblmr" FLOAT DOUBLE
+"drdt1n_na12g5anblmr" FLOAT DOUBLE
+"dkt1n_na12g5anblmr" FLOAT DOUBLE
+"dpkt1n_na12g5anblmr" FLOAT DOUBLE
+"datn_na12g5anblmr" FLOAT DOUBLE
+"dlatn_na12g5anblmr" FLOAT DOUBLE
+"dpatn_na12g5anblmr" FLOAT DOUBLE
+"duc1n_na12g5anblmr" FLOAT DOUBLE
+"dlucn_na12g5anblmr" FLOAT DOUBLE
+"cgdp_pa12g5anblmr" FLOAT DOUBLE
+"cgdlp_pa12g5anblmr" FLOAT DOUBLE
+"cgsp_pa12g5anblmr" FLOAT DOUBLE
+"cgslp_pa12g5anblmr" FLOAT DOUBLE
+"cjdp_pa12g5anblmr" FLOAT DOUBLE
+"cjsp_pa12g5anblmr" FLOAT DOUBLE
+"cjswdp_pa12g5anblmr" FLOAT DOUBLE
+"cjswgdp_pa12g5anblmr" FLOAT DOUBLE
+"cjswgsp_pa12g5anblmr" FLOAT DOUBLE
+"cjswsp_pa12g5anblmr" FLOAT DOUBLE
+"dagsp_pa12g5anblmr" FLOAT DOUBLE
+"dpagsp_pa12g5anblmr" FLOAT DOUBLE
+"dk2p_pa12g5anblmr" FLOAT DOUBLE
+"dla0p_pa12g5anblmr" FLOAT DOUBLE
+"dpatp_pa12g5anblmr" FLOAT DOUBLE
+"dpkt1p_pa12g5anblmr" FLOAT DOUBLE
+"drdp_pa12g5anblmr" FLOAT DOUBLE
+"drdwp_pa12g5anblmr" FLOAT DOUBLE
+"drswp_pa12g5anblmr" FLOAT DOUBLE
+"du0p_pa12g5anblmr" FLOAT DOUBLE
+"dlu0p_pa12g5anblmr" FLOAT DOUBLE
+"dpu0p_pa12g5anblmr" FLOAT DOUBLE
+"dvsatp_pa12g5anblmr" FLOAT DOUBLE
+"dlvsatp_pa12g5anblmr" FLOAT DOUBLE
+"dpvsatp_pa12g5anblmr" FLOAT DOUBLE
+"dvthp_pa12g5anblmr" FLOAT DOUBLE
+"dlvthp_pa12g5anblmr" FLOAT DOUBLE
+"dpvthp_pa12g5anblmr" FLOAT DOUBLE
+"dwagsp_pa12g5anblmr" FLOAT DOUBLE
+"dwu0p_pa12g5anblmr" FLOAT DOUBLE
+"dwvthp_pa12g5anblmr" FLOAT DOUBLE
+"dxlp_pa12g5anblmr" FLOAT DOUBLE
+"dxwp_pa12g5anblmr" FLOAT DOUBLE
+"toxp_pa12g5anblmr" FLOAT DOUBLE
+"cgbp_pa12g5anblmr" FLOAT DOUBLE
+"cgdn_nld36g5a" FLOAT DOUBLE
+"cgsn_nld36g5a" FLOAT DOUBLE
+"cgdln_nld36g5a" FLOAT DOUBLE
+"cgsln_nld36g5a" FLOAT DOUBLE
+"cjdn_nld36g5a" FLOAT DOUBLE
+"cjsn_nld36g5a" FLOAT DOUBLE
+"cjswdn_nld36g5a" FLOAT DOUBLE
+"cjswgdn_nld36g5a" FLOAT DOUBLE
+"cjswsn_nld36g5a" FLOAT DOUBLE
+"cjswgsn_nld36g5a" FLOAT DOUBLE
+"dxln_nld36g5a" FLOAT DOUBLE
+"dxwn_nld36g5a" FLOAT DOUBLE
+"toxn_nld36g5a" FLOAT DOUBLE
+"da0n_nld36g5a" FLOAT DOUBLE
+"drdn_nld36g5a" FLOAT DOUBLE
+"drdwn_nld36g5a" FLOAT DOUBLE
+"drswn_nld36g5a" FLOAT DOUBLE
+"du0n_nld36g5a" FLOAT DOUBLE
+"dvsatn_nld36g5a" FLOAT DOUBLE
+"dvthn_nld36g5a" FLOAT DOUBLE
+"dwa0n_nld36g5a" FLOAT DOUBLE
+"dwrdwn_nld36g5a" FLOAT DOUBLE
+"dwrswn_nld36g5a" FLOAT DOUBLE
+"dwu0n_nld36g5a" FLOAT DOUBLE
+"dwvsatn_nld36g5a" FLOAT DOUBLE
+"dwvthn_nld36g5a" FLOAT DOUBLE
+"dwatn_nld36g5a" FLOAT DOUBLE
+"dwprtn_nld36g5a" FLOAT DOUBLE
+"datn_nld36g5a" FLOAT DOUBLE
+"dwuten_nld36g5a" FLOAT DOUBLE
+"cgbn_nld36g5a" FLOAT DOUBLE
+"dgidn_nld36g5a" FLOAT DOUBLE
+"toxn_hv5_5vnw" FLOAT DOUBLE
+"dxln_hv5_5vnw" FLOAT DOUBLE
+"dxwn_hv5_5vnw" FLOAT DOUBLE
+"cjdn_hv5_5vnw" FLOAT DOUBLE
+"cjswdn_hv5_5vnw" FLOAT DOUBLE
+"cjswgdn_hv5_5vnw" FLOAT DOUBLE
+"cjsn_hv5_5vnw" FLOAT DOUBLE
+"cjswsn_hv5_5vnw" FLOAT DOUBLE
+"cjswgsn_hv5_5vnw" FLOAT DOUBLE
+"cgsn_hv5_5vnw" FLOAT DOUBLE
+"cgdn_hv5_5vnw" FLOAT DOUBLE
+"dvthn_hv5_5vnw" FLOAT DOUBLE
+"dvsatn_hv5_5vnw" FLOAT DOUBLE
+"du0n_hv5_5vnw" FLOAT DOUBLE
+"drdwn_hv5_5vnw" FLOAT DOUBLE
+"drswn_hv5_5vnw" FLOAT DOUBLE
+"mismatchflag_mim" FLOAT DOUBLE
+"ov_ratio_mim" FLOAT DOUBLE
+"par_mim" FLOAT DOUBLE
+"cmimbb_mimfac" FLOAT DOUBLE
+"cm5bb_mimfac" FLOAT DOUBLE
+"mismatchflag_mos_na" FLOAT DOUBLE
+"ov_ratio_na" FLOAT DOUBLE
+"par1n_na" FLOAT DOUBLE
+"par2n_na" FLOAT DOUBLE
+"par3n_na" FLOAT DOUBLE
+"par4n_na" FLOAT DOUBLE
+"par5n_na" FLOAT DOUBLE
+"toxn_na" FLOAT DOUBLE
+"dxln_na" FLOAT DOUBLE
+"dxwn_na" FLOAT DOUBLE
+"ddlcn_na" FLOAT DOUBLE
+"cjn_na" FLOAT DOUBLE
+"cjswn_na" FLOAT DOUBLE
+"cjswgn_na" FLOAT DOUBLE
+"cgon_na" FLOAT DOUBLE
+"cgln_na" FLOAT DOUBLE
+"cfn_na" FLOAT DOUBLE
+"dcitn_na" FLOAT DOUBLE
+"da0n_na" FLOAT DOUBLE
+"dagsn_na" FLOAT DOUBLE
+"datn_na" FLOAT DOUBLE
+"dk2n_na" FLOAT DOUBLE
+"dla0n_na" FLOAT DOUBLE
+"dlagsn_na" FLOAT DOUBLE
+"dlatn_na" FLOAT DOUBLE
+"dlcitn_na" FLOAT DOUBLE
+"dlk2n_na" FLOAT DOUBLE
+"dlpdiblc2n_na" FLOAT DOUBLE
+"dlu0n_na" FLOAT DOUBLE
+"dluten_na" FLOAT DOUBLE
+"dlvsatn_na" FLOAT DOUBLE
+"dlvth0n_na" FLOAT DOUBLE
+"dpa0n_na" FLOAT DOUBLE
+"dpagsn_na" FLOAT DOUBLE
+"dpatn_na" FLOAT DOUBLE
+"dpcitn_na" FLOAT DOUBLE
+"dpdiblc2n_na" FLOAT DOUBLE
+"dpk2n_na" FLOAT DOUBLE
+"dppdiblc2n_na" FLOAT DOUBLE
+"dpu0n_na" FLOAT DOUBLE
+"dputen_na" FLOAT DOUBLE
+"dpvsatn_na" FLOAT DOUBLE
+"dpvth0n_na" FLOAT DOUBLE
+"du0n_na" FLOAT DOUBLE
+"duten_na" FLOAT DOUBLE
+"dvsatn_na" FLOAT DOUBLE
+"dvth0n_na" FLOAT DOUBLE
+"dwa0n_na" FLOAT DOUBLE
+"dwagsn_na" FLOAT DOUBLE
+"dwatn_na" FLOAT DOUBLE
+"dwcitn_na" FLOAT DOUBLE
+"dwk2n_na" FLOAT DOUBLE
+"dwpdiblc2n_na" FLOAT DOUBLE
+"dwu0n_na" FLOAT DOUBLE
+"dwuten_na" FLOAT DOUBLE
+"dwvsatn_na" FLOAT DOUBLE
+"dwvth0n_na" FLOAT DOUBLE
+"dub1n_na" FLOAT DOUBLE
+"dlub1n_na" FLOAT DOUBLE
+"dwub1n_na" FLOAT DOUBLE
+"dpub1n_na" FLOAT DOUBLE
+"mismatchflag_res" FLOAT DOUBLE
+"par_res" FLOAT DOUBLE
+"r_rnod" FLOAT DOUBLE
+"r_rnodw" FLOAT DOUBLE
+"r_rpod" FLOAT DOUBLE
+"r_rpodw" FLOAT DOUBLE
+"r_rnpo1" FLOAT DOUBLE
+"r_rnpo1w" FLOAT DOUBLE
+"r_rppo1" FLOAT DOUBLE
+"r_rppo1w" FLOAT DOUBLE
+"r_rm1" FLOAT DOUBLE
+"r_rm2" FLOAT DOUBLE
+"r_rm3" FLOAT DOUBLE
+"r_rm4" FLOAT DOUBLE
+"r_rm5" FLOAT DOUBLE
+"r_rm6" FLOAT DOUBLE
+"r_rmu_15k" FLOAT DOUBLE
+"r_rmu_30k" FLOAT DOUBLE
+"r_rmu_40k" FLOAT DOUBLE
+"r_rnodrpo" FLOAT DOUBLE
+"rend_rnodrpo" FLOAT DOUBLE
+"dxl_rnodrpo" FLOAT DOUBLE
+"x_dxw_rnodrpo" FLOAT DOUBLE
+"r_rpodrpo" FLOAT DOUBLE
+"rend_rpodrpo" FLOAT DOUBLE
+"dxl_rpodrpo" FLOAT DOUBLE
+"x_dxw_rpodrpo" FLOAT DOUBLE
+"r_rnpo1rpo" FLOAT DOUBLE
+"rend_rnpo1rpo" FLOAT DOUBLE
+"dxl_rnpo1rpo" FLOAT DOUBLE
+"x_dxw_rnpo1rpo" FLOAT DOUBLE
+"r_rppo1rpo" FLOAT DOUBLE
+"rend_rppo1rpo" FLOAT DOUBLE
+"dxl_rppo1rpo" FLOAT DOUBLE
+"x_dxw_rppo1rpo" FLOAT DOUBLE
+"r_rppolyhri" FLOAT DOUBLE
+"rend_rppolyhri" FLOAT DOUBLE
+"dxl_rppolyhri" FLOAT DOUBLE
+"x_dxw_rppolyhri" FLOAT DOUBLE
+"r_rppolyhri3k" FLOAT DOUBLE
+"rend_rppolyhri3k" FLOAT DOUBLE
+"x_dxl_rppolyhri3k" FLOAT DOUBLE
+"x_dxw_rppolyhri3k" FLOAT DOUBLE
+"r_nodrpo_pure5v" FLOAT DOUBLE
+"rend_nodrpo_pure5v" FLOAT DOUBLE
+"dxl_nodrpo_pure5v" FLOAT DOUBLE
+"x_dxw_nodrpo_pure5v" FLOAT DOUBLE
+"r_podrpo_pure5v" FLOAT DOUBLE
+"rend_podrpo_pure5v" FLOAT DOUBLE
+"dxl_podrpo_pure5v" FLOAT DOUBLE
+"x_dxw_podrpo_pure5v" FLOAT DOUBLE
+"r_npolyrpo_pure5v" FLOAT DOUBLE
+"rend_npolyrpo_pure5v" FLOAT DOUBLE
+"dxl_npolyrpo_pure5v" FLOAT DOUBLE
+"x_dxw_npolyrpo_pure5v" FLOAT DOUBLE
+"r_ppolyrpo_pure5v" FLOAT DOUBLE
+"rend_ppolyrpo_pure5v" FLOAT DOUBLE
+"dxl_ppolyrpo_pure5v" FLOAT DOUBLE
+"x_dxw_ppolyrpo_pure5v" FLOAT DOUBLE
+"r_rppolywo_serp" FLOAT DOUBLE
+"rend_rppolywo_serp" FLOAT DOUBLE
+"dxl_rppolywo_serp" FLOAT DOUBLE
+"x_dxw_rppolywo_serp" FLOAT DOUBLE
+"r_rppolyhri_serp" FLOAT DOUBLE
+"rend_rppolyhri_serp" FLOAT DOUBLE
+"dxl_rppolyhri_serp" FLOAT DOUBLE
+"x_dxw_rppolyhri_serp" FLOAT DOUBLE
+"r_rnwsti" FLOAT DOUBLE
+"rend_rnwsti" FLOAT DOUBLE
+"r_rnwsti_pure5v" FLOAT DOUBLE
+"rend_rnwsti_pure5v" FLOAT DOUBLE
+"r_rnwod" FLOAT DOUBLE
+"rend_rnwod" FLOAT DOUBLE
+"r_rnwod_pure5v" FLOAT DOUBLE
+"rend_rnwod_pure5v" FLOAT DOUBLE
+"mismatchflag_res_hv" FLOAT DOUBLE
+"par_res_hv" FLOAT DOUBLE
+"r_rhvnwshp" FLOAT DOUBLE
+"x_dxw_rhvnwshp" FLOAT DOUBLE
+"rend_rhvnwshp" FLOAT DOUBLE
+"r_rnddshp" FLOAT DOUBLE
+"r_rshphvnw" FLOAT DOUBLE
+"r_rpddhvnw" FLOAT DOUBLE
+"r_rshphvnw_hvpw_gb" FLOAT DOUBLE
+"x_dxw_rshphvnw_hvpw_gb" FLOAT DOUBLE
+"rend_rshphvnw_hvpw_gb" FLOAT DOUBLE
+"r_rhvpwnblhvnw_hvpw_gb" FLOAT DOUBLE
+"x_dxw_rhvpwnblhvnw_hvpw_gb" FLOAT DOUBLE
+"rend_rhvpwnblhvnw_hvpw_gb" FLOAT DOUBLE
+"r_rnddshp_ga_ck3" FLOAT DOUBLE
+"rend_rnddshp_ga_ck3" FLOAT DOUBLE
+"x_dxw_rnddshp_ga_ck3" FLOAT DOUBLE
+"x_dxl_rnddshp_ga_ck3" FLOAT DOUBLE
+"r_rhvpwnblhvnw_hvpw_gb_ck3" FLOAT DOUBLE
+"rend_rhvpwnblhvnw_hvpw_gb_ck3" FLOAT DOUBLE
+"x_dxw_rhvpwnblhvnw_hvpw_gb_ck3" FLOAT DOUBLE
+"x_dxl_rhvpwnblhvnw_hvpw_gb_ck3" FLOAT DOUBLE
+"mismatchflag_rtmom" FLOAT DOUBLE
+"ov_ratio_rtmom" FLOAT DOUBLE
+"rtmom_fac" FLOAT DOUBLE
+"par_mom" FLOAT DOUBLE
+"random_fn" FLOAT DOUBLE
+"par1fn_mc" FLOAT DOUBLE
+"par1fn_mc_io" FLOAT DOUBLE
+"random_fn_io" FLOAT DOUBLE
+"par2fn_mc_io" FLOAT DOUBLE
+) PROP(
+"key" "parameters"
+)
+VALUE
+"top-level" "top-level" (
+27.0000
+27.0000
+0.00000
+1600.00
+2.00000e-11
+0.000300000
+2.00000e-06
+0.00000
+2.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+0.00000
+0.00000
+0.00000
+0.00000
+1.00000
+0.00000
+1.00000
+0.00000
+0.00000
+0.00000
+0.00000
+3.98100e-09
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.000981000
+1.18500e-10
+3.82000e-10
+0.00000
+0.00000
+9.54839e-11
+1.29912e-10
+3.73547e-10
+1.70700e-10
+4.06000e-09
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00112000
+1.34500e-10
+4.36000e-10
+2.42932e-11
+9.87133e-12
+2.74083e-10
+1.70700e-10
+6.10000e+41
+3.20000e+23
+3.04000e+07
+3.50000e+41
+3.60000e+23
+6.50000e+09
+2.22753
+6.10000e+41
+3.20000e+23
+3.04000e+07
+2.22753
+3.50000e+41
+3.60000e+23
+6.50000e+09
+0.00000
+1.00000
+1.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+1.38100e-08
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00115000
+1.83000e-10
+2.27000e-10
+1.00000e-12
+1.40000e-10
+1.80600e-10
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+1.33600e-08
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00122000
+1.99000e-10
+2.08000e-10
+4.40000e-11
+9.00000e-11
+1.77900e-10
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+3.60000e+41
+1.00000e+23
+1.00000e+06
+0.750000
+450.000
+3.87300
+35.8651
+0.00000
+3.00000
+2.30259
+0.00000
+2.30259
+0.00000
+1.00000
+3.60000e+41
+1.00000e+23
+1.00000e+06
+1.67000e+41
+1.61200e+24
+3.50000e+09
+0.750000
+1100.00
+3.87300
+87.6703
+0.00000
+3.00000
+2.30259
+0.00000
+2.30259
+0.00000
+1.00000
+1.67000e+41
+1.61200e+24
+3.50000e+09
+0.00000
+1.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+1.80600e-10
+3.50000e-10
+1.00000e-12
+0.00115000
+1.83000e-10
+2.27000e-10
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+1.33000e-08
+1.00000
+0.00000
+1.80600e-10
+3.50000e-10
+1.00000e-12
+0.00115000
+1.83000e-10
+2.27000e-10
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+1.33000e-08
+1.00000
+0.00000
+1.77900e-10
+1.90000e-10
+1.00000e-11
+0.00122000
+1.99000e-10
+2.08000e-10
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+1.33600e-08
+1.00000
+0.00000
+1.77900e-10
+1.70000e-10
+2.83000e-11
+0.00122000
+1.99000e-10
+2.08000e-10
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+1.33600e-08
+1.00000
+0.00000
+0.00000
+1.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+1.30200e-08
+0.00000
+0.00000
+9.60000e-11
+1.40000e-10
+8.80000e-08
+0.000513000
+1.94000e-10
+2.44000e-10
+1.80600e-10
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+1.31000e-08
+0.00000
+0.00000
+4.00000e-11
+4.00000e-10
+0.000370000
+1.65000e-10
+1.54000e-10
+1.77900e-10
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+1.00000
+1.00000
+1.00000
+1.38100e-08
+0.00000
+0.00000
+1.80600e-10
+1.00000
+5.00000e-13
+3.00000e-10
+5.00000e-13
+3.00000e-10
+0.00115000
+0.00115000
+1.83000e-10
+2.27000e-10
+2.27000e-10
+1.83000e-10
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+1.33600e-08
+0.00000
+0.00000
+1.77900e-10
+0.00122000
+0.00122000
+1.99000e-10
+1.99000e-10
+2.08000e-10
+2.08000e-10
+1.70000e-10
+1.80000e-11
+1.70000e-10
+1.80000e-11
+1.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+1.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+1.29200e-08
+0.00000
+0.00000
+0.00112400
+3.66200e-10
+2.44700e-10
+1.30000e-10
+3.30000e-10
+1.80600e-10
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+1.00000
+1.00000
+1.00000
+0.00000
+1.00000
+0.00000
+0.00000
+0.00000
+1.00000
+1.00000
+0.00000
+1.00000
+0.00000
+0.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+0.00000
+1.00000
+0.00000
+0.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+0.00000
+1.00000
+0.00000
+0.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+0.00000
+1.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+1.00000
+0.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+0.00000
+1.00000
+0.00000
+0.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+0.00000
+1.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+1.30200e-08
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00113400
+1.92500e-10
+2.47800e-10
+8.50000e-11
+1.00000e-10
+1.80600e-10
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+0.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+0.00000
+1.00000
+1.00000
+1.00000
+1.00000
+8.77000
+13.3020
+16.5970
+17.5980
+17.5980
+22.3580
+24.3140
+27.8300
+30.2230
+29.8300
+35.8230
+37.0300
+24.4300
+30.1300
+47.3730
+56.1790
+68.3830
+81.7820
+34.6750
+82.7600
+1.00000
+0.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+0.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+20.8150
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+28.6550
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+39.0560
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+47.8792
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+57.6970
+1.00000
+0.00000
+1.00000
+1.00000
+1.00000
+1.00000
+5.44200
+5.43020
+0.00000
+0.00000
+7.28000
+7.28000
+7.49000
+7.49000
+8.23000
+8.23000
+8.41000
+8.41000
+82.9000
+1.58600e-05
+0.00000
+0.00000
+128.200
+2.85000e-05
+0.00000
+0.00000
+322.500
+0.000105000
+0.00000
+0.00000
+350.800
+0.000133000
+0.00000
+0.00000
+1026.12
+0.000120394
+0.00000
+0.00000
+3110.00
+6.95000e-05
+0.00000
+0.00000
+83.0500
+2.52200e-05
+0.00000
+0.00000
+120.229
+4.15890e-05
+0.00000
+0.00000
+355.350
+9.56100e-05
+0.00000
+0.00000
+335.000
+0.000170000
+0.00000
+0.00000
+435.000
+1.00000e-08
+0.00000
+0.00000
+1455.00
+1.00000e-08
+0.00000
+0.00000
+963.600
+0.000250000
+1070.00
+0.000380000
+416.000
+0.000205000
+586.000
+0.000250000
+7.67000e-17
+4.16000e-17
+4.16000e-17
+7.67000e-17
+4.16000e-17
+0.00000
+1.00000
+0.00000
+0.00000
+0.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+0.00000
+1.00000
+1.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+1.07010e-10
+9.50000e-10
+1.78332e-10
+2.00000e-11
+0.000246000
+0.00268000
+6.27000e-10
+4.33000e-10
+3.48000e-10
+3.48000e-10
+0.00000
+1.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+1.30000e-08
+1.30000e-08
+0.00000
+0.00000
+1.03100e-10
+1.71680e-10
+0.000297000
+0.00268000
+5.19000e-10
+5.19000e-10
+3.48000e-10
+3.48000e-10
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+1.00000
+1.00000e-09
+1.00000e-11
+1.30000e-08
+0.00000
+0.00000
+0.000246000
+6.27000e-10
+4.33000e-10
+0.00268000
+3.48000e-10
+3.48000e-10
+2.03840e-10
+1.72223e-10
+9.00000e-10
+1.55000e-11
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+1.00000
+1.70400e-10
+1.59200e-10
+0.000297000
+0.00268000
+5.19000e-10
+5.19000e-10
+3.48000e-10
+3.48000e-10
+1.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+1.30000e-08
+1.00000e-09
+1.00000e-11
+1.35000e-09
+1.81500e-10
+1.70000e-11
+2.32700e-10
+0.000246000
+0.00268000
+6.27000e-10
+4.33000e-10
+3.48000e-10
+3.48000e-10
+0.00000
+1.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+1.30000e-08
+0.00000
+1.30000e-08
+0.00000
+0.00000
+9.78300e-11
+1.66300e-10
+0.000297000
+0.00268000
+5.19000e-10
+5.19000e-10
+3.48000e-10
+3.48000e-10
+0.00000
+0.00000
+1.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+1.10000e-09
+1.00000e-11
+1.30000e-08
+0.00000
+0.00000
+0.000246000
+6.27000e-10
+4.33000e-10
+0.00268000
+3.48000e-10
+3.48000e-10
+1.58000e-10
+2.40000e-10
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+9.00000e-10
+1.70000e-11
+1.00000
+1.30000e-08
+0.00000
+0.00000
+0.000297000
+5.19000e-10
+5.19000e-10
+0.00268000
+3.48000e-10
+3.48000e-10
+1.42000e-11
+1.71200e-10
+9.20000e-10
+1.50000e-11
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+1.00000
+0.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.30000e-08
+0.00000
+0.00000
+0.000246000
+6.27000e-10
+4.33000e-10
+0.00268000
+3.48000e-10
+3.48000e-10
+1.73000e-10
+2.40000e-10
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+8.80000e-10
+1.70000e-11
+1.00000
+1.30000e-08
+0.00000
+0.00000
+0.000297000
+5.19000e-10
+5.19000e-10
+0.00268000
+3.48000e-10
+3.48000e-10
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+1.00000e-12
+1.70000e-10
+7.50000e-10
+1.70000e-11
+0.00000
+0.00000
+0.00000
+1.00000
+1.00000
+3.72000e-11
+1.20000e-09
+1.72040e-10
+1.70000e-11
+0.000246000
+0.00268000
+6.27000e-10
+4.33000e-10
+3.48000e-10
+3.48000e-10
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+1.30000e-08
+1.30000e-08
+0.00000
+0.00000
+0.000297000
+5.19000e-10
+5.19000e-10
+0.00268000
+3.48000e-10
+3.48000e-10
+1.14000e-12
+1.70300e-10
+1.15000e-09
+1.70000e-11
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.00000
+1.30000e-08
+0.00000
+0.00000
+1.00000
+1.86000e-10
+1.50000e-09
+2.53000e-10
+4.00000e-11
+0.000246000
+0.00268000
+6.27000e-10
+4.33000e-10
+3.48000e-10
+3.48000e-10
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+1.30000e-08
+0.00000
+0.00000
+0.000256000
+3.48000e-10
+3.48000e-10
+0.00112000
+1.98000e-10
+2.21000e-10
+1.08397e-10
+3.29235e-11
+8.60000e-10
+4.52000e-10
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+1.00000
+1.30000e-08
+0.00000
+0.00000
+0.000256000
+3.46000e-10
+3.46000e-10
+0.00112000
+1.98000e-10
+2.21000e-10
+4.23100e-13
+1.42500e-12
+3.00000e-10
+1.10000e-09
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+1.00000
+1.28000e-08
+0.00000
+0.00000
+0.000256000
+3.46000e-10
+3.46000e-10
+0.00115000
+1.83000e-10
+2.27000e-10
+3.52000e-11
+2.94000e-11
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+8.60000e-10
+6.30000e-10
+1.00000
+1.28000e-08
+0.00000
+0.00000
+4.56000e-05
+1.98000e-11
+1.98000e-11
+0.00115000
+1.83000e-10
+2.27000e-10
+4.72000e-11
+5.04000e-11
+1.00000e-09
+6.00000e-10
+0.00000
+1.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+1.30000e-08
+0.00000
+0.00000
+0.000123000
+6.79000e-10
+6.79000e-10
+0.00115000
+1.83000e-10
+2.27000e-10
+5.58000e-12
+3.00000e-12
+1.00000
+9.60000e-10
+6.50000e-10
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+1.32000e-08
+0.00000
+0.00000
+0.000256000
+3.48000e-10
+3.48000e-10
+0.00117000
+2.35000e-10
+1.99000e-10
+1.04520e-10
+1.50800e-10
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+7.40000e-10
+1.65000e-10
+1.00000
+1.30000e-08
+0.00000
+0.00000
+0.000256000
+3.48000e-10
+3.48000e-10
+0.00117000
+2.35000e-10
+1.99000e-10
+1.87434e-10
+1.59549e-10
+9.20000e-10
+1.60000e-10
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+1.00000
+1.30000e-08
+0.00000
+0.00000
+0.000262000
+5.03000e-10
+5.03000e-10
+0.00117000
+2.32000e-10
+1.99000e-10
+1.22191e-11
+1.54580e-10
+3.00000e-10
+1.70000e-10
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+1.00000
+1.30000e-08
+0.00000
+0.00000
+0.000262000
+5.03000e-10
+5.03000e-10
+0.00117000
+2.35000e-10
+1.99000e-10
+8.97000e-14
+1.55000e-10
+3.00000e-10
+1.75000e-10
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+1.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+1.30000e-08
+0.00000
+0.00000
+0.000262000
+5.03000e-10
+5.03000e-10
+0.00117000
+2.35000e-10
+1.99000e-10
+1.04400e-11
+1.61500e-10
+2.01000e-10
+1.75000e-10
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+1.00000
+1.30000e-08
+0.00000
+0.00000
+0.000262000
+5.03000e-10
+5.03000e-10
+0.00117000
+2.32000e-10
+1.99000e-10
+1.12390e-11
+2.00970e-10
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+4.50000e-10
+1.80000e-10
+1.00000
+1.30000e-08
+0.00000
+0.00000
+0.000262000
+5.03000e-10
+5.03000e-10
+0.00117000
+2.32000e-10
+1.99000e-10
+5.91500e-11
+2.83000e-10
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+5.00000e-10
+1.80000e-10
+1.00000
+1.30000e-08
+0.00000
+0.00000
+2.34400e-11
+8.00000e-10
+1.73250e-10
+2.07920e-11
+0.000113000
+0.00268000
+4.45000e-10
+4.45000e-10
+3.48000e-10
+3.48000e-10
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+1.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+1.30000e-08
+0.00000
+0.00000
+0.000113000
+4.45000e-10
+4.45000e-10
+0.00268000
+3.48000e-10
+3.48000e-10
+1.80790e-12
+1.89189e-10
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+7.50000e-10
+2.07920e-11
+0.00000
+0.00000
+1.00000
+0.00000
+1.30000e-08
+0.00000
+0.00000
+0.000113000
+4.45000e-10
+4.45000e-10
+0.00115000
+1.83000e-10
+2.27000e-10
+2.03000e-11
+3.89000e-11
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+8.00000e-10
+7.50000e-10
+1.00000
+1.30000e-08
+0.00000
+0.00000
+0.000113000
+4.45000e-10
+4.45000e-10
+0.00268000
+3.48000e-10
+3.48000e-10
+2.71185e-11
+1.86186e-10
+9.00000e-10
+4.50000e-11
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+1.00000
+1.30000e-08
+0.00000
+0.00000
+0.000113000
+4.45000e-10
+4.45000e-10
+0.00268000
+3.48000e-10
+3.48000e-10
+1.78820e-10
+2.73952e-11
+9.50000e-10
+1.00890e-11
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+1.00000
+1.28000e-08
+0.00000
+0.00000
+0.000113000
+4.45000e-10
+4.45000e-10
+0.00268000
+3.48000e-10
+3.48000e-10
+1.56000e-10
+3.75000e-10
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+9.50000e-08
+-5.00000e-15
+0.00000
+0.00000
+1.00000
+9.00000e-10
+3.00000e-11
+1.30000e-08
+0.00000
+0.00000
+0.000113000
+4.45000e-10
+4.45000e-10
+0.00117000
+2.35000e-10
+1.99000e-10
+1.09400e-10
+2.59460e-10
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+1.00000
+7.00000e-10
+1.08000e-10
+1.30000e-08
+0.00000
+0.00000
+0.000113000
+4.45000e-10
+4.45000e-10
+0.00117000
+2.35000e-10
+1.99000e-10
+1.00060e-10
+2.70000e-10
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+1.00000
+4.50000e-10
+1.15000e-10
+1.32000e-08
+0.00000
+0.00000
+0.000113000
+4.45000e-10
+4.45000e-10
+0.00122000
+1.99000e-10
+2.08000e-10
+8.00000e-11
+2.80100e-10
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+1.00000
+3.00000e-10
+1.00000e-10
+1.32000e-08
+0.00000
+0.00000
+0.000113000
+4.45000e-10
+4.45000e-10
+0.00122000
+1.99000e-10
+2.08000e-10
+2.80000e-10
+7.07000e-11
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+1.00000
+2.60000e-10
+1.00000e-10
+1.32000e-08
+0.00000
+0.00000
+0.000113000
+4.45000e-10
+4.45000e-10
+0.00122000
+1.99000e-10
+2.08000e-10
+7.44000e-11
+2.90000e-10
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+1.00000
+2.50000e-10
+1.05000e-10
+1.30000e-08
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+1.70500e-12
+3.89000e-12
+0.000113000
+4.45000e-10
+4.45000e-10
+0.00115000
+1.83000e-10
+1.83000e-10
+0.00000
+9.00000e-10
+8.00000e-10
+1.00000
+1.30000e-08
+0.00000
+0.00000
+0.00115000
+0.000113000
+1.83000e-10
+4.45000e-10
+2.27000e-10
+4.45000e-10
+4.00000e-11
+5.50000e-11
+1.10000e-09
+4.50000e-10
+0.00000
+1.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+1.30000e-08
+0.00000
+0.00000
+1.71220e-10
+9.50000e-10
+3.28110e-10
+1.80890e-11
+1.00000
+0.000113000
+0.00268000
+4.45000e-10
+4.45000e-10
+3.48000e-10
+3.48000e-10
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+1.30000e-08
+0.00000
+0.00000
+1.71220e-10
+8.50000e-10
+3.28110e-10
+1.80890e-11
+0.000113000
+0.00268000
+4.45000e-10
+4.45000e-10
+3.48000e-10
+3.48000e-10
+1.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+8.00000e-12
+1.00000e-12
+7.00000e-10
+9.70000e-10
+0.000113000
+0.00115000
+4.45000e-10
+4.45000e-10
+2.27000e-10
+1.83000e-10
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+1.28000e-08
+0.00000
+0.00000
+1.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+5.97360e-11
+2.50000e-10
+9.20080e-10
+1.00000e-12
+0.000246000
+0.00268000
+6.27000e-10
+4.33000e-10
+3.48000e-10
+3.48000e-10
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+1.30000e-08
+0.00000
+1.00000
+1.30000e-08
+0.00000
+0.00000
+0.000246000
+6.27000e-10
+4.33000e-10
+0.00268000
+3.48000e-10
+3.48000e-10
+5.83200e-11
+2.40000e-10
+1.43200e-09
+5.00000e-11
+1.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+1.30000e-08
+0.00000
+0.00000
+0.000246000
+6.27000e-10
+4.33000e-10
+0.00268000
+3.48000e-10
+3.48000e-10
+7.88500e-11
+2.40000e-10
+8.53200e-10
+5.00000e-11
+1.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+1.30000e-08
+0.00000
+0.00000
+0.000256000
+3.46000e-10
+3.46000e-10
+0.00268000
+3.48000e-10
+3.48000e-10
+8.24010e-11
+2.40000e-10
+9.49760e-10
+5.00000e-11
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+1.00000
+1.30000e-08
+0.00000
+0.00000
+1.00000
+8.55200e-11
+3.90400e-11
+0.000256000
+0.00112000
+3.48000e-10
+3.48000e-10
+2.21000e-10
+1.98000e-10
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+5.31070e-10
+4.80000e-10
+1.30000e-08
+0.00000
+0.00000
+1.00000e-10
+4.50000e-10
+5.00000e-11
+1.20000e-09
+1.00000
+0.000256000
+0.00112000
+3.48000e-10
+3.48000e-10
+2.21000e-10
+1.98000e-10
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+2.87600e-12
+2.71970e-10
+1.57260e-10
+1.40460e-10
+0.000262000
+0.00117000
+5.03000e-10
+5.03000e-10
+1.99000e-10
+2.35000e-10
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+1.30000e-08
+1.00000
+1.50000e-11
+2.49900e-10
+2.77100e-09
+1.82900e-11
+0.000123000
+0.00268000
+6.79000e-10
+6.79000e-10
+3.48000e-10
+3.48000e-10
+0.00000
+0.00000
+1.30000e-08
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+1.00000
+0.00000
+1.33400e-08
+0.00000
+0.00000
+8.24000e-05
+6.42000e-10
+6.42000e-10
+0.00117000
+2.04000e-10
+2.17000e-10
+1.66000e-10
+1.34000e-10
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+1.00000
+0.00000
+1.00000
+1.00000
+0.00000
+1.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+4.12000e-09
+0.00000
+0.00000
+3.55000e-08
+0.00130000
+3.52000e-10
+3.41000e-10
+1.62000e-10
+1.15000e-10
+1.70700e-10
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+7.28000
+7.28000
+7.49000
+7.49000
+8.23000
+8.23000
+8.41000
+8.41000
+0.0780000
+0.0780000
+0.0780000
+0.0780000
+0.0780000
+0.0360000
+0.0154800
+0.00897000
+0.00620000
+82.9000
+1.58600e-05
+0.00000
+0.00000
+128.200
+2.85000e-05
+0.00000
+0.00000
+322.500
+0.000105000
+0.00000
+0.00000
+350.800
+0.000133000
+0.00000
+0.00000
+1026.12
+0.000120394
+0.00000
+0.00000
+3110.00
+6.95000e-05
+0.00000
+0.00000
+83.0500
+2.52200e-05
+0.00000
+0.00000
+120.229
+4.15890e-05
+0.00000
+0.00000
+355.350
+9.56100e-05
+0.00000
+0.00000
+335.000
+0.000170000
+0.00000
+0.00000
+435.000
+1.00000e-08
+0.00000
+0.00000
+1455.00
+1.00000e-08
+0.00000
+0.00000
+963.600
+0.000250000
+1070.00
+0.000380000
+416.000
+0.000205000
+586.000
+0.000250000
+0.00000
+0.00000
+2026.60
+0.00000
+0.000100000
+7014.10
+2068.80
+8532.20
+1975.10
+0.00000
+0.000500000
+5422.20
+0.00000
+0.0170000
+5760.40
+-0.00000
+0.00000
+0.00000
+5894.60
+27807.0
+0.00000
+0.00000
+0.00000
+1.00000
+1.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+0.00000
+)
+END

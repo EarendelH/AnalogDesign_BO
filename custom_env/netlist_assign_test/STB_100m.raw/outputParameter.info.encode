@@ -1,0 +1,789 @@
+HEADER
+"PSFversion" "1.00"
+"BINPSF creation time" "1712027231"
+"simulator" "spectre"
+"version" "18.1.0.335.isr6"
+"date" "11:07:10 AM, Tue Apr 2, 2024"
+"design" "// Generated for: spectre"
+"analysis type" "info"
+"analysis name" "outputParameter"
+"analysis description" "Circuit Information"
+"xVecSorted" "unknown"
+"tolerance.relative" 0.00100000
+"ReferenceTemperature.Value" 27.0000
+"ReferenceTemperature.Units" "C"
+TYPE
+"bsim4~instparams" STRUCT(
+"tempeff" FLOAT DOUBLE PROP(
+"units" "C"
+"description" "Effective temperature for a single device"
+)
+"meff" FLOAT DOUBLE PROP(
+"description" "Effective multiplicity factor (m-factor)"
+)
+"weff" FLOAT DOUBLE PROP(
+"units" "m"
+"description" "Effective channel width (alias=lx62)"
+)
+"leff" FLOAT DOUBLE PROP(
+"units" "m"
+"description" "Effective channel length (alias=lx63)"
+)
+"weffcv" FLOAT DOUBLE PROP(
+"units" "m"
+"description" "Effective channel width for CV (alias=lx64)"
+)
+"leffcv" FLOAT DOUBLE PROP(
+"units" "m"
+"description" "Effective channel length for CV (alias=lx65)"
+)
+"vfbsd" FLOAT DOUBLE PROP(
+"units" "V"
+"description" "Flat band Voltage between the gate and Drain/source diffusions (alias=lx75)"
+)
+"rgbi" FLOAT DOUBLE PROP(
+"units" "Ohm"
+"description" "Gate bias-independent resistance"
+)
+"adeff" FLOAT DOUBLE PROP(
+"units" "m^2"
+"description" "Effective drain area"
+)
+"aseff" FLOAT DOUBLE PROP(
+"units" "m^2"
+"description" "Effective source area"
+)
+"pdeff" FLOAT DOUBLE PROP(
+"units" "m"
+"description" "Effective drain perimeter"
+)
+"pseff" FLOAT DOUBLE PROP(
+"units" "m"
+"description" "Effective source perimeter"
+)
+) PROP(
+"key" "inst"
+)
+"capacitor~instparams" STRUCT(
+"tempeff" FLOAT DOUBLE PROP(
+"units" "C"
+"description" "Effective temperature for a single device"
+)
+"meff" FLOAT DOUBLE PROP(
+"description" "Effective multiplicity factor (m-factor)"
+)
+"leff" FLOAT DOUBLE PROP(
+"units" "m"
+"description" "Effective capacitor length"
+)
+"weff" FLOAT DOUBLE PROP(
+"units" "m"
+"description" "Effective capacitor width"
+)
+"ceff" FLOAT DOUBLE PROP(
+"units" "F"
+"description" "Effective capacitance(alias=lv1)"
+)
+) PROP(
+"key" "inst"
+)
+"isource~instparams" STRUCT(
+"tempeff" FLOAT DOUBLE PROP(
+"units" "C"
+"description" "Effective temperature for a single device"
+)
+) PROP(
+"key" "inst"
+)
+"resistor~instparams" STRUCT(
+"leff" FLOAT DOUBLE PROP(
+"units" "m"
+"description" "Effective resistor length"
+)
+"weff" FLOAT DOUBLE PROP(
+"units" "m"
+"description" "Effective resistor width"
+)
+"reff" FLOAT DOUBLE PROP(
+"units" "Ohm"
+"description" "Effective resistance"
+)
+"ceff" FLOAT DOUBLE PROP(
+"units" "F"
+"description" "Effective capacitance"
+)
+"tempeff" FLOAT DOUBLE PROP(
+"units" "C"
+"description" "Effective temperature for a single device"
+)
+"meff" FLOAT DOUBLE PROP(
+"description" "Effective multiplicity factor (m-factor)"
+)
+) PROP(
+"key" "inst"
+)
+"vsource~instparams" STRUCT(
+"tempeff" FLOAT DOUBLE PROP(
+"units" "C"
+"description" "Effective temperature for a single device"
+)
+) PROP(
+"key" "inst"
+)
+VALUE
+"M0" "bsim4~instparams" (
+27.0000
+1.00000
+2.00470e-05
+9.81200e-08
+2.00000e-05
+9.80714e-08
+-0.0102718
+0.00000
+3.24000e-09
+3.24840e-09
+0.000324000
+0.000364800
+) PROP(
+"model" "pch.4"
+)
+"I8.M5" "bsim4~instparams" (
+27.0000
+1.00000
+2.04700e-06
+4.18120e-07
+2.00000e-06
+4.18071e-07
+-0.0102718
+0.00000
+9.60000e-13
+9.60000e-13
+2.96000e-06
+2.96000e-06
+) PROP(
+"model" "pch.7"
+)
+"I8.M9" "bsim4~instparams" (
+27.0000
+2.00000
+2.04700e-06
+4.18120e-07
+2.00000e-06
+4.18071e-07
+-0.0102718
+0.00000
+9.60000e-13
+9.60000e-13
+2.96000e-06
+2.96000e-06
+) PROP(
+"model" "pch.7"
+)
+"I8.M26" "bsim4~instparams" (
+27.0000
+3.00000
+4.04700e-06
+4.18120e-07
+4.00000e-06
+4.18071e-07
+-0.0102718
+0.00000
+1.92000e-12
+1.92000e-12
+4.96000e-06
+4.96000e-06
+) PROP(
+"model" "pch.7"
+)
+"I8.M14" "bsim4~instparams" (
+27.0000
+3.00000
+4.04700e-06
+4.18120e-07
+4.00000e-06
+4.18071e-07
+-0.0102718
+0.00000
+1.92000e-12
+1.92000e-12
+4.96000e-06
+4.96000e-06
+) PROP(
+"model" "pch.7"
+)
+"I8.M15" "bsim4~instparams" (
+27.0000
+1.00000
+4.04700e-06
+4.18120e-07
+4.00000e-06
+4.18071e-07
+-0.0102718
+0.00000
+1.92000e-12
+1.92000e-12
+4.96000e-06
+4.96000e-06
+) PROP(
+"model" "pch.7"
+)
+"I8.M3" "bsim4~instparams" (
+27.0000
+4.00000
+2.04700e-06
+9.81200e-08
+2.00000e-06
+9.80714e-08
+-0.0102718
+0.00000
+9.60000e-13
+9.60000e-13
+2.96000e-06
+2.96000e-06
+) PROP(
+"model" "pch.8"
+)
+"I8.M19" "bsim4~instparams" (
+27.0000
+2.00000
+4.04700e-06
+9.81200e-08
+4.00000e-06
+9.80714e-08
+-0.0102718
+0.00000
+1.92000e-12
+1.92000e-12
+4.96000e-06
+4.96000e-06
+) PROP(
+"model" "pch.8"
+)
+"I8.M24" "bsim4~instparams" (
+27.0000
+2.00000
+4.04700e-06
+9.81200e-08
+4.00000e-06
+9.80714e-08
+-0.0102718
+0.00000
+1.92000e-12
+1.92000e-12
+4.96000e-06
+4.96000e-06
+) PROP(
+"model" "pch.8"
+)
+"I8.M10" "bsim4~instparams" (
+27.0000
+1.00000
+8.47000e-07
+3.91812e-06
+8.00000e-07
+3.91807e-06
+-0.0102718
+0.00000
+3.84000e-13
+3.84000e-13
+1.76000e-06
+1.76000e-06
+) PROP(
+"model" "pch.10"
+)
+"I8.M11" "bsim4~instparams" (
+27.0000
+1.00000
+8.47000e-07
+3.91812e-06
+8.00000e-07
+3.91807e-06
+-0.0102718
+0.00000
+3.84000e-13
+3.84000e-13
+1.76000e-06
+1.76000e-06
+) PROP(
+"model" "pch.10"
+)
+"I9.M34" "bsim4~instparams" (
+27.0000
+1.00000
+1.04700e-06
+4.18120e-07
+1.00000e-06
+4.18071e-07
+-0.0102718
+0.00000
+4.80000e-13
+4.80000e-13
+1.96000e-06
+1.96000e-06
+) PROP(
+"model" "pch.11"
+)
+"I9.M32" "bsim4~instparams" (
+27.0000
+2.00000
+1.04700e-06
+4.18120e-07
+1.00000e-06
+4.18071e-07
+-0.0102718
+0.00000
+4.80000e-13
+4.80000e-13
+1.96000e-06
+1.96000e-06
+) PROP(
+"model" "pch.11"
+)
+"I8.M22" "bsim4~instparams" (
+27.0000
+3.00000
+1.04700e-06
+9.18120e-07
+1.00000e-06
+9.18071e-07
+-0.0102718
+0.00000
+4.80000e-13
+4.80000e-13
+1.96000e-06
+1.96000e-06
+) PROP(
+"model" "pch.11"
+)
+"I8.M21" "bsim4~instparams" (
+27.0000
+1.00000
+1.04700e-06
+9.18120e-07
+1.00000e-06
+9.18071e-07
+-0.0102718
+0.00000
+4.80000e-13
+4.80000e-13
+1.96000e-06
+1.96000e-06
+) PROP(
+"model" "pch.11"
+)
+"I8.M4" "bsim4~instparams" (
+27.0000
+1.00000
+1.97960e-06
+9.33100e-07
+2.00000e-06
+9.32353e-07
+-0.00270691
+0.00000
+9.60000e-13
+9.60000e-13
+2.96000e-06
+2.96000e-06
+) PROP(
+"model" "nch.7"
+)
+"I8.M13" "bsim4~instparams" (
+27.0000
+5.00000
+1.97960e-06
+9.33100e-07
+2.00000e-06
+9.32353e-07
+-0.00270691
+0.00000
+9.60000e-13
+9.60000e-13
+2.96000e-06
+2.96000e-06
+) PROP(
+"model" "nch.7"
+)
+"I8.M8" "bsim4~instparams" (
+27.0000
+1.00000
+1.97960e-06
+9.33100e-07
+2.00000e-06
+9.32353e-07
+-0.00270691
+0.00000
+9.60000e-13
+9.60000e-13
+2.96000e-06
+2.96000e-06
+) PROP(
+"model" "nch.7"
+)
+"I8.M12" "bsim4~instparams" (
+27.0000
+1.00000
+1.97960e-06
+9.33100e-07
+2.00000e-06
+9.32353e-07
+-0.00270691
+0.00000
+9.60000e-13
+9.60000e-13
+2.96000e-06
+2.96000e-06
+) PROP(
+"model" "nch.7"
+)
+"I8.M6" "bsim4~instparams" (
+27.0000
+1.00000
+1.97960e-06
+9.33100e-07
+2.00000e-06
+9.32353e-07
+-0.00270691
+0.00000
+9.60000e-13
+9.60000e-13
+2.96000e-06
+2.96000e-06
+) PROP(
+"model" "nch.7"
+)
+"I8.M7" "bsim4~instparams" (
+27.0000
+1.00000
+1.97960e-06
+9.33100e-07
+2.00000e-06
+9.32353e-07
+-0.00270691
+0.00000
+9.60000e-13
+9.60000e-13
+2.96000e-06
+2.96000e-06
+) PROP(
+"model" "nch.7"
+)
+"I8.M16" "bsim4~instparams" (
+27.0000
+5.00000
+1.97960e-06
+9.33100e-07
+2.00000e-06
+9.32353e-07
+-0.00270691
+0.00000
+9.60000e-13
+9.60000e-13
+2.96000e-06
+2.96000e-06
+) PROP(
+"model" "nch.7"
+)
+"I8.M2" "bsim4~instparams" (
+27.0000
+6.00000
+4.97960e-06
+4.33100e-07
+5.00000e-06
+4.32353e-07
+-0.00270691
+0.00000
+2.40000e-12
+2.40000e-12
+5.96000e-06
+5.96000e-06
+) PROP(
+"model" "nch.7"
+)
+"I8.M1" "bsim4~instparams" (
+27.0000
+6.00000
+4.97960e-06
+4.33100e-07
+5.00000e-06
+4.32353e-07
+-0.00270691
+0.00000
+2.40000e-12
+2.40000e-12
+5.96000e-06
+5.96000e-06
+) PROP(
+"model" "nch.7"
+)
+"I8.M17" "bsim4~instparams" (
+27.0000
+2.00000
+1.97960e-06
+1.13100e-07
+2.00000e-06
+1.12353e-07
+-0.00270691
+0.00000
+9.60000e-13
+9.60000e-13
+2.96000e-06
+2.96000e-06
+) PROP(
+"model" "nch.8"
+)
+"I8.M18" "bsim4~instparams" (
+27.0000
+2.00000
+1.97960e-06
+1.13100e-07
+2.00000e-06
+1.12353e-07
+-0.00270691
+0.00000
+9.60000e-13
+9.60000e-13
+2.96000e-06
+2.96000e-06
+) PROP(
+"model" "nch.8"
+)
+"I8.M25" "bsim4~instparams" (
+27.0000
+1.00000
+3.97960e-06
+1.13100e-07
+4.00000e-06
+1.12353e-07
+-0.00270691
+0.00000
+1.92000e-12
+1.92000e-12
+4.96000e-06
+4.96000e-06
+) PROP(
+"model" "nch.8"
+)
+"I9.M31" "bsim4~instparams" (
+27.0000
+1.00000
+7.79600e-07
+3.93310e-06
+8.00000e-07
+3.93235e-06
+-0.00270691
+0.00000
+3.84000e-13
+3.84000e-13
+1.76000e-06
+1.76000e-06
+) PROP(
+"model" "nch.10"
+)
+"I9.M35" "bsim4~instparams" (
+27.0000
+1.00000
+7.79600e-07
+3.93310e-06
+8.00000e-07
+3.93235e-06
+-0.00270691
+0.00000
+3.84000e-13
+3.84000e-13
+1.76000e-06
+1.76000e-06
+) PROP(
+"model" "nch.10"
+)
+"I8.M23" "bsim4~instparams" (
+27.0000
+1.00000
+7.79600e-07
+3.93310e-06
+8.00000e-07
+3.93235e-06
+-0.00270691
+0.00000
+3.84000e-13
+3.84000e-13
+1.76000e-06
+1.76000e-06
+) PROP(
+"model" "nch.10"
+)
+"I8.M20" "bsim4~instparams" (
+27.0000
+1.00000
+7.79600e-07
+3.93310e-06
+8.00000e-07
+3.93235e-06
+-0.00270691
+0.00000
+3.84000e-13
+3.84000e-13
+1.76000e-06
+1.76000e-06
+) PROP(
+"model" "nch.10"
+)
+"I9.M28" "bsim4~instparams" (
+27.0000
+1.00000
+9.79600e-07
+9.33100e-07
+1.00000e-06
+9.32353e-07
+-0.00270691
+0.00000
+4.80000e-13
+4.80000e-13
+1.96000e-06
+1.96000e-06
+) PROP(
+"model" "nch.11"
+)
+"I9.M33" "bsim4~instparams" (
+27.0000
+1.00000
+9.79600e-07
+9.33100e-07
+1.00000e-06
+9.32353e-07
+-0.00270691
+0.00000
+4.80000e-13
+4.80000e-13
+1.96000e-06
+1.96000e-06
+) PROP(
+"model" "nch.11"
+)
+"I9.M27" "bsim4~instparams" (
+27.0000
+1.00000
+9.79600e-07
+9.33100e-07
+1.00000e-06
+9.32353e-07
+-0.00270691
+0.00000
+4.80000e-13
+4.80000e-13
+1.96000e-06
+1.96000e-06
+) PROP(
+"model" "nch.11"
+)
+"I9.M36" "bsim4~instparams" (
+27.0000
+1.00000
+9.79600e-07
+9.33100e-07
+1.00000e-06
+9.32353e-07
+-0.00270691
+0.00000
+4.80000e-13
+4.80000e-13
+1.96000e-06
+1.96000e-06
+) PROP(
+"model" "nch.11"
+)
+"I9.M30" "bsim4~instparams" (
+27.0000
+1.00000
+9.79600e-07
+9.33100e-07
+1.00000e-06
+9.32353e-07
+-0.00270691
+0.00000
+4.80000e-13
+4.80000e-13
+1.96000e-06
+1.96000e-06
+) PROP(
+"model" "nch.11"
+)
+"I9.M29" "bsim4~instparams" (
+27.0000
+1.00000
+9.79600e-07
+9.33100e-07
+1.00000e-06
+9.32353e-07
+-0.00270691
+0.00000
+4.80000e-13
+4.80000e-13
+1.96000e-06
+1.96000e-06
+) PROP(
+"model" "nch.11"
+)
+"C0" "capacitor~instparams" (
+27.0000
+1.00000
+nan
+nan
+1.00000e-08
+) PROP(
+"model" "capacitor"
+)
+"C1" "capacitor~instparams" (
+27.0000
+1.00000
+nan
+nan
+2.00000e-11
+) PROP(
+"model" "capacitor"
+)
+"I1" "isource~instparams" (
+27.0000
+) PROP(
+"model" "isource"
+)
+"I4" "isource~instparams" (
+27.0000
+) PROP(
+"model" "isource"
+)
+"I12" "isource~instparams" (
+27.0000
+) PROP(
+"model" "isource"
+)
+"R1" "resistor~instparams" (
+nan
+nan
+100000.
+nan
+27.0000
+1.00000
+) PROP(
+"model" "resistor"
+)
+"R0" "resistor~instparams" (
+nan
+nan
+1600.00
+nan
+27.0000
+1.00000
+) PROP(
+"model" "resistor"
+)
+"V2" "vsource~instparams" (
+27.0000
+) PROP(
+"model" "vsource"
+)
+"VIN2" "vsource~instparams" (
+27.0000
+) PROP(
+"model" "vsource"
+)
+END
