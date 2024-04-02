@@ -373,6 +373,7 @@ def update_obs_space_w_region(ideal_specs_dict, cur_specs_dict, cur_param_input,
     dict_sum = {"cur_specs": cur_specs_flatten, "ideal_specs": ideal_specs_flatten, "cur_param": cur_param_dict,
                 "region_dict": region_dict}
     dict_sum = OrderedDict(dict_sum)
+    print(f"Debug in update_obs_space, \n updated_obs_space: {dict_sum}")
 
     return dict_sum
 
