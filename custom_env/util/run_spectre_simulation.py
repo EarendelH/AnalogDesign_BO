@@ -189,21 +189,4 @@ def run_region_simulation(work_dir, sim_config, zero_sim_result, show_output=Fal
             subprocess.run(f"spectre -64 +aps {os.path.join(work_dir, assigned_netlist_filename)}",
                            shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
-        # Process the simulation files as specified in the config
-        raw_dir = os.path.join(work_dir, f"{assigned_netlist_name}.raw")
-        sim_result_file = simulation_config["simulation_file"]
-        # Convert to list if it is not
-        if not isinstance(sim_result_file, list):
-            sim_result_file = [sim_result_file]
-        parse_funcs = simulation_config["parse_func"]
-        if not isinstance(parse_funcs, list):
-            parse_funcs = [parse_funcs]
-
-        # Convert binary file to text file
-        for idx, sim_file in enumerate(sim_result_file):
-            file_to_process = os.path.join(raw_dir, sim_file)
-            processed_file = f"{file_to_process}.encode"
-            subprocess.run(f"psf {file_to_process} -o {processed_file}", shell=True)
-            # print(f"Processed file: {sim_file}")
-
     return None
