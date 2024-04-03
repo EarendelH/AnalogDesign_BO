@@ -211,8 +211,8 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
             update_netlist(working_dir_reset_dc, self.dc_sim_config_dict, init_param, self.unassigned_netlist_dir)
             _ = run_dynamic_simulation(working_dir_reset_dc, self.dc_sim_config_dict, self.zero_sim_result,
                                        self.sim_output_enable)
-            dc_reset_raw_result_path = os.path.join(working_dir_reset_dc, "DC.raw/dcOpInfo.info")
-            dc_reset_result_path = os.path.join(working_dir_reset_dc, "DC.raw/dcOpInfo.info.encode")
+            dc_reset_raw_result_path = os.path.join(working_dir_reset_dc, "Region.raw/dcOpInfo.info")
+            dc_reset_result_path = os.path.join(working_dir_reset_dc, "Region.raw/dcOpInfo.info.encode")
             subprocess.run(f"psf {dc_reset_raw_result_path} -o {dc_reset_result_path}", shell=True)
             reset_operation_region_dict = extract_operation_region_w_name(dc_reset_result_path)
             logging.debug(f"Initialing!!!Operation region: {reset_operation_region_dict}")
@@ -321,8 +321,8 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
                 update_netlist(working_dir_step_dc, self.dc_sim_config_dict, updated_param, self.unassigned_netlist_dir)
                 _ = run_dynamic_simulation(working_dir_step_dc, self.dc_sim_config_dict, self.zero_sim_result,
                                            self.sim_output_enable)
-                dc_raw_result_path = os.path.join(working_dir_step_dc, "DC.raw/dcOpInfo.info")
-                dc_result_path = os.path.join(working_dir_step_dc, "DC.raw/dcOpInfo.info.encode")
+                dc_raw_result_path = os.path.join(working_dir_step_dc, "Region.raw/dcOpInfo.info")
+                dc_result_path = os.path.join(working_dir_step_dc, "Region.raw/dcOpInfo.info.encode")
                 subprocess.run(f"psf {dc_raw_result_path} -o {dc_result_path}", shell=True)
                 operation_region_dict = extract_operation_region_w_name(dc_result_path)
                 operation_region_list = list(operation_region_dict.values())
@@ -395,8 +395,8 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
                                self.unassigned_netlist_dir)
                 _ = run_dynamic_simulation(working_dir_step_dc_passed, self.dc_sim_config_dict, self.zero_sim_result,
                                            self.sim_output_enable)
-                dc_raw_result_path = os.path.join(working_dir_step_dc_passed, "DC.raw/dcOpInfo.info")
-                dc_result_path = os.path.join(working_dir_step_dc_passed, "DC.raw/dcOpInfo.info.encode")
+                dc_raw_result_path = os.path.join(working_dir_step_dc_passed, "Region.raw/dcOpInfo.info")
+                dc_result_path = os.path.join(working_dir_step_dc_passed, "Region.raw/dcOpInfo.info.encode")
                 subprocess.run(f"psf {dc_raw_result_path} -o {dc_result_path}", shell=True)
                 operation_region_dict = extract_operation_region_w_name(dc_result_path)
                 delete_work_dir(working_dir_step_dc_passed)
