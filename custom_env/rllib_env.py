@@ -358,7 +358,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
             observations = {agent: observation for agent in self.agents}
             rew = {a: -10 for a in self.agents}
 
-            logging.info(f"Step!!!DC Check fail.Reward result: {rew} with step number: {self.step_num}")
+            logging.info(f"Step!!!DC Check fail. Reward result: {rew} with step number: {self.step_num}")
 
             terminated = {a: False for a in self.agents}
 
