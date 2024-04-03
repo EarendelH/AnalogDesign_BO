@@ -160,3 +160,50 @@ def run_dynamic_simulation(work_dir, sim_config, zero_sim_result, show_output=Fa
             break
 
     return results, fail_tag
+
+
+def run_region_simulation(work_dir, sim_config, zero_sim_result, show_output=False):
+    """
+    Run spectre simulation. Once the output result is zero (for pwr, reset value is 1), the simulation will be stopped.
+    Zero simulation result is given.
+    :param work_dir: working directory
+    :param sim_config: config simulation item and corresponding result parse function
+    :param show_output: show the output of the simulation
+    :param zero_sim_result: zero simulation result
+    :return: Arranged simulation results
+    """
+
+    for simulation_config in sim_config:
+        simulation = simulation_config["simulation_name"]
+        assigned_netlist_name = simulation_config[f"netlist_name"]
+        assigned_netlist_filename = f"{assigned_netlist_name}.scs"
+
+        # Check if the assigned netlist file exists
+        file_list = os.listdir(work_dir)
+        if assigned_netlist_filename not in file_list:
+            raise ValueError(f"Assigned netlist file {assigned_netlist_filename} not found.")
+
+        if show_output:
+            subprocess.run(f"spectre -64 +aps {os.path.join(work_dir, assigned_netlist_filename)}", shell=True)
+        else:
+            subprocess.run(f"spectre -64 +aps {os.path.join(work_dir, assigned_netlist_filename)}",
+                           shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
+        # Process the simulation files as specified in the config
+        raw_dir = os.path.join(work_dir, f"{assigned_netlist_name}.raw")
+        sim_result_file = simulation_config["simulation_file"]
+        # Convert to list if it is not
+        if not isinstance(sim_result_file, list):
+            sim_result_file = [sim_result_file]
+        parse_funcs = simulation_config["parse_func"]
+        if not isinstance(parse_funcs, list):
+            parse_funcs = [parse_funcs]
+
+        # Convert binary file to text file
+        for idx, sim_file in enumerate(sim_result_file):
+            file_to_process = os.path.join(raw_dir, sim_file)
+            processed_file = f"{file_to_process}.encode"
+            subprocess.run(f"psf {file_to_process} -o {processed_file}", shell=True)
+            # print(f"Processed file: {sim_file}")
+
+    return None
