@@ -138,7 +138,7 @@ def run_dynamic_simulation(work_dir, sim_config, zero_sim_result, show_output=Fa
             result = function(processed_file_full_path)
             results[simulation] = result
 
-            print(f"Debug in run_dynamic_simulation.py, result in {simulation} is {result}")
+            # print(f"Debug in run_dynamic_simulation.py, result in {simulation} is {result}")
 
             # Add Simulation Name before each keys in the result dictionary. Avoid error in flatten the dictionary
             modified_result = {f"{simulation}_{key}": value for key, value in result.items()}
