@@ -221,3 +221,6 @@ def findShoot(filename):
 # Test Code
 # file = "/Users/hanwu/ML/AnalogDesignAuto_MultiAgent/custom_env/netlist_assign_test/Trans.raw/tran.tran.tran.encode"
 # print(findShoot(file))
+
+# file = "/Users/hanwu/Downloads/LDO_SSF/Trans.raw/tran.tran.tran.encode"
+# print(findShoot(file))
