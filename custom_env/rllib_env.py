@@ -215,7 +215,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
             subprocess.run(f"psf {dc_reset_raw_result_path} -o {dc_reset_result_path}", shell=True)
             reset_operation_region_dict = extract_operation_region_w_name(dc_reset_result_path)
             logging.debug(f"Initialing!!!Operation region: {reset_operation_region_dict}")
-            delete_work_dir(working_dir_reset_dc)
+            # delete_work_dir(working_dir_reset_dc)
         except Exception as e:
             logging.warning(f"Resting!!!: {e}. No DC sim file.")
             reset_operation_region_dict = self.operation_region_dict_zero
@@ -268,7 +268,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
             pickle.dump(self.trajectory_data, f)
 
         # Delete working temp directory, if it exists
-        delete_work_dir(working_dir_reset)
+        # delete_work_dir(working_dir_reset)
 
         return observations, info
 
@@ -278,10 +278,6 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         self.step_num += 1
 
         operation_region_dict = {}
-
-        # Create working directory
-        working_dir_step = create_work_dir(self.run_root_dir)
-        logging.info(f"Step!!! Working directory: {working_dir_step} with step number: {self.step_num}")
 
         if self.action_mask:
             for key in self.device_mask_dict:
@@ -332,7 +328,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
                 # Check operation_region_dict length vs self.operation_region_dict_zero length
                 if len(operation_region_dict) != len(self.operation_region_dict_zero):
                     logging.warning(f"Warning!!!: Operation region dict length {len(operation_region_dict)} does not "
-                                 f"match with operation_region_dict_zero length {len(self.norm_ideal_specs)}.")
+                                    f"match with operation_region_dict_zero length {len(self.norm_ideal_specs)}.")
                     operation_region_dict = self.operation_region_dict_zero
                     valid_param = False
                 # Delete working temp directory, if it exists
@@ -371,6 +367,11 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         else:
             # Run all simulations
             # Parse the updated param and generate the netlist
+
+            # Create working directory
+            working_dir_step = create_work_dir(self.run_root_dir)
+            logging.info(f"Step!!! Working directory: {working_dir_step} with step number: {self.step_num}")
+
             update_netlist(working_dir_step, self.sim_config_dict, updated_param, self.unassigned_netlist_dir)
 
             # Run spectre simulation and normalize the result
@@ -442,6 +443,9 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
                     truncated[agent_name] = True
                     self.truncateds.add(agent_name)
 
+            # Delete working temp directory, if it exists
+            delete_work_dir(working_dir_step)
+
         info = {agent: {} for agent in self.agents}
 
         terminated["__all__"] = len(self.terminateds) == len(self.agents)
@@ -461,8 +465,5 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
 
         with open(self.log_file_path, 'wb') as f:
             pickle.dump(self.trajectory_data, f)
-
-        # Delete working temp directory, if it exists
-        delete_work_dir(working_dir_step)
 
         return observations, rew, terminated, truncated, info
