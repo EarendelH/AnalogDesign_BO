@@ -167,7 +167,7 @@ def main():
                 sgd_minibatch_size=64,
                 num_sgd_iter=10,
                 model={
-                    "fcnet_hiddens": [256, 256, 256, 256, 256, 256],
+                    "fcnet_hiddens": [256, 256, 256, 256, 256, 256, 256, 256],
                 }
             )
             .debugging(log_level="DEBUG")
