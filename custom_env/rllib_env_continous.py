@@ -216,7 +216,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
             subprocess.run(f"psf {dc_reset_raw_result_path} -o {dc_reset_result_path}", shell=True)
             reset_operation_region_dict = extract_operation_region_w_name(dc_reset_result_path)
             logging.debug(f"Initialing!!!Operation region: {reset_operation_region_dict}")
-            # delete_work_dir(working_dir_reset_dc)
+            # delete_work_dir(working_dir_reset)
         except Exception as e:
             logging.warning(f"Resting!!!: {e}. No DC sim file.")
             reset_operation_region_dict = self.operation_region_dict_zero
