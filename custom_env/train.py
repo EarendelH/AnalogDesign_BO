@@ -174,9 +174,9 @@ def main():
             .framework("torch")
             .resources(num_gpus=num_gpu)
             .multi_agent(
-                policies={"policy_1", "policy_2", "policy_3", "policy_4", "policy_5", "policy_6", "policy_7"},
+                policies={"policy_1", "policy_2", "policy_3", "policy_4", "policy_5"},
                 policy_mapping_fn=(lambda aid, episode, worker, **kw: f"policy_{aid[-1]}"),
-                policies_to_train=["policy_1", "policy_2", "policy_3", "policy_4", "policy_5", "policy_6", "policy_7"],
+                policies_to_train=["policy_1", "policy_2", "policy_3", "policy_4", "policy_5"],
             )
         )
 
