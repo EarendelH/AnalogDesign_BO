@@ -8,6 +8,8 @@ from typing import Dict, Tuple, Union
 def split_value_unit(value: Union[str, int]) -> Tuple[float, str]:
     if isinstance(value, int):
         return float(value), ''  # Convert int to float and return with an empty unit
+    if isinstance(value, float):
+        return value, ''
     else:
         for i, char in enumerate(value):
             if not char.isdigit() and char != '.':
