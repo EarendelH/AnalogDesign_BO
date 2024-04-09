@@ -29,6 +29,8 @@ def filter_data(input_pkl, threshold):
             # print(f"Filtered data: {item}")
             filtered_data.append(item)
 
+    print(f"Filtered data number: {len(filtered_data)} extracted from {len(valid_data)} data.")
+
     sorted_list = sorted(filtered_data, key=lambda x: x['rew'], reverse=True)
 
     save_joblib = input("Do you want to save the filtered data to a new joblib file? (y/n): ")
