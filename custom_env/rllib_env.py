@@ -18,7 +18,7 @@ from util.generalize_config import generalize_config
 from util.update_param import update_parameters
 from util.update_obs_space import update_obs_space_w_region, flatten_observation_w_region
 from util.normlization import norm_ideal_spec, norm_sim_spec
-from util.util_func import retry_decorator, delete_work_dir
+from util.util_func import retry_decorator
 from util.init_param import gen_init_param
 from util.extract_device_param_value import extract_operation_region_w_name
 
@@ -332,7 +332,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
                     operation_region_dict = self.operation_region_dict_zero
                     valid_param = False
                 # Delete working temp directory, if it exists
-                delete_work_dir(working_dir_step_dc)
+                # delete_work_dir(working_dir_step_dc)
             except Exception as e:
                 logging.warning(f"Warning!!!: {e}. Failed to run DC check with step number: {self.step_num}")
                 operation_region_dict = self.operation_region_dict_zero
@@ -399,7 +399,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
                 dc_result_path = os.path.join(working_dir_step_dc_passed, "Region.raw/dcOpInfo.info.encode")
                 subprocess.run(f"psf {dc_raw_result_path} -o {dc_result_path}", shell=True)
                 operation_region_dict = extract_operation_region_w_name(dc_result_path)
-                delete_work_dir(working_dir_step_dc_passed)
+                # (working_dir_step_dc_passed)
             except Exception as e:
                 logging.warning(f"Step Warning!!!: {e}. No DC sim file.")
                 operation_region_dict = self.operation_region_dict_zero
@@ -445,7 +445,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
                     self.truncateds.add(agent_name)
 
             # Delete working temp directory, if it exists
-            delete_work_dir(working_dir_step)
+            # delete_work_dir(working_dir_step)
 
         info = {agent: {} for agent in self.agents}
 

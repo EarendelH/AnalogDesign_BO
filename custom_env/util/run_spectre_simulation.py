@@ -1,6 +1,7 @@
 import os
 import subprocess
 from importlib import import_module
+import pickle
 
 
 def run_spectre_simulation(work_dir, sim_config, show_output=False):
@@ -158,6 +159,10 @@ def run_dynamic_simulation(work_dir, sim_config, zero_sim_result, show_output=Fa
         # Break the loop if fail_tag is True
         if fail_tag:
             break
+
+        # Save result as pickle file
+        with open(f"{work_dir}/result.pkl", "wb") as f:
+            pickle.dump(results, f)
 
     return results, fail_tag
 

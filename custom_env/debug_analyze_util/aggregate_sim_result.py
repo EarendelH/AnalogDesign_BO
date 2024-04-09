@@ -76,10 +76,27 @@ def scan_and_aggregate_metrics(input_folder, output_file):
         dump(aggregated_metrics, f)
 
 
+def scan_and_aggregate_single_thread(input_folder, output_file):
+    aggregated_metrics = []
+    for root, dirs, files in os.walk(input_folder):
+        for file in files:
+            if file.endswith('.pkl'):
+                file_path = os.path.join(root, file)
+                sum_data = process_file(file_path)
+                if sum_data is not None:
+                    aggregated_metrics.extend(sum_data)
+                print(f"Processed {file_path}.")
+
+    print(f"Aggregated {len(aggregated_metrics)} metrics.")
+
+    with open(output_file, 'wb') as f:
+        dump(aggregated_metrics, f)
+
+
 if __name__ == "__main__":
     if len(sys.argv) != 3:
         print("Usage: python script.py <input_folder> <output_file>")
     else:
         input_folder = sys.argv[1]
         output_file = sys.argv[2]
-        scan_and_aggregate_metrics(input_folder, output_file)
+        scan_and_aggregate_single_thread(input_folder, output_file)
