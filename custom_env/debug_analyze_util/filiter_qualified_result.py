@@ -12,9 +12,9 @@ def check_values(data):
     return True
 
 
-def filter_data(input_file, threshold):
+def filter_data(input_pkl, threshold):
 
-    data = load(input_file)
+    data = load(input_pkl)
     filtered_data = []
 
     valid_data = []
