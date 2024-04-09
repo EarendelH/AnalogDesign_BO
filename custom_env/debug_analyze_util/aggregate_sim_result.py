@@ -3,6 +3,7 @@ import pickle
 import sys
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from joblib import dump
+from collections import OrderedDict
 
 
 def flatten_result(sim_result):
@@ -19,6 +20,10 @@ def process_file(file_path):
             data = pickle.load(f)
         initial_sim_result = flatten_result(data['initial_data']['sim_result'])
         init_param = data['initial_data']['init_param']
+        # Convert to OrderedDict to maintain order of keys
+        if isinstance(init_param, dict):
+            init_param = OrderedDict(init_param.items())
+        init_param = sorted(init_param.items())
         init_rew = data['initial_data']['rew']
         init_data = {'result': initial_sim_result, 'param': init_param, 'rew': init_rew}
         sum_data = [init_data]
@@ -26,6 +31,10 @@ def process_file(file_path):
         for step in data['steps_data']:
             step_sim_result = flatten_result(step['sim_result'])
             step_param = step['updated_param']
+            # Convert to OrderedDict to maintain order of keys
+            if isinstance(step_param, dict):
+                step_param = OrderedDict(step_param.items())
+            step_param = sorted(step_param.items())
             step_rew = step['rew']['Agent_1']
             step_data = {'result': step_sim_result, 'param': step_param, 'rew': step_rew}
             sum_data.append(step_data)
