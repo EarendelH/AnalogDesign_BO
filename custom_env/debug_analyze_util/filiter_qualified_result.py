@@ -3,12 +3,28 @@ import sys
 import pandas as pd
 
 
+def check_values(data):
+    for key, value in data.items():
+        if value == 0:
+            return False
+        if key == 'DC_IQ' and value == 1:
+            return False
+    return True
+
+
 def filter_data(input_file, threshold):
 
     data = load(input_file)
     filtered_data = []
 
+    valid_data = []
     for item in data:
+        if check_values(item['result']):
+            valid_data.append(item)
+
+    print(f"Valida data number: {len(valid_data)} extracted from {len(data)} data.")
+
+    for item in valid_data:
         if item['rew'] >= threshold:
             # print(f"Filtered data: {item}")
             filtered_data.append(item)
