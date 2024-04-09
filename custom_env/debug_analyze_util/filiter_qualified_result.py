@@ -5,9 +5,9 @@ import pandas as pd
 
 def check_values(data):
     for key, value in data.items():
-        if value == 0:
+        if value == 0.0:
             return False
-        if key == 'DC_IQ' and value == 1:
+        if key == 'DC_IQ' and value == 1.0:
             return False
     return True
 
