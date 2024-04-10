@@ -14,11 +14,13 @@ def clean_folder(target_folder):
                     sub_path = sub_entry.path
                     if sub_entry.is_dir():
                         shutil.rmtree(sub_path)
-                        print(f"Deleted folder: {sub_path} at {time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())}")
+                        print(f"Deleted folder: {sub_path} "
+                              f"at {time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())}")
                     elif sub_entry.is_file():
                         if not (sub_entry.name.endswith('.scs') or sub_entry.name.endswith('.pkl')):
                             os.remove(sub_path)
-                            print(f"Deleted file: {sub_path} at {time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())}")
+                            print(f"Deleted file: {sub_path} "
+                                  f"at {time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())}")
 
 
 def main_loop(target_folder):
