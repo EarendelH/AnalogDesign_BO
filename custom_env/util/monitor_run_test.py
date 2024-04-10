@@ -9,7 +9,7 @@ def clean_folder(target_folder):
     for entry in os.scandir(target_folder):
         if entry.is_dir():
             dir_path = entry.path
-            if current_time - os.path.getmtime(dir_path) > 300:  # 300秒为5分钟
+            if current_time - os.path.getmtime(dir_path) > 300:
                 for sub_entry in os.scandir(dir_path):
                     sub_path = sub_entry.path
                     if sub_entry.is_dir():
