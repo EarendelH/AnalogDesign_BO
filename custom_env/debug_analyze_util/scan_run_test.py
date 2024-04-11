@@ -65,6 +65,11 @@ norm_specs_file = config_path + "/norm_specs.yaml"
 with open(norm_specs_file, 'r') as file:
     norm_specs = yaml.safe_load(file)
 
+ideal_specs_file = config_path + "/norm_specs_cal.yaml"
+
+with open(ideal_specs_file, 'r') as file:
+    ideal_specs = yaml.safe_load(file)
+
 sim_summary = {}
 
 # Iterate over all folder in the path
@@ -82,7 +87,7 @@ for folder in os.listdir(run_test_path):
                 sim_summary[folder] = {}
                 sim_summary[folder]["result"] = single_sim
                 print(f"Debug, norm_specs: {norm_specs}, single_sim: {single_sim}")
-                rew_single = cal_reward(norm_specs, single_sim, norm_specs)
+                rew_single = cal_reward(ideal_specs, single_sim, norm_specs)
                 sim_summary[folder]["reward"] = rew_single
                 print(f"Reward for {folder} is {rew_single} with specs {single_sim}")
 
