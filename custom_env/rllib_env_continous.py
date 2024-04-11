@@ -184,7 +184,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
             # Add Simulation Name before each keys in the result dictionary. Avoid error in flatten the dictionary
             modified_result = {f"{sim_name}_{key}": value for key, value in self.zero_sim_result[sim_name].items()}
             self.zero_sim_result[sim_name] = modified_result
-        logging.debug(f"Initialing!!!Zero sim result: {self.zero_sim_result}")
+        logging.info(f"Initialing!!!Zero sim result: {self.zero_sim_result}")
 
         try:
             sim_result, _ = run_dynamic_simulation(working_dir_reset, self.sim_config_dict, self.zero_sim_result,
