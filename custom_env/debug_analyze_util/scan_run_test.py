@@ -86,7 +86,7 @@ for folder in os.listdir(run_test_path):
                 # Create sub-dict for the folder
                 sim_summary[folder] = {}
                 sim_summary[folder]["result"] = single_sim
-                print(f"Debug, norm_specs: {norm_specs}, single_sim: {single_sim}")
+                # print(f"Debug, norm_specs: {norm_specs}, single_sim: {single_sim}")
                 rew_single = cal_reward(ideal_specs, single_sim, norm_specs)
                 sim_summary[folder]["reward"] = rew_single
                 print(f"Reward for {folder} is {rew_single} with specs {single_sim}")
