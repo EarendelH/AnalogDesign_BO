@@ -43,7 +43,7 @@ def scan_and_process(root_dir, highlight_subdir):
     results = {}
 
     for subdir in next(os.walk(root_dir))[1]:
-        target_file = os.path.join(root_dir, subdir, 'Line_Reg_200m.raw', 'dc.dc.encode')
+        target_file = os.path.join(root_dir, subdir, 'Line_Reg_1u.raw', 'dc.dc.encode')
         if os.path.isfile(target_file):
             trace_data = extractTrace(target_file)
             print(trace_data)
@@ -60,7 +60,7 @@ def plot_data(results, highlight_subdir, root_dir):
 
     for subdir, data in results.items():
         if subdir == highlight_subdir:
-            plt.plot(data['VDD'][0::2], data['VOUT'], label=f'{subdir} (highlight)', color='yellow', linewidth=2)
+            plt.plot(data['VDD'][0::2], data['VOUT'], label=f'{subdir} (highlight)', color='red', linewidth=2)
         else:
             plt.plot(data['VDD'][0::2], data['VOUT'], label=subdir, color='blue', linewidth=1)
 
@@ -70,12 +70,12 @@ def plot_data(results, highlight_subdir, root_dir):
     plt.legend()
     plt.grid(True)
 
-    plt_path = os.path.join(root_dir, 'vout_time_plot.png')
+    plt_path = os.path.join(root_dir, 'Line_Reg.png')
     plt.savefig(plt_path)
     plt.show()
     print(f"Image save to：{plt_path}")
 
 
-# root_dir = '/Users/hanwu/Downloads/Joblib/SSF_UM'
-# highlight_subdir = 'tmp_20240411050938337807895'
+# root_dir = '/Users/hanwu/Downloads/Joblib/CM_eex03'
+# highlight_subdir = 'tmp_202404110457301383262927'
 # scan_and_process(root_dir, highlight_subdir)
