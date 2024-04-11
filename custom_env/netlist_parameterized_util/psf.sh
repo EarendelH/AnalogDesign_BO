@@ -1,16 +1,30 @@
 #!/bin/bash
 
-echo "Process Folder Name"
-read folder_name
+echo "Enter the directory:"
+read directory
 
-if [ ! -d "$folder_name" ]; then
-  echo "No such folder"
+# Check if the directory exists
+if [ ! -d "$directory" ]; then
+  echo "Directory does not exist."
   exit 1
 fi
 
-for file in "$folder_name"/*; do
+# Process all .scs files in the directory
+for file in "$directory"/*.scs; do
   if [ -f "$file" ]; then
-    psf "$file" -o "${file}.encode"
+    spectre -64 +aps "$file"
   fi
-
 done
+
+# Process all subdirectories
+for subdir in "$directory"/*/; do
+  if [ -d "$subdir" ]; then
+    for file in "$subdir"*; do
+      if [ -f "$file" ]; then
+        psf "$file" -o "${file}.encode"
+      fi
+    done
+  fi
+done
+
+echo "Processing complete."
