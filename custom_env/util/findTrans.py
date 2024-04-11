@@ -1,4 +1,6 @@
 import numpy as np
+import os
+import matplotlib.pyplot as plt
 # from extract_trace import extractTransTrace
 from util.extract_trace import extractTransTrace
 
@@ -224,3 +226,45 @@ def findShoot(filename):
 
 # file = "/Users/hanwu/Downloads/LDO_SSF/Trans.raw/tran.tran.tran.encode"
 # print(findShoot(file))
+
+
+def scan_and_process(root_dir, highlight_subdir):
+    results = {}
+
+    for subdir in next(os.walk(root_dir))[1]:
+        target_file = os.path.join(root_dir, subdir, 'Trans_10m.raw', 'tran.tran.tran.encode')
+        if os.path.isfile(target_file):
+            trace_data = extractTransTrace(target_file)
+            print(trace_data)
+            results[subdir] = {
+                'time': trace_data['time'],
+                'VOUT': trace_data['VOUT']
+            }
+
+    plot_data(results, highlight_subdir, root_dir)
+
+
+def plot_data(results, highlight_subdir, root_dir):
+    plt.figure(figsize=(10, 6))
+
+    for subdir, data in results.items():
+        if subdir == highlight_subdir:
+            plt.plot(data['time'], data['VOUT'], label=f'{subdir} (highlight)', color='yellow', linewidth=2)
+        else:
+            plt.plot(data['time'], data['VOUT'], label=subdir, color='blue', linewidth=1)
+
+    plt.title('VOUT vs. Time Plot')
+    plt.xlabel('Time')
+    plt.ylabel('VOUT')
+    plt.legend()
+    plt.grid(True)
+
+    plt_path = os.path.join(root_dir, 'vout_time_plot.png')
+    plt.savefig(plt_path)
+    plt.show()
+    print(f"Image save to：{plt_path}")
+
+
+# root_dir = '/Users/hanwu/Downloads/Joblib/CM'
+# highlight_subdir = 'tmp_202404102050091383244495'
+# scan_and_process(root_dir, highlight_subdir)
