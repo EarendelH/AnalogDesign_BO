@@ -43,7 +43,7 @@ def scan_and_process(root_dir, highlight_subdir):
     results = {}
 
     for subdir in next(os.walk(root_dir))[1]:
-        target_file = os.path.join(root_dir, subdir, 'Line_Reg_10m.raw', 'dc.dc.encode')
+        target_file = os.path.join(root_dir, subdir, 'Line_Reg_200m.raw', 'dc.dc.encode')
         if os.path.isfile(target_file):
             trace_data = extractTrace(target_file)
             print(trace_data)
@@ -76,6 +76,6 @@ def plot_data(results, highlight_subdir, root_dir):
     print(f"Image save to：{plt_path}")
 
 
-# root_dir = '/Users/hanwu/Downloads/Joblib/CM'
-# highlight_subdir = 'tmp_202404102050091383244495'
+# root_dir = '/Users/hanwu/Downloads/Joblib/SSF_UM'
+# highlight_subdir = 'tmp_20240411050938337807895'
 # scan_and_process(root_dir, highlight_subdir)

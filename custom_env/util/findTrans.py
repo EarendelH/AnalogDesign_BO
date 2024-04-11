@@ -266,8 +266,8 @@ def plot_data(results, highlight_subdir, root_dir):
     print(f"Image save to：{plt_path}")
 
 
-# root_dir = '/Users/hanwu/Downloads/Joblib/SSF'
-# highlight_subdir = 'tmp_202404092323511402223653'
+# root_dir = '/Users/hanwu/Downloads/Joblib/SSF_UM'
+# highlight_subdir = 'tmp_20240411050938337807895'
 # scan_and_process(root_dir, highlight_subdir)
 
 
@@ -300,9 +300,11 @@ def fourier_analysis(time_data, signal_data):
     plt.tight_layout()
     plt.show()
 
-#
-# dict = extractTransTrace("/Users/hanwu/Downloads/Joblib/SSF/tmp_202404092323511402223653/Trans.raw/tran.tran.tran.encode")
+
+# dict = extractTransTrace("/Users/hanwu/Downloads/Joblib/SSF_UM/tmp_20240411051043339987954/
+# Trans.raw/tran.tran.tran.encode")
 # print(dict)
-# time_data = dict['time']
-# signal_data = dict['VOUT']
-# fourier_analysis(time_data, signal_data)
+# time_undershoot_index = [i for i, t in enumerate(dict['time']) if 5e-6 <= t <= 11e-6]
+# time_undershoot = [dict['time'][i] for i in time_undershoot_index]
+# vout_undershoot = [dict['VOUT'][i] for i in time_undershoot_index]
+# fourier_analysis(time_undershoot, vout_undershoot)
