@@ -178,6 +178,8 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
             self.zero_sim_result[sim_name] = {item: 0.0 for item in sim_items}
             if sim_name == 'DC':
                 self.zero_sim_result[sim_name]['IQ'] = 1.0
+            if sim_name.startswith('Trans'):
+                self.zero_sim_result[sim_name] = {item: 1.0 for item in sim_items}
             # Add Simulation Name before each keys in the result dictionary. Avoid error in flatten the dictionary
             modified_result = {f"{sim_name}_{key}": value for key, value in self.zero_sim_result[sim_name].items()}
             self.zero_sim_result[sim_name] = modified_result

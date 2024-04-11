@@ -145,12 +145,22 @@ def run_dynamic_simulation(work_dir, sim_config, zero_sim_result, show_output=Fa
             modified_result = {f"{simulation}_{key}": value for key, value in result.items()}
             results[simulation] = modified_result
 
-            if any(value == 1.0 for value in result.values()) and simulation == "DC":
+            # Easy way to determine the stability of transient simulation
+            if simulation.startswith("Trans"):
+                # Determine whether processed_file is larger than 1M
+                if os.path.getsize(processed_file_full_path) > 1024 * 1024:
+                    print(f"Warning: {processed_file_full_path} is larger than 1M, the system is highly likely to "
+                          f"be unstable.")
+                    fail_tag = True
+                    # All items in modified_result{simulation} set to 1
+                    results[simulation] = {key: 1.0 for key in modified_result.keys()}
+
+            if any(value == 1.0 for value in result.values()) and (simulation == "DC" or simulation.startswith("Trans")):
                 fail_tag = True
                 print(f"Simulation {simulation} failed. Return zero simulation result")
                 print(f"Partial result success: {results}")
                 break
-            if any(value == 0.0 for value in result.values()) and simulation != "DC":
+            if any(value == 0.0 for value in result.values()) and (simulation != "DC" or not simulation.startswith("Trans")):
                 fail_tag = True
                 print(f"Simulation {simulation} failed. Return zero simulation result")
                 print(f"Partial result success: {results}")
