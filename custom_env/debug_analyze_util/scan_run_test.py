@@ -78,6 +78,8 @@ for folder in os.listdir(run_test_path):
                 # Load the pickle file
                 with open(os.path.join(run_test_path, folder, file), "rb") as f:
                     single_sim = pickle.load(f)
+                # Create sub-dict for the folder
+                sim_summary[folder] = {}
                 sim_summary[folder]["result"] = single_sim
                 rew_single = cal_reward(norm_specs, single_sim, norm_specs)
                 sim_summary[folder]["reward"] = rew_single
