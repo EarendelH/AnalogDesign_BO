@@ -3,6 +3,8 @@
 echo "Enter the directory:"
 read directory
 
+start_time=$(date +%s)
+
 # Check if the directory exists
 if [ ! -d "$directory" ]; then
   echo "Directory does not exist."
@@ -27,4 +29,8 @@ for subdir in "$directory"/*/; do
   fi
 done
 
+end_time=$(date +%s)
+elapsed_time=$((end_time - start_time))
+
 echo "Processing complete."
+echo "Total time taken: $elapsed_time seconds."

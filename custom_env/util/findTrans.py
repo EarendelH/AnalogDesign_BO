@@ -1,8 +1,9 @@
 import numpy as np
 import os
 import matplotlib.pyplot as plt
-# from extract_trace import extractTransTrace
-from util.extract_trace import extractTransTrace
+from extract_trace import extractTransTrace
+# from util.extract_trace import extractTransTrace
+import numpy as np
 
 
 def analyze_trans_file(file_path):
@@ -232,15 +233,15 @@ def scan_and_process(root_dir, highlight_subdir):
     results = {}
 
     for subdir in next(os.walk(root_dir))[1]:
-        target_file = os.path.join(root_dir, subdir, 'Trans_10m.raw', 'tran.tran.tran.encode')
+        target_file = os.path.join(root_dir, subdir, 'Trans.raw', 'tran.tran.tran.encode')
         if os.path.isfile(target_file):
             trace_data = extractTransTrace(target_file)
-            print(trace_data)
             results[subdir] = {
                 'time': trace_data['time'],
                 'VOUT': trace_data['VOUT']
             }
-
+            print(trace_data['time'])
+            print(trace_data['VOUT'])
     plot_data(results, highlight_subdir, root_dir)
 
 
@@ -265,6 +266,43 @@ def plot_data(results, highlight_subdir, root_dir):
     print(f"Image save to：{plt_path}")
 
 
-# root_dir = '/Users/hanwu/Downloads/Joblib/CM'
-# highlight_subdir = 'tmp_202404102050091383244495'
+# root_dir = '/Users/hanwu/Downloads/Joblib/SSF'
+# highlight_subdir = 'tmp_202404092323511402223653'
 # scan_and_process(root_dir, highlight_subdir)
+
+
+def fourier_analysis(time_data, signal_data):
+    sample_intervals = np.diff(time_data)
+    sample_rate = 1 / np.mean(sample_intervals)
+
+    fft_result = np.fft.fft(signal_data)
+    fft_freq = np.fft.fftfreq(len(signal_data), 1 / sample_rate)
+
+    positive_freqs = fft_freq > 0
+    fft_magnitude = np.abs(fft_result[positive_freqs])
+    fft_frequencies = fft_freq[positive_freqs]
+
+    plt.figure(figsize=(12, 6))
+
+    plt.subplot(2, 1, 1)
+    plt.plot(time_data, signal_data)
+    plt.title('Time Series')
+    plt.xlabel('Time (seconds)')
+    plt.ylabel('Amplitude')
+
+    plt.subplot(2, 1, 2)
+    plt.stem(fft_frequencies, fft_magnitude, 'b', markerfmt=" ", basefmt="-b")
+    plt.title('Frequency Spectrum')
+    plt.xlabel('Frequency (Hz)')
+    plt.ylabel('Magnitude')
+    plt.xlim(0, sample_rate / 2)
+
+    plt.tight_layout()
+    plt.show()
+
+#
+# dict = extractTransTrace("/Users/hanwu/Downloads/Joblib/SSF/tmp_202404092323511402223653/Trans.raw/tran.tran.tran.encode")
+# print(dict)
+# time_data = dict['time']
+# signal_data = dict['VOUT']
+# fourier_analysis(time_data, signal_data)
