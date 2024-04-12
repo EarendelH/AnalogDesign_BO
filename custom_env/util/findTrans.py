@@ -242,8 +242,8 @@ def findShoot(filename):
 # file = "/Users/hanwu/ML/AnalogDesignAuto_MultiAgent/custom_env/netlist_assign_test/Trans.raw/tran.tran.tran.encode"
 # print(findShoot(file))
 
-file = "/Users/hanwu/Downloads/Joblib/SSF_UM_53c63/tmp_20240411224832550072069/Trans.raw/tran.tran.tran.encode"
-print(findShoot(file))
+# file = "/Users/hanwu/Downloads/Joblib/SSF_UM_53c63/tmp_20240411224832550072069/Trans.raw/tran.tran.tran.encode"
+# print(findShoot(file))
 
 
 def scan_and_process(root_dir, highlight_subdir):
