@@ -201,6 +201,7 @@ def findShoot(filename):
     trans_dict = extractTransTrace(filename)
     time_series = trans_dict["time"]
     vout_trace = trans_dict["VOUT"]
+    stable_voltage = 1.2
 
     # Clip time 50us-100us and 100us-150us
     time_undershoot_index = [i for i, t in enumerate(time_series) if 2e-6 <= t <= 12e-6]
@@ -219,6 +220,21 @@ def findShoot(filename):
     undershoot = vout_undershoot_base - vout_undershoot_min
     overshoot = vout_overshoot_max - vout_overshoot_base
 
+    # Determine whether the stable voltage is regulated to 1.2V (pre-defined)
+    # Find the mid-value in vout_undershoot
+    stable_high_load_voltage = vout_undershoot[len(vout_undershoot) // 2]
+    stable_light_load_voltage = vout_overshoot[-1]
+    if stable_high_load_voltage >= stable_voltage * 1.1 or stable_high_load_voltage <= stable_voltage * 0.9:
+        print("Warning! This LDO cannot be regulated to VREF under high load.")
+        overshoot = 1.0
+        undershoot = 1.0
+    if stable_light_load_voltage >= stable_voltage * 1.1 or stable_light_load_voltage <= stable_voltage * 0.9:
+        print("Warning! This LDO cannot be regulated to VREF under light load.")
+        overshoot = 1.0
+        undershoot = 1.0
+    else:
+        pass
+
     return {"overShoot": overshoot, "underShoot": undershoot}
 
 # Test Code
@@ -233,7 +249,7 @@ def scan_and_process(root_dir, highlight_subdir):
     results = {}
 
     for subdir in next(os.walk(root_dir))[1]:
-        target_file = os.path.join(root_dir, subdir, 'Trans_5m.raw', 'tran.tran.tran.encode')
+        target_file = os.path.join(root_dir, subdir, 'Trans.raw', 'tran.tran.tran.encode')
         if os.path.isfile(target_file):
             trace_data = extractTransTrace(target_file)
             results[subdir] = {
@@ -266,8 +282,8 @@ def plot_data(results, highlight_subdir, root_dir):
     print(f"Image save to：{plt_path}")
 
 
-# root_dir = '/Users/hanwu/Downloads/Joblib/CM_eex03'
-# highlight_subdir = 'tmp_202404110457301383262927'
+# root_dir = '/Users/hanwu/Downloads/Joblib/SSF_UM_1'
+# highlight_subdir = 'tmp_20240411224832550072069'
 # scan_and_process(root_dir, highlight_subdir)
 
 

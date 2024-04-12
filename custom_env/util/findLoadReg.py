@@ -75,6 +75,6 @@ def plot_data(results, highlight_subdir, root_dir):
     print(f"Image save to：{plt_path}")
 
 
-# root_dir = '/Users/hanwu/Downloads/Joblib/CM_eex03'
-# highlight_subdir = 'tmp_202404110457301383262927'
+# root_dir = '/Users/hanwu/Downloads/Joblib/SSF_UM_1'
+# highlight_subdir = 'tmp_20240411224832550072069'
 # scan_and_process(root_dir, highlight_subdir)
