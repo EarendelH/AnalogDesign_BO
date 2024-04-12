@@ -1,8 +1,8 @@
 import numpy as np
 import os
 import matplotlib.pyplot as plt
-# from extract_trace import extractTransTrace
-from util.extract_trace import extractTransTrace
+from extract_trace import extractTransTrace
+# from util.extract_trace import extractTransTrace
 import numpy as np
 
 
@@ -249,7 +249,7 @@ def scan_and_process(root_dir, highlight_subdir):
     results = {}
 
     for subdir in next(os.walk(root_dir))[1]:
-        target_file = os.path.join(root_dir, subdir, 'Trans.raw', 'tran.tran.tran.encode')
+        target_file = os.path.join(root_dir, subdir, 'Trans_10m.raw', 'tran.tran.tran.encode')
         if os.path.isfile(target_file):
             trace_data = extractTransTrace(target_file)
             results[subdir] = {
@@ -282,9 +282,9 @@ def plot_data(results, highlight_subdir, root_dir):
     print(f"Image save to：{plt_path}")
 
 
-# root_dir = '/Users/hanwu/Downloads/Joblib/SSF_UM_1'
-# highlight_subdir = 'tmp_20240411224832550072069'
-# scan_and_process(root_dir, highlight_subdir)
+root_dir = '/Users/hanwu/Downloads/Joblib/CM_eex03_ea68b'
+highlight_subdir = 'tmp_202404120045401172475399'
+scan_and_process(root_dir, highlight_subdir)
 
 
 def fourier_analysis(time_data, signal_data):
