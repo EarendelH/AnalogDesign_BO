@@ -222,8 +222,9 @@ def findShoot(filename):
 
     # Determine whether the stable voltage is regulated to 1.2V (pre-defined)
     # Find the mid-value in vout_undershoot
-    stable_high_load_voltage = vout_undershoot[len(vout_undershoot) // 2]
+    stable_high_load_voltage = vout_undershoot[-1]
     stable_light_load_voltage = vout_overshoot[-1]
+    # print(f"Debug, stable_light_load_voltage: {stable_light_load_voltage}")
     if stable_high_load_voltage >= stable_voltage * 1.1 or stable_high_load_voltage <= stable_voltage * 0.9:
         print("Warning! This LDO cannot be regulated to VREF under high load.")
         overshoot = 1.0
@@ -241,8 +242,8 @@ def findShoot(filename):
 # file = "/Users/hanwu/ML/AnalogDesignAuto_MultiAgent/custom_env/netlist_assign_test/Trans.raw/tran.tran.tran.encode"
 # print(findShoot(file))
 
-# file = "/Users/hanwu/Downloads/LDO_SSF/Trans.raw/tran.tran.tran.encode"
-# print(findShoot(file))
+file = "/Users/hanwu/Downloads/Joblib/SSF_UM_53c63/tmp_20240411224832550072069/Trans.raw/tran.tran.tran.encode"
+print(findShoot(file))
 
 
 def scan_and_process(root_dir, highlight_subdir):
