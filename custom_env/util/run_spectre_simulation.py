@@ -145,7 +145,7 @@ def run_dynamic_simulation(work_dir, sim_config, zero_sim_result, show_output=Fa
             modified_result = {f"{simulation}_{key}": value for key, value in result.items()}
             results[simulation] = modified_result
 
-            print(f"Debug: {simulation} simulation result: {results}")
+            # print(f"Debug: {simulation} simulation result: {results}")
 
             # Easy way to determine the stability of transient simulation
             if simulation.startswith("Trans"):
