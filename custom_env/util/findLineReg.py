@@ -64,13 +64,13 @@ def plot_data(results, highlight_subdir, root_dir):
         else:
             plt.plot(data['VDD'][0::2], data['VOUT'], label=subdir, color='blue', linewidth=1)
 
-    plt.title('VOUT vs. VDD Plot')
+    plt.title('VOUT vs. VDD Plot, Iload = 10mA')
     plt.xlabel('VDD')
     plt.ylabel('VOUT')
     plt.legend()
     plt.grid(True)
 
-    plt_path = os.path.join(root_dir, 'Line_Reg.png')
+    plt_path = os.path.join(root_dir, 'Line_Reg_10m.png')
     plt.savefig(plt_path)
     plt.show()
     print(f"Image save to：{plt_path}")
