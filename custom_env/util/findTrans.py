@@ -250,7 +250,7 @@ def scan_and_process(root_dir, highlight_subdir):
     results = {}
 
     for subdir in next(os.walk(root_dir))[1]:
-        target_file = os.path.join(root_dir, subdir, 'Trans_5m.raw', 'tran.tran.tran.encode')
+        target_file = os.path.join(root_dir, subdir, 'Trans.raw', 'tran.tran.tran.encode')
         if os.path.isfile(target_file):
             trace_data = extractTransTrace(target_file)
             results[subdir] = {
@@ -271,20 +271,20 @@ def plot_data(results, highlight_subdir, root_dir):
         else:
             plt.plot(data['time'], data['VOUT'], label=subdir, color='blue', linewidth=1)
 
-    plt.title('VOUT vs. Time Plot, Iload = 5mA')
+    plt.title('VOUT vs. Time Plot, Iload = 200mA')
     plt.xlabel('Time')
     plt.ylabel('VOUT')
     plt.legend()
     plt.grid(True)
 
-    plt_path = os.path.join(root_dir, 'vout_time_plot_5m.png')
+    plt_path = os.path.join(root_dir, 'vout_time_plot_200m.png')
     plt.savefig(plt_path)
     plt.show()
     print(f"Image save to：{plt_path}")
 
 
-# root_dir = '/Users/hanwu/Downloads/Joblib/CM_eex03_ea68b'
-# highlight_subdir = 'tmp_202404120045401172475399'
+# root_dir = '/Users/hanwu/Downloads/Joblib/SSF_eex_hph_03_5704e/reward_filiter'
+# highlight_subdir = 'tmp_20240413155646261557914'
 # scan_and_process(root_dir, highlight_subdir)
 
 

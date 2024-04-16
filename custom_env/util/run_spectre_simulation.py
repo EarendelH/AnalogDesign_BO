@@ -150,8 +150,8 @@ def run_dynamic_simulation(work_dir, sim_config, zero_sim_result, show_output=Fa
             # Easy way to determine the stability of transient simulation
             if simulation.startswith("Trans"):
                 # Determine whether processed_file is larger than 1M
-                if os.path.getsize(processed_file_full_path) > 1024 * 1024:
-                    print(f"Warning: {processed_file_full_path} is larger than 1M, the system is highly likely to "
+                if os.path.getsize(processed_file_full_path) > 400 * 1024:
+                    print(f"Warning: {processed_file_full_path} is larger than 0.5M, the system is highly likely to "
                           f"be unstable.")
                     fail_tag = True
                     # All items in modified_result{simulation} set to 1
