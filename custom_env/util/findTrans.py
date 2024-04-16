@@ -1,8 +1,8 @@
 import numpy as np
 import os
 import matplotlib.pyplot as plt
-from extract_trace import extractTransTrace
-# from util.extract_trace import extractTransTrace
+# from extract_trace import extractTransTrace
+from util.extract_trace import extractTransTrace
 import numpy as np
 
 
@@ -284,9 +284,9 @@ def plot_data(results, highlight_subdir, root_dir):
     print(f"Image save to：{plt_path}")
 
 
-root_dir = '/Users/hanwu/Downloads/Joblib/SSF_eex_hph_03_5704e/shoot_sort/'
-highlight_subdir = 'tmp_20240413155646261557914'
-scan_and_process(root_dir, highlight_subdir)
+# root_dir = '/Users/hanwu/Downloads/Joblib/SSF_eex_hph_03_5704e/shoot_sort/'
+# highlight_subdir = 'tmp_20240413155646261557914'
+# scan_and_process(root_dir, highlight_subdir)
 
 
 def fourier_analysis(time_data, signal_data):
