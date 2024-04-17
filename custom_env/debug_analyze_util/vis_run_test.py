@@ -5,8 +5,11 @@ import numpy as np
 
 
 # Function to validate entries using specific criteria
-def is_valid_entry(flattened_dict):
+def is_valid_entry(input_dict):
     """Check validity of dictionary entries based on predefined rules."""
+
+    flattened_dict = {k: v for d in input_dict.values() for k, v in d.items()}
+
     for key, value in flattened_dict.items():
         if (key.startswith('Trans') or key.startswith('DC')) and value == 1.0:
             return False
