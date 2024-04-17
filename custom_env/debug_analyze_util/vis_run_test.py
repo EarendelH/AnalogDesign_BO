@@ -46,6 +46,7 @@ def label_directories(base_path, sorted_dirs):
                     labels[dir_name] = 1  # Invalid result
             else:
                 labels[dir_name] = 0  # Default label if conditions are not met
+        print(f"Directory {dir_name} labeled as {labels[dir_name]}")
     return labels
 
 
