@@ -13,27 +13,6 @@ from ray.tune.registry import register_env
 from rllib_env import RllibAnalogDesignAutoEnv
 
 
-def set_max_process_limit():
-    try:
-        shell = subprocess.check_output('echo $0', shell=True).decode().strip()
-        print(f"SHELL: {shell}")
-        if 'bash' or '-bash' in shell:
-            print("Setting max process limit to 409600")
-            subprocess.call('ulimit -u 409600', shell=True)
-        elif 'tcsh' or '-tcsh' in shell:
-            print("Setting max process limit to 409600")
-            subprocess.call('limit maxproc 409600', shell=True)
-        else:
-            print("Unknown shell. Not setting max process limit. Continuing? (y/n): ")
-            choice = input().strip().lower()
-            if choice != 'n':
-                print("Exiting")
-                sys.exit(1)
-    except subprocess.SubprocessError as e:
-        print(f"Error setting max process limit: {e} and exiting")
-        sys.exit(1)
-
-
 def get_user_input(prompt, default_value):
     """Collects user input or uses the default value if input is empty."""
     user_input = input(f"{prompt} (Default: {default_value}): ").strip()
@@ -73,11 +52,11 @@ def main():
         confirm_flag = True
     if args.config_mode == 'interactive':
         settings = {
-            "max_process_limit": get_user_input("Set max process limit? (True/False)", "False"),
             "cpu_usage": get_user_input(f"Enter use CPU num, total available CPU is {cpu_count}"
                                                    , "10"),
             "gpu_usage": get_user_input(f"Enter use GPU num, total available CPU is {gpu_count}", "0"),
             "generalize": get_user_input("Enable generalization (True/False)", "True"),
+            "netlist_folder_name": get_user_input("Name of netlist folder", "netlist_template"),
             "specs_folder_name": get_user_input("Name of specs folder", "sampled_specs"),
             "config_folder_name": get_user_input("Name of config folder", "config"),
             "run_folder_name": get_user_input("Name of run folder", "run_test"),
@@ -96,9 +75,6 @@ def main():
 
     print(f"Configuration settings: {settings}")
 
-    if settings["max_process_limit"]:
-        set_max_process_limit()
-
     num_cpu = int(settings["cpu_usage"])
     num_gpu = int(settings["gpu_usage"])
 
@@ -107,7 +83,6 @@ def main():
     if confirm_flag:
         if args.config_mode == 'interactive':
             # Convert string boolean values to Python boolean values
-            settings["max_process_limit"] = settings["max_process_limit"] == "True"
             settings["generalize"] = settings["generalize"] == "True"
             settings["sim_output"] = settings["sim_output"] == "True"
             settings["action_mask"] = settings["action_mask"] == "True"
@@ -116,6 +91,7 @@ def main():
 
         env_settings = {
             "generalize": settings["generalize"],
+            "netlist_folder_name": settings["netlist_folder_name"],
             "specs_folder_name": settings["specs_folder_name"],
             "config_folder_name": settings["config_folder_name"],
             "run_folder_name": settings["run_folder_name"],

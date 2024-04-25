@@ -29,6 +29,7 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 
 class RllibAnalogDesignAutoEnv(MultiAgentEnv):
     def __init__(self, generalize=True,
+                 netlist_folder_name='',
                  specs_folder_name='',
                  config_folder_name='',
                  run_folder_name='',
@@ -97,7 +98,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         self.norm_specs_file = os.path.join(self.current_path, self.norm_specs_file)
 
         # Set netlist directory
-        self.unassigned_netlist_dir = "netlist_template"
+        self.unassigned_netlist_dir = netlist_folder_name
         self.unassigned_netlist_dir = os.path.join(self.current_path, self.unassigned_netlist_dir)
 
         # Load YAML
