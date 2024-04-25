@@ -61,7 +61,8 @@ def plot_data(results, highlight_subdir, root_dir):
         if subdir == highlight_subdir:
             plt.plot(data['ILOAD'], data['VOUT'], label=f'{subdir} (highlight)', color='red', linewidth=2)
         else:
-            plt.plot(data['ILOAD'], data['VOUT'], label=subdir, color='blue', linewidth=1)
+            # plt.plot(data['ILOAD'], data['VOUT'], label=subdir, color='blue', linewidth=1)
+            plt.plot(data['ILOAD'], data['VOUT'], label=subdir, linewidth=1)
 
     plt.title('VOUT vs. ILOAD Plot')
     plt.xlabel('ILOAD')
@@ -75,6 +76,6 @@ def plot_data(results, highlight_subdir, root_dir):
     print(f"Image save to：{plt_path}")
 
 
-# root_dir = '/Users/hanwu/Downloads/Joblib/CM_eex_hph_03_b47de/fom_sort/'
-# highlight_subdir = 'tmp_20240417002402187192582'
+# root_dir = '/Users/hanwu/Downloads/Joblib/SSF_UM_fc0a3/fm_sort'
+# highlight_subdir = 'tmp_20240416222829162161766'
 # scan_and_process(root_dir, highlight_subdir)
