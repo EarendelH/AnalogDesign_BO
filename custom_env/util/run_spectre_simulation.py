@@ -176,7 +176,7 @@ def run_dynamic_simulation(work_dir, sim_config, zero_sim_result, show_output=Fa
     with open(f"{work_dir}/result.pkl", "wb") as f:
         pickle.dump(results, f)
 
-    print(f"Debug!!! results: {results} and fail_tag: {fail_tag}")
+    # print(f"Debug!!! results: {results} and fail_tag: {fail_tag}")
 
     return results, fail_tag
 
