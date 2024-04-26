@@ -88,7 +88,7 @@ def run_dynamic_simulation(work_dir, sim_config, zero_sim_result, show_output=Fa
     """
 
     results = zero_sim_result
-    fail_tag = None
+    fail_tag = False
 
     for simulation_config in sim_config:
         simulation = simulation_config["simulation_name"]
