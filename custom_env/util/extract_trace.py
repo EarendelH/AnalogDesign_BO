@@ -1,4 +1,5 @@
 from collections import defaultdict
+import re
 
 
 def extractTrace(filepath):
@@ -107,9 +108,57 @@ def extractTransTrace(filepath):
 
     return trace_dict
 
+
+def extractACTrace(file_path):
+    # Function to read content from a file
+    def read_file_content(file_path):
+        with open(file_path, 'r') as file:
+            content = file.read()
+        return content
+
+    # Function to extract values between "VALUE" and "END"
+    def find_value_content(content):
+        start = content.index("VALUE") + len("VALUE")
+        end = content.index("END")
+        return content[start:end]
+
+    # Use regex to parse the signal names and their corresponding values
+    def parse_signals(value_content):
+        # Updated regex to better handle numbers, including scientific notation
+        regex = r'\"(.+?)\"\s+(\(.*?\)|[-+]?[0-9]*\.?[0-9]+(?:[eE][-+]?[0-9]+)?)'
+        matches = re.findall(regex, value_content)
+        signal_data = {}
+        for match in matches:
+            signal_name, value_str = match
+            try:
+                if value_str.startswith('('):
+                    # Extract the first float from a pair of floats in parentheses, ensuring full scientific notation
+                    # is captured
+                    first_value, second_value = re.match(r'\((-?[0-9]*\.?[0-9]+(?:[eE][-+]?[0-9]+)?)[ ,]+(-?[0-9]*\.?[0-9]+(?:[eE][-+]?[0-9]+)?)\)', value_str).groups()
+                    first_value = float(first_value)
+                    second_value = float(second_value)
+                    value = (first_value * first_value + second_value * second_value) ** 0.5
+                else:
+                    # Directly convert the string to float
+                    value = float(value_str)
+                if signal_name not in signal_data:
+                    signal_data[signal_name] = []
+                signal_data[signal_name].append(value)
+            except ValueError as e:
+                print(f"Error converting {value_str} to float: {e}")
+                continue
+        return signal_data
+
+    # Read content from file
+    content = read_file_content(file_path)
+
+    # Extract and parse the signal values
+    value_content = find_value_content(content)
+    signal_data = parse_signals(value_content)
+    return signal_data
+
+
 # Test Code
-# file = "/Users/hanwu/ML/AnalogDesignAuto_MultiAgent/custom_env/netlist_assign_test/Trans.raw/tran.tran.tran.encode"
-# dict = extractTransTrace(file)
+# file = "/Users/hanwu/Downloads/ac.ac.encode"
+# dict = extractACTrace(file)
 # print(dict)
-# print(dict["time"])
-# print(dict["VOUT"])

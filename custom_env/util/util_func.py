@@ -26,6 +26,11 @@ def unit_conversion(value):
     return float(value)
 
 
+def find_closest_value_index(target_list, target_value):
+    closest_index = min(range(len(target_list)), key=lambda i: abs(target_list[i] - target_value))
+    return closest_index
+
+
 # Test Code
 # test_values = ['0.5u', '10M', '2k', 5, '7']
 # converted_values = [unit_conversion(value) for value in test_values]

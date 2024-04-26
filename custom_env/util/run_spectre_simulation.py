@@ -27,9 +27,9 @@ def run_spectre_simulation(work_dir, sim_config, show_output=False):
         # print(f"Execute command: spectre -64 {os.path.join(work_dir, assigned_netlist_filename)}")
         # print(f"Run spectre simulation for: {simulation}")
         if show_output:
-            subprocess.run(f"spectre -64 +aps {os.path.join(work_dir, assigned_netlist_filename)}", shell=True)
+            subprocess.run(f"spectre -64 ++aps {os.path.join(work_dir, assigned_netlist_filename)}", shell=True)
         else:
-            subprocess.run(f"spectre -64 +aps {os.path.join(work_dir, assigned_netlist_filename)}",
+            subprocess.run(f"spectre -64 ++aps {os.path.join(work_dir, assigned_netlist_filename)}",
                            shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
         # Process the simulation files as specified in the config
@@ -104,9 +104,9 @@ def run_dynamic_simulation(work_dir, sim_config, zero_sim_result, show_output=Fa
         # print(f"Execute command: spectre -64 {os.path.join(work_dir, assigned_netlist_filename)}")
         # print(f"Run spectre simulation for: {simulation}")
         if show_output:
-            subprocess.run(f"spectre -64 +aps {os.path.join(work_dir, assigned_netlist_filename)}", shell=True)
+            subprocess.run(f"spectre -64 ++aps {os.path.join(work_dir, assigned_netlist_filename)}", shell=True)
         else:
-            subprocess.run(f"spectre -64 +aps {os.path.join(work_dir, assigned_netlist_filename)}",
+            subprocess.run(f"spectre -64 ++aps {os.path.join(work_dir, assigned_netlist_filename)}",
                            shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
         # Process the simulation files as specified in the config
@@ -151,7 +151,7 @@ def run_dynamic_simulation(work_dir, sim_config, zero_sim_result, show_output=Fa
             if simulation.startswith("Trans"):
                 # Determine whether processed_file is larger than 1M
                 if os.path.getsize(processed_file_full_path) > 400 * 1024:
-                    print(f"Warning: {processed_file_full_path} is larger than 0.5M, the system is highly likely to "
+                    print(f"Warning: {processed_file_full_path} is larger than 0.4M, the system is highly likely to "
                           f"be unstable.")
                     fail_tag = True
                     # All items in modified_result{simulation} set to 1
@@ -201,9 +201,9 @@ def run_region_simulation(work_dir, sim_config, zero_sim_result, show_output=Fal
             raise ValueError(f"Assigned netlist file {assigned_netlist_filename} not found.")
 
         if show_output:
-            subprocess.run(f"spectre -64 +aps {os.path.join(work_dir, assigned_netlist_filename)}", shell=True)
+            subprocess.run(f"spectre -64 ++aps {os.path.join(work_dir, assigned_netlist_filename)}", shell=True)
         else:
-            subprocess.run(f"spectre -64 +aps {os.path.join(work_dir, assigned_netlist_filename)}",
+            subprocess.run(f"spectre -64 ++aps {os.path.join(work_dir, assigned_netlist_filename)}",
                            shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
     return None

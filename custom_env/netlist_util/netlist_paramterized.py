@@ -160,6 +160,72 @@ def netlist_parameterized(input_scs_path, output_scs_path, output_yaml_path):
             "scc": "0",
             "mismatchflag": "1"
         },
+        "pch_5_mac": {
+            "w": "w_{0}_per_finger*nf_{0}",
+            "l": "l_{0}",
+            "multi": "1",
+            "nf": "nf_{0}",
+            "sigma": "1",
+            "sd": "540.0n",
+            "ad": "((nf_{0}-int(nf_{0}/2)*2)*(4.8e-07+((nf_{0}-1)*5.4e-07)/2+0)+(nf_{0}+1-int((nf_{0}+1)/2)*2)*((nf_{0}/2)*5.4e-07))*w_{0}_per_finger",
+            "as": "((nf_{0}-int(nf_{0}/2)*2)*(4.8e-07+((nf_{0}-1)*5.4e-07)/2+0)+(nf_{0}+1-int((nf_{0}+1)/2)*2)*(4.8e-07+4.8e-07+(nf_{0}/2-1)*5.4e-07+0+0))*w_{0}_per_finger",
+            "pd": "(nf_{0}-int(nf_{0}/2)*2)*((4.8e-07+((nf_{0}-1)*5.4e-07)/2+0)*2+(nf_{0}+1)*w_{0}_per_finger)+(nf_{0}+1-int((nf_{0}+1)/2)*2)*(((nf_{0}/2)*5.4e-07)*2+nf_{0}*w_{0}_per_finger)",
+            "ps": "(nf_{0}-int(nf_{0}/2)*2)*((4.8e-07+((nf_{0}-1)*5.4e-07)/2+0)*2+(nf_{0}+1)*w_{0}_per_finger)+(nf_{0}+1-int((nf_{0}+1)/2)*2)*((4.8e-07+4.8e-07+(nf_{0}/2-1)*5.4e-07+0+0)*2+(nf_{0}+2)*w_{0}_per_finger)",
+            "nrd": "(nf_{0}-int(nf_{0}/2)*2)*(2.7e-07*2.7e-07/(2.7e-07+2.7e-07*(nf_{0}-1))/w_{0}_per_finger)+(nf_{0}+1-int((nf_{0}+1)/2)*2)*(2.7e-07/nf_{0}/w_{0}_per_finger)",
+            "nrs": "(nf_{0}-int(nf_{0}/2)*2)*(2.7e-07*2.7e-07/(2.7e-07+2.7e-07*(nf_{0}-1))/w_{0}_per_finger)+(nf_{0}+1-int((nf_{0}+1)/2)*2)*(2.7e-07*2.7e-07*2.7e-07/(2.7e-07*2.7e-07*(nf_{0}-2)+2.7e-07*(2.7e-07+2.7e-07))/w_{0}_per_finger)",
+            "sa": "1/(1 / ((4.8e-07 + l_{0}/2) + (5.4e-07 + l_{0})*(1-1)/3.5 ) )-(0.5*l_{0})",
+            "sb": "1/(1 / ((4.8e-07 + l_{0}/2) + (5.4e-07 + l_{0})*(1-1)/3.5 ) )-(0.5*l_{0})",
+            "sca": "0",
+            "scb": "0",
+            "scc": "0",
+            "mismatchflag": "1"
+        },
+        "nch_5_mac": {
+            "w": "w_{0}_per_finger*nf_{0}",
+            "l": "l_{0}",
+            "multi": "1",
+            "nf": "nf_{0}",
+            "sigma": "1",
+            "sd": "540.0n",
+            "ad": "((nf_{0}-int(nf_{0}/2)*2)*(4.8e-07+((nf_{0}-1)*5.4e-07)/2+0)+(nf_{0}+1-int((nf_{0}+1)/2)*2)*((nf_{0}/2)*5.4e-07))*w_{0}_per_finger",
+            "as": "((nf_{0}-int(nf_{0}/2)*2)*(4.8e-07+((nf_{0}-1)*5.4e-07)/2+0)+(nf_{0}+1-int((nf_{0}+1)/2)*2)*(4.8e-07+4.8e-07+(nf_{0}/2-1)*5.4e-07+0+0))*w_{0}_per_finger",
+            "pd": "(nf_{0}-int(nf_{0}/2)*2)*((4.8e-07+((nf_{0}-1)*5.4e-07)/2+0)*2+(nf_{0}+1)*w_{0}_per_finger)+(nf_{0}+1-int((nf_{0}+1)/2)*2)*(((nf_{0}/2)*5.4e-07)*2+nf_{0}*w_{0}_per_finger)",
+            "ps": "(nf_{0}-int(nf_{0}/2)*2)*((4.8e-07+((nf_{0}-1)*5.4e-07)/2+0)*2+(nf_{0}+1)*w_{0}_per_finger)+(nf_{0}+1-int((nf_{0}+1)/2)*2)*((4.8e-07+4.8e-07+(nf_{0}/2-1)*5.4e-07+0+0)*2+(nf_{0}+2)*w_{0}_per_finger)",
+            "nrd": "(nf_{0}-int(nf_{0}/2)*2)*(2.7e-07*2.7e-07/(2.7e-07+2.7e-07*(nf_{0}-1))/w_{0}_per_finger)+(nf_{0}+1-int((nf_{0}+1)/2)*2)*(2.7e-07/nf_{0}/w_{0}_per_finger)",
+            "nrs": "(nf_{0}-int(nf_{0}/2)*2)*(2.7e-07*2.7e-07/(2.7e-07+2.7e-07*(nf_{0}-1))/w_{0}_per_finger)+(nf_{0}+1-int((nf_{0}+1)/2)*2)*(2.7e-07*2.7e-07*2.7e-07/(2.7e-07*2.7e-07*(nf_{0}-2)+2.7e-07*(2.7e-07+2.7e-07))/w_{0}_per_finger)",
+            "sa": "1/(1 / ((4.8e-07 + l_{0}/2) + (5.4e-07 + l_{0})*(1-1)/3.5 ) )-(0.5*l_{0})",
+            "sb": "1/(1 / ((4.8e-07 + l_{0}/2) + (5.4e-07 + l_{0})*(1-1)/3.5 ) )-(0.5*l_{0})",
+            "sca": "0",
+            "scb": "0",
+            "scc": "0",
+            "mismatchflag": "1"
+        },
+        "ne5": {
+            "w": "w_{0}_per_finger",
+            "l": "l_{0}",
+            "as": "(int(((nf_{0})-1)/2.0 )*5.4e-07+((int((nf_{0})/2.0)-(nf_{0})/2.0<-0.1)?1:2)*4.8e-07)*(w_{0}_per_finger)/(nf_{0})",
+            "ad": "(int((nf_{0})/2.0 )*5.4e-07+(((int((nf_{0})/2.0)-(nf_{0})/2.0<-0.1)?1:0)*4.8e-07))*(w_{0}_per_finger)/(nf_{0})",
+            "ps": "(int(((nf_{0})-1)/2.0 )*2*(5.4e-07+(w_{0}_per_finger))+((int((nf_{0})/2)-(nf_{0})/2.0<-0.1)?1:2)*2*(4.8e-07+(w_{0}_per_finger)))/(nf_{0})",
+            "pd": "(int((nf_{0})/2.0 )*2*(5.4e-07+(w_{0}_per_finger))+((int((nf_{0})/2.0)-(nf_{0})/2.0<-0.1)?1:0)*2*(4.8e-07+(w_{0}_per_finger)))/(nf_{0})",
+            "nrs": "2.7e-07/(w_{0}_per_finger)",
+            "nrd": "2.7e-07/(w_{0}_per_finger)",
+            "m": "(1)*(nf_{0})",
+            "par1": "((1)*(nf_{0}))",
+            "xf_subext": "0"
+        },
+        "pe5": {
+            "w": "w_{0}_per_finger",
+            "l": "l_{0}",
+            "as": "(int(((nf_{0})-1)/2.0 )*5.4e-07+((int((nf_{0})/2.0)-(nf_{0})/2.0<-0.1)?1:2)*4.8e-07)*(w_{0}_per_finger)/(nf_{0})",
+            "ad": "(int((nf_{0})/2.0 )*5.4e-07+(((int((nf_{0})/2.0)-(nf_{0})/2.0<-0.1)?1:0)*4.8e-07))*(w_{0}_per_finger)/(nf_{0})",
+            "ps": "(int(((nf_{0})-1)/2.0 )*2*(5.4e-07+(w_{0}_per_finger))+((int((nf_{0})/2)-(nf_{0})/2.0<-0.1)?1:2)*2*(4.8e-07+(w_{0}_per_finger)))/(nf_{0})",
+            "pd": "(int((nf_{0})/2.0 )*2*(5.4e-07+(w_{0}_per_finger))+((int((nf_{0})/2.0)-(nf_{0})/2.0<-0.1)?1:0)*2*(4.8e-07+(w_{0}_per_finger)))/(nf_{0})",
+            "nrs": "2.7e-07/(w_{0}_per_finger)",
+            "nrd": "2.7e-07/(w_{0}_per_finger)",
+            "m": "(1)*(nf_{0})",
+            "par1": "((1)*(nf_{0}))",
+            "xf_subext": "0"
+        }
     }
 
     for part in netlist_parts:
@@ -216,7 +282,7 @@ def netlist_parameterized(input_scs_path, output_scs_path, output_yaml_path):
 
 
 if __name__ == "__main__":
-    input_scs_folder = "/Users/hanwu/ML/AnalogDesignAuto_MultiAgent/custom_env/netlist_assign_test"
+    input_scs_folder = "/Users/hanwu/ML/AnalogDesignAuto_MultiAgent/custom_env/netlist_orginal"
     output_scs_folder = "/Users/hanwu/ML/AnalogDesignAuto_MultiAgent/custom_env/netlist_template"
     for file in os.listdir(input_scs_folder):
         if file.endswith(".scs"):

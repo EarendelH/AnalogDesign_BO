@@ -1,0 +1,111 @@
+// Generated for: spectre
+// Generated on: Apr 25 10:45:45 2024
+// Design library name: LDO_JSSC2010
+// Design cell name: tb_DC
+// Design view name: schematic
+simulator lang=spectre
+global 0
+parameters CC1 CC2 CFF1 IB1 IB2 IB3 IB4 IB5 IB6 IB7 RC2 RF1 RF2 RFF1 RFF2 RS1 RS2 RS3
+include "/data/PDK/pdk_installed/tsmc180bcd_g2/pdk/pdk_1p6m_2/tsmc18/../models/spectre/c018bcd_gen2_v1d6_usage.scs" section=pre_simu
+include "/data/PDK/pdk_installed/tsmc180bcd_g2/pdk/pdk_1p6m_2/tsmc18/../models/spectre/c018bcd_gen2_v1d6_usage.scs" section=tt_lib
+
+// Library name: LDO_JSSC2010
+// Cell name: LDO_Core
+// View name: schematic
+subckt LDO_Core VFB VIN VOUT VREF VSS
+    M18 (net10 net15 VIN VIN) pch_mac l=180n w=2u multi=1 nf=1 sigma=1 \
+        sd=540n ad=9.6e-13 as=9.6e-13 pd=4.96u ps=4.96u nrd=0.135 \
+        nrs=0.135 sa=480n sb=480n sca=0 scb=0 scc=0 mismatchflag=1
+    M16 (net19 net19 VIN VIN) pch_mac l=180n w=2u multi=1 nf=1 sigma=1 \
+        sd=540n ad=9.6e-13 as=9.6e-13 pd=4.96u ps=4.96u nrd=0.135 \
+        nrs=0.135 sa=480n sb=480n sca=0 scb=0 scc=0 mismatchflag=1
+    M15 (net15 net19 VIN VIN) pch_mac l=180n w=2u multi=1 nf=1 sigma=1 \
+        sd=540n ad=9.6e-13 as=9.6e-13 pd=4.96u ps=4.96u nrd=0.135 \
+        nrs=0.135 sa=480n sb=480n sca=0 scb=0 scc=0 mismatchflag=1
+    M12 (net23 net17 VIN VDD) pch_mac l=180n w=2u multi=1 nf=1 sigma=1 \
+        sd=540n ad=9.6e-13 as=9.6e-13 pd=4.96u ps=4.96u nrd=0.135 \
+        nrs=0.135 sa=480n sb=480n sca=0 scb=0 scc=0 mismatchflag=1
+    M10 (net17 net14 VIN VDD) pch_mac l=180n w=2u multi=1 nf=1 sigma=1 \
+        sd=540n ad=9.6e-13 as=9.6e-13 pd=4.96u ps=4.96u nrd=0.135 \
+        nrs=0.135 sa=480n sb=480n sca=0 scb=0 scc=0 mismatchflag=1
+    M9 (net14 net14 VIN VDD) pch_mac l=180n w=2u multi=1 nf=1 sigma=1 \
+        sd=540n ad=9.6e-13 as=9.6e-13 pd=4.96u ps=4.96u nrd=0.135 \
+        nrs=0.135 sa=480n sb=480n sca=0 scb=0 scc=0 mismatchflag=1
+    M6 (net30 net28 net41 VDD) pch_mac l=180n w=2u multi=1 nf=1 sigma=1 \
+        sd=540n ad=9.6e-13 as=9.6e-13 pd=4.96u ps=4.96u nrd=0.135 \
+        nrs=0.135 sa=480n sb=480n sca=0 scb=0 scc=0 mismatchflag=1
+    M5 (net28 net28 net26 VDD) pch_mac l=180n w=2u multi=1 nf=1 sigma=1 \
+        sd=540n ad=9.6e-13 as=9.6e-13 pd=4.96u ps=4.96u nrd=0.135 \
+        nrs=0.135 sa=480n sb=480n sca=0 scb=0 scc=0 mismatchflag=1
+    M2 (net41 net33 net29 VDD) pch_mac l=180n w=2u multi=1 nf=1 sigma=1 \
+        sd=540n ad=9.6e-13 as=9.6e-13 pd=4.96u ps=4.96u nrd=0.135 \
+        nrs=0.135 sa=480n sb=480n sca=0 scb=0 scc=0 mismatchflag=1
+    M1 (net26 VREF net29 VDD) pch_mac l=180n w=2u multi=1 nf=1 sigma=1 \
+        sd=540n ad=9.6e-13 as=9.6e-13 pd=4.96u ps=4.96u nrd=0.135 \
+        nrs=0.135 sa=480n sb=480n sca=0 scb=0 scc=0 mismatchflag=1
+    M0 (VOUT net23 VIN VIN) pch_mac l=180n w=2u multi=1 nf=1 sigma=1 \
+        sd=540n ad=9.6e-13 as=9.6e-13 pd=4.96u ps=4.96u nrd=0.135 \
+        nrs=0.135 sa=480n sb=480n sca=0 scb=0 scc=0 mismatchflag=1
+    M14 (net19 net24 net18 VSS) nch_mac l=180n w=2u multi=1 nf=1 sigma=1 \
+        sd=540n ad=9.6e-13 as=9.6e-13 pd=4.96u ps=4.96u nrd=0.135 \
+        nrs=0.135 sa=480n sb=480n sca=0 scb=0 scc=0 mismatchflag=1
+    M13 (net15 VFB net18 VSS) nch_mac l=180n w=2u multi=1 nf=1 sigma=1 \
+        sd=540n ad=9.6e-13 as=9.6e-13 pd=4.96u ps=4.96u nrd=0.135 \
+        nrs=0.135 sa=480n sb=480n sca=0 scb=0 scc=0 mismatchflag=1
+    M8 (net17 net26 net13 VSS) nch_mac l=180n w=2u multi=1 nf=1 sigma=1 \
+        sd=540n ad=9.6e-13 as=9.6e-13 pd=4.96u ps=4.96u nrd=0.135 \
+        nrs=0.135 sa=480n sb=480n sca=0 scb=0 scc=0 mismatchflag=1
+    M7 (net14 net5 net13 VSS) nch_mac l=180n w=2u multi=1 nf=1 sigma=1 \
+        sd=540n ad=9.6e-13 as=9.6e-13 pd=4.96u ps=4.96u nrd=0.135 \
+        nrs=0.135 sa=480n sb=480n sca=0 scb=0 scc=0 mismatchflag=1
+    M4 (net26 net30 VSS VSS) nch_mac l=180n w=2u multi=1 nf=1 sigma=1 \
+        sd=540n ad=9.6e-13 as=9.6e-13 pd=4.96u ps=4.96u nrd=0.135 \
+        nrs=0.135 sa=480n sb=480n sca=0 scb=0 scc=0 mismatchflag=1
+    M3 (net41 net30 VSS VSS) nch_mac l=180n w=2u multi=1 nf=1 sigma=1 \
+        sd=540n ad=9.6e-13 as=9.6e-13 pd=4.96u ps=4.96u nrd=0.135 \
+        nrs=0.135 sa=480n sb=480n sca=0 scb=0 scc=0 mismatchflag=1
+    I6 (net18 VSS) isource dc=IB7 type=dc
+    I5 (net10 VSS) isource dc=IB6 type=dc
+    I4 (net23 VSS) isource dc=IB5 type=dc
+    I3 (net13 VSS) isource dc=IB4 type=dc
+    I2 (net30 VSS) isource dc=IB3 type=dc
+    I1 (net28 VSS) isource dc=IB2 type=dc
+    I0 (VIN net29) isource dc=IB1 type=dc
+    C2 (VIN net24) capacitor c=CFF1
+    C1 (net45 VSS) capacitor c=CC2
+    C0 (net26 net30) capacitor c=CC1
+    R7 (VIN net24) resistor r=RFF1
+    R6 (net10 net24) resistor r=RFF2
+    R5 (net10 net45) resistor r=RC2
+    R4 (net10 net5) resistor r=RS1
+    R3 (net5 VSS) resistor r=RS3
+    R2 (net5 net23) resistor r=RS2
+    R1 (net33 VSS) resistor r=RF2
+    R0 (VOUT net33) resistor r=RF1
+ends LDO_Core
+// End of subcircuit definition.
+
+// Library name: LDO_JSSC2010
+// Cell name: tb_DC
+// View name: schematic
+I0 (VOUT VIN VOUT VREF VSS) LDO_Core
+C3 (net4 VSS) capacitor c=4u
+R8 (VOUT net4) resistor r=30m
+I1 (VOUT VSS) isource dc=0 type=dc
+V2 (VIN 0) vsource dc=1.8 type=dc
+V1 (VREF 0) vsource dc=1 type=dc
+V0 (VSS 0) vsource dc=0 type=dc
+simulatorOptions options psfversion="1.1.0" reltol=1e-3 vabstol=1e-6 \
+    iabstol=1e-12 temp=27 tnom=27 scalem=1.0 scale=1.0 gmin=1e-12 rforce=1 \
+    maxnotes=5 maxwarns=5 digits=5 cols=80 pivrel=1e-3 \
+    sensfile="../psf/sens.output" checklimitdest=psf 
+dcOp dc write="spectre.dc" maxiters=150 maxsteps=10000 annotate=status
+dcOpInfo info what=oppoint where=rawfile
+modelParameter info what=models where=rawfile
+element info what=inst where=rawfile
+outputParameter info what=output where=rawfile
+designParamVals info what=parameters where=rawfile
+primitives info what=primitives where=rawfile
+subckts info what=subckts where=rawfile
+save V0:p 
+saveOptions options save=allpub

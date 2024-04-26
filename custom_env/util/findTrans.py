@@ -201,11 +201,11 @@ def findShoot(filename):
     trans_dict = extractTransTrace(filename)
     time_series = trans_dict["time"]
     vout_trace = trans_dict["VOUT"]
-    stable_voltage = 1.2
+    stable_voltage = 1.0
 
     # Clip time 50us-100us and 100us-150us
-    time_undershoot_index = [i for i, t in enumerate(time_series) if 2e-6 <= t <= 12e-6]
-    time_overshoot_index = [i for i, t in enumerate(time_series) if 12e-6 <= t <= 20e-6]
+    time_undershoot_index = [i for i, t in enumerate(time_series) if 2.5e-6 <= t <= 7.5e-6]
+    time_overshoot_index = [i for i, t in enumerate(time_series) if 7.5e-6 <= t <= 12.5e-6]
     vout_undershoot = [vout_trace[i] for i in time_undershoot_index]
     vout_overshoot = [vout_trace[i] for i in time_overshoot_index]
 

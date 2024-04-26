@@ -12,7 +12,7 @@ def findLineReg(filename):
     - filename: Path to the file to be processed.
     - trace_name: Name of the trace to be extracted.
     """
-    vdd_name = '"VDD"'
+    vdd_name = '"VIN"'
     vout_name = '"VOUT"'
 
     trace_dict = extractTrace(filename)

@@ -3,6 +3,7 @@ from util.extract_trace import extractTrace
 import os
 import matplotlib.pyplot as plt
 
+
 def findLoadReg(filename):
     """
     Extract the trace data from a file and return the trace data.
