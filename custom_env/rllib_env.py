@@ -96,6 +96,8 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         self.device_mask_config = os.path.join(self.current_path, self.device_mask_config)
         self.norm_specs_file = config_folder_name + "/norm_specs.yaml"
         self.norm_specs_file = os.path.join(self.current_path, self.norm_specs_file)
+        self.generalize_specs_config = config_folder_name + "/generalize_specs.yaml"
+        self.generalize_specs_config = os.path.join(self.current_path, self.generalize_specs_config)
 
         # Set netlist directory
         self.unassigned_netlist_dir = netlist_folder_name
@@ -115,6 +117,8 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
             self.device_mask_dict = yaml.safe_load(file)
         with open(self.dc_sim_config, 'r') as file:
             self.dc_sim_config_dict = yaml.safe_load(file)
+        with open(self.generalize_specs_config, 'r') as file:
+            self.generalize_specs_config_dict = yaml.safe_load(file)
 
         # RLlib config
         self.possible_agents = list(agent_assign_dict.keys())
@@ -173,17 +177,15 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
 
         # For avoid simulation error in step, generate a default result with zero value but correct key in step method
         self.zero_sim_result = {}
-        for sim in self.sim_config_dict:
-            sim_name = sim['simulation_name']
-            sim_items = sim['simulation_item']
-            self.zero_sim_result[sim_name] = {item: 0.0 for item in sim_items}
-            if sim_name == 'DC':
-                self.zero_sim_result[sim_name]['IQ'] = 1.0
-            if sim_name.startswith('Trans'):
-                self.zero_sim_result[sim_name] = {item: 1.0 for item in sim_items}
-            # Add Simulation Name before each keys in the result dictionary. Avoid error in flatten the dictionary
-            modified_result = {f"{sim_name}_{key}": value for key, value in self.zero_sim_result[sim_name].items()}
-            self.zero_sim_result[sim_name] = modified_result
+
+        for sim in self.generalize_specs_config_dict:
+            specs_tmp_dict = {}
+            for specs_item in self.generalize_specs_config_dict[sim]:
+                if self.generalize_specs_config_dict[sim][specs_item]['objective'] == 'max':
+                    specs_tmp_dict[specs_item] = 0.0
+                if self.generalize_specs_config_dict[sim][specs_item]['objective'] == 'min':
+                    specs_tmp_dict[specs_item] = 100.0
+            self.zero_sim_result[sim] = specs_tmp_dict
         logging.info(f"Initialing!!!Zero sim result: {self.zero_sim_result}")
 
         try:
@@ -384,7 +386,12 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
                 return run_dynamic_simulation(working_dir_step, self.sim_config_dict, self.zero_sim_result,
                                               self.sim_output_enable)
 
-            sim_result, fail_tage = _run_simulation_with_retry()
+            try:
+                sim_result, fail_tage = _run_simulation_with_retry()
+            except Exception as e:
+                logging.warning(f"Step Warning!!!: {e}. Simulation failed, use zero result instead.")
+                sim_result = self.zero_sim_result
+                fail_tage = True
             logging.info(f"Step!!!Simulation result: {sim_result} with step number: {self.step_num}")
             logging.debug(f"Debug, sim_result is {sim_result}")
             logging.debug(f"Debug, self.norm_specs is {self.norm_specs}")
