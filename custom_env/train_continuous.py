@@ -62,7 +62,6 @@ def main():
             "run_folder_name": get_user_input("Name of run folder", "run_test"),
             "sim_output": get_user_input("Enable simulation output (True/False)", "False"),
             "init_method": get_user_input("Initialization method (File/Half/Random)", "file"),
-            "action_mask": get_user_input("Enable action mask (True/False)", "True"),
             "dc_check": get_user_input("Enable step DC check (True/False)", "True"),
             "restore_checkpoint": get_user_input("Restore from checkpoint? (True/False)", "False"),
             "checkpoint_path": None,  # To be conditionally updated
@@ -85,7 +84,6 @@ def main():
             # Convert string boolean values to Python boolean values
             settings["generalize"] = settings["generalize"] == "True"
             settings["sim_output"] = settings["sim_output"] == "True"
-            settings["action_mask"] = settings["action_mask"] == "True"
             settings["dc_check"] = settings["dc_check"] == "True"
             settings["restore_checkpoint"] = settings["restore_checkpoint"] == "True"
 
@@ -97,7 +95,6 @@ def main():
             "run_folder_name": settings["run_folder_name"],
             "sim_output": settings["sim_output"],
             "init_method": settings["init_method"],
-            "action_mask": settings["action_mask"],
             "dc_check": settings["dc_check"],
         }
 

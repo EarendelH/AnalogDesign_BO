@@ -1,5 +1,5 @@
 from collections import OrderedDict
-
+import numpy
 import gymnasium
 import yaml
 
@@ -74,11 +74,11 @@ def gen_action_space(agent_assign_yaml_path):
 # array([0, 2, 0])), ('M20', array([2, 0, 1])), ('M21', array([2, 2, 0])), ('M22', array([1, 2, 2])), ('IB',
 # array([1]))])
 
-def gen_masked_action_space(action_mask_flag, device_mask_dict, agent_assign_dict):
+
+def gen_masked_action_space(device_mask_dict, agent_assign_dict):
     """
     Generate action space for the environment.
     Parameters:
-        action_mask_flag: A flag to determine whether to apply the device mask.
         device_mask_dict: dict to the YAML file that contains devices to be masked.
         agent_assign_dict: dict to the YAML file that defines the action space including agent name and corresponding device name.
     Returns:
@@ -89,31 +89,55 @@ def gen_masked_action_space(action_mask_flag, device_mask_dict, agent_assign_dic
     # 0: -1 index;
     # 1: Keep the same;
     # 2: +1 index;
-    operation_number = 3  # Define the number of operations for action space
 
-    # Apply device mask if flagged
-    if action_mask_flag:
-        for key, values in device_mask_dict.items():
-            for device_list in agent_assign_dict.values():
-                device_list[:] = [device for device in device_list if device not in values]
+    device_list = []
+    for device_group in agent_assign_dict.values():
+        device_list.extend(device_group)
+    # print(f"Device list is {device_list}")
 
-    # Generate action spaces
-    action_space_dict = {
-        group_name: gymnasium.spaces.Dict({
-            device: gymnasium.spaces.MultiDiscrete([operation_number] * (3 if device.startswith('M') else 1))
-            for device in device_list
-        })
-        for group_name, device_list in agent_assign_dict.items()
-    }
+    for values in device_mask_dict.values():
+        for value in values:
+            device_name = value.replace('_Match', '')  # Remove _Match suffix if exists
+            if device_name not in device_list:
+                raise ValueError(f"Device {device_name} not found in device list")
 
-    return gymnasium.spaces.Dict(action_space_dict)
+    for key, values in device_mask_dict.items():
+        for value in values:
+            if value.endswith('_Match'):
+                # If the value ends with '_Match', replace the corresponding device in the list with the value
+                device_list = [device if device != value.replace('_Match', '') else value for device in device_list]
+            else:
+                # If the value does not end with '_Match', remove the corresponding device from the list
+                device_list = [device for device in device_list if device != value]
+    # print(f"Device list after mask is {device_list}")
+
+    action_space = {}
+    for group_name, group_device_list in agent_assign_dict.items():
+        space_dict = {}
+        for device in device_list:
+            if device in group_device_list:
+                if device.startswith('M') and not device.endswith('_Match'):
+                    # If the device starts with 'M' and does not end with '_Match', create a MultiDiscrete space
+                    # with 3 actions
+                    space_dict[device] = gymnasium.spaces.MultiDiscrete([3, 3, 3])
+                else:
+                    # Otherwise, create a MultiDiscrete space with 1 action
+                    space_dict[device] = gymnasium.spaces.MultiDiscrete([3])
+            if device.replace('_Match', '') in group_device_list and device.endswith('_Match'):
+                # If the device ends with '_Match', create a MultiDiscrete space with 1 action and
+                # add '_Match' suffix
+                space_dict[device] = gymnasium.spaces.MultiDiscrete([3])
+        action_space[group_name] = gymnasium.spaces.Dict(space_dict)
+
+    # Return a Dict space containing all the action spaces
+    return gymnasium.spaces.Dict(action_space)
 
 
 # Test Code
 # agent_assign_yaml_path = "../config/agent_assign.yaml"
 # with open(agent_assign_yaml_path, 'r') as file:
 #     agent_assign_dict = yaml.safe_load(file)
-# device_mask_yaml_path = "../config/device_mask.yaml"
+# device_mask_yaml_path = "../config/device_mask_test.yaml"
 # with open(device_mask_yaml_path, 'r') as file:
 #     device_mask_dict = yaml.safe_load(file)
 # action_space_dict = gen_masked_action_space(True, device_mask_dict, agent_assign_dict)
@@ -121,59 +145,74 @@ def gen_masked_action_space(action_mask_flag, device_mask_dict, agent_assign_dic
 
 # Output
 
-# Dict('Agent_1': Dict('IBP': MultiDiscrete([3]), 'M1': MultiDiscrete([3 3 3]), 'M4': MultiDiscrete([3 3 3]),
-# 'M5': MultiDiscrete([3 3 3])), 'Agent_2': Dict('M9': MultiDiscrete([3 3 3])), 'Agent_3': Dict('M12': MultiDiscrete(
-# [3 3 3])), 'Agent_4': Dict('CM': MultiDiscrete([3]), 'M0': MultiDiscrete([3 3 3]), 'R0': MultiDiscrete([3]),
-# 'R1': MultiDiscrete([3])))
+# Device list is ['IB1', 'IB2', 'IB3', 'M1', 'M2', 'M3', 'M4', 'M5', 'M6', 'CC1', 'IB4', 'IB5', 'M7', 'M8', 'M9',
+# 'M10', 'M12', 'RS1', 'RS2', 'RS3', 'IB6', 'IB7', 'M13', 'M14', 'M15', 'M16', 'M18', 'RC2', 'RFF1', 'RFF2', 'CC2',
+# 'CFF1', 'M0', 'RF1', 'RF2']
 
-# Test Code
-# agent_assign_yaml_path = "../config/agent_assign.yaml"
-# with open(agent_assign_yaml_path, 'r') as file:
-#     agent_assign_dict = yaml.safe_load(file)
-# device_mask_yaml_path = "../config/device_mask.yaml"
-# with open(device_mask_yaml_path, 'r') as file:
-#     device_mask_dict = yaml.safe_load(file)
-# action_space_dict = gen_masked_action_space(False, device_mask_dict, agent_assign_dict)
-# print(action_space_dict)
+# Device list after mask is ['IB1', 'IB2', 'IB3', 'M1', 'M3', 'M5', 'CC1', 'IB4', 'IB5', 'M7', 'M9', 'M12', 'RS1',
+# 'RS2', 'RS3', 'IB6', 'IB7', 'M13', 'M15', 'M18_Match', 'RC2', 'RFF1', 'RFF2', 'CC2', 'CFF1', 'M0', 'RF1', 'RF2']
 
-
-# Output
-
-# Dict('Agent_1': Dict('IBP': MultiDiscrete([3]), 'M1': MultiDiscrete([3 3 3]), 'M4': MultiDiscrete([3 3 3]),
-# 'M5': MultiDiscrete([3 3 3]), 'M6': MultiDiscrete([3 3 3])), 'Agent_2': Dict('M10': MultiDiscrete([3 3 3]),
-# 'M9': MultiDiscrete([3 3 3])), 'Agent_3': Dict('M11': MultiDiscrete([3 3 3]), 'M12': MultiDiscrete([3 3 3]),
-# 'M13': MultiDiscrete([3 3 3]), 'M2': MultiDiscrete([3 3 3])), 'Agent_4': Dict('CM': MultiDiscrete([3]),
-# 'M0': MultiDiscrete([3 3 3]), 'R0': MultiDiscrete([3]), 'R1': MultiDiscrete([3])))
+# Dict('Agent_1': Dict('CC1': MultiDiscrete([3]), 'IB1': MultiDiscrete([3]), 'IB2': MultiDiscrete([3]),
+# 'IB3': MultiDiscrete([3]), 'M1': MultiDiscrete([3 3 3]), 'M3': MultiDiscrete([3 3 3]), 'M5': MultiDiscrete([3 3
+# 3])), 'Agent_2': Dict('IB4': MultiDiscrete([3]), 'IB5': MultiDiscrete([3]), 'M12': MultiDiscrete([3 3 3]),
+# 'M7': MultiDiscrete([3 3 3]), 'M9': MultiDiscrete([3 3 3]), 'RS1': MultiDiscrete([3]), 'RS2': MultiDiscrete([3]),
+# 'RS3': MultiDiscrete([3])), 'Agent_3': Dict('CC2': MultiDiscrete([3]), 'CFF1': MultiDiscrete([3]),
+# 'IB6': MultiDiscrete([3]), 'IB7': MultiDiscrete([3]), 'M13': MultiDiscrete([3 3 3]), 'M15': MultiDiscrete([3 3 3]),
+# 'M18_Match': MultiDiscrete([3]), 'RC2': MultiDiscrete([3]), 'RFF1': MultiDiscrete([3]), 'RFF2': MultiDiscrete([
+# 3])), 'Agent_4': Dict('M0': MultiDiscrete([3 3 3]), 'RF1': MultiDiscrete([3]), 'RF2': MultiDiscrete([3])))
 
 
-def gen_masked_continuous_action_space(action_mask_flag, device_mask_dict, agent_assign_dict):
+def gen_masked_continuous_action_space(device_mask_dict, agent_assign_dict):
     """
     Generate action space for the environment.
     Parameters:
-        action_mask_flag: A flag to determine whether to apply the device mask.
         device_mask_dict: dict to the YAML file that contains devices to be masked.
         agent_assign_dict: dict to the YAML file that defines the action space including agent name and corresponding device name.
     Returns:
         gymnasium.spaces.Dict: The action space for the multi-agent environment as a dictionary of MultiDiscrete spaces.
     """
 
-    single_mos_act_space = gymnasium.spaces.Box(low=0, high=1, shape=(3,), dtype=float)
+    triple_act_space = gymnasium.spaces.Box(low=0, high=1, shape=(3,), dtype=float)
     single_act_space = gymnasium.spaces.Box(low=0, high=1, shape=(1,), dtype=float)
 
-    # Apply device mask if flagged
-    if action_mask_flag:
-        for key, values in device_mask_dict.items():
-            for device_list in agent_assign_dict.values():
-                device_list[:] = [device for device in device_list if device not in values]
+    device_list = []
+    for device_group in agent_assign_dict.values():
+        device_list.extend(device_group)
+    # print(f"Device list is {device_list}")
 
-    # Generate action spaces
-    continuous_action_space_dict = {
-        group_name: gymnasium.spaces.Dict({
-            device: single_mos_act_space if device.startswith('M') else single_act_space
-            for device in device_list
-        })
-        for group_name, device_list in agent_assign_dict.items()
-    }
+    for values in device_mask_dict.values():
+        for value in values:
+            device_name = value.replace('_Match', '')  # Remove _Match suffix if exists
+            if device_name not in device_list:
+                raise ValueError(f"Device {device_name} not found in device list")
+
+    for key, values in device_mask_dict.items():
+        for value in values:
+            if value.endswith('_Match'):
+                # If the value ends with '_Match', replace the corresponding device in the list with the value
+                device_list = [device if device != value.replace('_Match', '') else value for device in device_list]
+            else:
+                # If the value does not end with '_Match', remove the corresponding device from the list
+                device_list = [device for device in device_list if device != value]
+    # print(f"Device list after mask is {device_list}")
+
+    continuous_action_space_dict = {}
+    for group_name, group_device_list in agent_assign_dict.items():
+        space_dict = {}
+        for device in device_list:
+            if device in group_device_list:
+                if device.startswith('M') and not device.endswith('_Match'):
+                    # If the device starts with 'M' and does not end with '_Match', create a MultiDiscrete space
+                    # with 3 actions
+                    space_dict[device] = triple_act_space
+                else:
+                    # Otherwise, create a MultiDiscrete space with 1 action
+                    space_dict[device] = single_act_space
+            if device.replace('_Match', '') in group_device_list and device.endswith('_Match'):
+                # If the device ends with '_Match', create a MultiDiscrete space with 1 action and
+                # add '_Match' suffix
+                space_dict[device] = single_act_space
+        continuous_action_space_dict[group_name] = gymnasium.spaces.Dict(space_dict)
 
     return gymnasium.spaces.Dict(continuous_action_space_dict)
 
@@ -183,7 +222,7 @@ def gen_masked_continuous_action_space(action_mask_flag, device_mask_dict, agent
 # agent_assign_yaml_path = "../config/agent_assign.yaml"
 # with open(agent_assign_yaml_path, 'r') as file:
 #     agent_assign_dict = yaml.safe_load(file)
-# device_mask_yaml_path = "../config/device_mask.yaml"
+# device_mask_yaml_path = "../config/device_mask_test.yaml"
 # with open(device_mask_yaml_path, 'r') as file:
 #     device_mask_dict = yaml.safe_load(file)
 # action_space_dict = gen_masked_continuous_action_space(True, device_mask_dict, agent_assign_dict)
@@ -192,14 +231,28 @@ def gen_masked_continuous_action_space(action_mask_flag, device_mask_dict, agent
 
 # Output
 
-# Dict('Agent_1': Dict('IBP': Box(0.0, 1.0, (1,), float64), 'M1': Box(0.0, 1.0, (3,), float64), 'M4': Box(0.0, 1.0,
-# (3,), float64), 'M5': Box(0.0, 1.0, (3,), float64)), 'Agent_2': Dict('M9': Box(0.0, 1.0, (3,), float64)),
-# 'Agent_3': Dict('M12': Box(0.0, 1.0, (3,), float64)), 'Agent_4': Dict('CM': Box(0.0, 1.0, (1,), float64),
-# 'M0': Box(0.0, 1.0, (3,), float64), 'R0': Box(0.0, 1.0, (1,), float64), 'R1': Box(0.0, 1.0, (1,), float64)))
+# Dict('Agent_1': Dict('CC1': Box(0.0, 1.0, (1,), float64), 'IB1': Box(0.0, 1.0, (1,), float64), 'IB2': Box(0.0, 1.0,
+# (1,), float64), 'IB3': Box(0.0, 1.0, (1,), float64), 'M1': Box(0.0, 1.0, (3,), float64), 'M3': Box(0.0, 1.0, (3,),
+# float64), 'M5': Box(0.0, 1.0, (3,), float64)),
+# 'Agent_2': Dict('IB4': Box(0.0, 1.0, (1,), float64), 'IB5': Box(0.0,
+# 1.0, (1,), float64), 'M12': Box(0.0, 1.0, (3,), float64), 'M7': Box(0.0, 1.0, (3,), float64), 'M9': Box(0.0, 1.0,
+# (3,), float64), 'RS1': Box(0.0, 1.0, (1,), float64), 'RS2': Box(0.0, 1.0, (1,), float64), 'RS3': Box(0.0, 1.0, (1,
+# ), float64)),
+# 'Agent_3': Dict('CC2': Box(0.0, 1.0, (1,), float64), 'CFF1': Box(0.0, 1.0, (1,), float64),
+# 'IB6': Box(0.0, 1.0, (1,), float64), 'IB7': Box(0.0, 1.0, (1,), float64), 'M13': Box(0.0, 1.0, (3,), float64),
+# 'M15': Box(0.0, 1.0, (3,), float64), 'M18_Match': Box(0.0, 1.0, (1,), float64), 'RC2': Box(0.0, 1.0, (1,),
+# float64), 'RFF1': Box(0.0, 1.0, (1,), float64), 'RFF2': Box(0.0, 1.0, (1,), float64)),
+# 'Agent_4': Dict('M0': Box(
+# 0.0, 1.0, (3,), float64), 'RF1': Box(0.0, 1.0, (1,), float64), 'RF2': Box(0.0, 1.0, (1,), float64)))
 
-# OrderedDict([('Agent_1', OrderedDict([('IBP', array([0.58232024])), ('M1', array([0.55986021, 0.71259075,
-# 0.32580201])), ('M4', array([0.66283334, 0.9521516 , 0.37748751])), ('M5', array([0.40918823, 0.07680309,
-# 0.44814611]))])), ('Agent_2', OrderedDict([('M9', array([0.82469542, 0.35882003, 0.36313247]))])), ('Agent_3',
-# OrderedDict([('M12', array([0.37167306, 0.25930124, 0.37495792]))])), ('Agent_4', OrderedDict([('CM',
-# array([0.54670056])), ('M0', array([0.54749156, 0.13308131, 0.40636367])), ('R0', array([0.61302462])), ('R1',
-# array([0.37650811]))]))])
+# OrderedDict([('Agent_1', OrderedDict([('CC1', array([0.493357])), ('IB1', array([0.53245834])), ('IB2',
+# array([0.87585361])), ('IB3', array([0.2147892])), ('M1', array([0.34548798, 0.19526191, 0.31041265])), ('M3',
+# array([0.64578267, 0.48986625, 0.52779528])), ('M5', array([0.50632692, 0.97714935, 0.46945506]))])), ('Agent_2',
+# OrderedDict([('IB4', array([0.0950411])), ('IB5', array([0.158443])), ('M12', array([0.8665787 , 0.30845822,
+# 0.29615566])), ('M7', array([0.58860131, 0.55341384, 0.70000145])), ('M9', array([0.88636789, 0.46847989,
+# 0.34320644])), ('RS1', array([0.96523337])), ('RS2', array([0.45065067])), ('RS3', array([0.32390361]))])),
+# ('Agent_3', OrderedDict([('CC2', array([0.81840415])), ('CFF1', array([0.89620556])), ('IB6', array([0.72583433])),
+# ('IB7', array([0.46248085])), ('M13', array([0.93667   , 0.80311077, 0.68963442])), ('M15', array([0.07773608,
+# 0.13162735, 0.67831186])), ('M18_Match', array([0.16219355])), ('RC2', array([0.17780553])), ('RFF1',
+# array([0.87879238])), ('RFF2', array([0.92046156]))])), ('Agent_4', OrderedDict([('M0', array([0.74038348,
+# 0.45659135, 0.75843968])), ('RF1', array([0.52462717])), ('RF2', array([0.36224194]))]))])

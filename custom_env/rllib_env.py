@@ -1,4 +1,5 @@
 import os
+import numpy
 import yaml
 from collections import OrderedDict
 import pickle
@@ -9,13 +10,13 @@ import logging
 
 from util.gen_action_space import gen_masked_action_space
 from util.gen_obs_space import gen_obs_space_w_region, flatten_obs_space_w_region
+from util.update_param import update_parameters
 from util.gen_param_space import gen_param_space
 from util.util_func import create_work_dir
 from util.assign_param2netlist import update_netlist
 from util.run_spectre_simulation import run_dynamic_simulation, run_region_simulation
 from util.cal_reward import cal_reward
 from util.generalize_config import generalize_config
-from util.update_param import update_parameters
 from util.update_obs_space import update_obs_space_w_region, flatten_observation_w_region
 from util.normlization import norm_ideal_spec, norm_sim_spec
 from util.util_func import retry_decorator
@@ -35,7 +36,6 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
                  run_folder_name='',
                  sim_output=False,
                  init_method='file',
-                 action_mask=True,
                  dc_check=True):
 
         # Init values
@@ -49,12 +49,10 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         self.ideal_specs = None
         self.cur_param = None
         self.max_step = 1024
+        self.action_mask = True
 
         # Get absolute path
         self.current_path = os.getcwd()
-
-        # Pass action mask flag
-        self.action_mask = action_mask
 
         # Pass initial dc check flag
         self.dc_check = dc_check
@@ -148,7 +146,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
                                                                                    agent_assign_dict))
         logging.debug(f"observation_space: {self.observation_space}")
         self._action_space_in_preferred_format = True
-        self.action_space = gen_masked_action_space(action_mask, self.device_mask_dict, agent_assign_dict)
+        self.action_space = gen_masked_action_space(self.device_mask_dict, agent_assign_dict)
         logging.debug(f"action_space: {self.action_space}")
 
         self.resetted = False
@@ -164,7 +162,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         logging.info(f"Initialing!!!Generalize flag: {self.generalize}")
         logging.info(f"Initialing!!!Ideal specs: {self.ideal_specs}")
 
-        init_param = gen_init_param(self.init_method, self.predefined_init_param, self.action_mask,
+        init_param = gen_init_param(self.init_method, self.predefined_init_param, True,
                                     self.device_mask_dict, self.param_space)
         logging.debug(f"Initialing!!!Init param: {init_param}")
 
@@ -214,7 +212,8 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
             working_dir_reset_dc = create_work_dir(self.run_root_dir)
             logging.info(f"Initialing!!!DC Check working directory: {working_dir_reset_dc}")
             update_netlist(working_dir_reset_dc, self.dc_sim_config_dict, init_param, self.unassigned_netlist_dir)
-            run_region_simulation(working_dir_reset_dc, self.dc_sim_config_dict, self.zero_sim_result, self.sim_output_enable)
+            run_region_simulation(working_dir_reset_dc, self.dc_sim_config_dict, self.zero_sim_result,
+                                  self.sim_output_enable)
             dc_reset_raw_result_path = os.path.join(working_dir_reset_dc, "Region.raw/dcOpInfo.info")
             dc_reset_result_path = os.path.join(working_dir_reset_dc, "Region.raw/dcOpInfo.info.encode")
             subprocess.run(f"psf {dc_reset_raw_result_path} -o {dc_reset_result_path}", shell=True)
@@ -278,20 +277,37 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         return observations, info
 
     def step(self, action_dict):
-
+        logging.debug(f"Step!!!Action dict: {action_dict}")
         # Update step number
         self.step_num += 1
 
         operation_region_dict = {}
 
-        if self.action_mask:
-            for key in self.device_mask_dict:
-                for agent_key in action_dict:
-                    if key in action_dict[agent_key]:
-                        new_values = self.device_mask_dict[key]
-                        for new_key in new_values:
+        for key in self.device_mask_dict:
+            for agent_key in action_dict:
+                if key in action_dict[agent_key]:
+                    new_values = self.device_mask_dict[key]
+                    for new_key in new_values:
+                        if new_key.endswith('_Match'):
+                            match_action = action_dict[agent_key][key][:2]
+                            new_value = numpy.append(match_action, action_dict[agent_key][new_key])
+                        else:
                             new_value = action_dict[agent_key][key]
-                            action_dict[agent_key][new_key] = new_value
+                        action_dict[agent_key][new_key] = new_value
+
+        mapped_action_dict = OrderedDict()
+        for agent, agent_dict in action_dict.items():
+            new_agent_dict = OrderedDict()
+            for key, value in agent_dict.items():
+                if key.endswith('_Match'):
+                    new_key = key.replace('_Match', '')
+                else:
+                    new_key = key
+
+                new_agent_dict[new_key] = value
+            mapped_action_dict[agent] = new_agent_dict
+        action_dict = mapped_action_dict
+        logging.debug(f"Step!!!Mapped action dict: {action_dict}")
 
         # Flatten all actions
         all_action_flatten = OrderedDict()
