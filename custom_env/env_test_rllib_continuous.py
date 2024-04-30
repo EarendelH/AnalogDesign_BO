@@ -3,7 +3,7 @@ from rllib_env_continous import RllibAnalogDesignAutoEnv
 
 if __name__ == "__main__":
     env = RllibAnalogDesignAutoEnv(generalize=True, specs_folder_name='sampled_specs',
-                                   netlist_folder_name='netlist_template', config_folder_name='config',
+                                   netlist_folder_name='netlist_template', config_folder_name='config_Mohamed_JSSC10_C',
                                    run_folder_name='run_test', sim_output=False, init_method='half',
                                    dc_check=True)
 
