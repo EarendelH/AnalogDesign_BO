@@ -1,5 +1,3 @@
-from collections import OrderedDict
-import numpy
 import gymnasium
 import yaml
 
@@ -80,7 +78,8 @@ def gen_masked_action_space(device_mask_dict, agent_assign_dict):
     Generate action space for the environment.
     Parameters:
         device_mask_dict: dict to the YAML file that contains devices to be masked.
-        agent_assign_dict: dict to the YAML file that defines the action space including agent name and corresponding device name.
+        agent_assign_dict: dict to the YAML file that defines the action space including agent name and corresponding
+        device name.
     Returns:
         gymnasium.spaces.Dict: The action space for the multi-agent environment as a dictionary of MultiDiscrete spaces.
     """
@@ -167,7 +166,8 @@ def gen_masked_continuous_action_space(device_mask_dict, agent_assign_dict):
     Generate action space for the environment.
     Parameters:
         device_mask_dict: dict to the YAML file that contains devices to be masked.
-        agent_assign_dict: dict to the YAML file that defines the action space including agent name and corresponding device name.
+        agent_assign_dict: dict to the YAML file that defines the action space including agent name and corresponding
+        device name.
     Returns:
         gymnasium.spaces.Dict: The action space for the multi-agent environment as a dictionary of MultiDiscrete spaces.
     """
