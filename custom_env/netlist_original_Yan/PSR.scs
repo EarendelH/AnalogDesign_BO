@@ -1,0 +1,109 @@
+// Generated for: spectre
+// Generated on: Apr 30 18:44:18 2024
+// Design library name: LDO_TCASI_Yan
+// Design cell name: tb_PSR
+// Design view name: schematic
+simulator lang=spectre
+global 0
+parameters C1 CB IB
+include "/data/PDK/pdk_installed/tsmc180bcd_g2/pdk/pdk_1p6m_2/tsmc18/../models/spectre/c018bcd_gen2_v1d6_usage.scs" section=pre_simu
+include "/data/PDK/pdk_installed/tsmc180bcd_g2/pdk/pdk_1p6m_2/tsmc18/../models/spectre/c018bcd_gen2_v1d6_usage.scs" section=tt_lib
+
+// Library name: LDO_TCASI_Yan
+// Cell name: LDO_Core
+// View name: schematic
+subckt LDO_Core VFB VIN VOUT VREF VSS
+    M15 (net28 net27 net10 net10) nch_mac l=180n w=2u multi=1 nf=1 sigma=1 \
+        sd=540n ad=9.6e-13 as=9.6e-13 pd=4.96u ps=4.96u nrd=0.135 \
+        nrs=0.135 sa=480n sb=480n sca=0 scb=0 scc=0 mismatchflag=1
+    M16 (net50 net27 net10 net10) nch_mac l=180n w=2u multi=1 nf=1 sigma=1 \
+        sd=540n ad=9.6e-13 as=9.6e-13 pd=4.96u ps=4.96u nrd=0.135 \
+        nrs=0.135 sa=480n sb=480n sca=0 scb=0 scc=0 mismatchflag=1
+    M12 (net34 net27 net10 net10) nch_mac l=180n w=2u multi=1 nf=1 sigma=1 \
+        sd=540n ad=9.6e-13 as=9.6e-13 pd=4.96u ps=4.96u nrd=0.135 \
+        nrs=0.135 sa=480n sb=480n sca=0 scb=0 scc=0 mismatchflag=1
+    M11 (net37 net34 net10 net10) nch_mac l=180n w=2u multi=1 nf=1 sigma=1 \
+        sd=540n ad=9.6e-13 as=9.6e-13 pd=4.96u ps=4.96u nrd=0.135 \
+        nrs=0.135 sa=480n sb=480n sca=0 scb=0 scc=0 mismatchflag=1
+    M19 (net19 net7 net10 net10) nch_mac l=180n w=2u multi=1 nf=1 sigma=1 \
+        sd=540n ad=9.6e-13 as=9.6e-13 pd=4.96u ps=4.96u nrd=0.135 \
+        nrs=0.135 sa=480n sb=480n sca=0 scb=0 scc=0 mismatchflag=1
+    M20 (net15 net7 net10 net10) nch_mac l=180n w=2u multi=1 nf=1 sigma=1 \
+        sd=540n ad=9.6e-13 as=9.6e-13 pd=4.96u ps=4.96u nrd=0.135 \
+        nrs=0.135 sa=480n sb=480n sca=0 scb=0 scc=0 mismatchflag=1
+    M21 (net7 net7 net10 net10) nch_mac l=180n w=2u multi=1 nf=1 sigma=1 \
+        sd=540n ad=9.6e-13 as=9.6e-13 pd=4.96u ps=4.96u nrd=0.135 \
+        nrs=0.135 sa=480n sb=480n sca=0 scb=0 scc=0 mismatchflag=1
+    M14 (net27 net27 net10 net10) nch_mac l=180n w=2u multi=1 nf=1 sigma=1 \
+        sd=540n ad=9.6e-13 as=9.6e-13 pd=4.96u ps=4.96u nrd=0.135 \
+        nrs=0.135 sa=480n sb=480n sca=0 scb=0 scc=0 mismatchflag=1
+    M3 (net20 VFB net19 VSS) nch_mac l=180n w=2u multi=1 nf=1 sigma=1 \
+        sd=540n ad=9.6e-13 as=9.6e-13 pd=4.96u ps=4.96u nrd=0.135 \
+        nrs=0.135 sa=480n sb=480n sca=0 scb=0 scc=0 mismatchflag=1
+    M2 (net20 net48 net19 VSS) nch_mac l=180n w=2u multi=1 nf=1 sigma=1 \
+        sd=540n ad=9.6e-13 as=9.6e-13 pd=4.96u ps=4.96u nrd=0.135 \
+        nrs=0.135 sa=480n sb=480n sca=0 scb=0 scc=0 mismatchflag=1
+    M1 (net16 VREF net19 VSS) nch_mac l=180n w=2u multi=1 nf=1 sigma=1 \
+        sd=540n ad=9.6e-13 as=9.6e-13 pd=4.96u ps=4.96u nrd=0.135 \
+        nrs=0.135 sa=480n sb=480n sca=0 scb=0 scc=0 mismatchflag=1
+    M0 (VOUT net37 VIN VIN) pch_mac l=200n w=200.0000u multi=1 nf=20 \
+        sigma=1 sd=540.0n ad=5.4e-11 as=5.82e-11 pd=210.8u ps=231.64u \
+        nrd=0.00135 nrs=0.00135 sa=480.0n sb=480.0n sca=0 scb=0 scc=0 \
+        mismatchflag=1
+    M18 (net15 net15 VIN VIN) pch_mac l=180n w=2u multi=1 nf=1 sigma=1 \
+        sd=540n ad=9.6e-13 as=9.6e-13 pd=4.96u ps=4.96u nrd=0.135 \
+        nrs=0.135 sa=480n sb=480n sca=0 scb=0 scc=0 mismatchflag=1
+    M17 (net27 net15 VIN VIN) pch_mac l=180n w=2u multi=1 nf=1 sigma=1 \
+        sd=540n ad=9.6e-13 as=9.6e-13 pd=4.96u ps=4.96u nrd=0.135 \
+        nrs=0.135 sa=480n sb=480n sca=0 scb=0 scc=0 mismatchflag=1
+    M13 (net37 net15 VIN VIN) pch_mac l=180n w=2u multi=1 nf=1 sigma=1 \
+        sd=540n ad=9.6e-13 as=9.6e-13 pd=4.96u ps=4.96u nrd=0.135 \
+        nrs=0.135 sa=480n sb=480n sca=0 scb=0 scc=0 mismatchflag=1
+    M10 (net37 net37 VIN VIN) pch_mac l=180n w=2u multi=1 nf=1 sigma=1 \
+        sd=540n ad=9.6e-13 as=9.6e-13 pd=4.96u ps=4.96u nrd=0.135 \
+        nrs=0.135 sa=480n sb=480n sca=0 scb=0 scc=0 mismatchflag=1
+    M9 (net34 net50 net37 VIN) pch_mac l=180n w=2u multi=1 nf=1 sigma=1 \
+        sd=540n ad=9.6e-13 as=9.6e-13 pd=4.96u ps=4.96u nrd=0.135 \
+        nrs=0.135 sa=480n sb=480n sca=0 scb=0 scc=0 mismatchflag=1
+    M8 (net50 net28 VFB VIN) pch_mac l=180n w=2u multi=1 nf=1 sigma=1 \
+        sd=540n ad=9.6e-13 as=9.6e-13 pd=4.96u ps=4.96u nrd=0.135 \
+        nrs=0.135 sa=480n sb=480n sca=0 scb=0 scc=0 mismatchflag=1
+    M7 (net28 net28 net48 VIN) pch_mac l=180n w=2u multi=1 nf=1 sigma=1 \
+        sd=540n ad=9.6e-13 as=9.6e-13 pd=4.96u ps=4.96u nrd=0.135 \
+        nrs=0.135 sa=480n sb=480n sca=0 scb=0 scc=0 mismatchflag=1
+    M6 (net48 net16 VIN VIN) pch_mac l=180n w=2u multi=1 nf=1 sigma=1 \
+        sd=540n ad=9.6e-13 as=9.6e-13 pd=4.96u ps=4.96u nrd=0.135 \
+        nrs=0.135 sa=480n sb=480n sca=0 scb=0 scc=0 mismatchflag=1
+    M5 (net20 net20 VIN VIN) pch_mac l=180n w=2u multi=1 nf=1 sigma=1 \
+        sd=540n ad=9.6e-13 as=9.6e-13 pd=4.96u ps=4.96u nrd=0.135 \
+        nrs=0.135 sa=480n sb=480n sca=0 scb=0 scc=0 mismatchflag=1
+    M4 (net16 net20 VIN VIN) pch_mac l=180n w=2u multi=1 nf=1 sigma=1 \
+        sd=540n ad=9.6e-13 as=9.6e-13 pd=4.96u ps=4.96u nrd=0.135 \
+        nrs=0.135 sa=480n sb=480n sca=0 scb=0 scc=0 mismatchflag=1
+    CB (net28 net10) capacitor c=CB
+    C1 (net7 net10) capacitor c=C1
+    I0 (VIN net7) isource dc=IB type=dc
+ends LDO_Core
+// End of subcircuit definition.
+
+// Library name: LDO_TCASI_Yan
+// Cell name: tb_PSR
+// View name: schematic
+I0 (VOUT VIN VOUT VREF VSS) LDO_Core
+V2 (VIN 0) vsource dc=1.2 mag=1 type=dc
+V1 (VREF 0) vsource dc=1 type=dc
+V0 (VSS 0) vsource dc=0 type=dc
+C3 (VOUT VSS) capacitor c=130p
+I1 (VOUT VSS) isource dc=10m type=dc
+simulatorOptions options psfversion="1.1.0" reltol=1e-3 vabstol=1e-6 \
+    iabstol=1e-12 temp=27 tnom=27 scalem=1.0 scale=1.0 gmin=1e-12 rforce=1 \
+    maxnotes=5 maxwarns=5 digits=5 cols=80 pivrel=1e-3 \
+    sensfile="../psf/sens.output" checklimitdest=psf 
+ac ac start=1 stop=10G annotate=status 
+modelParameter info what=models where=rawfile
+element info what=inst where=rawfile
+outputParameter info what=output where=rawfile
+designParamVals info what=parameters where=rawfile
+primitives info what=primitives where=rawfile
+subckts info what=subckts where=rawfile
+saveOptions options save=allpub
