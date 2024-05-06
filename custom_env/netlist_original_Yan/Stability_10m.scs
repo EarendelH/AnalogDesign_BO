@@ -13,28 +13,28 @@ include "/data/PDK/pdk_installed/tsmc180bcd_g2/pdk/pdk_1p6m_2/tsmc18/../models/s
 // Cell name: LDO_Core
 // View name: schematic
 subckt LDO_Core VFB VIN VOUT VREF VSS
-    M15 (net28 net27 net10 net10) nch_mac l=180n w=2u multi=1 nf=1 sigma=1 \
+    M15 (net28 net27 VSS VSS) nch_mac l=180n w=2u multi=1 nf=1 sigma=1 \
         sd=540n ad=9.6e-13 as=9.6e-13 pd=4.96u ps=4.96u nrd=0.135 \
         nrs=0.135 sa=480n sb=480n sca=0 scb=0 scc=0 mismatchflag=1
-    M16 (net50 net27 net10 net10) nch_mac l=180n w=2u multi=1 nf=1 sigma=1 \
+    M16 (net50 net27 VSS VSS) nch_mac l=180n w=2u multi=1 nf=1 sigma=1 \
         sd=540n ad=9.6e-13 as=9.6e-13 pd=4.96u ps=4.96u nrd=0.135 \
         nrs=0.135 sa=480n sb=480n sca=0 scb=0 scc=0 mismatchflag=1
-    M12 (net34 net27 net10 net10) nch_mac l=180n w=2u multi=1 nf=1 sigma=1 \
+    M12 (net34 net27 VSS VSS) nch_mac l=180n w=2u multi=1 nf=1 sigma=1 \
         sd=540n ad=9.6e-13 as=9.6e-13 pd=4.96u ps=4.96u nrd=0.135 \
         nrs=0.135 sa=480n sb=480n sca=0 scb=0 scc=0 mismatchflag=1
-    M11 (net37 net34 net10 net10) nch_mac l=180n w=2u multi=1 nf=1 sigma=1 \
+    M11 (net37 net34 VSS VSS) nch_mac l=180n w=2u multi=1 nf=1 sigma=1 \
         sd=540n ad=9.6e-13 as=9.6e-13 pd=4.96u ps=4.96u nrd=0.135 \
         nrs=0.135 sa=480n sb=480n sca=0 scb=0 scc=0 mismatchflag=1
-    M19 (net19 net7 net10 net10) nch_mac l=180n w=2u multi=1 nf=1 sigma=1 \
+    M19 (net19 net7 VSS VSS) nch_mac l=180n w=2u multi=1 nf=1 sigma=1 \
         sd=540n ad=9.6e-13 as=9.6e-13 pd=4.96u ps=4.96u nrd=0.135 \
         nrs=0.135 sa=480n sb=480n sca=0 scb=0 scc=0 mismatchflag=1
-    M20 (net15 net7 net10 net10) nch_mac l=180n w=2u multi=1 nf=1 sigma=1 \
+    M20 (net15 net7 VSS VSS) nch_mac l=180n w=2u multi=1 nf=1 sigma=1 \
         sd=540n ad=9.6e-13 as=9.6e-13 pd=4.96u ps=4.96u nrd=0.135 \
         nrs=0.135 sa=480n sb=480n sca=0 scb=0 scc=0 mismatchflag=1
-    M21 (net7 net7 net10 net10) nch_mac l=180n w=2u multi=1 nf=1 sigma=1 \
+    M21 (net7 net7 VSS VSS) nch_mac l=180n w=2u multi=1 nf=1 sigma=1 \
         sd=540n ad=9.6e-13 as=9.6e-13 pd=4.96u ps=4.96u nrd=0.135 \
         nrs=0.135 sa=480n sb=480n sca=0 scb=0 scc=0 mismatchflag=1
-    M14 (net27 net27 net10 net10) nch_mac l=180n w=2u multi=1 nf=1 sigma=1 \
+    M14 (net27 net27 VSS VSS) nch_mac l=180n w=2u multi=1 nf=1 sigma=1 \
         sd=540n ad=9.6e-13 as=9.6e-13 pd=4.96u ps=4.96u nrd=0.135 \
         nrs=0.135 sa=480n sb=480n sca=0 scb=0 scc=0 mismatchflag=1
     M3 (net20 VFB net19 VSS) nch_mac l=180n w=2u multi=1 nf=1 sigma=1 \
@@ -80,8 +80,8 @@ subckt LDO_Core VFB VIN VOUT VREF VSS
     M4 (net16 net20 VIN VIN) pch_mac l=180n w=2u multi=1 nf=1 sigma=1 \
         sd=540n ad=9.6e-13 as=9.6e-13 pd=4.96u ps=4.96u nrd=0.135 \
         nrs=0.135 sa=480n sb=480n sca=0 scb=0 scc=0 mismatchflag=1
-    CB (net28 net10) capacitor c=CB
-    C1 (net7 net10) capacitor c=C1
+    CB (net28 VSS) capacitor c=CB
+    C1 (net7 VSS) capacitor c=C1
     I0 (VIN net7) isource dc=IB type=dc
 ends LDO_Core
 // End of subcircuit definition.
