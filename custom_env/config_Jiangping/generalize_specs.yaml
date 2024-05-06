@@ -52,33 +52,77 @@ Load_Reg:
     - 0.1
     - 0.2
 Line_Reg_100m:
-  Line_Reg_lineReg:
+  Line_Reg_100m_lineReg:
     objective: min
     reward_type: optimal
     bounds:
     - 0.008
     - 0.012
 Line_Reg_1m:
-  Line_Reg_lineReg:
+  Line_Reg_1m_lineReg:
     objective: min
     reward_type: optimal
     bounds:
     - 0.004
     - 0.008
 Trans_1_2V:
-  Trans_overShoot:
+  Trans_1_2V_overShoot:
     objective: min
     reward_type: optimal
     bounds:
     - 0.01
     - 0.02
-  Trans_underShoot:
+  Trans_1_2V_underShoot:
+    objective: min
+    reward_type: optimal
+    bounds:
+    - 0.01
+    - 0.02
+Trans_0_75V:
+  Trans_0_75V_overShoot:
+    objective: min
+    reward_type: optimal
+    bounds:
+    - 0.01
+    - 0.02
+  Trans_0_75V_underShoot:
+    objective: min
+    reward_type: optimal
+    bounds:
+    - 0.01
+    - 0.02
+Trans_Line_Reg:
+  Trans_Line_Reg_overShoot:
+    objective: min
+    reward_type: optimal
+    bounds:
+    - 0.01
+    - 0.02
+  Trans_Line_Reg_underShoot:
     objective: min
     reward_type: optimal
     bounds:
     - 0.01
     - 0.02
 PSR:
+  PSR_psr_100:
+    objective: max
+    reward_type: optimal
+    bounds:
+    - 50
+    - 70
+  PSR_psr_1k:
+    objective: max
+    reward_type: optimal
+    bounds:
+    - 50
+    - 70
+  PSR_psr_10k:
+    objective: max
+    reward_type: optimal
+    bounds:
+    - 50
+    - 70
   PSR_psr_100k:
     objective: max
     reward_type: optimal
@@ -86,12 +130,6 @@ PSR:
     - 50
     - 70
   PSR_psr_1M:
-    objective: max
-    reward_type: optimal
-    bounds:
-    - 50
-    - 70
-  PSR_psr_10M:
     objective: max
     reward_type: optimal
     bounds:
