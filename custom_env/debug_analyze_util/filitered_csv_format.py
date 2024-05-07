@@ -11,7 +11,7 @@ def flatten_nested_dict(d):
 
 def is_valid_entry(flattened_dict):
     for key, value in flattened_dict.items():
-        if (key.startswith('Trans') or key.startswith('DC')) and value == 1.0:
+        if (key.startswith('Trans') or key.startswith('DC')) and value == 100.0:
             return False
         if not (key.startswith('Trans') or key.startswith('DC')) and value == 0.0:
             return False
