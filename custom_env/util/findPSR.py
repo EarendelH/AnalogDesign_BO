@@ -101,6 +101,9 @@ def findPowerSupplyRejectionRatio_Yan(file_path):
         psr_5 = 0.0
 
     return {"psr_1k": psr_1, "psr_1M": psr_2, "psr_100M": psr_3, "psr_1G": psr_4, "psr_10G": psr_5}
+# Test the function with the provided file
+# value_dict = findPowerSupplyRejectionRatio_Yan("/Users/hanwu/Downloads/ac/ac.raw/ac.ac.encode")
+# print(value_dict)
 
 
 def findPowerSupplyRejectionRatio_Jiangping(file_path):
