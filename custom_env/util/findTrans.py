@@ -233,7 +233,7 @@ def findShoot(filename):
         print("Warning! This LDO cannot be regulated to VREF under light load.")
         overshoot = 100.0
         undershoot = 100.0
-    if stable_high_load_voltage == 0.0 or stable_light_load_voltage == 0.0:
+    if undershoot == 0.0 or overshoot == 0.0:
         print("Warning! No shoot be found.")
         overshoot = 100.0
         undershoot = 100.0
