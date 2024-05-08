@@ -29,8 +29,8 @@ def findLoadReg(filename):
         load_reg = (vout_end - vout_init) / (iload_end - iload_init)
         load_reg = abs(load_reg)
     except ZeroDivisionError:
-        load_reg = 0.0
-        print("Warning: Division by zero. Setting load regulation to 0.0.")
+        load_reg = 100.0
+        print("Warning: Division by zero. Setting load regulation to 100.0.")
 
     return {"loadReg": load_reg}
 

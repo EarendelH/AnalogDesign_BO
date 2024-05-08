@@ -1,4 +1,5 @@
 - simulation_name: Stability_1u
+  objective: max
   netlist_name: Stability_1u
   simulation_file: stb.margin.stb
   script_name: findStability
@@ -7,6 +8,7 @@
     - phaseMargin
     - gainBandWidth
 - simulation_name: Stability_10m
+  objective: max
   netlist_name: Stability_10m
   simulation_file: stb.margin.stb
   script_name: findStability
@@ -15,6 +17,7 @@
     - phaseMargin
     - gainBandWidth
 - simulation_name: Stability_25m
+  objective: max
   netlist_name: Stability_25m
   simulation_file: stb.margin.stb
   script_name: findStability
@@ -23,6 +26,7 @@
     - phaseMargin
     - gainBandWidth
 - simulation_name: Load_Reg
+  objective: min
   netlist_name: Load_Reg
   simulation_file: dc.dc
   script_name: findLoadReg
@@ -30,6 +34,7 @@
   simulation_item:
     - loadReg
 - simulation_name: Line_Reg
+  objective: min
   netlist_name: Line_Reg
   simulation_file: dc.dc
   script_name: findLineReg
@@ -37,6 +42,7 @@
   simulation_item:
     - lineReg
 - simulation_name: Trans
+  objective: min
   netlist_name: Trans
   simulation_file: tran.tran.tran
   script_name: findTrans
@@ -45,6 +51,7 @@
     - overShoot
     - underShoot
 - simulation_name: PSR
+  objective: max
   netlist_name: PSR
   simulation_file: ac.ac.encode
   script_name: findPSR
@@ -54,6 +61,7 @@
     - psr_1M
     - psr_10M
 - simulation_name: DC
+  objective: min
   netlist_name: DC
   simulation_file: dcOp.dc
   script_name: findDC

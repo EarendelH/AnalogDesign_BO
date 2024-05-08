@@ -94,6 +94,7 @@ def run_dynamic_simulation(work_dir, sim_config, zero_sim_result, show_output=Fa
         simulation = simulation_config["simulation_name"]
         assigned_netlist_name = simulation_config[f"netlist_name"]
         assigned_netlist_filename = f"{assigned_netlist_name}.scs"
+        objective = simulation_config["objective"]
 
         # Check if the assigned netlist file exists
         file_list = os.listdir(work_dir)
@@ -147,6 +148,17 @@ def run_dynamic_simulation(work_dir, sim_config, zero_sim_result, show_output=Fa
 
             # print(f"Debug: {simulation} simulation result: {results}")
 
+            if simulation == "PSR" and not all(value == 0.0 for value in result.values()):
+                fail_tag = False
+            else:
+                if any(value == 100.0 for value in result.values()) and (objective == "min"):
+                    fail_tag = True
+                    print(f"Simulation {simulation} failed. Return zero simulation result")
+                    print(f"Partial result success: {results}")
+                if any(value == 0.0 for value in result.values()) and (objective == "max"):
+                    fail_tag = True
+                    print(f"Simulation {simulation} failed. Return zero simulation result")
+                    print(f"Partial result success: {results}")
             # Easy way to determine the stability of transient simulation
             if simulation.startswith("Trans"):
                 # Determine whether processed_file is larger than 1M
@@ -155,18 +167,7 @@ def run_dynamic_simulation(work_dir, sim_config, zero_sim_result, show_output=Fa
                           f"be unstable.")
                     fail_tag = True
                     # All items in modified_result{simulation} set to 1
-                    results[simulation] = {key: 1.0 for key in modified_result.keys()}
-
-            if any(value == 1.0 for value in result.values()) and (simulation == "DC" or simulation.startswith("Trans")):
-                fail_tag = True
-                print(f"Simulation {simulation} failed. Return zero simulation result")
-                print(f"Partial result success: {results}")
-                break
-            if any(value == 0.0 for value in result.values()) and (simulation != "DC" or not simulation.startswith("Trans")):
-                fail_tag = True
-                print(f"Simulation {simulation} failed. Return zero simulation result")
-                print(f"Partial result success: {results}")
-                break
+                    results[simulation] = {key: 100.0 for key in modified_result.keys()}
 
         # Break the loop if fail_tag is True
         if fail_tag:

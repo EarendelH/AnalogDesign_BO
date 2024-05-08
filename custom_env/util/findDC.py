@@ -7,7 +7,7 @@ def findDCValue(filepath):
 
     instance_name = "V0"
     property_name = "pwr"
-    default_value = 1.0
+    default_value = 100.0
 
     try:
         value_dict = parse_device_values(filepath)
@@ -66,7 +66,7 @@ def findIQ(filepath):
         value = extract_dcOP_data(filepath, search_keyword)
     except Exception as e:
         print(f"Warning: {e}. Setting IQ to default (1.0).")
-        value = 1.0
+        value = 100.0
     return {"IQ": value}
 
 

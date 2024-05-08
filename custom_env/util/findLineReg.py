@@ -29,8 +29,8 @@ def findLineReg(filename):
         line_reg = (vout_end - vout_init) / (vdd_end - vdd_init)
         line_reg = abs(line_reg)
     except ZeroDivisionError:
-        line_reg = 0.0
-        print("Warning: Division by zero. Setting load regulation to 0.0.")
+        line_reg = 100.0
+        print("Warning: Division by zero. Setting load regulation to 100.0.")
 
     return {"lineReg": line_reg}
 

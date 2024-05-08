@@ -1,4 +1,5 @@
 - simulation_name: Stability_1m
+  objective: max
   netlist_name: Stability_1m
   simulation_file: stb.margin.stb
   script_name: findStability
@@ -7,6 +8,7 @@
     - phaseMargin
     - gainBandWidth
 - simulation_name: Stability_50m
+  objective: max
   netlist_name: Stability_50m
   simulation_file: stb.margin.stb
   script_name: findStability
@@ -15,6 +17,7 @@
     - phaseMargin
     - gainBandWidth
 - simulation_name: Stability_100m
+  objective: max
   netlist_name: Stability_100m
   simulation_file: stb.margin.stb
   script_name: findStability
@@ -23,6 +26,7 @@
     - phaseMargin
     - gainBandWidth
 - simulation_name: Load_Reg
+  objective: min
   netlist_name: Load_Reg
   simulation_file: dc.dc
   script_name: findLoadReg
@@ -30,6 +34,7 @@
   simulation_item:
     - loadReg
 - simulation_name: Line_Reg_100m
+  objective: min
   netlist_name: Line_Reg_100m
   simulation_file: dc.dc
   script_name: findLineReg
@@ -37,6 +42,7 @@
   simulation_item:
     - lineReg
 - simulation_name: Line_Reg_1m
+  objective: min
   netlist_name: Line_Reg_1m
   simulation_file: dc.dc
   script_name: findLineReg
@@ -44,6 +50,7 @@
   simulation_item:
     - lineReg
 - simulation_name: Trans_1_2V
+  objective: min
   netlist_name: Trans_1_2V
   simulation_file: tran.tran.tran
   script_name: findTrans
@@ -52,6 +59,7 @@
     - overShoot
     - underShoot
 - simulation_name: Trans_0_75V
+  objective: min
   netlist_name: Trans_0_75V
   simulation_file: tran.tran.tran
   script_name: findTrans
@@ -60,6 +68,7 @@
     - overShoot
     - underShoot
 - simulation_name: Trans_Line_Reg
+  objective: min
   netlist_name: Trans_Line_Reg
   simulation_file: tran.tran.tran
   script_name: findTrans
@@ -68,6 +77,7 @@
     - overShoot
     - underShoot
 - simulation_name: PSR
+  objective: max
   netlist_name: PSR
   simulation_file: ac.ac.encode
   script_name: findPSR
@@ -79,6 +89,7 @@
     - psr_100k
     - psr_1M
 - simulation_name: DC
+  objective: min
   netlist_name: DC
   simulation_file: dcOp.dc
   script_name: findDC

@@ -102,7 +102,7 @@ def findPowerSupplyRejectionRatio_Yan(file_path):
 
     return {"psr_1k": psr_1, "psr_1M": psr_2, "psr_100M": psr_3, "psr_1G": psr_4, "psr_10G": psr_5}
 # Test the function with the provided file
-# value_dict = findPowerSupplyRejectionRatio_Yan("/Users/hanwu/Downloads/ac/ac.raw/ac.ac.encode")
+# value_dict = findPowerSupplyRejectionRatio_Yan("/Users/hanwu/Downloads/tmp_20240508144031562245439/PSR.raw/ac.ac.encode")
 # print(value_dict)
 
 
