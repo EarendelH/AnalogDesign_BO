@@ -19,7 +19,11 @@ for directory in "$target_directory"/tmp*/; do
     # Process all .scs files in the directory
     for file in "$directory"/*.scs; do
       if [ -f "$file" ]; then
+        start_spectre=$(date +%s)
         spectre -64 +aps "$file"
+        end_spectre=$(date +%s)
+        elapsed_spectre=$((end_spectre - start_spectre))
+        echo "Spectre processing time for $file: $elapsed_spectre seconds."
       fi
     done
 
@@ -28,7 +32,11 @@ for directory in "$target_directory"/tmp*/; do
       if [ -d "$subdir" ]; then
         for file in "$subdir"*; do
           if [ -f "$file" ]; then
+            start_psf=$(date +%s)
             psf "$file" -o "${file}.encode"
+            end_psf=$(date +%s)
+            elapsed_psf=$((end_psf - start_psf))
+            echo "PSF processing time for $file: $elapsed_psf seconds."
           fi
         done
       fi
