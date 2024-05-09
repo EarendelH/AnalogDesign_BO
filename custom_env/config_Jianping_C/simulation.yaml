@@ -58,24 +58,6 @@
   simulation_item:
     - overShoot
     - underShoot
-- simulation_name: Trans_0_75V
-  objective: min
-  netlist_name: Trans_0_75V
-  simulation_file: tran.tran.tran
-  script_name: findTrans
-  parse_func: findShoot_Jiangping
-  simulation_item:
-    - overShoot
-    - underShoot
-- simulation_name: Trans_Line_Reg
-  objective: min
-  netlist_name: Trans_Line_Reg
-  simulation_file: tran.tran.tran
-  script_name: findTrans
-  parse_func: findShoot_Line_Reg
-  simulation_item:
-    - overShoot
-    - underShoot
 - simulation_name: PSR
   objective: max
   netlist_name: PSR
