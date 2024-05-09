@@ -95,6 +95,7 @@ def run_dynamic_simulation(work_dir, sim_config, zero_sim_result, show_output=Fa
         assigned_netlist_name = simulation_config[f"netlist_name"]
         assigned_netlist_filename = f"{assigned_netlist_name}.scs"
         objective = simulation_config["objective"]
+        print(f"Debug!!! Running Simulation: {simulation}")
 
         # Check if the assigned netlist file exists
         file_list = os.listdir(work_dir)
@@ -125,7 +126,7 @@ def run_dynamic_simulation(work_dir, sim_config, zero_sim_result, show_output=Fa
             file_to_process = os.path.join(raw_dir, sim_file)
             processed_file = f"{file_to_process}.encode"
             subprocess.run(f"psf {file_to_process} -o {processed_file}", shell=True)
-            # print(f"Processed file: {sim_file}")
+            print(f"Debug!!! Processed file: {sim_file}")
 
             # Load the function to process the results and execute it
             script_name = simulation_config["script_name"]
