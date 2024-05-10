@@ -4,15 +4,15 @@ other_variable:
   - variable_name: C1
     value:
       range: [0.5p,20.0p]
-      step: "0.5p"
+      step: "0.25p"
   - variable_name: CB
     value:
       range: [0.5p,20.0p]
-      step: "0.5p"
+      step: "0.25p"
   - variable_name: IB
     value:
       range: [0.5u,20.0u]
-      step: "0.5u"
+      step: "0.25u"
 M15:
   instance_type: nch_mac
   params:
@@ -183,16 +183,16 @@ M0:
   params:
   - variable_name: w_M0_per_finger
     value:
-      range: [10.0u,500.0u]
-      step: "10.0u"
+      range: [25.0u,500.0u]
+      step: "25.0u"
   - variable_name: l_M0
     value:
       range: [0.5u,1.0u]
       step: "0.5u"
   - variable_name: nf_M0
     value:
-      range: [20,200]
-      step: "20"
+      range: [25,500]
+      step: "25"
 M18:
   instance_type: pch_mac
   params:
