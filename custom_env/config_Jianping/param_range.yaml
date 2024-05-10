@@ -3,24 +3,24 @@ other_variable:
   params:
   - variable_name: C1
     value:
-      range: [0.5p,10.0p]
+      range: [0.25p,10.0p]
       step: "0.25p"
   - variable_name: C2
     value:
-      range: [0.5p,10.0p]
+      range: [0.25p,10.0p]
       step: "0.25p"
   - variable_name: CM
     value:
-      range: [0.5p,10.0p]
+      range: [0.25p,10.0p]
       step: "0.25p"
   - variable_name: IB
     value:
-      range: [0.5u,5.0u]
+      range: [0.25u,5.0u]
       step: "0.5u"
   - variable_name: R1
     value:
-      range: [200.0k,2000.0k]
-      step: "200.0k"
+      range: [100.0k,2000.0k]
+      step: "100.0k"
 M0:
   instance_type: pch_mac
   params:
@@ -34,8 +34,8 @@ M0:
       step: "0.5u"
   - variable_name: nf_M0
     value:
-      range: [20,500]
-      step: "20"
+      range: [25,500]
+      step: "25"
 M31:
   instance_type: nch_mac
   params:
