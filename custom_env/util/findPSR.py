@@ -61,7 +61,7 @@ def findPowerSupplyRejectionRatio_Yan(file_path):
 def findPowerSupplyRejectionRatio_Jiangping(file_path):
 
     freq_list = [100, 1000, 10000, 100000, 1000000]
-    freq_labels = ['100Hz', '1kHz', '10kHz', '100kHz', '1MHz']
+    freq_labels = ['100', '1k', '10k', '100k', '1M']
 
     result = findPowerSupplyRejectionRatio_general(file_path, freq_list, freq_labels)
 
@@ -73,7 +73,7 @@ def findPowerSupplyRejectionRatio_Jiangping(file_path):
 def findPowerSupplyRejectionRatio_Debashis(file_path):
 
     freq_list = [1000, 1000000, 10000000]
-    freq_labels = ['1kHz', '1MHz', '10MHz']
+    freq_labels = ['1k', '1M', '10M']
 
     result = findPowerSupplyRejectionRatio_general(file_path, freq_list, freq_labels)
 
