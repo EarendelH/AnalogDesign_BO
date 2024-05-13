@@ -187,12 +187,14 @@ def findSlewRate(file_path):
 # print(dict)
 
 
-def findShoot(filename):
+def findShoot_general(filename, time_ranges, stable_voltage):
     """
     Extract the overshoot and undershoot value from trans file
 
     Args:
     - filename: Path to the file to be processed.
+    - time_ranges: A list of tuples, each defining a time range.
+    - stable_voltage: The stable voltage value.
 
     Returns:
     - Overshoot and undershoot value
@@ -201,11 +203,10 @@ def findShoot(filename):
     trans_dict = extractTransTrace(filename)
     time_series = trans_dict["time"]
     vout_trace = trans_dict["VOUT"]
-    stable_voltage = 1.0
 
-    # Clip time 50us-100us and 100us-150us
-    time_undershoot_index = [i for i, t in enumerate(time_series) if 2.5e-6 <= t <= 7.5e-6]
-    time_overshoot_index = [i for i, t in enumerate(time_series) if 7.5e-6 <= t <= 12.5e-6]
+    # Clip time according to time_ranges
+    time_undershoot_index = [i for i, t in enumerate(time_series) if time_ranges[0][0] <= t <= time_ranges[0][1]]
+    time_overshoot_index = [i for i, t in enumerate(time_series) if time_ranges[1][0] <= t <= time_ranges[1][1]]
     vout_undershoot = [vout_trace[i] for i in time_undershoot_index]
     vout_overshoot = [vout_trace[i] for i in time_overshoot_index]
 
@@ -233,7 +234,7 @@ def findShoot(filename):
         print("Warning! This LDO cannot be regulated to VREF under light load.")
         overshoot = 100.0
         undershoot = 100.0
-    if undershoot == 0.0 or overshoot == 0.0:
+    if stable_high_load_voltage == 0.0 or stable_light_load_voltage == 0.0:
         print("Warning! No shoot be found.")
         overshoot = 100.0
         undershoot = 100.0
@@ -242,124 +243,25 @@ def findShoot(filename):
 
     return {"overShoot": overshoot, "underShoot": undershoot}
 
-# Test Code
-# file = "/Users/hanwu/ML/AnalogDesignAuto_MultiAgent/custom_env/netlist_assign_test/Trans.raw/tran.tran.tran.encode"
-# print(findShoot(file))
 
-# file = "/Users/hanwu/Downloads/Joblib/SSF_UM_53c63/tmp_20240411224832550072069/Trans.raw/tran.tran.tran.encode"
-# print(findShoot(file))
+def findShoot(filename):
+    result = findShoot_general(filename, [(2.5e-6, 7.5e-6), (7.5e-6, 12.5e-6)], 1.0)
+    return result
 
 
 def findShoot_Jiangping(filename):
-    """
-    Extract the overshoot and undershoot value from trans file
-
-    Args:
-    - filename: Path to the file to be processed.
-
-    Returns:
-    - Overshoot and undershoot value
-    """
-
-    trans_dict = extractTransTrace(filename)
-    time_series = trans_dict["time"]
-    vout_trace = trans_dict["VOUT"]
-    stable_voltage = 0.5
-
-    # Clip time 50us-100us and 100us-150us
-    time_undershoot_index = [i for i, t in enumerate(time_series) if 2.5e-6 <= t <= 7.5e-6]
-    time_overshoot_index = [i for i, t in enumerate(time_series) if 7.5e-6 <= t <= 12.5e-6]
-    vout_undershoot = [vout_trace[i] for i in time_undershoot_index]
-    vout_overshoot = [vout_trace[i] for i in time_overshoot_index]
-
-    # Calculate overshoot and undershoot,
-    # undershoot: Vout@50us -Vout_clip1_min, overshoot: Vout_clip2_max - Vout@100us
-    vout_undershoot_min = np.min(vout_undershoot)
-    vout_overshoot_max = np.max(vout_overshoot)
-    # Find the neset value to 50us and 100us
-    vout_undershoot_base = vout_undershoot[0]
-    vout_overshoot_base = vout_overshoot[0]
-
-    undershoot = vout_undershoot_base - vout_undershoot_min
-    overshoot = vout_overshoot_max - vout_overshoot_base
-
-    # Determine whether the stable voltage is regulated to 1.2V (pre-defined)
-    # Find the mid-value in vout_undershoot
-    stable_high_load_voltage = vout_undershoot[-1]
-    stable_light_load_voltage = vout_overshoot[-1]
-    # print(f"Debug, stable_light_load_voltage: {stable_light_load_voltage}")
-    if stable_high_load_voltage >= stable_voltage * 1.1 or stable_high_load_voltage <= stable_voltage * 0.9:
-        print("Warning! This LDO cannot be regulated to VREF under high load.")
-        overshoot = 100.0
-        undershoot = 100.0
-    if stable_light_load_voltage >= stable_voltage * 1.1 or stable_light_load_voltage <= stable_voltage * 0.9:
-        print("Warning! This LDO cannot be regulated to VREF under light load.")
-        overshoot = 100.0
-        undershoot = 100.0
-    if stable_high_load_voltage == 0.0 or stable_light_load_voltage == 0.0:
-        print("Warning! No shoot be found.")
-        overshoot = 100.0
-        undershoot = 100.0
-    else:
-        pass
-
-    return {"overShoot": overshoot, "underShoot": undershoot}
+    result = findShoot_general(filename, [(2.5e-6, 7.5e-6), (7.5e-6, 12.5e-6)], 0.5)
+    return result
 
 
-def findShoot_Line_Reg(filename):
-    """
-    Extract the overshoot and undershoot value from trans file
+def findShoot_Debashis(filename):
+    result = findShoot_general(filename, [(2.5e-6, 7.5e-6), (7.5e-6, 12.5e-6)], 1.6)
+    return result
 
-    Args:
-    - filename: Path to the file to be processed.
 
-    Returns:
-    - Overshoot and undershoot value
-    """
-
-    trans_dict = extractTransTrace(filename)
-    time_series = trans_dict["time"]
-    vout_trace = trans_dict["VOUT"]
-    stable_voltage = 0.5
-
-    # Clip time 50us-100us and 100us-150us
-    time_undershoot_index = [i for i, t in enumerate(time_series) if 320.0e-6 <= t <= 400.0e-6]
-    time_overshoot_index = [i for i, t in enumerate(time_series) if 60.0e-6 <= t <= 140.0e-6]
-    vout_undershoot = [vout_trace[i] for i in time_undershoot_index]
-    vout_overshoot = [vout_trace[i] for i in time_overshoot_index]
-
-    # Calculate overshoot and undershoot,
-    # undershoot: Vout@50us -Vout_clip1_min, overshoot: Vout_clip2_max - Vout@100us
-    vout_undershoot_min = np.min(vout_undershoot)
-    vout_overshoot_max = np.max(vout_overshoot)
-    # Find the neset value to 50us and 100us
-    vout_undershoot_base = vout_undershoot[0]
-    vout_overshoot_base = vout_overshoot[0]
-
-    undershoot = vout_undershoot_base - vout_undershoot_min
-    overshoot = vout_overshoot_max - vout_overshoot_base
-
-    # Determine whether the stable voltage is regulated to 1.2V (pre-defined)
-    # Find the mid-value in vout_undershoot
-    stable_high_load_voltage = vout_undershoot[-1]
-    stable_light_load_voltage = vout_overshoot[-1]
-    # print(f"Debug, stable_light_load_voltage: {stable_light_load_voltage}")
-    if stable_high_load_voltage >= stable_voltage * 1.1 or stable_high_load_voltage <= stable_voltage * 0.9:
-        print("Warning! This LDO cannot be regulated to VREF under high load.")
-        overshoot = 100.0
-        undershoot = 100.0
-    if stable_light_load_voltage >= stable_voltage * 1.1 or stable_light_load_voltage <= stable_voltage * 0.9:
-        print("Warning! This LDO cannot be regulated to VREF under light load.")
-        overshoot = 100.0
-        undershoot = 100.0
-    if stable_high_load_voltage == 0.0 or stable_light_load_voltage == 0.0:
-        print("Warning! No shoot be found.")
-        overshoot = 100.0
-        undershoot = 100.0
-    else:
-        pass
-
-    return {"overShoot": overshoot, "underShoot": undershoot}
+def findShoot_Line_Reg_Debashis(filename):
+    result = findShoot_general(filename, [(7.5e-6, 12.5e-6), (2.5e-6, 7.5e-6)], 1.6)
+    return result
 
 
 def scan_and_process(root_dir, highlight_subdir):

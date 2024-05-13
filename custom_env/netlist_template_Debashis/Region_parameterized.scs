@@ -1,17 +1,17 @@
 // Generated for: spectre
-// Generated on: May 10 22:56:21 2024
+// Generated on: May 12 22:31:49 2024
 // Design library name: LDO_TCASII_Debashis
 // Design cell name: tb_Region
 // Design view name: schematic
 simulator lang=spectre
 global 0
-parameters CC RC w_M30_per_finger l_M30 nf_M30 w_M60_per_finger l_M60 nf_M60 w_M64_per_finger l_M64 nf_M64 w_M6_per_finger l_M6 nf_M6 w_M5_per_finger l_M5 nf_M5 w_M24_per_finger l_M24 nf_M24 w_M23_per_finger l_M23 nf_M23 w_M63_per_finger l_M63 nf_M63 w_M62_per_finger l_M62 nf_M62 w_M61_per_finger l_M61 nf_M61 w_M21_per_finger l_M21 nf_M21 w_M22_per_finger l_M22 nf_M22 w_M0_per_finger l_M0 nf_M0 w_M11_per_finger l_M11 nf_M11 w_M12_per_finger l_M12 nf_M12 w_M10_per_finger l_M10 nf_M10 w_M9_per_finger l_M9 nf_M9 w_M7_per_finger l_M7 nf_M7 w_M8_per_finger l_M8 nf_M8 w_M42_per_finger l_M42 nf_M42 w_M41_per_finger l_M41 nf_M41 w_M2_per_finger l_M2 nf_M2 w_M1_per_finger l_M1 nf_M1
+parameters VB1 VB2 VB3 CC RC w_M30_per_finger l_M30 nf_M30 w_M60_per_finger l_M60 nf_M60 w_M64_per_finger l_M64 nf_M64 w_M6_per_finger l_M6 nf_M6 w_M5_per_finger l_M5 nf_M5 w_M24_per_finger l_M24 nf_M24 w_M23_per_finger l_M23 nf_M23 w_M63_per_finger l_M63 nf_M63 w_M62_per_finger l_M62 nf_M62 w_M61_per_finger l_M61 nf_M61 w_M21_per_finger l_M21 nf_M21 w_M22_per_finger l_M22 nf_M22 w_M0_per_finger l_M0 nf_M0 w_M11_per_finger l_M11 nf_M11 w_M12_per_finger l_M12 nf_M12 w_M10_per_finger l_M10 nf_M10 w_M9_per_finger l_M9 nf_M9 w_M7_per_finger l_M7 nf_M7 w_M8_per_finger l_M8 nf_M8 w_M42_per_finger l_M42 nf_M42 w_M41_per_finger l_M41 nf_M41 w_M2_per_finger l_M2 nf_M2 w_M1_per_finger l_M1 nf_M1
 include "/data/PDK/pdk_installed/tsmc180bcd_g2/pdk/pdk_1p6m_2/tsmc18/../models/spectre/c018bcd_gen2_v1d6_usage.scs" section=pre_simu
 include "/data/PDK/pdk_installed/tsmc180bcd_g2/pdk/pdk_1p6m_2/tsmc18/../models/spectre/c018bcd_gen2_v1d6_usage.scs" section=tt_lib
 // Library name: LDO_TCASII_Debashis
 // Cell name: LDO_Core
 // View name: schematic
-subckt LDO_Core VFB VIN VOUT VREF VSS
+subckt LDO_Core VB1 VB2 VB3 VFB VIN VOUT VREF VSS
     M30 (net22 net23 VOUT VSS) nch_mac l=l_M30 w=w_M30_per_finger*nf_M30 multi=1 nf=nf_M30 sigma=1 sd=540.0n ad=((nf_M30-int(nf_M30/2)*2)*(4.8e-07+((nf_M30-1)*5.4e-07)/2+0)+(nf_M30+1-int((nf_M30+1)/2)*2)*((nf_M30/2)*5.4e-07))*w_M30_per_finger as=((nf_M30-int(nf_M30/2)*2)*(4.8e-07+((nf_M30-1)*5.4e-07)/2+0)+(nf_M30+1-int((nf_M30+1)/2)*2)*(4.8e-07+4.8e-07+(nf_M30/2-1)*5.4e-07+0+0))*w_M30_per_finger pd=(nf_M30-int(nf_M30/2)*2)*((4.8e-07+((nf_M30-1)*5.4e-07)/2+0)*2+(nf_M30+1)*w_M30_per_finger)+(nf_M30+1-int((nf_M30+1)/2)*2)*(((nf_M30/2)*5.4e-07)*2+nf_M30*w_M30_per_finger) ps=(nf_M30-int(nf_M30/2)*2)*((4.8e-07+((nf_M30-1)*5.4e-07)/2+0)*2+(nf_M30+1)*w_M30_per_finger)+(nf_M30+1-int((nf_M30+1)/2)*2)*((4.8e-07+4.8e-07+(nf_M30/2-1)*5.4e-07+0+0)*2+(nf_M30+2)*w_M30_per_finger) nrd=(nf_M30-int(nf_M30/2)*2)*(2.7e-07*2.7e-07/(2.7e-07+2.7e-07*(nf_M30-1))/w_M30_per_finger)+(nf_M30+1-int((nf_M30+1)/2)*2)*(2.7e-07/nf_M30/w_M30_per_finger) nrs=(nf_M30-int(nf_M30/2)*2)*(2.7e-07*2.7e-07/(2.7e-07+2.7e-07*(nf_M30-1))/w_M30_per_finger)+(nf_M30+1-int((nf_M30+1)/2)*2)*(2.7e-07*2.7e-07*2.7e-07/(2.7e-07*2.7e-07*(nf_M30-2)+2.7e-07*(2.7e-07+2.7e-07))/w_M30_per_finger) sa=1/(1 / ((4.8e-07 + l_M30/2) + (5.4e-07 + l_M30)*(1-1)/3.5 ) )-(0.5*l_M30) sb=1/(1 / ((4.8e-07 + l_M30/2) + (5.4e-07 + l_M30)*(1-1)/3.5 ) )-(0.5*l_M30) sca=0 scb=0 scc=0 mismatchflag=1
     M60 (net38 net38 VSS VSS) nch_mac l=l_M60 w=w_M60_per_finger*nf_M60 multi=1 nf=nf_M60 sigma=1 sd=540.0n ad=((nf_M60-int(nf_M60/2)*2)*(4.8e-07+((nf_M60-1)*5.4e-07)/2+0)+(nf_M60+1-int((nf_M60+1)/2)*2)*((nf_M60/2)*5.4e-07))*w_M60_per_finger as=((nf_M60-int(nf_M60/2)*2)*(4.8e-07+((nf_M60-1)*5.4e-07)/2+0)+(nf_M60+1-int((nf_M60+1)/2)*2)*(4.8e-07+4.8e-07+(nf_M60/2-1)*5.4e-07+0+0))*w_M60_per_finger pd=(nf_M60-int(nf_M60/2)*2)*((4.8e-07+((nf_M60-1)*5.4e-07)/2+0)*2+(nf_M60+1)*w_M60_per_finger)+(nf_M60+1-int((nf_M60+1)/2)*2)*(((nf_M60/2)*5.4e-07)*2+nf_M60*w_M60_per_finger) ps=(nf_M60-int(nf_M60/2)*2)*((4.8e-07+((nf_M60-1)*5.4e-07)/2+0)*2+(nf_M60+1)*w_M60_per_finger)+(nf_M60+1-int((nf_M60+1)/2)*2)*((4.8e-07+4.8e-07+(nf_M60/2-1)*5.4e-07+0+0)*2+(nf_M60+2)*w_M60_per_finger) nrd=(nf_M60-int(nf_M60/2)*2)*(2.7e-07*2.7e-07/(2.7e-07+2.7e-07*(nf_M60-1))/w_M60_per_finger)+(nf_M60+1-int((nf_M60+1)/2)*2)*(2.7e-07/nf_M60/w_M60_per_finger) nrs=(nf_M60-int(nf_M60/2)*2)*(2.7e-07*2.7e-07/(2.7e-07+2.7e-07*(nf_M60-1))/w_M60_per_finger)+(nf_M60+1-int((nf_M60+1)/2)*2)*(2.7e-07*2.7e-07*2.7e-07/(2.7e-07*2.7e-07*(nf_M60-2)+2.7e-07*(2.7e-07+2.7e-07))/w_M60_per_finger) sa=1/(1 / ((4.8e-07 + l_M60/2) + (5.4e-07 + l_M60)*(1-1)/3.5 ) )-(0.5*l_M60) sb=1/(1 / ((4.8e-07 + l_M60/2) + (5.4e-07 + l_M60)*(1-1)/3.5 ) )-(0.5*l_M60) sca=0 scb=0 scc=0 mismatchflag=1
     M64 (net30 net38 VSS VSS) nch_mac l=l_M64 w=w_M64_per_finger*nf_M64 multi=1 nf=nf_M64 sigma=1 sd=540.0n ad=((nf_M64-int(nf_M64/2)*2)*(4.8e-07+((nf_M64-1)*5.4e-07)/2+0)+(nf_M64+1-int((nf_M64+1)/2)*2)*((nf_M64/2)*5.4e-07))*w_M64_per_finger as=((nf_M64-int(nf_M64/2)*2)*(4.8e-07+((nf_M64-1)*5.4e-07)/2+0)+(nf_M64+1-int((nf_M64+1)/2)*2)*(4.8e-07+4.8e-07+(nf_M64/2-1)*5.4e-07+0+0))*w_M64_per_finger pd=(nf_M64-int(nf_M64/2)*2)*((4.8e-07+((nf_M64-1)*5.4e-07)/2+0)*2+(nf_M64+1)*w_M64_per_finger)+(nf_M64+1-int((nf_M64+1)/2)*2)*(((nf_M64/2)*5.4e-07)*2+nf_M64*w_M64_per_finger) ps=(nf_M64-int(nf_M64/2)*2)*((4.8e-07+((nf_M64-1)*5.4e-07)/2+0)*2+(nf_M64+1)*w_M64_per_finger)+(nf_M64+1-int((nf_M64+1)/2)*2)*((4.8e-07+4.8e-07+(nf_M64/2-1)*5.4e-07+0+0)*2+(nf_M64+2)*w_M64_per_finger) nrd=(nf_M64-int(nf_M64/2)*2)*(2.7e-07*2.7e-07/(2.7e-07+2.7e-07*(nf_M64-1))/w_M64_per_finger)+(nf_M64+1-int((nf_M64+1)/2)*2)*(2.7e-07/nf_M64/w_M64_per_finger) nrs=(nf_M64-int(nf_M64/2)*2)*(2.7e-07*2.7e-07/(2.7e-07+2.7e-07*(nf_M64-1))/w_M64_per_finger)+(nf_M64+1-int((nf_M64+1)/2)*2)*(2.7e-07*2.7e-07*2.7e-07/(2.7e-07*2.7e-07*(nf_M64-2)+2.7e-07*(2.7e-07+2.7e-07))/w_M64_per_finger) sa=1/(1 / ((4.8e-07 + l_M64/2) + (5.4e-07 + l_M64)*(1-1)/3.5 ) )-(0.5*l_M64) sb=1/(1 / ((4.8e-07 + l_M64/2) + (5.4e-07 + l_M64)*(1-1)/3.5 ) )-(0.5*l_M64) sca=0 scb=0 scc=0 mismatchflag=1
@@ -43,10 +43,13 @@ ends LDO_Core
 // Library name: LDO_TCASII_Debashis
 // Cell name: tb_Region
 // View name: schematic
+V5 (VB3 0) vsource dc=VB3 type=dc
+V3 (VB1 0) vsource dc=VB1 type=dc
+V4 (VB2 0) vsource dc=VB2 type=dc
 V2 (VIN 0) vsource dc=1.8 type=dc
 V1 (VREF 0) vsource dc=1.6 type=dc
 V0 (VSS 0) vsource dc=0 type=dc
-I0 (VOUT VIN VOUT VREF VSS) LDO_Core
+I0 (VB1 VB2 VB3 VOUT VIN VOUT VREF VSS) LDO_Core
 C0 (VOUT VSS) capacitor c=50p
 I1 (VOUT VSS) isource dc=25m type=dc
 simulatorOptions options psfversion="1.1.0" reltol=1e-3 vabstol=1e-6 \

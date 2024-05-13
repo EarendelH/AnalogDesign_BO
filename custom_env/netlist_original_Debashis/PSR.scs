@@ -1,18 +1,18 @@
 // Generated for: spectre
-// Generated on: May 11 15:38:20 2024
+// Generated on: May 12 22:31:10 2024
 // Design library name: LDO_TCASII_Debashis
 // Design cell name: tb_PSR
 // Design view name: schematic
 simulator lang=spectre
 global 0
-parameters CC RC
+parameters VB1 VB2 VB3 CC RC
 include "/data/PDK/pdk_installed/tsmc180bcd_g2/pdk/pdk_1p6m_2/tsmc18/../models/spectre/c018bcd_gen2_v1d6_usage.scs" section=pre_simu
 include "/data/PDK/pdk_installed/tsmc180bcd_g2/pdk/pdk_1p6m_2/tsmc18/../models/spectre/c018bcd_gen2_v1d6_usage.scs" section=tt_lib
 
 // Library name: LDO_TCASII_Debashis
 // Cell name: LDO_Core
 // View name: schematic
-subckt LDO_Core VFB VIN VOUT VREF VSS
+subckt LDO_Core VB1 VB2 VB3 VFB VIN VOUT VREF VSS
     M30 (net22 net23 VOUT VSS) nch_mac l=180n w=2u multi=1 nf=1 sigma=1 \
         sd=540n ad=9.6e-13 as=9.6e-13 pd=4.96u ps=4.96u nrd=0.135 \
         nrs=0.135 sa=480n sb=480n sca=0 scb=0 scc=0 mismatchflag=1
@@ -91,10 +91,13 @@ ends LDO_Core
 // Library name: LDO_TCASII_Debashis
 // Cell name: tb_PSR
 // View name: schematic
+V5 (VB3 0) vsource dc=VB3 type=dc
+V3 (VB1 0) vsource dc=VB1 type=dc
+V4 (VB2 0) vsource dc=VB2 type=dc
 V2 (VIN 0) vsource dc=1.8 mag=1 type=dc
 V1 (VREF 0) vsource dc=1.6 type=dc
 V0 (VSS 0) vsource dc=0 type=dc
-I0 (VOUT VIN VOUT VREF VSS) LDO_Core
+I0 (VB1 VB2 VB3 VOUT VIN VOUT VREF VSS) LDO_Core
 C0 (VOUT VSS) capacitor c=50p
 I1 (VOUT VSS) isource dc=50m type=dc
 simulatorOptions options psfversion="1.1.0" reltol=1e-3 vabstol=1e-6 \
