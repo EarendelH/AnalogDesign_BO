@@ -27,7 +27,7 @@ print(f'Original data length: {original_length}')
 
 # Flatten the nested dictionary and filter invalid entries
 data['Valid_Specs'] = data['Specs'].apply(lambda x: flatten_nested_dict(ast.literal_eval(x)))
-# data = data[data['Valid_Specs'].apply(is_valid_entry)]
+data = data[data['Valid_Specs'].apply(is_valid_entry)]
 
 # Convert the valid flattened dictionaries into DataFrame columns
 result_df = data['Valid_Specs'].apply(pd.Series)
