@@ -7,6 +7,7 @@ import datetime
 import random
 import subprocess
 import logging
+from ray.rllib.env.multi_agent_env import MultiAgentEnv
 
 from util.gen_action_space import gen_masked_action_space
 from util.gen_obs_space import gen_obs_space_w_region, flatten_obs_space_w_region
@@ -22,8 +23,6 @@ from util.normlization import norm_ideal_spec, norm_sim_spec
 from util.util_func import retry_decorator
 from util.init_param import gen_init_param
 from util.extract_device_param_value import extract_operation_region_w_name
-
-from ray.rllib.env.multi_agent_env import MultiAgentEnv
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
