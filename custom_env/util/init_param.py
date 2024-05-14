@@ -13,10 +13,21 @@ def gen_init_param(init_method_flag, init_param_path, action_mask_flag, device_m
 
     init_param = OrderedDict()
 
+    # Determine initialization method if init_method_flag is 'mixed'
+    if init_method_flag == 'mixed':
+        rand_num = random.random()
+        if rand_num <= 0.7:
+            print(f"Initialing!!!init method: mixed -> file")
+            init_method_flag = 'file'
+        else:
+            print(f"Initialing!!!init method: mixed -> random")
+            init_method_flag = 'random'
+
     # Load initial parameters from a file if init_method_flag is 'file'
     if init_method_flag == 'file':
-        with open(init_param_path, 'r') as file:
-            init_param = yaml.safe_load(file)
+        with open(init_param_path, 'r') as f:
+            param_sets = yaml.safe_load(f)
+            init_param = random.choice(param_sets)
         print(f"Initialing!!!init method: file, init param: {init_param}")
 
     # Initialize parameters to the middle value of their range if init_method_flag is 'half'
@@ -149,3 +160,11 @@ def gen_init_param(init_method_flag, init_param_path, action_mask_flag, device_m
 # ('l_M22', '4.5u'), ('nf_M22', '14'), ('w_M21_per_finger', '8.0u'), ('l_M21', '4.5u'), ('nf_M21', '14'),
 # ('w_M18_per_finger', '1.5u'), ('l_M18', '8.5u'), ('nf_M18', '1'), ('w_M17_per_finger', '1.5u'), ('l_M17', '8.5u'),
 # ('nf_M17', '1'), ('IB', '22.0u')])
+
+# init_method_flag = 'mixed'
+# init_param_path = '/Users/hanwu/ML/AnalogDesignAuto_MultiAgent/custom_env/config_Jianping/init_param.yaml'
+# action_mask_flag = True
+# device_mask_dict = None
+# param_space = None
+#
+# gen_init_param(init_method_flag, init_param_path, action_mask_flag, device_mask_dict, param_space)
