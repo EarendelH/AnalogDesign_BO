@@ -48,7 +48,7 @@ def findPowerSupplyRejectionRatio(file_path):
 def findPowerSupplyRejectionRatio_Yan(file_path):
 
     freq_list = [1000, 1000000, 100000000, 1000000000, 10000000000]
-    freq_labels = ['1kHz', '1M', '100MHz', '1GHz', '10GHz']
+    freq_labels = ['1k', '1M', '100M', '1G', '10G']
 
     result = findPowerSupplyRejectionRatio_general(file_path, freq_list, freq_labels)
 
