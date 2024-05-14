@@ -61,7 +61,7 @@ def main():
             "config_folder_name": get_user_input("Name of config folder", "config"),
             "run_folder_name": get_user_input("Name of run folder", "run_test"),
             "sim_output": get_user_input("Enable simulation output (True/False)", "False"),
-            "init_method": get_user_input("Initialization method (File/Half/Random)", "file"),
+            "init_method": get_user_input("Initialization method (file/half/random/mixed)", "file"),
             "dc_check": get_user_input("Enable step DC check (True/False)", "True"),
             "restore_checkpoint": get_user_input("Restore from checkpoint? (True/False)", "False"),
             "checkpoint_path": None,  # To be conditionally updated
