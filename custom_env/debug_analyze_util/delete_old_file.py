@@ -6,7 +6,6 @@ def delete_old_files_and_dirs(path):
 
     current_time = time.time()
 
-    # 遍历指定目录
     for root_dir, dirs, files in os.walk(path, topdown=False):
         for name in files:
             file_path = os.path.join(root_dir, name)
