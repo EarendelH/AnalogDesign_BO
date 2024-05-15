@@ -6,21 +6,21 @@ set target_directory = $<
 set start_time = `date +%s`
 
 # Check if the target directory exists
-if (! -d $target_directory) then
+if (! -d "$target_directory") then
   echo "Target directory does not exist."
   exit 1
 endif
 
 # Loop through all subdirectories starting with 'tmp'
-foreach directory ("$target_directory/tmp*/")
-  if (-d $directory) then
+foreach directory ("$target_directory"/tmp*/)
+  if (-d "$directory") then
     echo "Processing directory: $directory"
 
     # Process all .scs files in the directory
-    foreach file ("$directory/*.scs")
-      if (-f $file) then
+    foreach file ("$directory"/*.scs)
+      if (-f "$file") then
         set start_spectre = `date +%s`
-        spectre -64 +aps $file
+        spectre -64 +aps "$file"
         set end_spectre = `date +%s`
         @ elapsed_spectre = $end_spectre - $start_spectre
         echo "Spectre processing time for $file: $elapsed_spectre seconds."
@@ -28,12 +28,12 @@ foreach directory ("$target_directory/tmp*/")
     end
 
     # Process all subdirectories
-    foreach subdir ("$directory/*/")
-      if (-d $subdir) then
-        foreach file ("$subdir/*")
-          if (-f $file) then
+    foreach subdir ("$directory"/*/)
+      if (-d "$subdir") then
+        foreach file ("$subdir"/*)
+          if (-f "$file") then
             set start_psf = `date +%s`
-            psf $file -o "$file.encode"
+            psf "$file" -o "${file}.encode"
             set end_psf = `date +%s`
             @ elapsed_psf = $end_psf - $start_psf
             echo "PSF processing time for $file: $elapsed_psf seconds."
