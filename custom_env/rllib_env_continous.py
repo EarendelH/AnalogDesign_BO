@@ -1,3 +1,4 @@
+import copy
 import os
 import numpy
 import yaml
@@ -7,6 +8,7 @@ import datetime
 import random
 import subprocess
 import logging
+from ray.rllib.env.multi_agent_env import MultiAgentEnv
 
 from util.gen_action_space import gen_masked_continuous_action_space
 from util.gen_obs_space import gen_obs_space_w_region, flatten_obs_space_w_region
@@ -20,10 +22,8 @@ from util.generalize_config import generalize_config
 from util.update_obs_space import update_obs_space_w_region, flatten_observation_w_region
 from util.normlization import norm_ideal_spec, norm_sim_spec
 from util.util_func import retry_decorator
-from util.init_param import gen_init_param
+from util.gen_init_param import gen_init_param
 from util.extract_device_param_value import extract_operation_region_w_name
-
-from ray.rllib.env.multi_agent_env import MultiAgentEnv
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
@@ -192,7 +192,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         # For avoid simulation error in init, use zero result instead.
         except Exception as e:
             logging.warning(f"Warning!!!: {e}. Simulation failed, use zero result instead.")
-            sim_result = self.zero_sim_result
+            sim_result = copy.deepcopy(self.zero_sim_result)
 
         # Normalize the current ideal specs
         logging.info(f"Initialing!!!Ideal specs: {self.ideal_specs}")
@@ -212,8 +212,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
             working_dir_reset_dc = create_work_dir(self.run_root_dir)
             logging.info(f"Initialing!!!DC Check working directory: {working_dir_reset_dc}")
             update_netlist(working_dir_reset_dc, self.dc_sim_config_dict, init_param, self.unassigned_netlist_dir)
-            run_region_simulation(working_dir_reset_dc, self.dc_sim_config_dict, self.zero_sim_result,
-                                  self.sim_output_enable)
+            run_region_simulation(working_dir_reset_dc, self.dc_sim_config_dict, self.sim_output_enable)
             dc_reset_raw_result_path = os.path.join(working_dir_reset_dc, "Region.raw/dcOpInfo.info")
             dc_reset_result_path = os.path.join(working_dir_reset_dc, "Region.raw/dcOpInfo.info.encode")
             subprocess.run(f"psf {dc_reset_raw_result_path} -o {dc_reset_result_path}", shell=True)
@@ -222,13 +221,13 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
             # delete_work_dir(working_dir_reset_dc)
         except Exception as e:
             logging.warning(f"Resting!!!: {e}. No DC sim file.")
-            reset_operation_region_dict = self.operation_region_dict_zero
+            reset_operation_region_dict = copy.deepcopy(self.operation_region_dict_zero)
 
         # Check operation_region_dict length vs self.operation_region_dict_zero length
         if len(reset_operation_region_dict) != len(self.operation_region_dict_zero):
             logging.warning(f"Resting!!!: Operation region dict length {len(reset_operation_region_dict)} "
                             f"does not match with operation_region_dict_zero length {len(self.norm_ideal_specs)}.")
-            reset_operation_region_dict = self.operation_region_dict_zero
+            reset_operation_region_dict = copy.deepcopy(self.operation_region_dict_zero)
 
         # Generate observation
         observation_detail = update_obs_space_w_region(self.norm_ideal_specs, norm_sim_result, init_param,
@@ -244,7 +243,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         rew = cal_reward(self.ideal_specs, sim_result, self.norm_specs)
         logging.info(f"Debug!!!Initialing!!!Reward result: {rew}")
 
-        self.cur_param = init_param
+        self.cur_param = copy.deepcopy(init_param)
 
         self.resetted = True
         self.terminateds = set()
@@ -283,20 +282,21 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
 
         operation_region_dict = {}
 
+        step_action_dict = copy.deepcopy(action_dict)
         for key in self.device_mask_dict:
-            for agent_key in action_dict:
-                if key in action_dict[agent_key]:
+            for agent_key in step_action_dict:
+                if key in step_action_dict[agent_key]:
                     new_values = self.device_mask_dict[key]
                     for new_key in new_values:
                         if new_key.endswith('_Match'):
-                            match_action = action_dict[agent_key][key][:2]
-                            new_value = numpy.append(match_action, action_dict[agent_key][new_key])
+                            match_action = step_action_dict[agent_key][key][:2]
+                            new_value = numpy.append(match_action, step_action_dict[agent_key][new_key])
                         else:
-                            new_value = action_dict[agent_key][key]
-                        action_dict[agent_key][new_key] = new_value
+                            new_value = step_action_dict[agent_key][key]
+                        step_action_dict[agent_key][new_key] = new_value
 
         mapped_action_dict = OrderedDict()
-        for agent, agent_dict in action_dict.items():
+        for agent, agent_dict in step_action_dict.items():
             new_agent_dict = OrderedDict()
             for key, value in agent_dict.items():
                 if key.endswith('_Match'):
@@ -306,12 +306,12 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
 
                 new_agent_dict[new_key] = value
             mapped_action_dict[agent] = new_agent_dict
-        action_dict = mapped_action_dict
-        logging.debug(f"Step!!!Mapped action dict: {action_dict}")
+        mapped_step_action_dict = copy.deepcopy(mapped_action_dict)
+        logging.debug(f"Step!!!Mapped action dict: {mapped_step_action_dict}")
 
         # Flatten all actions
         all_action_flatten = OrderedDict()
-        for group in action_dict.values():
+        for group in mapped_step_action_dict.values():
             for key, value in group.items():
                 all_action_flatten[key] = value
 
@@ -323,7 +323,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         logging.info(f"Step!!!Updated param: {updated_param} with step number: {self.step_num}")
 
         # Update current param
-        self.cur_param = updated_param
+        self.cur_param = copy.deepcopy(updated_param)
 
         # Run DC check firstly and only once. If dc_check is True. If DC check failed, return zero sim result and -25
         # reward. End the episode.
@@ -335,8 +335,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
                              f"with step number: {self.step_num}")
                 # Update DC Netlist File for checking operation region
                 update_netlist(working_dir_step_dc, self.dc_sim_config_dict, updated_param, self.unassigned_netlist_dir)
-                run_region_simulation(working_dir_step_dc, self.dc_sim_config_dict, self.zero_sim_result,
-                                      self.sim_output_enable)
+                run_region_simulation(working_dir_step_dc, self.dc_sim_config_dict, self.sim_output_enable)
                 dc_raw_result_path = os.path.join(working_dir_step_dc, "Region.raw/dcOpInfo.info")
                 dc_result_path = os.path.join(working_dir_step_dc, "Region.raw/dcOpInfo.info.encode")
                 subprocess.run(f"psf {dc_raw_result_path} -o {dc_result_path}", shell=True)
@@ -350,19 +349,19 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
                 if len(operation_region_dict) != len(self.operation_region_dict_zero):
                     logging.warning(f"Warning!!!: Operation region dict length {len(operation_region_dict)} does not "
                                     f"match with operation_region_dict_zero length {len(self.norm_ideal_specs)}.")
-                    operation_region_dict = self.operation_region_dict_zero
+                    operation_region_dict = copy.deepcopy(self.operation_region_dict_zero)
                     valid_param = False
                 # Delete working temp directory, if it exists
                 # delete_work_dir(working_dir_step_dc)
             except Exception as e:
                 logging.warning(f"Warning!!!: {e}. Failed to run DC check with step number: {self.step_num}")
-                operation_region_dict = self.operation_region_dict_zero
+                operation_region_dict = copy.deepcopy(self.operation_region_dict_zero)
                 valid_param = False
 
         # DC check fail condition
         if self.dc_check and not valid_param:
             logging.info(f"Step!!!Param failed DC check with step number: {self.step_num}")
-            sim_result = self.zero_sim_result
+            sim_result = copy.deepcopy(self.zero_sim_result)
             logging.debug(f"Debug, sim_result is {sim_result}")
             logging.debug(f"Debug, self.norm_specs is {self.norm_specs}")
             norm_sim_result = norm_sim_spec(sim_result, self.norm_specs)
@@ -406,7 +405,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
                 sim_result, fail_tage = _run_simulation_with_retry()
             except Exception as e:
                 logging.warning(f"Step Warning!!!: {e}. Simulation failed, use zero result instead.")
-                sim_result = self.zero_sim_result
+                sim_result = copy.deepcopy(self.zero_sim_result)
                 fail_tage = True
             logging.info(f"Step!!!Simulation result: {sim_result} with step number: {self.step_num}")
             logging.debug(f"Debug, sim_result is {sim_result}")
@@ -419,8 +418,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
                 working_dir_step_dc_passed = create_work_dir(self.run_root_dir)
                 update_netlist(working_dir_step_dc_passed, self.dc_sim_config_dict, updated_param,
                                self.unassigned_netlist_dir)
-                run_region_simulation(working_dir_step_dc_passed, self.dc_sim_config_dict, self.zero_sim_result,
-                                      self.sim_output_enable)
+                run_region_simulation(working_dir_step_dc_passed, self.dc_sim_config_dict, self.sim_output_enable)
                 dc_raw_result_path = os.path.join(working_dir_step_dc_passed, "Region.raw/dcOpInfo.info")
                 dc_result_path = os.path.join(working_dir_step_dc_passed, "Region.raw/dcOpInfo.info.encode")
                 subprocess.run(f"psf {dc_raw_result_path} -o {dc_result_path}", shell=True)
@@ -428,13 +426,13 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
                 # (working_dir_step_dc_passed)
             except Exception as e:
                 logging.warning(f"Step Warning!!!: {e}. No DC sim file.")
-                operation_region_dict = self.operation_region_dict_zero
+                operation_region_dict = copy.deepcopy(self.operation_region_dict_zero)
 
             # Check operation_region_dict length vs self.operation_region_dict_zero length
             if len(operation_region_dict) != len(self.operation_region_dict_zero):
                 logging.warning(f"Warning!!!: Operation region dict length {len(operation_region_dict)} does not match "
                                 f"with operation_region_dict_zero length {len(self.norm_ideal_specs)}.")
-                operation_region_dict = self.operation_region_dict_zero
+                operation_region_dict = copy.deepcopy(self.operation_region_dict_zero)
 
             observation_detail = update_obs_space_w_region(self.norm_ideal_specs, norm_sim_result, updated_param,
                                                            operation_region_dict)

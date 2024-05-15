@@ -1,3 +1,4 @@
+import copy
 import os
 import subprocess
 from importlib import import_module
@@ -87,7 +88,7 @@ def run_dynamic_simulation(work_dir, sim_config, zero_sim_result, show_output=Fa
     :return: Arranged simulation results
     """
 
-    results = zero_sim_result
+    results = copy.deepcopy(zero_sim_result)
     fail_tag = False
 
     for simulation_config in sim_config:
@@ -187,14 +188,13 @@ def run_dynamic_simulation(work_dir, sim_config, zero_sim_result, show_output=Fa
     return results, fail_tag
 
 
-def run_region_simulation(work_dir, sim_config, zero_sim_result, show_output=False):
+def run_region_simulation(work_dir, sim_config, show_output=False):
     """
     Run spectre simulation. Once the output result is zero (for pwr, reset value is 1), the simulation will be stopped.
     Zero simulation result is given.
     :param work_dir: working directory
     :param sim_config: config simulation item and corresponding result parse function
     :param show_output: show the output of the simulation
-    :param zero_sim_result: zero simulation result
     :return: Arranged simulation results
     """
 
