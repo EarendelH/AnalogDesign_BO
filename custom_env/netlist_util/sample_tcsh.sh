@@ -19,7 +19,11 @@ foreach directory ("$target_directory"/tmp*/)
     # Process all .scs files in the directory
     foreach file ("$directory"/*.scs)
       if (-f "$file") then
-        spectre -64 +aps "$file"
+        set start_spectre = `date +%s`
+        spectre -64 ++aps "$file"
+        set end_spectre = `date +%s`
+        @ elapsed_spectre = $end_spectre - $start_spectre
+        echo "Spectre processing time for $file: $elapsed_spectre seconds."
       endif
     end
 
@@ -28,7 +32,11 @@ foreach directory ("$target_directory"/tmp*/)
       if (-d "$subdir") then
         foreach file ("$subdir"/*)
           if (-f "$file") then
+            set start_psf = `date +%s`
             psf "$file" -o "${file}.encode"
+            set end_psf = `date +%s`
+            @ elapsed_psf = $end_psf - $start_psf
+            echo "PSF processing time for $file: $elapsed_psf seconds."
           endif
         end
       endif
@@ -37,7 +45,7 @@ foreach directory ("$target_directory"/tmp*/)
 end
 
 set end_time = `date +%s`
-set elapsed_time = `expr $end_time - $start_time`
+@ elapsed_time = $end_time - $start_time
 
 echo "Processing complete."
 echo "Total time taken: $elapsed_time seconds."
