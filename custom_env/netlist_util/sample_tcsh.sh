@@ -20,7 +20,7 @@ foreach directory ("$target_directory"/tmp*/)
     foreach file ("$directory"/*.scs)
       if (-f "$file") then
         set start_spectre = `date +%s`
-        spectre -64 ++aps "$file"
+        spectre -64 +aps "$file"
         set end_spectre = `date +%s`
         @ elapsed_spectre = $end_spectre - $start_spectre
         echo "Spectre processing time for $file: $elapsed_spectre seconds."
