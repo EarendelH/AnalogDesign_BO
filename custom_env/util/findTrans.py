@@ -1,4 +1,3 @@
-import numpy as np
 import os
 import matplotlib.pyplot as plt
 # from extract_trace import extractTransTrace
@@ -302,8 +301,8 @@ def plot_data(results, highlight_subdir, root_dir):
     print(f"Image save to：{plt_path}")
 
 
-# root_dir = '/Users/hanwu/Downloads/Joblib/SSF_UM_fc0a3/fm_sort'
-# highlight_subdir = 'tmp_20240416222829162161766'
+# root_dir = '/Users/hanwu/Downloads/Log/Yan/select_point'
+# highlight_subdir = 'tmp_2024051420010627014325'
 # scan_and_process(root_dir, highlight_subdir)
 
 
