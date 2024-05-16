@@ -28,9 +28,9 @@ def change_colors(img):
 
 
 # Apply the function to the image
-image = Image.open('/Users/hanwu/Downloads/Joblib/LDO_SSF.png')
+image = Image.open('/Users/hanwu/Downloads/sch.png')
 modified_image = change_colors(image)
 
 # Save the modified image to a new file
-output_path = '/Users/hanwu/Downloads/Joblib/LDO_SSF_modify.png'
+output_path = '/Users/hanwu/Downloads/sch_1.png'
 modified_image.save(output_path)
