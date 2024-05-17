@@ -1,0 +1,28 @@
+`include "discipline.h"
+`include "constants.h"
+
+module mosCap(vp, vn);
+    inout vp, vn;
+    electrical vp, vn;
+    real c,q;
+    parameter real toxa=21.1; 
+    parameter real weff=1; 
+    parameter real leff=1;
+    parameter real as=1;
+    parameter real as2=1;
+    parameter real phit=1;
+    parameter real a0=1;
+    parameter real vfb=1;
+    real xgc1,et1,zm,cm,vm1,tau,xm1;
+    analog begin
+        xgc1=0.5*(1.0-(V(vp, vn)+vfb)/(0.01*phit+sqrt((V(vp, vn)+vfb)*(V(vp, vn)+vfb)+1.0e-4*phit*phit)));
+        et1=1.0-xgc1+as*(xgc1*(1.0+a0*(1.0-1.0/(1.0-a0*xgc1*(vfb+V(vp, vn))/phit)))-a0)/(0.5*as+sqrt(0.25*as2-(xgc1*(1.0+a0*(1.0-1.0/(1.0-a0*xgc1*(vfb+V(vp, vn))/phit)))-a0)*(V(vp, vn)+vfb)/phit));
+        zm=(1.0-(1.0-(V(vp, vn)+vfb)/phit*et1/as2)*et1)*(V(vp, vn)+vfb)/phit;
+        cm=as2-2.0*(V(vp, vn)+vfb)/phit*et1;
+        vm1=(as2-2.0-(V(vp, vn)+vfb)*et1/phit)*et1-as2; 
+        tau=((et1-1.0)*(V(vp, vn)+vfb)/phit+ln(1.0+zm))/(1.0e-6+(V(vp, vn)+vfb)*(V(vp, vn)+vfb)/phit/phit);
+        xm1=et1+as2*(1.0+zm)*tau*vm1/(vm1*vm1+(0.5*cm*cm-as2-as2*zm)*tau); 
+        c=  0.3399936/toxa*weff*leff*(1.0-2.0/(as2/xm1+2.0-as2+(V(vp, vn)+vfb)/phit*xm1))+1.39E-10*(2.0*weff+2.0*leff)  ;  
+        V(vp, vn) <+ idt(I(vp, vn)/c);        
+    end
+endmodule
