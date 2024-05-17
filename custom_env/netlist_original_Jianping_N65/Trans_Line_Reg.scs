@@ -5,7 +5,7 @@
 // Design view name: schematic
 simulator lang=spectre
 global 0
-parameters C1=1p C2=1p CM=1p IB=1u R1=10k
+parameters C1 C2 CM IB R1
 include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_bip
 include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_dio
 include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_dio_33
@@ -140,7 +140,7 @@ simulatorOptions options psfversion="1.1.0" reltol=1e-3 vabstol=1e-6 \
     maxnotes=5 maxwarns=5 digits=5 cols=80 pivrel=1e-3 \
     sensfile="../psf/sens.output" checklimitdest=psf 
 tran tran stop=450u write="spectre.ic" writefinal="spectre.fc" \
-    annotate=status maxiters=5 
+    annotate=status maxiters=5
 finalTimeOP info what=oppoint where=rawfile
 modelParameter info what=models where=rawfile
 element info what=inst where=rawfile

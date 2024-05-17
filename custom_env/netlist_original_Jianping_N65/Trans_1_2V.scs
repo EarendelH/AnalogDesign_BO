@@ -5,7 +5,7 @@
 // Design view name: schematic
 simulator lang=spectre
 global 0
-parameters C1=1p C2=1p CM=1p IB=1u R1=10k
+parameters C1 C2 CM IB R1
 include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_bip
 include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_dio
 include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_dio_33
@@ -148,4 +148,5 @@ outputParameter info what=output where=rawfile
 designParamVals info what=parameters where=rawfile
 primitives info what=primitives where=rawfile
 subckts info what=subckts where=rawfile
+save I1:sink
 saveOptions options save=allpub
