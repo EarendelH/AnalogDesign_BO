@@ -1,0 +1,118 @@
+DC:
+  DC_IQ:
+    objective: min
+    reward_type: optimal
+    bounds:
+    - 0.0001
+    - 0.0002
+Stability_1u:
+  Stability_1u_gainBandWidth:
+    objective: max
+    reward_type: optimal
+    bounds:
+    - 1000000.0
+    - 2000000.0
+  Stability_1u_phaseMargin:
+    objective: max
+    reward_type: satisfactory
+    bounds:
+    - 30.0
+    - 30.1
+Stability_25m:
+  Stability_25m_gainBandWidth:
+    objective: max
+    reward_type: optimal
+    bounds:
+    - 1000000.0
+    - 2000000.0
+  Stability_25m_phaseMargin:
+    objective: max
+    reward_type: satisfactory
+    bounds:
+    - 30.0
+    - 30.1
+Stability_50m:
+  Stability_50m_gainBandWidth:
+    objective: max
+    reward_type: optimal
+    bounds:
+    - 1000000.0
+    - 2000000.0
+  Stability_50m_phaseMargin:
+    objective: max
+    reward_type: satisfactory
+    bounds:
+    - 30.0
+    - 30.1
+Load_Reg:
+  Load_Reg_loadReg:
+    objective: min
+    reward_type: optimal
+    bounds:
+    - 0.2
+    - 0.3
+Line_Reg:
+  Line_Reg_lineReg:
+    objective: min
+    reward_type: optimal
+    bounds:
+    - 0.003
+    - 0.006
+Trans_0m:
+  Trans_0m_overShoot:
+    objective: min
+    reward_type: optimal
+    bounds:
+    - 0.09
+    - 0.15
+  Trans_0m_underShoot:
+    objective: min
+    reward_type: optimal
+    bounds:
+    - 0.15
+    - 0.20
+Trans_9m:
+  Trans_9m_overShoot:
+    objective: min
+    reward_type: optimal
+    bounds:
+    - 0.12
+    - 0.15
+  Trans_9m_underShoot:
+    objective: min
+    reward_type: optimal
+    bounds:
+    - 0.12
+    - 0.15
+Trans_Line_Reg:
+  Trans_Line_Reg_overShoot:
+    objective: min
+    reward_type: optimal
+    bounds:
+    - 0.03
+    - 0.05
+  Trans_Line_Reg_underShoot:
+    objective: min
+    reward_type: optimal
+    bounds:
+    - 0.03
+    - 0.05
+PSR:
+  PSR_psr_1k:
+    objective: max
+    reward_type: optimal
+    bounds:
+    - 60.0
+    - 70.0
+  PSR_psr_1M:
+    objective: max
+    reward_type: optimal
+    bounds:
+    - 30.0
+    - 40.0
+  PSR_psr_10M:
+    objective: max
+    reward_type: optimal
+    bounds:
+    - 20.0
+    - 10.0
