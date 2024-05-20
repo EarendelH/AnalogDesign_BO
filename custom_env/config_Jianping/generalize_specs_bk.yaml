@@ -78,6 +78,19 @@ Trans_1_2V:
     bounds:
     - 0.06
     - 0.1
+Trans_0_75V:
+  Trans_0_75V_overShoot:
+    objective: min
+    reward_type: optimal
+    bounds:
+    - 0.11
+    - 0.15
+  Trans_0_75V_underShoot:
+    objective: min
+    reward_type: optimal
+    bounds:
+    - 0.08
+    - 0.12
 Trans_Line_Reg:
   Trans_Line_Reg_overShoot:
     objective: min
