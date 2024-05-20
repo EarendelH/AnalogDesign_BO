@@ -216,6 +216,8 @@ def findShoot_general(filename, time_ranges, stable_voltage):
     # Find the neset value to 50us and 100us
     vout_undershoot_base = vout_undershoot[0]
     vout_overshoot_base = vout_overshoot[0]
+    # print(f"Debug, vout_undershoot_base: {vout_undershoot_base} and vout_overshoot_base: {vout_overshoot_base}")
+    # print(f"Debug, vout_undershoot_min: {vout_undershoot_min} and vout_overshoot_max: {vout_overshoot_max}")
 
     undershoot = vout_undershoot_base - vout_undershoot_min
     overshoot = vout_overshoot_max - vout_overshoot_base
@@ -225,16 +227,20 @@ def findShoot_general(filename, time_ranges, stable_voltage):
     stable_high_load_voltage = vout_undershoot[-1]
     stable_light_load_voltage = vout_overshoot[-1]
     # print(f"Debug, stable_light_load_voltage: {stable_light_load_voltage}")
-    if stable_high_load_voltage >= stable_voltage * 1.1 or stable_high_load_voltage <= stable_voltage * 0.9:
+    if stable_high_load_voltage >= stable_voltage * 1.05 or stable_high_load_voltage <= stable_voltage * 0.95:
         print("Warning! This LDO cannot be regulated to VREF under high load.")
         overshoot = 100.0
         undershoot = 100.0
-    if stable_light_load_voltage >= stable_voltage * 1.1 or stable_light_load_voltage <= stable_voltage * 0.9:
+    if stable_light_load_voltage >= stable_voltage * 1.05 or stable_light_load_voltage <= stable_voltage * 0.95:
         print("Warning! This LDO cannot be regulated to VREF under light load.")
         overshoot = 100.0
         undershoot = 100.0
     if stable_high_load_voltage == 0.0 or stable_light_load_voltage == 0.0:
         print("Warning! No shoot be found.")
+        overshoot = 100.0
+        undershoot = 100.0
+    if overshoot == 0.0 or undershoot == 0.0:
+        print("Warning! Shoot is zero. Too good to be true")
         overshoot = 100.0
         undershoot = 100.0
     else:
@@ -246,6 +252,11 @@ def findShoot_general(filename, time_ranges, stable_voltage):
 def findShoot(filename):
     result = findShoot_general(filename, [(2.5e-6, 7.5e-6), (7.5e-6, 12.5e-6)], 1.0)
     return result
+
+
+# Test Code
+# file = "/Users/hanwu/Downloads/Log_N65/Mohamed/select_point/tmp_20240520081612350614613/Trans.raw/tran.tran.tran.encode"
+# print(findShoot(file))
 
 
 def findShoot_Jiangping(filename):
@@ -267,7 +278,7 @@ def scan_and_process(root_dir, highlight_subdir):
     results = {}
 
     for subdir in next(os.walk(root_dir))[1]:
-        target_file = os.path.join(root_dir, subdir, 'Trans_1_2V.raw', 'tran.tran.tran.encode')
+        target_file = os.path.join(root_dir, subdir, 'Trans.raw', 'tran.tran.tran.encode')
         if os.path.isfile(target_file):
             trace_data = extractTransTrace(target_file)
             results[subdir] = {
@@ -301,8 +312,8 @@ def plot_data(results, highlight_subdir, root_dir):
     print(f"Image save to：{plt_path}")
 
 
-# root_dir = '/Users/hanwu/Downloads/Log/Jianping/v2/shoot_min'
-# highlight_subdir = 'tmp_20240515192828337377957'
+# root_dir = '/Users/hanwu/Downloads/Log_N65/Mohamed/select_point'
+# highlight_subdir = 'tmp_20240520134711350467318'
 # scan_and_process(root_dir, highlight_subdir)
 
 
