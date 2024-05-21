@@ -1,112 +1,104 @@
-from collections import defaultdict
 import re
 
 
-def extractTrace(filepath):
+def extractTransTrace(file_path):
     """
-    Extract the trace data from a file.
+    Processes the signal file to extract time series data for each signal, correctly handling the 'group' line.
 
     Args:
-    - file: File object to be processed.
+    file_path (str): Path to the signal file.
+
+    Returns:
+    dict: A dictionary containing time series data for each signal.
     """
+    # Read the entire file
+    with open(file_path, 'r') as file:
+        all_lines = file.readlines()
 
-    is_collecting = False
-    extracted_lines = []
+    # Find indices for "TRACE", "VALUE", and "END"
+    trace_index = next(i for i, line in enumerate(all_lines) if "TRACE" in line)
+    value_index = next(i for i, line in enumerate(all_lines) if "VALUE" in line)
+    end_index = next(i for i, line in enumerate(all_lines) if "END" in line)
 
-    with open(filepath, 'r') as filepath:
-        lines = filepath.readlines()
-    # Find TRACE line and END line
-    for line in lines:
-        if "VALUE" in line:
-            is_collecting = True
-            continue
-        elif "END" in line:
-            break
-        if is_collecting:
-            extracted_lines.append(line)
+    # Extract lines between "TRACE" and "VALUE" for signal names
+    trace_name_lines = all_lines[trace_index + 1:value_index]
+    # print(trace_name_lines)
 
-    extracted_trace = defaultdict(list)
-    for line in extracted_lines:
-        parts = line.split()
-        trace_name = parts[0]
-        trace_value = float(parts[1])
-        extracted_trace[trace_name].append(trace_value)
+    # Remove lines from "PROP(" ending line to the nearest ")" line
+    filtered_lines = []
+    skip = False
 
-    trace_dict = dict(extracted_trace)
-
-    return trace_dict
-
-
-def extractTransTrace(filepath):
-    """
-    Extract the trace data from a file.
-
-    Args:
-    - file: File object to be processed.
-    """
-
-    with open(filepath, "r") as filepath:
-        content = filepath.readlines()
-    # Find TRACE, VALUE and END lines, make segments
-
-    is_collecting = False
-    extracted_trace_lines = []
-
-    for line in content:
-        if "TRACE" in line:
-            is_collecting = True
-            continue
-        elif "VALUE" in line:
-            break
-        if is_collecting:
-            extracted_trace_lines.append(line)
-
-    is_collecting = False
-    extracted_trace_lines_refine = []
-
-    for line in extracted_trace_lines:
-        if ")" in line:
-            is_collecting = True
-            continue
-        if is_collecting:
-            extracted_trace_lines_refine.append(line)
-
-    is_collecting = False
-    extracted_value_lines = []
-
-    for line in content:
-        if "VALUE" in line:
-            is_collecting = True
-            continue
-        if "END" in line:
-            break
-        if is_collecting:
-            extracted_value_lines.append(line)
-
-    trace_name_list = []
-    for line in extracted_trace_lines_refine:
-        parts = line.split()
-        trace_name = parts[0].strip('"')
-        trace_name_list.append(trace_name)
-
-    # Separate extracted_value_lines by "time"
-    extracted_trace = defaultdict(list)
-    line_count = 0
-    for line in extracted_value_lines:
-        if line.startswith('"time"'):
-            cur_time = float(line.split()[1])
-            extracted_trace["time"].append(cur_time)
-            line_count = 0
-        elif line.startswith('"group"'):
-            continue
+    for line in trace_name_lines:
+        if skip:
+            if ")" in line:
+                skip = False
         else:
-            trace_key = trace_name_list[line_count % len(trace_name_list)]
-            line_count += 1
-            extracted_trace[trace_key].append(float(line))
+            if line.strip().endswith("PROP("):
+                filtered_lines.append(line)
+                skip = True
+            else:
+                filtered_lines.append(line)
 
-    trace_dict = dict(extracted_trace)
+    # print(filtered_lines)
 
-    return trace_dict
+    extracted_signal_name = []
+    for line in filtered_lines:
+        match = re.search(r'\"(.*?)\"', line)
+        if match:
+            extracted_signal_name.append(match.group(1))
+    extracted_signal_name.pop(0)
+    # print(extracted_signal_name)
+
+    trace_value_lines = all_lines[value_index + 1:end_index]
+    # print(trace_value_lines)
+
+    grouped_trace_values = []
+    current_group = []
+
+    for line in trace_value_lines:
+        if line.strip().startswith('"time"'):
+            if current_group:
+                grouped_trace_values.append(current_group)
+            current_group = [line]
+        else:
+            current_group.append(line)
+
+    # Add the last group if it's not empty
+    if current_group:
+        grouped_trace_values.append(current_group)
+    # print(grouped_trace_values)
+
+    for group in grouped_trace_values:
+        for i, line in enumerate(group):
+            if line.strip().startswith('"group"'):
+                group[i] = line.replace('"group"', '').strip()
+    # print(grouped_trace_values)
+
+    signal_data = {name: [] for name in extracted_signal_name}
+    signal_data["time"] = []
+
+    # Process each group in grouped_trace_values
+    for group in grouped_trace_values:
+        # Find the "time" line and extract the timestamp
+        time_line = next(line for line in group if line.strip().startswith('"time"'))
+        timestamp = float(time_line.replace('"time"', '').strip())
+
+        # Process each line after the "time" line
+        for line, name in zip(group[group.index(time_line) + 1:], extracted_signal_name):
+            # Add the signal data to the corresponding list in signal_data
+            signal_data[name].append(float(line.strip()))
+
+        # Add the timestamp to the "time" list
+        signal_data["time"].append(timestamp)
+
+    # print(signal_data)
+
+    return signal_data
+
+# Test Code
+# file = "/Users/hanwu/Downloads/Log_N65/Jianping/select_point/tmp_20240518030545162069028/Trans_Line_Reg.raw/tran.tran.tran.encode"
+# dict = extractTransTrace(file)
+# print(dict)
 
 
 def extractACTrace(file_path):

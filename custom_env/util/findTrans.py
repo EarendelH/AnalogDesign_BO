@@ -1,6 +1,16 @@
 # from extract_trace import extractTransTrace
 from util.extract_trace import extractTransTrace
 import numpy as np
+import bisect
+
+
+def find_indices_in_range(nums, range_start, range_end):
+    start_idx = bisect.bisect_left(nums, range_start)
+    end_idx = bisect.bisect_right(nums, range_end)
+
+    indices = list(range(start_idx, end_idx))
+
+    return indices
 
 
 def analyze_trans_file(file_path):
@@ -199,13 +209,19 @@ def findShoot_general(filename, time_ranges, stable_voltage):
 
     trans_dict = extractTransTrace(filename)
     time_series = trans_dict["time"]
+    # print(f"Debug!!! time_series: {time_series} \n with length: {len(time_series)}")
     vout_trace = trans_dict["VOUT"]
+    # print(f"Debug!!! vout_trace: {vout_trace} \n with length: {len(vout_trace)}")
 
     # Clip time according to time_ranges
-    time_undershoot_index = [i for i, t in enumerate(time_series) if time_ranges[0][0] <= t <= time_ranges[0][1]]
-    time_overshoot_index = [i for i, t in enumerate(time_series) if time_ranges[1][0] <= t <= time_ranges[1][1]]
+    time_undershoot_index = find_indices_in_range(time_series, time_ranges[0][0], time_ranges[0][1])
+    # print(f"Debug!!! time_undershoot_index: {time_undershoot_index}")
+    time_overshoot_index = find_indices_in_range(time_series, time_ranges[1][0], time_ranges[1][1])
+    # print(f"Debug!!! time_overshoot_index: {time_overshoot_index}")
     vout_undershoot = [vout_trace[i] for i in time_undershoot_index]
     vout_overshoot = [vout_trace[i] for i in time_overshoot_index]
+    # print(f"Debug!!! vout_undershoot: {vout_undershoot}")
+    # print(f"Debug!!! vout_overshoot: {vout_overshoot}")
 
     # Calculate overshoot and undershoot,
     # undershoot: Vout@50us -Vout_clip1_min, overshoot: Vout_clip2_max - Vout@100us
@@ -268,13 +284,12 @@ def findShoot_Jiangping(filename):
 
 
 # Test Code
-# file = "/Users/hanwu/Downloads/Log_N65/Jianping/select_point_debug/tmp_20240521145727576866771/Trans_1_2V.raw/tran.tran.tran.encode"
+# file = "/Users/hanwu/Downloads/Log_N65/Jianping/select_point/tmp_20240518030545162069028/Trans_1_2V.raw/tran.tran.tran.encode"
 # print(findShoot_Jiangping(file))
 
 def findShoot_Debashis(filename):
     result = findShoot_general(filename, [(2.5e-6, 7.5e-6), (7.5e-6, 12.5e-6)], 1.6)
     return result
-
 
 # Test Code
 # file = "/Users/hanwu/Downloads/Log_N65/Debashis/select_point/tmp_20240520224716498574920/Trans_9m.raw/tran.tran.tran.encode"
@@ -286,6 +301,9 @@ def findShoot_Line_Reg_Debashis(filename):
 
 
 def findShoot_Line_Reg_Jianping(filename):
-    result = findShoot_general(filename, [(3.4e-4, 4.0e-4), (8.0e-5, 1.4e-4)], 0.5)
+    result = findShoot_general(filename, [(0.00023, 0.00046), (0.00004, 0.00023)], 0.5)
     return result
 
+# Test Code
+# file = "/Users/hanwu/Downloads/Log_N65/Jianping/select_point/tmp_20240518030545162069028/Trans_Line_Reg.raw/tran.tran.tran.encode"
+# print(findShoot_Line_Reg_Jianping(file))
