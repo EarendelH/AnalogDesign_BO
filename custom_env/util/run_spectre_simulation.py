@@ -142,13 +142,13 @@ def run_dynamic_simulation(work_dir, sim_config, zero_sim_result, show_output=Fa
             result = function(processed_file_full_path)
             results[simulation] = result
 
-            print(f"Debug in run_dynamic_simulation.py, result in {simulation} is {result}")
+            # print(f"Debug in run_dynamic_simulation.py, result in {simulation} is {result}")
 
             # Add Simulation Name before each keys in the result dictionary. Avoid error in flatten the dictionary
             modified_result = {f"{simulation}_{key}": value for key, value in result.items()}
             results[simulation] = modified_result
 
-            print(f"Debug: {simulation} simulation result: {results}")
+            # print(f"Debug: {simulation} simulation result: {results}")
 
             if simulation == "PSR" and not all(value == 0.0 for value in result.values()):
                 fail_tag = False
@@ -157,12 +157,12 @@ def run_dynamic_simulation(work_dir, sim_config, zero_sim_result, show_output=Fa
                     fail_tag = True
                     print(f"Simulation {simulation} failed. Return zero simulation result")
                     print(f"Partial result success: {results}")
-                    print(f"Debug!!! Simulation {simulation} failed. Return zero simulation result")
+                    # print(f"Debug!!! Simulation {simulation} failed. Return zero simulation result")
                 if any(value == 0.0 for value in result.values()) and (objective == "max"):
                     fail_tag = True
                     print(f"Simulation {simulation} failed. Return zero simulation result")
                     print(f"Partial result success: {results}")
-                    print(f"Debug!!! Simulation {simulation} failed. Return zero simulation result")
+                    # print(f"Debug!!! Simulation {simulation} failed. Return zero simulation result")
             # Easy way to determine the stability of transient simulation
             if simulation.startswith("Trans"):
                 # Determine whether processed_file is larger than 1M
@@ -172,11 +172,11 @@ def run_dynamic_simulation(work_dir, sim_config, zero_sim_result, show_output=Fa
                     fail_tag = True
                     # All items in modified_result{simulation} set to 1
                     results[simulation] = {key: 100.0 for key in modified_result.keys()}
-                    print(f"Debug!!! Simulation {simulation} failed. Return zero simulation result")
+                    # print(f"Debug!!! Simulation {simulation} failed. Return zero simulation result")
 
         # Break the loop if fail_tag is True
         if fail_tag:
-            print(f"Debug!!! Simulation {simulation} failed. Break the loop. No more simulation should be run.")
+            # print(f"Debug!!! Simulation {simulation} failed. Break the loop. No more simulation should be run.")
             break
 
         # Save result as pickle file
