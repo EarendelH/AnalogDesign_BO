@@ -1,4 +1,5 @@
 import re
+from collections import defaultdict
 
 
 def extractTrace(filepath):
