@@ -288,3 +288,4 @@ def findShoot_Line_Reg_Debashis(filename):
 def findShoot_Line_Reg_Jianping(filename):
     result = findShoot_general(filename, [(3.4e-4, 4.0e-4), (8.0e-5, 1.4e-4)], 0.5)
     return result
+
