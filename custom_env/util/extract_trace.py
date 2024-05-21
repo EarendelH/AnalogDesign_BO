@@ -1,6 +1,41 @@
 import re
 
 
+def extractTrace(filepath):
+    """
+    Extract the trace data from a file.
+
+    Args:
+    - file: File object to be processed.
+    """
+
+    is_collecting = False
+    extracted_lines = []
+
+    with open(filepath, 'r') as filepath:
+        lines = filepath.readlines()
+    # Find TRACE line and END line
+    for line in lines:
+        if "VALUE" in line:
+            is_collecting = True
+            continue
+        elif "END" in line:
+            break
+        if is_collecting:
+            extracted_lines.append(line)
+
+    extracted_trace = defaultdict(list)
+    for line in extracted_lines:
+        parts = line.split()
+        trace_name = parts[0]
+        trace_value = float(parts[1])
+        extracted_trace[trace_name].append(trace_value)
+
+    trace_dict = dict(extracted_trace)
+
+    return trace_dict
+
+
 def extractTransTrace(file_path):
     """
     Processes the signal file to extract time series data for each signal, correctly handling the 'group' line.
