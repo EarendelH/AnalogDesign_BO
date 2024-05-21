@@ -276,6 +276,10 @@ def findShoot_Debashis(filename):
     return result
 
 
+# Test Code
+# file = "/Users/hanwu/Downloads/Log_N65/Debashis/select_point/tmp_20240520224716498574920/Trans_9m.raw/tran.tran.tran.encode"
+# print(findShoot_Debashis(file))
+
 def findShoot_Line_Reg_Debashis(filename):
     result = findShoot_general(filename, [(7.5e-6, 12.5e-6), (2.5e-6, 7.5e-6)], 1.6)
     return result
