@@ -43,9 +43,9 @@ def plot_data(results, highlight_subdir, root_dir):
     print(f"Image save to：{plt_path}")
 
 
-root_dir = '/Users/hanwu/Downloads/Log_N65/Yan/select_point'
-highlight_subdir = 'tmp_20240520221003274241868'
-scan_and_process(root_dir, highlight_subdir)
+# root_dir = '/Users/hanwu/Downloads/Log_N65/Yan/select_point'
+# highlight_subdir = 'tmp_20240520221003274241868'
+# scan_and_process(root_dir, highlight_subdir)
 
 
 def fourier_analysis(time_data, signal_data):
