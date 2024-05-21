@@ -9,7 +9,7 @@ def scan_and_process(root_dir, highlight_subdir):
     results = {}
 
     for subdir in next(os.walk(root_dir))[1]:
-        target_file = os.path.join(root_dir, subdir, 'Trans.raw', 'tran.tran.tran.encode')
+        target_file = os.path.join(root_dir, subdir, 'Trans_0_75V.raw', 'tran.tran.tran.encode')
         if os.path.isfile(target_file):
             trace_data = extractTransTrace(target_file)
             results[subdir] = {
@@ -43,8 +43,8 @@ def plot_data(results, highlight_subdir, root_dir):
     print(f"Image save to：{plt_path}")
 
 
-# root_dir = '/Users/hanwu/Downloads/Log_N65/Yan/select_point'
-# highlight_subdir = 'tmp_20240520221003274241868'
+# root_dir = '/Users/hanwu/Downloads/Log_N65/Jianping/select_point'
+# highlight_subdir = 'tmp_20240519112142162143338'
 # scan_and_process(root_dir, highlight_subdir)
 
 

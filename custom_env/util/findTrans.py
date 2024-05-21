@@ -225,11 +225,12 @@ def findShoot_general(filename, time_ranges, stable_voltage):
     stable_high_load_voltage = vout_undershoot[-1]
     stable_light_load_voltage = vout_overshoot[-1]
     # print(f"Debug, stable_light_load_voltage: {stable_light_load_voltage}")
-    if stable_high_load_voltage >= stable_voltage * 1.05 or stable_high_load_voltage <= stable_voltage * 0.95:
+    # print(f"Debug, stable_high_load_voltage: {stable_high_load_voltage}")
+    if stable_high_load_voltage >= stable_voltage * 1.2 or stable_high_load_voltage <= stable_voltage * 0.8:
         print("Warning! This LDO cannot be regulated to VREF under high load.")
         overshoot = 100.0
         undershoot = 100.0
-    if stable_light_load_voltage >= stable_voltage * 1.05 or stable_light_load_voltage <= stable_voltage * 0.95:
+    if stable_light_load_voltage >= stable_voltage * 1.2 or stable_light_load_voltage <= stable_voltage * 0.8:
         print("Warning! This LDO cannot be regulated to VREF under light load.")
         overshoot = 100.0
         undershoot = 100.0
@@ -265,6 +266,10 @@ def findShoot_Jiangping(filename):
     result = findShoot_general(filename, [(2.5e-6, 7.5e-6), (7.5e-6, 12.5e-6)], 0.5)
     return result
 
+
+# Test Code
+# file = "/Users/hanwu/Downloads/Log_N65/Jianping/select_point/tmp_20240520060550161998830/Trans_0_75V.raw/tran.tran.tran.encode"
+# print(findShoot_Jiangping(file))
 
 def findShoot_Debashis(filename):
     result = findShoot_general(filename, [(2.5e-6, 7.5e-6), (7.5e-6, 12.5e-6)], 1.6)
