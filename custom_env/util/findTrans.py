@@ -1,5 +1,5 @@
-# from extract_trace import extractTransTrace
-from util.extract_trace import extractTransTrace
+from extract_trace import extractTransTrace
+# from util.extract_trace import extractTransTrace
 import numpy as np
 
 
@@ -242,10 +242,10 @@ def findShoot_general(filename, time_ranges, stable_voltage):
         print("Warning! Shoot is zero. Too good to be true")
         overshoot = 100.0
         undershoot = 100.0
-    if overshoot >= stable_voltage or undershoot >= stable_voltage:
-        print("Warning! Shoot is too large.")
-        overshoot = 100.0
-        undershoot = 100.0
+    # if overshoot >= stable_voltage or undershoot >= stable_voltage:
+    #     print("Warning! Shoot is too large.")
+    #     overshoot = 100.0
+    #     undershoot = 100.0
     else:
         pass
 
@@ -268,7 +268,7 @@ def findShoot_Jiangping(filename):
 
 
 # Test Code
-# file = "/Users/hanwu/Downloads/Log_N65/Jianping/select_point/tmp_20240520060550161998830/Trans_0_75V.raw/tran.tran.tran.encode"
+# file = "/Users/hanwu/Downloads/Log_N65/Jianping/select_point_debug/tmp_20240521145727576866771/Trans_1_2V.raw/tran.tran.tran.encode"
 # print(findShoot_Jiangping(file))
 
 def findShoot_Debashis(filename):
