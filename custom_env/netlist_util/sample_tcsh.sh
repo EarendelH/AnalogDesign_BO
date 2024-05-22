@@ -12,12 +12,12 @@ if (! -d "$target_directory") then
 endif
 
 # Loop through all subdirectories starting with 'tmp'
-foreach directory (`ls -d $target_directory/tmp*/`)
+foreach directory ("$target_directory"/tmp*/)
   if (-d "$directory") then
     echo "Processing directory: $directory"
 
     # Process all .scs files in the directory
-    foreach file (`ls $directory/*.scs 2>/dev/null`)
+    foreach file ("$directory"/*.scs)
       if (-f "$file") then
         set start_spectre = `date +%s`
         spectre -64 +aps "$file"
@@ -28,9 +28,9 @@ foreach directory (`ls -d $target_directory/tmp*/`)
     end
 
     # Process all subdirectories
-    foreach subdir (`ls -d $directory/*/ 2>/dev/null`)
+    foreach subdir ("$directory"/*/)
       if (-d "$subdir") then
-        foreach file (`ls $subdir/* 2>/dev/null`)
+        foreach file ("$subdir"/*)
           if (-f "$file") then
             set start_psf = `date +%s`
             psf "$file" -o "${file}.encode"
