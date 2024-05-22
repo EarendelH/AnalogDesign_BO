@@ -286,8 +286,8 @@ def findShoot(filename):
 
 
 # Test Code
-file = "/Users/hanwu/Downloads/Log_N65/Mohamed/select_point/tmp_20240521235143711221896/Trans.raw/tran.tran.tran.encode.encode"
-print(findShoot(file))
+# file = "/Users/hanwu/Downloads/Log_N65/Mohamed/select_point/tmp_20240521235143711221896/Trans.raw/tran.tran.tran.encode.encode"
+# print(findShoot(file))
 
 
 def findShoot_Jiangping(filename):
