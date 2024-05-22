@@ -242,6 +242,13 @@ def findShoot_general(filename, time_ranges, stable_voltage):
     stable_light_load_voltage = vout_overshoot[-1]
     # print(f"Debug, stable_light_load_voltage: {stable_light_load_voltage}")
     # print(f"Debug, stable_high_load_voltage: {stable_high_load_voltage}")
+
+    # Calculate penalty coefficient for punishing the max difference between ideal and real stable voltage
+    max_stable_voltage_diff = max(abs(stable_high_load_voltage - stable_voltage), abs(stable_light_load_voltage - stable_voltage))
+    # print(f"Debug, max_stable_voltage_diff: {max_stable_voltage_diff}")
+    penalty_coeff = max_stable_voltage_diff/stable_voltage
+    # print(f"Debug, penalty_coeff: {penalty_coeff}")
+
     if stable_high_load_voltage >= stable_voltage * 1.1 or stable_high_load_voltage <= stable_voltage * 0.9:
         print("Warning! This LDO cannot be regulated to VREF under high load.")
         overshoot = 100.0
@@ -265,6 +272,11 @@ def findShoot_general(filename, time_ranges, stable_voltage):
     else:
         pass
 
+    # print(f"Debug, overshoot: {overshoot} and undershoot: {undershoot}")
+
+    # overshoot = overshoot * (1 + penalty_coeff)
+    # undershoot = undershoot * (1 + penalty_coeff)
+
     return {"overShoot": overshoot, "underShoot": undershoot}
 
 
@@ -274,8 +286,8 @@ def findShoot(filename):
 
 
 # Test Code
-# file = "/Users/hanwu/Downloads/Log_N65/Mohamed/select_point/tmp_20240520081612350614613/Trans.raw/tran.tran.tran.encode"
-# print(findShoot(file))
+file = "/Users/hanwu/Downloads/Log_N65/Mohamed/select_point/tmp_20240521235143711221896/Trans.raw/tran.tran.tran.encode.encode"
+print(findShoot(file))
 
 
 def findShoot_Jiangping(filename):
