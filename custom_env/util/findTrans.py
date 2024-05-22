@@ -242,11 +242,11 @@ def findShoot_general(filename, time_ranges, stable_voltage):
     stable_light_load_voltage = vout_overshoot[-1]
     # print(f"Debug, stable_light_load_voltage: {stable_light_load_voltage}")
     # print(f"Debug, stable_high_load_voltage: {stable_high_load_voltage}")
-    if stable_high_load_voltage >= stable_voltage * 1.2 or stable_high_load_voltage <= stable_voltage * 0.8:
+    if stable_high_load_voltage >= stable_voltage * 1.1 or stable_high_load_voltage <= stable_voltage * 0.9:
         print("Warning! This LDO cannot be regulated to VREF under high load.")
         overshoot = 100.0
         undershoot = 100.0
-    if stable_light_load_voltage >= stable_voltage * 1.2 or stable_light_load_voltage <= stable_voltage * 0.8:
+    if stable_light_load_voltage >= stable_voltage * 1.1 or stable_light_load_voltage <= stable_voltage * 0.9:
         print("Warning! This LDO cannot be regulated to VREF under light load.")
         overshoot = 100.0
         undershoot = 100.0
