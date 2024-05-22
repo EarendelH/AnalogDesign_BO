@@ -1,57 +1,57 @@
 // Generated for: spectre
-// Generated on: May 17 15:47:49 2024
+// Generated on: May 17 15:25:03 2024
 // Design library name: LDO_JSSC2010_Mohamed_N65
-// Design cell name: tb_DC
+// Design cell name: tb_Line_Reg
 // Design view name: schematic
 simulator lang=spectre
 global 0
-parameters CC1 CC2 CFF1 IB1 IB2 IB3 IB4 IB5 IB6 IB7 RC2 RF1 RF2 RFF1 RFF2 RS1 RS2 RS3 w_M14_per_finger l_M14 nf_M14 w_M3_per_finger l_M3 nf_M3 w_M4_per_finger l_M4 nf_M4 w_M8_per_finger l_M8 nf_M8 w_M7_per_finger l_M7 nf_M7 w_M13_per_finger l_M13 nf_M13 w_M18_per_finger l_M18 nf_M18 w_M6_per_finger l_M6 nf_M6 w_M5_per_finger l_M5 nf_M5 w_M12_per_finger l_M12 nf_M12 w_M10_per_finger l_M10 nf_M10 w_M9_per_finger l_M9 nf_M9 w_M1_per_finger l_M1 nf_M1 w_M2_per_finger l_M2 nf_M2 w_M0_per_finger l_M0 nf_M0 w_M16_per_finger l_M16 nf_M16 w_M15_per_finger l_M15 nf_M15
-include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_bip
-include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_dio
-include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_dio_33
-include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_mim
-include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_dio_dnw
-include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_dio_18
-include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_bip_npn
-include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_33
-include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_rfrtmom
-include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_mos_cap_25
-include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_18
-include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_disres
-include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_res
-include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_dio_na
-include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_rfmos_33
-include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_dio_hvt
-include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_rfmvar
-include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_rfmos_18
-include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_na
-include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_dio_na33
-include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_dio_lvt
-include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_rfres_sa
-include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_na33
-include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_dio_esd
-include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_rfmim
-include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_dio_25od33
-include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_25od33
-include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt
-include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_mos_cap
-include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_dio_25
-include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_dio_25ud18
-include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_25
-include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_rfmos
-include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_25ud18
-include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_dio_na25od33
-include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_rfjvar
-include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_rfmos_25
-include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_rtmom
-include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_na25od33
-include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_dio_na25
-include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_rfres_rpo
-include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_hvt
-include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_rfind
-include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_rfmvar_25
-include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_na25
-include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_lvt
+parameters VIN=1.8 CC1 CC2 CFF1 IB1 IB2 IB3 IB4 IB5 IB6 IB7 RC2 RF1 RF2 RFF1 RFF2 RS1 RS2 RS3 w_M14_per_finger l_M14 nf_M14 w_M3_per_finger l_M3 nf_M3 w_M4_per_finger l_M4 nf_M4 w_M8_per_finger l_M8 nf_M8 w_M7_per_finger l_M7 nf_M7 w_M13_per_finger l_M13 nf_M13 w_M18_per_finger l_M18 nf_M18 w_M6_per_finger l_M6 nf_M6 w_M5_per_finger l_M5 nf_M5 w_M12_per_finger l_M12 nf_M12 w_M10_per_finger l_M10 nf_M10 w_M9_per_finger l_M9 nf_M9 w_M1_per_finger l_M1 nf_M1 w_M2_per_finger l_M2 nf_M2 w_M0_per_finger l_M0 nf_M0 w_M16_per_finger l_M16 nf_M16 w_M15_per_finger l_M15 nf_M15
+include "/home/hanwu/spectre_N65/crn65gplus_2d5_lk_v1d0.scs" section=tt_bip
+include "/home/hanwu/spectre_N65/crn65gplus_2d5_lk_v1d0.scs" section=tt_dio
+include "/home/hanwu/spectre_N65/crn65gplus_2d5_lk_v1d0.scs" section=tt_dio_33
+include "/home/hanwu/spectre_N65/crn65gplus_2d5_lk_v1d0.scs" section=tt_mim
+include "/home/hanwu/spectre_N65/crn65gplus_2d5_lk_v1d0.scs" section=tt_dio_dnw
+include "/home/hanwu/spectre_N65/crn65gplus_2d5_lk_v1d0.scs" section=tt_dio_18
+include "/home/hanwu/spectre_N65/crn65gplus_2d5_lk_v1d0.scs" section=tt_bip_npn
+include "/home/hanwu/spectre_N65/crn65gplus_2d5_lk_v1d0.scs" section=tt_33
+include "/home/hanwu/spectre_N65/crn65gplus_2d5_lk_v1d0.scs" section=tt_rfrtmom
+include "/home/hanwu/spectre_N65/crn65gplus_2d5_lk_v1d0.scs" section=tt_mos_cap_25
+include "/home/hanwu/spectre_N65/crn65gplus_2d5_lk_v1d0.scs" section=tt_18
+include "/home/hanwu/spectre_N65/crn65gplus_2d5_lk_v1d0.scs" section=tt_disres
+include "/home/hanwu/spectre_N65/crn65gplus_2d5_lk_v1d0.scs" section=tt_res
+include "/home/hanwu/spectre_N65/crn65gplus_2d5_lk_v1d0.scs" section=tt_dio_na
+include "/home/hanwu/spectre_N65/crn65gplus_2d5_lk_v1d0.scs" section=tt_rfmos_33
+include "/home/hanwu/spectre_N65/crn65gplus_2d5_lk_v1d0.scs" section=tt_dio_hvt
+include "/home/hanwu/spectre_N65/crn65gplus_2d5_lk_v1d0.scs" section=tt_rfmvar
+include "/home/hanwu/spectre_N65/crn65gplus_2d5_lk_v1d0.scs" section=tt_rfmos_18
+include "/home/hanwu/spectre_N65/crn65gplus_2d5_lk_v1d0.scs" section=tt_na
+include "/home/hanwu/spectre_N65/crn65gplus_2d5_lk_v1d0.scs" section=tt_dio_na33
+include "/home/hanwu/spectre_N65/crn65gplus_2d5_lk_v1d0.scs" section=tt_dio_lvt
+include "/home/hanwu/spectre_N65/crn65gplus_2d5_lk_v1d0.scs" section=tt_rfres_sa
+include "/home/hanwu/spectre_N65/crn65gplus_2d5_lk_v1d0.scs" section=tt_na33
+include "/home/hanwu/spectre_N65/crn65gplus_2d5_lk_v1d0.scs" section=tt_dio_esd
+include "/home/hanwu/spectre_N65/crn65gplus_2d5_lk_v1d0.scs" section=tt_rfmim
+include "/home/hanwu/spectre_N65/crn65gplus_2d5_lk_v1d0.scs" section=tt_dio_25od33
+include "/home/hanwu/spectre_N65/crn65gplus_2d5_lk_v1d0.scs" section=tt_25od33
+include "/home/hanwu/spectre_N65/crn65gplus_2d5_lk_v1d0.scs" section=tt
+include "/home/hanwu/spectre_N65/crn65gplus_2d5_lk_v1d0.scs" section=tt_mos_cap
+include "/home/hanwu/spectre_N65/crn65gplus_2d5_lk_v1d0.scs" section=tt_dio_25
+include "/home/hanwu/spectre_N65/crn65gplus_2d5_lk_v1d0.scs" section=tt_dio_25ud18
+include "/home/hanwu/spectre_N65/crn65gplus_2d5_lk_v1d0.scs" section=tt_25
+include "/home/hanwu/spectre_N65/crn65gplus_2d5_lk_v1d0.scs" section=tt_rfmos
+include "/home/hanwu/spectre_N65/crn65gplus_2d5_lk_v1d0.scs" section=tt_25ud18
+include "/home/hanwu/spectre_N65/crn65gplus_2d5_lk_v1d0.scs" section=tt_dio_na25od33
+include "/home/hanwu/spectre_N65/crn65gplus_2d5_lk_v1d0.scs" section=tt_rfjvar
+include "/home/hanwu/spectre_N65/crn65gplus_2d5_lk_v1d0.scs" section=tt_rfmos_25
+include "/home/hanwu/spectre_N65/crn65gplus_2d5_lk_v1d0.scs" section=tt_rtmom
+include "/home/hanwu/spectre_N65/crn65gplus_2d5_lk_v1d0.scs" section=tt_na25od33
+include "/home/hanwu/spectre_N65/crn65gplus_2d5_lk_v1d0.scs" section=tt_dio_na25
+include "/home/hanwu/spectre_N65/crn65gplus_2d5_lk_v1d0.scs" section=tt_rfres_rpo
+include "/home/hanwu/spectre_N65/crn65gplus_2d5_lk_v1d0.scs" section=tt_hvt
+include "/home/hanwu/spectre_N65/crn65gplus_2d5_lk_v1d0.scs" section=tt_rfind
+include "/home/hanwu/spectre_N65/crn65gplus_2d5_lk_v1d0.scs" section=tt_rfmvar_25
+include "/home/hanwu/spectre_N65/crn65gplus_2d5_lk_v1d0.scs" section=tt_na25
+include "/home/hanwu/spectre_N65/crn65gplus_2d5_lk_v1d0.scs" section=tt_lvt
 // Library name: LDO_JSSC2010_Mohamed_N65
 // Cell name: LDO_Core
 // View name: schematic
@@ -94,13 +94,13 @@ subckt LDO_Core VFB VIN VOUT VREF VSS
 ends LDO_Core
 // End of subcircuit definition.
 // Library name: LDO_JSSC2010_Mohamed_N65
-// Cell name: tb_DC
+// Cell name: tb_Line_Reg
 // View name: schematic
 I0 (VOUT VIN VOUT VREF VSS) LDO_Core
 C3 (net4 VSS) capacitor c=4u
 R8 (VOUT net4) resistor r=30m
-I1 (VOUT VSS) isource dc=0 type=dc
-V2 (VIN 0) vsource dc=1.8 type=dc
+I1 (VOUT VSS) isource dc=25m type=dc
+V2 (VIN 0) vsource dc=VIN type=dc
 V1 (VREF 0) vsource dc=1 type=dc
 V0 (VSS 0) vsource dc=0 type=dc
 simulatorOptions options psfversion="1.1.0" reltol=1e-3 vabstol=1e-6 \
@@ -109,11 +109,12 @@ simulatorOptions options psfversion="1.1.0" reltol=1e-3 vabstol=1e-6 \
     sensfile="../psf/sens.output" checklimitdest=psf 
 dcOp dc write="spectre.dc" maxiters=150 maxsteps=10000 annotate=status
 dcOpInfo info what=oppoint where=rawfile
+dc dc param=VIN start=1.15 stop=1.8 oppoint=rawfile maxiters=150 \
+    maxsteps=10000 annotate=status
 modelParameter info what=models where=rawfile
 element info what=inst where=rawfile
 outputParameter info what=output where=rawfile
 designParamVals info what=parameters where=rawfile
 primitives info what=primitives where=rawfile
 subckts info what=subckts where=rawfile
-save V0:p 
 saveOptions options save=allpub
