@@ -265,10 +265,10 @@ def findShoot_general(filename, time_ranges, stable_voltage):
         print("Warning! Shoot is zero. Too good to be true")
         overshoot = 100.0
         undershoot = 100.0
-    # if overshoot >= stable_voltage or undershoot >= stable_voltage:
-    #     print("Warning! Shoot is too large.")
-    #     overshoot = 100.0
-    #     undershoot = 100.0
+    if overshoot >= stable_voltage or undershoot >= stable_voltage:
+        print("Warning! Shoot is too large.")
+        overshoot = 100.0
+        undershoot = 100.0
     else:
         pass
 
