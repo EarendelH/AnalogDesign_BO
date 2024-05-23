@@ -1,0 +1,43 @@
+HEADER
+"PSFversion" "1.00"
+"BINPSF creation time" "1716445273"
+"simulator" "spectre"
+"version" "17.1.0.627.isr15"
+"date" "2:21:13 PM, Thur May 23, 2024"
+"design" "// Generated for: spectre"
+"analysis type" "margin.stb"
+"analysis name" "stb"
+"analysis description" "Stability Analysis `stb': freq = (1 Hz -> 1 GHz)"
+"xVecSorted" "ascending"
+"tolerance.relative" 0.00100000
+"operating point producer" "stb"
+"probe" "IPRB0"
+"gainMargin" "3.417911e+00 dB"
+"gainMarginFrequency" "9.679282e+07 Hz"
+"phaseMargin" "9.246012e+00 Deg"
+"phaseMarginFrequency" "7.859489e+07 Hz"
+TYPE
+"dB" FLOAT DOUBLE PROP(
+"key" "gain"
+"units" "dB"
+)
+"Deg" FLOAT DOUBLE PROP(
+"key" "gain"
+"units" "Deg"
+)
+"Hz" FLOAT DOUBLE PROP(
+"key" "gain"
+"units" "Hz"
+)
+"stbstate" STRING *
+VALUE
+"gainMargin" "dB" 3.41791 PROP(
+"gainMarginInfo" "Gain margin = 3.417911e+00 dB at frequency = 9.679282e+07 Hz"
+)
+"gainMarginFreq" "Hz" 9.67928e+07
+"phaseMargin" "Deg" 9.24601 PROP(
+"phaseMarginInfo" "Phase margin = 9.246012e+00 Deg at frequency = 7.859489e+07 Hz"
+)
+"phaseMarginFreq" "Hz" 7.85949e+07
+"stb_state" "stbstate" "The circuit is stable. Gain and phase margin are both found."
+END
