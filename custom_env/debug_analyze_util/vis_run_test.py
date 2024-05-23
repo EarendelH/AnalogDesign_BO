@@ -60,7 +60,9 @@ def label_directories(base_path, sorted_dirs):
 # Function to plot the distribution of labels
 def plot_label_distribution(labels, group_size=10000):
     label_values = list(labels.values())
+    print(f"Debug, label_values: {label_values}")
     max_label = max(label_values) if label_values else 0
+    print(f"Debug, max_label: {max_label}")
     colors = LinearSegmentedColormap.from_list("gradient", ["#FFFFFF", "#1C4E87"], N=max_label + 1)
 
     num_groups = (len(label_values) + group_size - 1) // group_size
