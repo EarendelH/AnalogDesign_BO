@@ -1,9 +1,10 @@
 import os
 import pickle
 import csv
-import matplotlib.pyplot as plt
+import multiprocessing as mp
 import numpy as np
 from matplotlib.colors import LinearSegmentedColormap
+import matplotlib.pyplot as plt
 
 
 # Function to validate entries using specific criteria
@@ -23,27 +24,36 @@ def scan_and_sort_directories(base_path):
     return sorted_dirs
 
 
-# Function to label directories and write labels to a CSV file
+# Function to process a single directory
+def process_single_directory(args):
+    base_path, dir_name = args
+    dir_path = os.path.join(base_path, dir_name)
+    subdirs = os.listdir(dir_path)
+    current_process = mp.current_process()  # Getting the current process information
+    if 'Region.raw' in subdirs and len(subdirs) == 1:
+        return dir_name, 0, current_process.name  # Only contains Region.raw
+    else:
+        result_path = os.path.join(dir_path, 'result.pkl')
+        if os.path.exists(result_path):
+            with open(result_path, 'rb') as file:
+                result_dict = pickle.load(file)
+            return dir_name, is_valid_entry(result_dict), current_process.name  # Valid result
+        else:
+            return dir_name, 0, current_process.name  # Default label if conditions are not met
+
+
+# Function to label directories and write labels to a CSV file using multiprocessing
 def label_directories(base_path, sorted_dirs):
-    labels = {}
+    with mp.Pool(processes=mp.cpu_count()) as pool:
+        results = pool.map(process_single_directory, [(base_path, dir_name) for dir_name in sorted_dirs])
+
+    labels = {dir_name: (label, process_name) for dir_name, label, process_name in results}
     with open('directory_labels.csv', 'w', newline='') as file:
         writer = csv.writer(file)
-        writer.writerow(['Directory Name', 'Label'])
-        for dir_name in sorted_dirs:
-            dir_path = os.path.join(base_path, dir_name)
-            subdirs = os.listdir(dir_path)
-            if 'Region.raw' in subdirs and len(subdirs) == 1:
-                labels[dir_name] = 0  # Only contains Region.raw
-            else:
-                result_path = os.path.join(dir_path, 'result.pkl')
-                if os.path.exists(result_path):
-                    with open(result_path, 'rb') as file:
-                        result_dict = pickle.load(file)
-                    labels[dir_name] = is_valid_entry(result_dict)  # Valid result
-                else:
-                    labels[dir_name] = 0  # Default label if conditions are not met
-            writer.writerow([dir_name, labels[dir_name]])
-            print(f"Directory {dir_name} labeled as {labels[dir_name]}")
+        writer.writerow(['Directory Name', 'Label', 'Process Name'])
+        for dir_name, (label, process_name) in labels.items():
+            writer.writerow([dir_name, label, process_name])
+            print(f"Directory {dir_name} labeled as {label} by {process_name}")
     return labels
 
 
