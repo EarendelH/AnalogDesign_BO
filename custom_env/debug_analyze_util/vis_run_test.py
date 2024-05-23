@@ -47,7 +47,7 @@ def label_directories(base_path, sorted_dirs):
     with mp.Pool(processes=mp.cpu_count()) as pool:
         results = pool.map(process_single_directory, [(base_path, dir_name) for dir_name in sorted_dirs])
 
-    labels = {dir_name: (label, process_name) for dir_name, label, process_name in results}
+    labels = {dir_name: label for dir_name, (label, process_name) in results}
     with open('directory_labels.csv', 'w', newline='') as file:
         writer = csv.writer(file)
         writer.writerow(['Directory Name', 'Label', 'Process Name'])
@@ -60,9 +60,7 @@ def label_directories(base_path, sorted_dirs):
 # Function to plot the distribution of labels
 def plot_label_distribution(labels, group_size=10000):
     label_values = list(labels.values())
-    print(f"Debug, label_values: {label_values}")
     max_label = max(label_values) if label_values else 0
-    print(f"Debug, max_label: {max_label}")
     colors = LinearSegmentedColormap.from_list("gradient", ["#FFFFFF", "#1C4E87"], N=max_label + 1)
 
     num_groups = (len(label_values) + group_size - 1) // group_size
