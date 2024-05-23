@@ -29,17 +29,16 @@ def process_single_directory(args):
     base_path, dir_name = args
     dir_path = os.path.join(base_path, dir_name)
     subdirs = os.listdir(dir_path)
-    current_process = mp.current_process()  # Getting the current process information
     if 'Region.raw' in subdirs and len(subdirs) == 1:
-        return dir_name, 0, current_process.name  # Only contains Region.raw
+        return dir_name, 0
     else:
         result_path = os.path.join(dir_path, 'result.pkl')
         if os.path.exists(result_path):
             with open(result_path, 'rb') as file:
                 result_dict = pickle.load(file)
-            return dir_name, is_valid_entry(result_dict), current_process.name  # Valid result
+            return dir_name, is_valid_entry(result_dict)
         else:
-            return dir_name, 0, current_process.name  # Default label if conditions are not met
+            return dir_name, 0
 
 
 # Function to label directories and write labels to a CSV file using multiprocessing
@@ -47,13 +46,13 @@ def label_directories(base_path, sorted_dirs):
     with mp.Pool(processes=mp.cpu_count()) as pool:
         results = pool.map(process_single_directory, [(base_path, dir_name) for dir_name in sorted_dirs])
 
-    labels = {dir_name: label for dir_name, (label, process_name) in results}
+    labels = {dir_name: label for dir_name, label in results}
     with open('directory_labels.csv', 'w', newline='') as file:
         writer = csv.writer(file)
-        writer.writerow(['Directory Name', 'Label', 'Process Name'])
-        for dir_name, (label, process_name) in labels.items():
-            writer.writerow([dir_name, label, process_name])
-            print(f"Directory {dir_name} labeled as {label} by {process_name}")
+        writer.writerow(['Directory Name', 'Label'])
+        for dir_name, label in labels.items():
+            writer.writerow([dir_name, label])
+            print(f"Directory {dir_name} labeled as {label}")
     return labels
 
 
