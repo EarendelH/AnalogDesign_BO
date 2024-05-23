@@ -36,8 +36,8 @@ result_df = data['Valid_Specs'].apply(pd.Series)
 expanded_data = pd.concat([data.drop(columns=['Specs', 'Valid_Specs']), result_df], axis=1)
 
 # Save to a new CSV file and print the count of valid entries
-new_file_path = file_path.replace('.csv', '_format.csv')
-expanded_data.to_csv(new_file_path, index=False)
+new_file_path = file_path.replace('.csv', '_format.xlsx')
+expanded_data.to_excel(new_file_path, index=False)
 valid_length = len(expanded_data)
 print(f'Total valid entries: {valid_length}')
 
