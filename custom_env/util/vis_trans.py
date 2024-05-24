@@ -43,8 +43,8 @@ def plot_data(results, highlight_subdir, root_dir):
     print(f"Image save to：{plt_path}")
 
 
-root_dir = '/Users/hanwu/Downloads/Log_N65/Yan/5_23/select_point'
-highlight_subdir = 'tmp_20240523071355103055419'
+root_dir = '/Users/hanwu/Downloads/Log_N65/Yan/5_24/select_point'
+highlight_subdir = 'tmp_20240522221103102697277'
 scan_and_process(root_dir, highlight_subdir)
 
 
