@@ -6,8 +6,8 @@
 simulator lang=spectre
 global 0
 parameters VIN=1.8 CC1 CC2 CFF1 IB1 IB2 IB3 IB4 IB5 IB6 IB7 RC2 RF1 RF2 RFF1 RFF2 RS1 RS2 RS3 w_M18_per_finger l_M18 nf_M18 w_M16_per_finger l_M16 nf_M16 w_M15_per_finger l_M15 nf_M15 w_M12_per_finger l_M12 nf_M12 w_M10_per_finger l_M10 nf_M10 w_M9_per_finger l_M9 nf_M9 w_M6_per_finger l_M6 nf_M6 w_M5_per_finger l_M5 nf_M5 w_M2_per_finger l_M2 nf_M2 w_M1_per_finger l_M1 nf_M1 w_M0_per_finger l_M0 nf_M0 w_M14_per_finger l_M14 nf_M14 w_M13_per_finger l_M13 nf_M13 w_M8_per_finger l_M8 nf_M8 w_M7_per_finger l_M7 nf_M7 w_M4_per_finger l_M4 nf_M4 w_M3_per_finger l_M3 nf_M3
-include "/data/PDK/pdk_installed/tsmc180bcd_g2/pdk/pdk_1p6m_2/tsmc18/../models/spectre/c018bcd_gen2_v1d6_usage.scs" section=pre_simu
-include "/data/PDK/pdk_installed/tsmc180bcd_g2/pdk/pdk_1p6m_2/tsmc18/../models/spectre/c018bcd_gen2_v1d6_usage.scs" section=tt_lib
+include "/home/hanwu/spectre/c018bcd_gen2_v1d6_usage.scs" section=pre_simu
+include "/home/hanwu/spectre/c018bcd_gen2_v1d6_usage.scs" section=tt_lib
 // Library name: LDO_JSSC2010
 // Cell name: LDO_Core
 // View name: schematic
