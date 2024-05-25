@@ -140,16 +140,16 @@ def main():
                 sgd_minibatch_size=64,
                 num_sgd_iter=10,
                 model={
-                    "fcnet_hiddens": [256, 256, 256, 256, 256, 256, 256, 256],
+                    "fcnet_hiddens": [256, 256, 256, 256, 256, 256, 256, 256, 256, 256],
                 }
             )
             .debugging(log_level="DEBUG")
             .framework("torch")
             .resources(num_gpus=num_gpu)
             .multi_agent(
-                policies={"policy_1", "policy_2", "policy_3", "policy_4"},
+                policies={"policy_1", "policy_2", "policy_3", "policy_4", "policy_5"},
                 policy_mapping_fn=(lambda aid, episode, worker, **kw: f"policy_{aid[-1]}"),
-                policies_to_train=["policy_1", "policy_2", "policy_3", "policy_4"],
+                policies_to_train=["policy_1", "policy_2", "policy_3", "policy_4", "policy_5"],
             )
         )
 
