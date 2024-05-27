@@ -325,7 +325,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         # Update current param
         self.cur_param = copy.deepcopy(updated_param)
 
-        # Run DC check firstly and only once. If dc_check is True. If DC check failed, return zero sim result and -25
+        # Run DC check firstly and only once. If dc_check is True. If DC check failed, return zero sim result and -50
         # reward. End the episode.
         valid_param = None
         if self.dc_check:
@@ -372,7 +372,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
             observation = flatten_observation_w_region(observation_detail)
             logging.debug(f"Step!!!DC Check fail. Flatten Observation: {observation} with step number: {self.step_num}")
             observations = {agent: observation for agent in self.agents}
-            rew = {a: -25 for a in self.agents}
+            rew = {a: -50 for a in self.agents}
 
             logging.info(f"Step!!!DC Check fail. Reward result: {rew} with step number: {self.step_num}")
 
@@ -444,9 +444,9 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
             observations = {agent: observation for agent in self.agents}
 
             # Calculate reward
-            rew = {a: -25 for a in self.agents}
+            rew = {a: -50 for a in self.agents}
             # if fail_tage:
-            #     rew_single = -25
+            #     rew_single = -50
             #     logging.warning(f"Step!!!Reward is given to min due to some simulation failed")
             # else:
             #     rew_single = cal_reward(self.ideal_specs, sim_result, self.norm_specs)
