@@ -29,6 +29,8 @@ def cal_reward(ideal_specs_dict, cur_specs_dict, norm_specs_dict):
             single_reward = min((cur_spec_value - ideal_spec_value) / (cur_spec_value + ideal_spec_value), 0.0)
         elif constrain_objective == "min":
             single_reward = min((ideal_spec_value - cur_spec_value) / (cur_spec_value + ideal_spec_value), 0.0)
+        if spec.startswith('DC'):
+            single_reward = single_reward * 10
 
         rew += float(single_reward)
 
@@ -57,16 +59,16 @@ def cal_reward(ideal_specs_dict, cur_specs_dict, norm_specs_dict):
 # ideal_specs = {'gainBandWidth': {'reward_type': 'optimal', 'objective': 'max', 'value': 1},
 #                'phaseMargin': {'reward_type': 'satisfactory', 'objective': 'max', 'value': 2},
 #                'powerSupplyRejectionRatio': {'reward_type': 'optimal', 'objective': 'max', 'value': 3},
-#                'pwr': {'reward_type': 'optimal', 'objective': 'min','value': 4}}
-# cur_specs = {'DC': {'pwr': 1}, 'Stability': {'phaseMargin': 2, 'gainBandWidth': 3},
+#                'DC_pwr': {'reward_type': 'optimal', 'objective': 'min','value': 4}}
+# cur_specs = {'DC': {'DC_pwr': 10}, 'Stability': {'phaseMargin': 2, 'gainBandWidth': 3},
 #               'PSRR': {'powerSupplyRejectionRatio': 4}}
-# norm_specs = {'DC': {'pwr': 2}, 'Stability': {'phaseMargin': 2, 'gainBandWidth': 3},
+# norm_specs = {'DC': {'DC_pwr': 2}, 'Stability': {'phaseMargin': 2, 'gainBandWidth': 3},
 #               'PSRR': {'powerSupplyRejectionRatio': 4}}
 # reward = cal_reward(ideal_specs, cur_specs, norm_specs)
 # print(reward)
 
 # Output
-# -0.20600000000000002
+
 
 def cal_reward_simple(ideal_specs_dict, cur_specs_dict):
     """
