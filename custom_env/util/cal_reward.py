@@ -56,15 +56,49 @@ def cal_reward(ideal_specs_dict, cur_specs_dict, norm_specs_dict):
 
 
 # Test Code
-# ideal_specs = {'gainBandWidth': {'reward_type': 'optimal', 'objective': 'max', 'value': 1},
-#                'phaseMargin': {'reward_type': 'satisfactory', 'objective': 'max', 'value': 2},
-#                'powerSupplyRejectionRatio': {'reward_type': 'optimal', 'objective': 'max', 'value': 3},
-#                'DC_pwr': {'reward_type': 'optimal', 'objective': 'min','value': 4}}
-# cur_specs = {'DC': {'DC_pwr': 10}, 'Stability': {'phaseMargin': 2, 'gainBandWidth': 3},
-#               'PSRR': {'powerSupplyRejectionRatio': 4}}
-# norm_specs = {'DC': {'DC_pwr': 2}, 'Stability': {'phaseMargin': 2, 'gainBandWidth': 3},
-#               'PSRR': {'powerSupplyRejectionRatio': 4}}
+
+# ideal_specs = {'DC_IQ': {'objective': 'min', 'reward_type': 'optimal', 'value': 8e-06},
+# 'Stability_1m_gainBandWidth': {'objective': 'max', 'reward_type': 'optimal', 'value': 1000000.0},
+# 'Stability_1m_phaseMargin': {'objective': 'max', 'reward_type': 'satisfactory', 'value': 30.0},
+# 'Stability_50m_gainBandWidth': {'objective': 'max', 'reward_type': 'optimal', 'value': 1000000.0},
+# 'Stability_50m_phaseMargin': {'objective': 'max', 'reward_type': 'satisfactory', 'value': 30.0},
+# 'Stability_100m_gainBandWidth': {'objective': 'max', 'reward_type': 'optimal', 'value': 1000000.0},
+# 'Stability_100m_phaseMargin': {'objective': 'max', 'reward_type': 'satisfactory', 'value': 30.0},
+# 'Load_Reg_loadReg': {'objective': 'min', 'reward_type': 'optimal', 'value': 0.12}, 'Line_Reg_100m_lineReg': {
+# 'objective': 'min', 'reward_type': 'optimal', 'value': 0.008}, 'Line_Reg_1m_lineReg': {'objective': 'min',
+# 'reward_type': 'optimal', 'value': 0.004}, 'Trans_1_2V_overShoot': {'objective': 'min', 'reward_type': 'optimal',
+# 'value': 0.07}, 'Trans_1_2V_underShoot': {'objective': 'min', 'reward_type': 'optimal', 'value': 0.06},
+# 'Trans_0_75V_overShoot': {'objective': 'min', 'reward_type': 'optimal', 'value': 0.11}, 'Trans_0_75V_underShoot': {
+# 'objective': 'min', 'reward_type': 'optimal', 'value': 0.08}, 'Trans_Line_Reg_overShoot': {'objective': 'min',
+# 'reward_type': 'optimal', 'value': 0.04}, 'Trans_Line_Reg_underShoot': {'objective': 'min', 'reward_type':
+# 'optimal', 'value': 0.03}, 'PSR_psr_100': {'objective': 'max', 'reward_type': 'optimal', 'value': 50.0},
+# 'PSR_psr_1k': {'objective': 'max', 'reward_type': 'optimal', 'value': 45.0}, 'PSR_psr_10k': {'objective': 'max',
+# 'reward_type': 'optimal', 'value': 25.0}, 'PSR_psr_100k': {'objective': 'max', 'reward_type': 'optimal',
+# 'value': 5.0}, 'PSR_psr_1M': {'objective': 'max', 'reward_type': 'optimal', 'value': 0.0001}}
+#
+# cur_specs = {'DC': {'DC_IQ': 0.000100364}, 'Stability_1m': {'Stability_1m_phaseMargin': 26.19896,
+# 'Stability_1m_gainBandWidth': 54918080.0}, 'Stability_50m': {'Stability_50m_phaseMargin': 67.73379,
+# 'Stability_50m_gainBandWidth': 93061670.0}, 'Stability_100m': {'Stability_100m_phaseMargin': 71.66593,
+# 'Stability_100m_gainBandWidth': 89405280.0}, 'Load_Reg': {'Load_Reg_loadReg': 0.0041199999999996795},
+# 'Line_Reg_100m': {'Line_Reg_100m_lineReg': 0.00017333333333338335}, 'Line_Reg_1m': {'Line_Reg_1m_lineReg':
+# 5.333333333326332e-05}, 'Trans_1_2V': {'Trans_1_2V_overShoot': 0.13838300000000003, 'Trans_1_2V_underShoot':
+# 0.13162599999999997}, 'Trans_0_75V': {'Trans_0_75V_overShoot': 0.11439599999999994, 'Trans_0_75V_underShoot':
+# 0.12124299999999999}, 'Trans_Line_Reg': {'Trans_Line_Reg_overShoot': 0.005529999999999979,
+# 'Trans_Line_Reg_underShoot': 0.005035000000000012}, 'PSR': {'PSR_psr_100': 83.75430209719951, 'PSR_psr_1k':
+# 62.264008781888755, 'PSR_psr_10k': 44.26852949793264, 'PSR_psr_100k': 22.89905881726738, 'PSR_psr_1M':
+# 5.665768656927508}}
+#
+# norm_specs = {'Stability_1m': {'Stability_1m_gainBandWidth': 1000000.0, 'Stability_1m_phaseMargin': 30.0},
+# 'Stability_50m': {'Stability_50m_gainBandWidth': 1000000.0, 'Stability_50m_phaseMargin': 30.0}, 'Stability_100m': {
+# 'Stability_100m_gainBandWidth': 1000000.0, 'Stability_100m_phaseMargin': 30.0}, 'Load_Reg': {'Load_Reg_loadReg':
+# 0.12}, 'Line_Reg_100m': {'Line_Reg_100m_lineReg': 0.008}, 'Line_Reg_1m': {'Line_Reg_1m_lineReg': 0.004},
+# 'Trans_1_2V': {'Trans_1_2V_overShoot': 0.07, 'Trans_1_2V_underShoot': 0.06}, 'Trans_0_75V': {
+# 'Trans_0_75V_overShoot': 0.11, 'Trans_0_75V_underShoot': 0.08}, 'Trans_Line_Reg': {'Trans_Line_Reg_overShoot':
+# 0.04, 'Trans_Line_Reg_underShoot': 0.03}, 'PSR': {'PSR_psr_100': 50.0, 'PSR_psr_1k': 45.0, 'PSR_psr_10k': 25.0,
+# 'PSR_psr_100k': 5.0, 'PSR_psr_1M': 0.0001}, 'DC': {'DC_IQ': 8e-06}}
+#
 # reward = cal_reward(ideal_specs, cur_specs, norm_specs)
+#
 # print(reward)
 
 # Output
