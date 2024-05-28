@@ -9,7 +9,7 @@ def scan_and_process(root_dir, highlight_subdir):
     results = {}
 
     for subdir in next(os.walk(root_dir))[1]:
-        target_file = os.path.join(root_dir, subdir, 'Trans_Line_Reg.raw', 'tran.tran.tran.encode')
+        target_file = os.path.join(root_dir, subdir, 'Trans_0_75V.raw', 'tran.tran.tran.encode')
         if os.path.isfile(target_file):
             trace_data = extractTransTrace(target_file)
             results[subdir] = {
@@ -31,20 +31,20 @@ def plot_data(results, highlight_subdir, root_dir):
             # plt.plot(data['time'], data['VOUT'], label=subdir, color='blue', linewidth=1)
             plt.plot(data['time'], data['VOUT'], label=subdir, linewidth=1)
 
-    plt.title('VOUT vs. Time Plot, Iload = 100mA')
+    plt.title('VOUT vs. Time Plot@VDD=0.75V, Iload = 100mA')
     plt.xlabel('Time')
     plt.ylabel('VOUT')
     plt.legend()
     plt.grid(True)
 
-    plt_path = os.path.join(root_dir, 'vout_time_plot.png')
+    plt_path = os.path.join(root_dir, 'vout_time_plot_0_75.png')
     plt.savefig(plt_path)
     plt.show()
     print(f"Image save to：{plt_path}")
 
 
-root_dir = '/Users/hanwu/Downloads/Log_N65/Jianping/5_28_UM/select_point'
-highlight_subdir = 'tmp_20240527150414466421682'
+root_dir = '/Users/hanwu/Downloads/Log_N65/Jianping_C/5_28_eex02/select_point'
+highlight_subdir = 'tmp_20240526000327547417498'
 scan_and_process(root_dir, highlight_subdir)
 
 

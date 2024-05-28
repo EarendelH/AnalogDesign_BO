@@ -32,6 +32,8 @@ def cal_reward(ideal_specs_dict, cur_specs_dict, norm_specs_dict):
             single_reward = min((cur_spec_value - ideal_spec_value) / (cur_spec_value + ideal_spec_value), 0.0)
         elif constrain_objective == "min":
             single_reward = min((ideal_spec_value - cur_spec_value) / (cur_spec_value + ideal_spec_value), 0.0)
+        if spec.startswith('DC'):
+            single_reward = single_reward * 10
 
         rew += float(single_reward)
 
