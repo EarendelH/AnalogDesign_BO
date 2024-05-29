@@ -40,7 +40,7 @@ def plot_data(file_path, column_name):
 
 
 # Example usage
-file_path = '/Users/hanwu/Downloads/Log_N65/UM_output/final_combined_output.xlsx'
+file_path = '/Users/hanwu/Downloads/Log_N65/Jianping_C/5_29_UM/output_Jianping_N65_UM_C_format.xlsx'
 column_name_list = ['Reward', 'DC_IQ', 'Load_Reg_loadReg', 'Line_Reg_100m_lineReg', 'Line_Reg_1m_lineReg',
                     'Trans_1_2V_overShoot', 'Trans_1_2V_underShoot', 'Trans_0_75V_overShoot', 'Trans_0_75V_underShoot',
                     'Trans_Line_Reg_overShoot', 'Trans_Line_Reg_underShoot', 'PSR_psr_100', 'PSR_psr_1k', 'PSR_psr_10k',
