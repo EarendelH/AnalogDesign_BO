@@ -47,7 +47,7 @@ def cal_reward(ideal_specs_dict, cur_specs_dict, norm_specs_dict):
 
         rew += float(single_reward)
 
-    rew = - rew / min_rew
+    rew = -5 * rew / min_rew
 
     if rew >= 0:
         rew = rew + 10
