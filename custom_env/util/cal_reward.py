@@ -82,7 +82,7 @@ def cal_reward(ideal_specs_dict, cur_specs_dict, norm_specs_dict):
 # 'reward_type': 'optimal', 'value': 1}, 'Trans_1_2V_overShoot': {'objective': 'min', 'reward_type': 'optimal',
 # 'value': 1}, 'PSR_psr_100': {'objective': 'max', 'reward_type': 'optimal', 'value': 1}}
 #
-# cur_specs = {'DC': {'DC_IQ': 1}, 'Stability_1m': {'Stability_1m_gainBandWidth': 1},
+# cur_specs = {'DC': {'DC_IQ': 2}, 'Stability_1m': {'Stability_1m_gainBandWidth': 1},
 # 'Line_Reg_1m': {'Line_Reg_1m_lineReg': 1}, 'Trans_1_2V': {'Trans_1_2V_overShoot': 1}, 'PSR':
 # {'PSR_psr_100': 1}}
 #
