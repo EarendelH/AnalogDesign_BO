@@ -17,8 +17,19 @@ def cal_reward(ideal_specs_dict, cur_specs_dict, norm_specs_dict):
     cur_specs_flatten = {k: v for d in cur_specs_dict.values() for k, v in d.items()}
     norm_specs_flatten = {k: v for d in norm_specs_dict.values() for k, v in d.items()}
     rew = 0
+    min_rew = 0
 
-    # epsilon = 0.1
+    # Get the item number of cur_specs_flatten
+    for spec, detail in ideal_specs_dict.items():
+
+        if spec.startswith('DC'):
+            min_rew_single = -10
+        elif spec.startswith('Trans'):
+            min_rew_single = -5
+        else:
+            min_rew_single = -1
+
+        min_rew += min_rew_single
 
     for spec, detail in ideal_specs_dict.items():
 
@@ -34,11 +45,15 @@ def cal_reward(ideal_specs_dict, cur_specs_dict, norm_specs_dict):
             single_reward = min((ideal_spec_value - cur_spec_value) / (cur_spec_value + ideal_spec_value), 0.0)
         if spec.startswith('DC'):
             single_reward = single_reward * 10
+        elif spec.startswith('Trans'):
+            single_reward = single_reward * 5
 
         rew += float(single_reward)
 
+    rew = -5 * rew / min_rew
+
     if rew >= 0:
-        rew = rew + 15
+        rew = rew + 10
         for spec, detail in ideal_specs_dict.items():
 
             single_reward = 0
@@ -52,8 +67,12 @@ def cal_reward(ideal_specs_dict, cur_specs_dict, norm_specs_dict):
                     single_reward = max((cur_spec_value - general_ideal_spec_value) / (cur_spec_value + general_ideal_spec_value), 0.0)
                 elif constrain_objective == "min":
                     single_reward = max((general_ideal_spec_value - cur_spec_value) / (cur_spec_value + general_ideal_spec_value), 0.0)
+                if spec.startswith('DC'):
+                    single_reward = single_reward * 10
+                elif spec.startswith('Trans'):
+                    single_reward = single_reward * 5
 
-            rew += float(single_reward)*2  # 2 is the weight for the optimal reward
+            rew += float(single_reward)
 
     return rew
 
