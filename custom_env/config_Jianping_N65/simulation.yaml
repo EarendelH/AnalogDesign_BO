@@ -1,3 +1,11 @@
+- simulation_name: DC
+  objective: min
+  netlist_name: DC
+  simulation_file: dcOp.dc
+  script_name: findDC
+  parse_func: findIQ
+  simulation_item:
+    - IQ
 - simulation_name: Stability_1m
   objective: max
   netlist_name: Stability_1m
@@ -88,11 +96,3 @@
     - psr_10k
     - psr_100k
     - psr_1M
-- simulation_name: DC
-  objective: min
-  netlist_name: DC
-  simulation_file: dcOp.dc
-  script_name: findDC
-  parse_func: findIQ
-  simulation_item:
-    - IQ

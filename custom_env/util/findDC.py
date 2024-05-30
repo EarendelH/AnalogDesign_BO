@@ -67,6 +67,10 @@ def findIQ(filepath):
     except Exception as e:
         print(f"Warning: {e}. Setting IQ to default (1.0).")
         value = 100.0
+
+    if value > 0.00002:
+        print(f"Power is too large, return to max value")
+        value = 100.0
     return {"IQ": value}
 
 

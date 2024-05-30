@@ -15,8 +15,8 @@ other_variable:
       step: "0.05p"
   - variable_name: IB
     value:
-      range: [0.1u,10.0u]
-      step: "0.1u"
+      range: [0.1u,2.0u]
+      step: "0.02u"
   - variable_name: R1
     value:
       range: [50.0k,2000.0k]
@@ -34,8 +34,8 @@ M0:
       step: "0.02u"
   - variable_name: nf_M0
     value:
-      range: [2,20]
-      step: "2"
+      range: [20,25]
+      step: "1"
 M31:
   instance_type: nch_mac
   params:
