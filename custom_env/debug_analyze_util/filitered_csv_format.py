@@ -30,7 +30,7 @@ data['Valid_Specs'] = data['Specs'].apply(lambda x: flatten_nested_dict(ast.lite
 data = data[data['Valid_Specs'].apply(is_valid_entry)]
 
 # Convert the valid flattened dictionaries into DataFrame columns
-result_df = data['Valid_Specs'].apply(pd.Series)
+# result_df = data['Valid_Specs'].apply(pd.Series)
 
 # Combine the new columns with the original DataFrame (excluding the original 'Specs' column)
 expanded_data = pd.concat([data.drop(columns=['Specs', 'Valid_Specs']), result_df], axis=1)
