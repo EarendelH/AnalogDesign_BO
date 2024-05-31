@@ -9,11 +9,18 @@ def flatten_nested_dict(d):
     return flattened_dict
 
 
+# def is_valid_entry(flattened_dict):
+#     for key, value in flattened_dict.items():
+#         if (key.startswith('Trans') or key.startswith('DC')) and value == 100.0:
+#             return False
+#         if not (key.startswith('Trans') or key.startswith('DC')) and value == 0.0:
+#             return False
+#     return True
+
+
 def is_valid_entry(flattened_dict):
     for key, value in flattened_dict.items():
-        if (key.startswith('Trans') or key.startswith('DC')) and value == 100.0:
-            return False
-        if not (key.startswith('Trans') or key.startswith('DC')) and value == 0.0:
+        if value == 100.0 or value == 0.0:
             return False
     return True
 
@@ -27,7 +34,7 @@ print(f'Original data length: {original_length}')
 
 # Flatten the nested dictionary and filter invalid entries
 data['Valid_Specs'] = data['Specs'].apply(lambda x: flatten_nested_dict(ast.literal_eval(x)))
-# data = data[data['Valid_Specs'].apply(is_valid_entry)]
+data = data[data['Valid_Specs'].apply(is_valid_entry)]
 
 # Convert the valid flattened dictionaries into DataFrame columns
 result_df = data['Valid_Specs'].apply(pd.Series)
