@@ -77,6 +77,25 @@ def cal_reward(ideal_specs_dict, cur_specs_dict, norm_specs_dict):
     return rew
 
 
+def parse_parameters(file_path):
+    """
+    Parse the DC.scs file to extract the parameters line.
+    :param file_path: Path to the DC.scs file
+    :return: Dictionary of parameters
+    """
+    parameters_dict = {}
+    with open(file_path, 'r') as file:
+        for line in file:
+            if line.startswith('parameters'):
+                parameters_line = line.strip().split(' ', 1)[1]
+                parameters_pairs = parameters_line.split()
+                for pair in parameters_pairs:
+                    key, value = pair.split('=')
+                    parameters_dict[key] = value
+                break
+    return parameters_dict
+
+
 run_test_path = input("Enter the path of the run_test folder: ")
 config_path = input("Enter the path of the config folder: ")
 output_csv_path = input("Enter the path of the output csv file: ")
@@ -97,6 +116,12 @@ sim_summary = {}
 for folder in os.listdir(run_test_path):
     # Check if the folder is a directory
     if os.path.isdir(os.path.join(run_test_path, folder)):
+        parameters_dict = {}
+        # Check if the DC.scs file exists and parse it
+        dc_scs_path = os.path.join(run_test_path, folder, 'DC.scs')
+        if os.path.exists(dc_scs_path):
+            parameters_dict = parse_parameters(dc_scs_path)
+
         # Iterate over all files in the folder
         for file in os.listdir(os.path.join(run_test_path, folder)):
             # Check if the file is a pickle file
@@ -107,6 +132,7 @@ for folder in os.listdir(run_test_path):
                 # Create sub-dict for the folder
                 sim_summary[folder] = {}
                 sim_summary[folder]["result"] = single_sim
+                sim_summary[folder]["parameters"] = parameters_dict
                 # print(f"Debug, norm_specs: {norm_specs}, single_sim: {single_sim}")
                 rew_single = cal_reward(ideal_specs, single_sim, norm_specs)
                 sim_summary[folder]["reward"] = rew_single
@@ -115,6 +141,6 @@ for folder in os.listdir(run_test_path):
 # Save the summary to a csv file
 with open(output_csv_path, mode='w') as file:
     writer = csv.writer(file)
-    writer.writerow(["Folder Name", "Reward", "Specs"])
+    writer.writerow(["Folder Name", "Reward", "Specs", "Parameters"])
     for key, value in sim_summary.items():
-        writer.writerow([key, value["reward"], value["result"]])
+        writer.writerow([key, value["reward"], value["result"], value["parameters"]])
