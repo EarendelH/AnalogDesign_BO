@@ -153,7 +153,7 @@ def cluster_inputs(data, n_clusters):
 
 
 # Read the Excel file
-file_path = '/mnt/data/Demo.xlsx'
+file_path = input("Enter the path to the Excel file: ")
 output_dir = os.path.dirname(file_path)
 data = pd.read_excel(file_path)
 
