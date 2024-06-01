@@ -23,21 +23,20 @@ data = pd.read_csv(file_path)
 original_length = len(data)
 print(f'Original data length: {original_length}')
 
-# Flatten the nested dictionary and filter invalid entries for Specs
+# Flatten the nested dictionary and filter invalid entries for 'Specs'
 data['Valid_Specs'] = data['Specs'].apply(lambda x: flatten_nested_dict(ast.literal_eval(x)))
 data = data[data['Valid_Specs'].apply(is_valid_entry)]
 
-# Flatten the nested dictionary for Parameters
-data['Valid_Parameters'] = data['Parameters'].apply(lambda x: flatten_nested_dict(ast.literal_eval(x)))
+# Convert the valid flattened dictionaries into DataFrame columns for 'Specs'
+specs_df = data['Valid_Specs'].apply(pd.Series)
 
-# Convert the valid flattened dictionaries into DataFrame columns
-result_df = data['Valid_Specs'].apply(pd.Series)
-parameters_df = data['Valid_Parameters'].apply(pd.Series)
+# Expand 'Parameters' column directly into DataFrame columns
+params_df = data['Parameters'].apply(ast.literal_eval).apply(pd.Series)
 
 # Combine the new columns with the original DataFrame (excluding the original 'Specs' and 'Valid_Specs' columns)
-expanded_data = pd.concat([data.drop(columns=['Specs', 'Valid_Specs', 'Parameters', 'Valid_Parameters']), result_df, parameters_df], axis=1)
+expanded_data = pd.concat([data.drop(columns=['Specs', 'Valid_Specs', 'Parameters']), specs_df, params_df], axis=1)
 
-# Save to a new Excel file and print the count of valid entries
+# Save to a new CSV file and print the count of valid entries
 new_file_path = file_path.replace('.csv', '_format.xlsx')
 expanded_data.to_excel(new_file_path, index=False)
 valid_length = len(expanded_data)
