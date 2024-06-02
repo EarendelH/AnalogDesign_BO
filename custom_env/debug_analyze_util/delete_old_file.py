@@ -1,68 +1,54 @@
 import argparse
 import os
-import time
-import shutil
-from concurrent.futures import ThreadPoolExecutor, as_completed
+from datetime import datetime, timedelta
+import concurrent.futures
+from tqdm import tqdm
 
 
-# Step 1: Parse command line arguments
 def parse_args():
     parser = argparse.ArgumentParser(description="Delete old files and folders.")
-    parser.add_argument("directory", type=str, help="Path to the directory to clean up")
+    parser.add_argument("folder_path", type=str, help="The path of the folder to scan and clean.")
     return parser.parse_args()
 
 
-# Function to delete files
-def delete_file(file_path):
+def get_all_files_and_folders(folder_path):
+    items = []
+    for root, dirs, files in os.walk(folder_path):
+        for name in tqdm(dirs, desc="Scanning directories", unit="dir"):
+            items.append(os.path.join(root, name))
+        for name in tqdm(files, desc="Scanning files", unit="file"):
+            items.append(os.path.join(root, name))
+    return items
+
+
+def is_older_than_24_hours(item_path):
+    modification_time = os.path.getmtime(item_path)
+    return (datetime.now() - datetime.fromtimestamp(modification_time)) > timedelta(hours=24)
+
+
+def delete_item(item_path):
     try:
-        os.remove(file_path)
-        return f"Deleted file: {file_path}"
+        if os.path.isdir(item_path):
+            os.rmdir(item_path)
+        else:
+            os.remove(item_path)
     except Exception as e:
-        return f"Failed to delete file: {file_path}, Error: {str(e)}"
+        print(f"Error deleting {item_path}: {e}")
 
 
-# Function to delete directories
-def delete_directory(dir_path):
-    try:
-        shutil.rmtree(dir_path)
-        return f"Deleted directory: {dir_path}"
-    except Exception as e:
-        return f"Failed to delete directory: {dir_path}, Error: {str(e)}"
+def delete_old_items_concurrently(items):
+    with concurrent.futures.ThreadPoolExecutor() as executor:
+        futures = [executor.submit(delete_item, item) for item in items]
+        for i, future in enumerate(concurrent.futures.as_completed(futures)):
+            print(f"Progress: {i+1}/{len(items)}")
 
 
-# Step 2: Define the main function
 def main():
     args = parse_args()
-    target_dir = args.directory
-    current_time = time.time()
-    cutoff_time = current_time - 24 * 3600  # 24 hours ago
-
-    file_tasks = []
-    dir_tasks = []
-
-    # Step 3: Scan the directory
-    for root, dirs, files in os.walk(target_dir):
-        for name in files:
-            file_path = os.path.join(root, name)
-            if os.path.getmtime(file_path) < cutoff_time:
-                file_tasks.append(file_path)
-
-        for name in dirs:
-            dir_path = os.path.join(root, name)
-            if os.path.getmtime(dir_path) < cutoff_time:
-                dir_tasks.append(dir_path)
-
-    total_tasks = len(file_tasks) + len(dir_tasks)
-    completed_tasks = 0
-
-    with ThreadPoolExecutor(max_workers=4) as executor:
-        future_to_path = {executor.submit(delete_file, file): file for file in file_tasks}
-        future_to_path.update({executor.submit(delete_directory, dir): dir for dir in dir_tasks})
-
-        for future in as_completed(future_to_path):
-            result = future.result()
-            completed_tasks += 1
-            print(f"Task {completed_tasks}/{total_tasks}: {result}")
+    folder_path = args.folder_path
+    all_items = get_all_files_and_folders(folder_path)
+    items_to_delete = [item for item in all_items if is_older_than_24_hours(item)]
+    delete_old_items_concurrently(items_to_delete)
 
 
 if __name__ == "__main__":
