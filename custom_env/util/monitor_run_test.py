@@ -13,14 +13,24 @@ def clean_folder(target_folder):
                 for sub_entry in os.scandir(dir_path):
                     sub_path = sub_entry.path
                     if sub_entry.is_dir():
-                        shutil.rmtree(sub_path)
-                        print(f"Deleted folder: {sub_path} "
-                              f"at {time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())}")
+                        try:
+                            shutil.rmtree(sub_path)
+                            print(f"Deleted folder: {sub_path} "
+                                  f"at {time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())}")
+                        except Exception as e:
+                            print(f"Failed to delete folder: {sub_path} "
+                                  f"at {time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())}. "
+                                  f"Error: {e}")
                     elif sub_entry.is_file():
                         if not (sub_entry.name.endswith('.scs') or sub_entry.name.endswith('.pkl')):
-                            os.remove(sub_path)
-                            print(f"Deleted file: {sub_path} "
-                                  f"at {time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())}")
+                            try:
+                                os.remove(sub_path)
+                                print(f"Deleted file: {sub_path} "
+                                      f"at {time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())}")
+                            except Exception as e:
+                                print(f"Failed to delete file: {sub_path} "
+                                      f"at {time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())}. "
+                                      f"Error: {e}")
 
 
 def main_loop(target_folder):
