@@ -1,55 +1,47 @@
 import argparse
 import os
-from datetime import datetime, timedelta
-import concurrent.futures
-from tqdm import tqdm
+import time
+import threading
 
-
+# Step 1: Get the folder path from arguments
 def parse_args():
     parser = argparse.ArgumentParser(description="Delete old files and folders.")
-    parser.add_argument("folder_path", type=str, help="The path of the folder to scan and clean.")
+    parser.add_argument("folder_path", type=str, help="Path to the folder to scan and delete old files.")
     return parser.parse_args()
 
-
-def get_all_files_and_folders(folder_path):
-    items = []
+def scan_and_delete(folder_path):
+    threads = []
     for root, dirs, files in os.walk(folder_path):
-        for name in tqdm(dirs, desc="Scanning directories", unit="dir"):
-            items.append(os.path.join(root, name))
-        for name in tqdm(files, desc="Scanning files", unit="file"):
-            items.append(os.path.join(root, name))
-    return items
+        for name in dirs + files:
+            path = os.path.join(root, name)
+            t = threading.Thread(target=check_and_delete, args=(path,))
+            t.start()
+            threads.append(t)
 
+    for t in threads:
+        t.join()
 
-def is_older_than_24_hours(item_path):
-    modification_time = os.path.getmtime(item_path)
-    return (datetime.now() - datetime.fromtimestamp(modification_time)) > timedelta(hours=24)
-
-
-def delete_item(item_path):
-    try:
-        if os.path.isdir(item_path):
-            os.rmdir(item_path)
-        else:
-            os.remove(item_path)
-    except Exception as e:
-        print(f"Error deleting {item_path}: {e}")
-
-
-def delete_old_items_concurrently(items):
-    with concurrent.futures.ThreadPoolExecutor() as executor:
-        futures = [executor.submit(delete_item, item) for item in items]
-        for i, future in enumerate(concurrent.futures.as_completed(futures)):
-            print(f"Progress: {i+1}/{len(items)}")
-
-
-def main():
-    args = parse_args()
-    folder_path = args.folder_path
-    all_items = get_all_files_and_folders(folder_path)
-    items_to_delete = [item for item in all_items if is_older_than_24_hours(item)]
-    delete_old_items_concurrently(items_to_delete)
-
+def check_and_delete(path):
+    now = time.time()
+    if os.path.exists(path):
+        file_time = os.path.getmtime(path)
+        if now - file_time > 24 * 3600:  # Older than 24 hours
+            if os.path.isdir(path):
+                try:
+                    os.rmdir(path)
+                    print(f"Deleted folder: {path}")
+                except OSError:  # Directory not empty
+                    for root, dirs, files in os.walk(path, topdown=False):
+                        for name in files:
+                            os.remove(os.path.join(root, name))
+                        for name in dirs:
+                            os.rmdir(os.path.join(root, name))
+                    os.rmdir(path)
+            else:
+                os.remove(path)
+                print(f"Deleted file: {path}")
 
 if __name__ == "__main__":
-    main()
+    args = parse_args()
+    folder_path = args.folder_path
+    scan_and_delete(folder_path)
