@@ -134,7 +134,7 @@ plt.savefig(plot_file_path)
 
 # Group features based on the clustering results
 from scipy.cluster.hierarchy import fcluster
-max_distance = 0.25
+max_distance = 0.1
 clusters = fcluster(Z, max_distance, criterion='distance')
 
 feature_groups = {}
