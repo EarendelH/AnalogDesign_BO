@@ -51,7 +51,12 @@ excel_dir = os.path.dirname(excel_file_path)
 # Compute the overall feature importances for each algorithm
 overall_feature_importances_rf = np.mean([estimator.feature_importances_ for estimator in multi_output_rf.estimators_], axis=0)
 overall_feature_importances_pls = np.mean(np.abs(multi_output_pls.estimators_[0].coef_), axis=0)
-overall_feature_importances_krr = np.mean(np.abs(multi_output_krr.estimators_[0].dual_coef_), axis=0)
+
+# Compute the overall feature importances for KRR
+overall_feature_importances_krr = np.zeros(X.shape[1])
+for estimator in multi_output_krr.estimators_:
+    overall_feature_importances_krr += np.sum(np.abs(estimator.dual_coef_), axis=0)
+overall_feature_importances_krr /= len(multi_output_krr.estimators_)
 
 # Sort the input features based on their overall importance for each algorithm
 sorted_features_rf = sorted(zip(overall_feature_importances_rf, X.columns), reverse=True)
