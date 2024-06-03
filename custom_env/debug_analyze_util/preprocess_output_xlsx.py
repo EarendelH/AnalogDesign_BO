@@ -21,7 +21,7 @@ def process_excel(filepath):
     df = df.iloc[:, 2:]
 
     # Convert values with metric suffixes to float
-    for col in df.columns[24:]:
+    for col in df.columns[21:]:
         df[col] = df[col].apply(convert_to_float)
 
     # Find all columns that start with 'nf_'
