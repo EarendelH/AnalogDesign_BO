@@ -1,104 +1,55 @@
+import cudf
+import cuml
 import pandas as pd
 import numpy as np
-from cuml.ensemble import RandomForestRegressor as cuRF
-from cuml.model_selection import train_test_split as cuml_train_test_split
 import matplotlib.pyplot as plt
-import seaborn as sns
-import os
 import argparse
-import cudf
+import os
 
-# Function to convert columns to numeric types
-def convert_to_numeric(df):
-    if df.isnull().values.any():
-        print("Warning: DataFrame contains NaN values. These may affect conversion and model training.")
-        # df.fillna(0, inplace=True)
-
-    for col in df.columns:
-        if df[col].dtype == 'object':
-            try:
-                df[col] = pd.to_numeric(df[col])
-            except ValueError:
-                non_numeric_data = df[col][~df[col].apply(lambda x: x.replace('.', '', 1).isdigit())].unique()
-                print(f"Error: Column '{col}' contains non-numeric data that cannot be converted.")
-                print(f"Non-numeric data in column '{col}': {non_numeric_data}")
-                raise ValueError(f"Column '{col}' contains non-numeric data.")
-    return df
-
-
-# Parse command line arguments
-parser = argparse.ArgumentParser(description="Process Excel file and store results")
-parser.add_argument('file_path', type=str, help='Path to the input Excel file')
+# Setup command line arguments
+parser = argparse.ArgumentParser(description="Run Random Forest to group input features based on their impact on outputs.")
+parser.add_argument('--file_path', type=str, help="Path to the input xlsx file")
 args = parser.parse_args()
 
-# Read Excel file
-file_path = args.file_path
-data = pd.read_excel(file_path)
+# Read data
+data = pd.read_excel(args.file_path)
+df = cudf.from_pandas(data)
 
-# Separate input and output data
-output_data = data.iloc[:, :21]
-input_data = data.iloc[:, 21:]
+# Separate output and input data
+output_df = df.iloc[:, :22]
+input_df = df.iloc[:, 22:]
 
-# Convert columns to numeric types if possible
-output_data = convert_to_numeric(output_data)
-input_data = convert_to_numeric(input_data)
+# Compute feature importance for each output using Random Forest
+features_importance = cudf.DataFrame()
+for column in output_df.columns:
+    X = input_df
+    y = output_df[column]
+    rf_model = cuml.ensemble.RandomForestRegressor()
+    rf_model.fit(X, y)
+    features_importance[column] = rf_model.feature_importances_
 
-# Ensure only numeric columns are processed
-output_data = output_data.select_dtypes(include=[np.number])
-input_data = input_data.select_dtypes(include=[np.number])
+# Compute average importance across all outputs
+average_importance = features_importance.mean(axis=1)
 
-# Convert data to cuDF DataFrame
-output_data_cudf = cudf.DataFrame.from_pandas(output_data)
-input_data_cudf = cudf.DataFrame.from_pandas(input_data)
+# Group input features into 5 groups based on their impact
+labels = pd.cut(average_importance.to_array(), bins=5, labels=np.arange(5))
 
-# Split the dataset into training and testing sets
-X_train, X_test, Y_train, Y_test = cuml_train_test_split(input_data_cudf, output_data_cudf, test_size=0.2, random_state=0)
-
-# Build the GPU-accelerated Random Forest model
-rf = cuRF(n_estimators=100, random_state=0)
-rf.fit(X_train, Y_train)
-
-# Calculate feature importance
-feature_importances = rf.feature_importances_
-
-# Convert feature importance to a pandas DataFrame
-feature_importance_df = pd.DataFrame({
-    'Feature': input_data.columns,
-    'Importance': feature_importances
+# Store grouped features in a DataFrame
+grouped_input_features = cudf.DataFrame({
+    'Feature': input_df.columns,
+    'Group': labels
 })
 
-# Sort by importance
-feature_importance_df = feature_importance_df.sort_values(by='Importance', ascending=False).reset_index(drop=True)
+# Define the folder where to save files
+folder_path = os.path.dirname(args.file_path)
 
-# Divide into five groups
-group_size = len(feature_importance_df) // 5
-groups = {}
-for i in range(5):
-    start_index = i * group_size
-    if i == 4:  # Ensure the last group includes all remaining features
-        groups[f'Group {i+1}'] = feature_importance_df.iloc[start_index:]
-    else:
-        groups[f'Group {i+1}'] = feature_importance_df.iloc[start_index:start_index + group_size]
+# Save grouped data to CSV
+grouped_input_features.to_csv(os.path.join(folder_path, 'feature_groups.csv'))
 
-# Save grouped results to Excel file
-output_dir = os.path.dirname(file_path)
-output_excel_path = os.path.join(output_dir, 'Feature_Importance_Groups.xlsx')
-with pd.ExcelWriter(output_excel_path) as writer:
-    for group_name, group_data in groups.items():
-        group_data.to_excel(writer, sheet_name=group_name, index=False)
-
-# Visualize feature importance
-plt.figure(figsize=(12, 8))
-sns.barplot(x='Importance', y='Feature', data=feature_importance_df)
-plt.title('Feature Importances')
-plt.xlabel('Importance')
-plt.ylabel('Feature')
-
-# Annotate each bar with the feature name
-for index, value in enumerate(feature_importance_df['Importance']):
-    plt.text(value, index, f'{value:.2f}')
-
-# Save the plot
-output_plot_path = os.path.join(output_dir, 'Feature_Importance_Plot.png')
-plt.savefig(output_plot_path)
+# Plot the results
+plt.bar(grouped_input_features['Feature'].to_array(), grouped_input_features['Group'].to_array())
+plt.xlabel('Feature')
+plt.ylabel('Group')
+plt.title('Feature Importance Grouping')
+plt.savefig(os.path.join(folder_path, 'feature_groups.png'))
 plt.show()
