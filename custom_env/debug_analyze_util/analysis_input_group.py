@@ -19,7 +19,7 @@ data = pd.read_excel(excel_file_path)
 
 # Separate input and output features
 X = data.iloc[:, 22:]  # Input features
-y = data.iloc[:, :22]  # Output features
+y = data.iloc[:, :22].values.reshape(-1, 22)  # Reshape output features
 
 # Create an instance of the Random Forest Regressor
 rf = RandomForestRegressor(n_estimators=100, max_depth=10, random_state=42)
