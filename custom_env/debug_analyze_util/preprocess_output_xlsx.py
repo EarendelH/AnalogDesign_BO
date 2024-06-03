@@ -17,8 +17,8 @@ def process_excel(filepath):
     # Load the Excel file
     df = pd.read_excel(filepath)
 
-    # Remove the first column (folder name)
-    df = df.iloc[:, 1:]
+    # Remove the first and second column (folder name)
+    df = df.iloc[:, 2:]
 
     # Convert values with metric suffixes to float
     for col in df.columns[22:]:

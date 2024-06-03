@@ -87,8 +87,8 @@ print("Reading Parquet file...")
 data = pd.read_parquet(parquet_file_path)
 print("Data loaded.")
 
-X = data.iloc[:, 22:]
-y = data.iloc[:, :22]
+X = data.iloc[:, 21:]
+y = data.iloc[:, :21]
 
 print("Training models...")
 models = train_models(X, y)
