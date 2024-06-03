@@ -2,9 +2,6 @@
 import pandas as pd
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.multioutput import MultiOutputRegressor
-from sklearn.cross_decomposition import PLSRegression
-from sklearn.kernel_ridge import KernelRidge
-from sklearn.model_selection import cross_validate
 import matplotlib.pyplot as plt
 import os
 import sys
@@ -25,126 +22,62 @@ data = pd.read_excel(excel_file_path)
 X = data.iloc[:, 22:]  # Input features
 y = data.iloc[:, :22]  # Output features
 
-# Create instances of the three algorithms
+# Create a MultiOutputRegressor instance with RandomForestRegressor as the base estimator
 rf = RandomForestRegressor(n_estimators=100, max_depth=10, random_state=42)
 multi_output_rf = MultiOutputRegressor(rf)
 
-pls = PLSRegression(n_components=10)
-multi_output_pls = MultiOutputRegressor(pls)
-
-krr = KernelRidge(alpha=1.0)
-multi_output_krr = MultiOutputRegressor(krr)
-
-# Perform cross-validation for each algorithm
-cv_scores_rf = cross_validate(multi_output_rf, X, y, cv=5, scoring='r2')
-cv_scores_pls = cross_validate(multi_output_pls, X, y, cv=5, scoring='r2')
-cv_scores_krr = cross_validate(multi_output_krr, X, y, cv=5, scoring='r2')
-
-# Train the multi-output models on the input and output features
+# Train the multi-output model on the input and output features
 multi_output_rf.fit(X, y)
-multi_output_pls.fit(X, y)
-multi_output_krr.fit(X, y)
 
 # Get the directory path of the Excel file
 excel_dir = os.path.dirname(excel_file_path)
 
-# Compute the overall feature importances for each algorithm
-overall_feature_importances_rf = np.mean([estimator.feature_importances_ for estimator in multi_output_rf.estimators_], axis=0)
-overall_feature_importances_pls = np.mean(np.abs(multi_output_pls.estimators_[0].coef_), axis=0)
+# Compute the overall feature importances by averaging across all outputs
+overall_feature_importances = np.mean([estimator.feature_importances_ for estimator in multi_output_rf.estimators_], axis=0)
 
-# Compute the overall feature importances for KRR
-overall_feature_importances_krr = np.zeros(X.shape[1])
-for estimator in multi_output_krr.estimators_:
-    overall_feature_importances_krr += np.sum(np.abs(estimator.dual_coef_), axis=0)
-overall_feature_importances_krr /= len(multi_output_krr.estimators_)
+# Sort the input features based on their overall importance
+sorted_features = sorted(zip(overall_feature_importances, X.columns), reverse=True)
 
-# Sort the input features based on their overall importance for each algorithm
-sorted_features_rf = sorted(zip(overall_feature_importances_rf, X.columns), reverse=True)
-sorted_features_pls = sorted(zip(overall_feature_importances_pls, X.columns), reverse=True)
-sorted_features_krr = sorted(zip(overall_feature_importances_krr, X.columns), reverse=True)
+# Initialize groups and temporary list
+groups = []
+current_group = []
 
-# Function to group features based on importance
-def group_features(sorted_features):
-    groups = []
-    current_group = []
-
-    for importance, feature in sorted_features:
-        if current_group and abs(importance - current_group[0][0]) > 0.05:
-            groups.append(current_group)
-            current_group = []
-        current_group.append((importance, feature))
-
-    if current_group:
+# Iterate over sorted feature importances
+for importance, feature in sorted_features:
+    # If the current group has a large importance gap, start a new group
+    if current_group and abs(importance - current_group[0][0]) > 0.02:
         groups.append(current_group)
+        current_group = []
+    current_group.append((importance, feature))
 
-    groups = [[feature for _, feature in group] for group in groups]
-    return groups
+# Add the last group
+if current_group:
+    groups.append(current_group)
 
-# Group features for each algorithm
-groups_rf = group_features(sorted_features_rf)
-groups_pls = group_features(sorted_features_pls)
-groups_krr = group_features(sorted_features_krr)
+# Extract feature names from groups
+groups = [[feature for _, feature in group] for group in groups]
 
-# Print the cross-validation scores and feature groupings for each algorithm
-print("Random Forest Regression:")
-print("Cross-validation R^2 scores:", cv_scores_rf['test_score'])
+# Print the feature grouping
 print("Feature Grouping:")
-for i, group in enumerate(groups_rf):
+for i, group in enumerate(groups):
     print(f"Group {i+1}: {', '.join(group)}")
-print()
 
-print("Partial Least Squares Regression:")
-print("Cross-validation R^2 scores:", cv_scores_pls['test_score'])
-print("Feature Grouping:")
-for i, group in enumerate(groups_pls):
-    print(f"Group {i+1}: {', '.join(group)}")
-print()
-
-print("Kernel Ridge Regression:")
-print("Cross-validation R^2 scores:", cv_scores_krr['test_score'])
-print("Feature Grouping:")
-for i, group in enumerate(groups_krr):
-    print(f"Group {i+1}: {', '.join(group)}")
-print()
-
-# Save the cross-validation scores and feature groupings as a table
-with open(os.path.join(excel_dir, 'results.txt'), 'w') as file:
-    file.write("Random Forest Regression:\n")
-    file.write("Cross-validation R^2 scores: {}\n".format(cv_scores_rf['test_score']))
-    file.write("Feature Grouping:\n")
-    for i, group in enumerate(groups_rf):
+# Save the feature grouping as a table
+grouping_file_path = os.path.join(excel_dir, 'feature_grouping.txt')
+with open(grouping_file_path, 'w') as file:
+    file.write("Feature Grouping:\n\n")
+    for i, group in enumerate(groups):
         file.write(f"Group {i+1}: {', '.join(group)}\n")
-    file.write("\n")
 
-    file.write("Partial Least Squares Regression:\n")
-    file.write("Cross-validation R^2 scores: {}\n".format(cv_scores_pls['test_score']))
-    file.write("Feature Grouping:\n")
-    for i, group in enumerate(groups_pls):
-        file.write(f"Group {i+1}: {', '.join(group)}\n")
-    file.write("\n")
-
-    file.write("Kernel Ridge Regression:\n")
-    file.write("Cross-validation R^2 scores: {}\n".format(cv_scores_krr['test_score']))
-    file.write("Feature Grouping:\n")
-    for i, group in enumerate(groups_krr):
-        file.write(f"Group {i+1}: {', '.join(group)}\n")
-    file.write("\n")
-
-# Plot the overall feature importances for each algorithm
-fig, axs = plt.subplots(3, 1, figsize=(10, 18))
-
-for ax, sorted_features, title in zip(axs, [sorted_features_rf, sorted_features_pls, sorted_features_krr],
-                                      ['Random Forest', 'Partial Least Squares', 'Kernel Ridge']):
-    x_pos = range(len(sorted_features))
-    importances, labels = zip(*sorted_features)
-    ax.bar(x_pos, importances, align='center')
-    ax.set_xticks(x_pos)
-    ax.set_xticklabels(labels, rotation=90)
-    ax.set_xlabel('Features')
-    ax.set_ylabel('Importance')
-    ax.set_title(f'{title} Overall Feature Importances')
-    ax.tick_params(axis='x', labelsize=8)
-
+# Plot the overall feature importances as a bar chart
+plt.figure(figsize=(10, 6))
+x_pos = range(len(sorted_features))
+importances, labels = zip(*sorted_features)
+plt.bar(x_pos, importances, align='center')
+plt.xticks(x_pos, labels, rotation=90)
+plt.xlabel('Features')
+plt.ylabel('Importance')
+plt.title('Overall Feature Importances')
 plt.tight_layout()
 plot_file_path = os.path.join(excel_dir, 'overall_feature_importances.png')
 plt.savefig(plot_file_path)
