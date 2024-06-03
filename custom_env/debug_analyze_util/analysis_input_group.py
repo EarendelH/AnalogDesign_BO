@@ -70,7 +70,7 @@ plot_file_path = os.path.join(excel_dir, 'feature_clustering.png')
 plt.savefig(plot_file_path)
 
 from scipy.cluster.hierarchy import fcluster
-max_distance = 0.5
+max_distance = 0.2
 clusters = fcluster(Z, max_distance, criterion='distance')
 
 feature_groups = {}
