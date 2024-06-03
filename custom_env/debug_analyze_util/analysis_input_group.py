@@ -8,6 +8,18 @@ import os
 import argparse
 import cudf
 
+# Function to convert columns to numeric types
+def convert_to_numeric(df):
+    for col in df.columns:
+        if df[col].dtype == 'object':
+            try:
+                df[col] = pd.to_numeric(df[col])
+            except ValueError:
+                print(f"Error: Column {col} contains non-numeric data that cannot be converted.")
+                print(df[col])
+                raise
+    return df
+
 # Parse command line arguments
 parser = argparse.ArgumentParser(description="Process Excel file and store results")
 parser.add_argument('file_path', type=str, help='Path to the input Excel file')
@@ -20,6 +32,14 @@ data = pd.read_excel(file_path)
 # Separate input and output data
 output_data = data.iloc[:, :21]
 input_data = data.iloc[:, 21:]
+
+# Convert columns to numeric types if possible
+output_data = convert_to_numeric(output_data)
+input_data = convert_to_numeric(input_data)
+
+# Ensure only numeric columns are processed
+output_data = output_data.select_dtypes(include=[np.number])
+input_data = input_data.select_dtypes(include=[np.number])
 
 # Convert data to cuDF DataFrame
 output_data_cudf = cudf.DataFrame.from_pandas(output_data)
