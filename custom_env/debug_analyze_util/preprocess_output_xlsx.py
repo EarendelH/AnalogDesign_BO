@@ -18,7 +18,7 @@ def process_excel(filepath):
     df = pd.read_excel(filepath)
 
     # Remove the first column
-    df = df.iloc[:, 0:]
+    df = df.iloc[:, 1:]
 
     # Convert values with metric suffixes to float
     for col in df.columns[22:]:
