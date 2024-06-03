@@ -1,11 +1,12 @@
 import pandas as pd
 import numpy as np
 from cuml.ensemble import RandomForestRegressor as cuRF
-from cuml.model_selection import train_test_split
+from cuml.model_selection import train_test_split as cuml_train_test_split
 import matplotlib.pyplot as plt
 import seaborn as sns
 import os
 import argparse
+import cudf
 
 # Parse command line arguments
 parser = argparse.ArgumentParser(description="Process Excel file and store results")
@@ -20,12 +21,12 @@ data = pd.read_excel(file_path)
 output_data = data.iloc[:, :21]
 input_data = data.iloc[:, 21:]
 
-# Convert data to numpy arrays
-X = input_data.to_numpy()
-Y = output_data.to_numpy()
+# Convert data to cuDF DataFrame
+output_data_cudf = cudf.DataFrame.from_pandas(output_data)
+input_data_cudf = cudf.DataFrame.from_pandas(input_data)
 
 # Split the dataset into training and testing sets
-X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2, random_state=0)
+X_train, X_test, Y_train, Y_test = cuml_train_test_split(input_data_cudf, output_data_cudf, test_size=0.2, random_state=0)
 
 # Build the GPU-accelerated Random Forest model
 rf = cuRF(n_estimators=100, random_state=0)
