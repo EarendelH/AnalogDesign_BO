@@ -10,15 +10,21 @@ import cudf
 
 # Function to convert columns to numeric types
 def convert_to_numeric(df):
+    if df.isnull().values.any():
+        print("Warning: DataFrame contains NaN values. These may affect conversion and model training.")
+        # df.fillna(0, inplace=True)
+
     for col in df.columns:
         if df[col].dtype == 'object':
             try:
                 df[col] = pd.to_numeric(df[col])
             except ValueError:
-                print(f"Error: Column {col} contains non-numeric data that cannot be converted.")
-                print(df[col])
-                raise
+                non_numeric_data = df[col][~df[col].apply(lambda x: x.replace('.', '', 1).isdigit())].unique()
+                print(f"Error: Column '{col}' contains non-numeric data that cannot be converted.")
+                print(f"Non-numeric data in column '{col}': {non_numeric_data}")
+                raise ValueError(f"Column '{col}' contains non-numeric data.")
     return df
+
 
 # Parse command line arguments
 parser = argparse.ArgumentParser(description="Process Excel file and store results")
