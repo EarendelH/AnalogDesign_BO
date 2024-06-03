@@ -5,7 +5,6 @@ from sklearn.multioutput import MultiOutputRegressor
 import matplotlib.pyplot as plt
 import os
 import sys
-import numpy as np
 
 # Check if the Excel file path is provided as a command-line argument
 if len(sys.argv) < 2:
@@ -33,9 +32,9 @@ multi_output_rf.fit(X, y)
 excel_dir = os.path.dirname(excel_file_path)
 
 # Print the feature importances for each output
-feature_importances = multi_output_rf.estimators_[0].feature_importances_
 for i in range(y.shape[1]):
-    sorted_importances = sorted(zip(feature_importances[i], X.columns), reverse=True)
+    feature_importances = multi_output_rf.estimators_[i].feature_importances_
+    sorted_importances = sorted(zip(feature_importances, X.columns), reverse=True)
     print(f"Feature Importances for Output {i}:")
     for importance, feature in sorted_importances:
         print(f"{feature}: {importance}")
@@ -53,7 +52,8 @@ with open(os.path.join(excel_dir, 'feature_importances.txt'), 'w') as file:
 
 # Plot the feature importances for the first output as a bar chart
 plt.figure(figsize=(10, 6))
-sorted_features = sorted(zip(feature_importances[0], X.columns), reverse=True)
+feature_importances = multi_output_rf.estimators_[0].feature_importances_
+sorted_features = sorted(zip(feature_importances, X.columns), reverse=True)
 x_pos = range(len(sorted_features))
 importances, labels = zip(*sorted_features)
 plt.bar(x_pos, importances, align='center')
