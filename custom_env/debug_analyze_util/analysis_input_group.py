@@ -45,7 +45,7 @@ current_group = []
 # Iterate over sorted feature importances
 for importance, feature in sorted_features:
     # If the current group has a large importance gap, start a new group
-    if current_group and abs(importance - current_group[0][0]) > 0.05:
+    if current_group and abs(importance - current_group[0][0]) > 0.02:
         groups.append(current_group)
         current_group = []
     current_group.append((importance, feature))
