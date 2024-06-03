@@ -1,4 +1,3 @@
-# Import required libraries
 import pandas as pd
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.multioutput import MultiOutputRegressor
@@ -6,70 +5,81 @@ import matplotlib.pyplot as plt
 import os
 import sys
 import numpy as np
+from joblib import Parallel, delayed
+from tqdm import tqdm
 
-# Check if the Excel file path is provided as a command-line argument
+def convert_to_parquet(excel_file_path):
+    parquet_file_path = excel_file_path.replace('.xlsx', '.parquet')
+    data = pd.read_excel(excel_file_path)
+    data.to_parquet(parquet_file_path)
+    return parquet_file_path
+
+def train_model(X, y):
+    rf = RandomForestRegressor(n_estimators=100, max_depth=10, random_state=42)
+    multi_output_rf = MultiOutputRegressor(rf)
+    multi_output_rf.fit(X, y)
+    return multi_output_rf
+
+def compute_feature_importances(estimator):
+    return estimator.feature_importances_
+
 if len(sys.argv) < 2:
     print("Usage: python script.py <excel_file_path>")
     sys.exit(1)
 
-# Get the Excel file path from the command-line argument
 excel_file_path = sys.argv[1]
 
-# Read the input data from the Excel file
-data = pd.read_excel(excel_file_path)
+print("Converting Excel file to Parquet format...")
+parquet_file_path = convert_to_parquet(excel_file_path)
+print("Conversion complete.")
 
-# Separate input and output features
-X = data.iloc[:, 22:]  # Input features
-y = data.iloc[:, :22]  # Output features
+print("Reading Parquet file...")
+data = pd.read_parquet(parquet_file_path)
+print("Data loaded.")
 
-# Create a MultiOutputRegressor instance with RandomForestRegressor as the base estimator
-rf = RandomForestRegressor(n_estimators=100, max_depth=10, random_state=42)
-multi_output_rf = MultiOutputRegressor(rf)
+X = data.iloc[:, 22:]
+y = data.iloc[:, :22]
 
-# Train the multi-output model on the input and output features
-multi_output_rf.fit(X, y)
+print("Training model...")
+multi_output_rf = train_model(X, y)
+print("Model training complete.")
 
-# Get the directory path of the Excel file
-excel_dir = os.path.dirname(excel_file_path)
+print("Computing feature importances...")
+feature_importances = Parallel(n_jobs=-1)(
+    delayed(compute_feature_importances)(estimator) for estimator in tqdm(multi_output_rf.estimators_, desc="Computing feature importances")
+)
+print("Feature importance computation complete.")
 
-# Compute the overall feature importances by averaging across all outputs
-overall_feature_importances = np.mean([estimator.feature_importances_ for estimator in multi_output_rf.estimators_], axis=0)
+overall_feature_importances = np.mean(feature_importances, axis=0)
 
-# Sort the input features based on their overall importance
 sorted_features = sorted(zip(overall_feature_importances, X.columns), reverse=True)
 
-# Initialize groups and temporary list
 groups = []
 current_group = []
 
-# Iterate over sorted feature importances
 for importance, feature in sorted_features:
-    # If the current group has a large importance gap, start a new group
     if current_group and abs(importance - current_group[0][0]) > 0.02:
         groups.append(current_group)
         current_group = []
     current_group.append((importance, feature))
 
-# Add the last group
 if current_group:
     groups.append(current_group)
 
-# Extract feature names from groups
 groups = [[feature for _, feature in group] for group in groups]
 
-# Print the feature grouping
 print("Feature Grouping:")
 for i, group in enumerate(groups):
     print(f"Group {i+1}: {', '.join(group)}")
 
-# Save the feature grouping as a table
+excel_dir = os.path.dirname(excel_file_path)
+
 grouping_file_path = os.path.join(excel_dir, 'feature_grouping.txt')
 with open(grouping_file_path, 'w') as file:
     file.write("Feature Grouping:\n\n")
     for i, group in enumerate(groups):
         file.write(f"Group {i+1}: {', '.join(group)}\n")
 
-# Plot the overall feature importances as a bar chart
 plt.figure(figsize=(10, 6))
 x_pos = range(len(sorted_features))
 importances, labels = zip(*sorted_features)
