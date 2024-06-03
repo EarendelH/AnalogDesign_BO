@@ -51,6 +51,13 @@ feature_importances_tensor = np.array(Parallel(n_jobs=-1)(
 ))
 print("Feature importance computation complete.")
 
+print("Feature Importances Tensor:")
+print(feature_importances_tensor)
+
+excel_dir = os.path.dirname(excel_file_path)
+tensor_file_path = os.path.join(excel_dir, 'feature_importances_tensor.txt')
+np.savetxt(tensor_file_path, feature_importances_tensor, fmt='%.4f')
+
 normalized_importances = feature_importances_tensor / feature_importances_tensor.sum(axis=1, keepdims=True)
 
 similarity_matrix = np.dot(normalized_importances, normalized_importances.T)
@@ -59,13 +66,14 @@ from scipy.cluster.hierarchy import dendrogram, linkage
 Z = linkage(similarity_matrix, method='ward')
 
 plt.figure(figsize=(10, 6))
-dendrogram(Z, labels=X.columns, orientation='right')
+dendrogram(Z, labels=list(range(len(X.columns))), orientation='right')
 plt.xlabel('Features')
 plt.ylabel('Distance')
 plt.title('Feature Clustering')
 plt.tight_layout()
 
-excel_dir = os.path.dirname(excel_file_path)
+feature_map = dict(enumerate(X.columns))
+
 plot_file_path = os.path.join(excel_dir, 'feature_clustering.png')
 plt.savefig(plot_file_path)
 
@@ -74,7 +82,8 @@ max_distance = 0.2
 clusters = fcluster(Z, max_distance, criterion='distance')
 
 feature_groups = {}
-for feature, cluster in zip(X.columns, clusters):
+for feature_idx, cluster in enumerate(clusters):
+    feature = feature_map[feature_idx]
     if cluster not in feature_groups:
         feature_groups[cluster] = []
     feature_groups[cluster].append(feature)
