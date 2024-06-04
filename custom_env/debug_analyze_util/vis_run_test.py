@@ -95,8 +95,29 @@ def plot_label_distribution(labels, group_size=1000):
 
 # Main code
 if __name__ == "__main__":
-    base_path = input("Enter the path to the directory: ")
-    sorted_dirs = scan_and_sort_directories(base_path)
-    labels = label_directories(base_path, sorted_dirs)
-    # plot_label_distribution can be modified to read from 'directory_labels.csv' if running separately
-    plot_label_distribution(labels)
+    choice = input("Enter '1' to scan a directory or '2' to provide a CSV file path: ")
+
+    if choice == '1':
+        base_path = input("Enter the path to the directory: ")
+        sorted_dirs = scan_and_sort_directories(base_path)
+        labels = label_directories(base_path, sorted_dirs)
+        plot_label_distribution(labels)
+    elif choice == '2':
+        csv_path = input("Enter the path to the CSV file: ")
+        if os.path.exists(csv_path):
+            labels = {}
+            with open(csv_path, 'r') as file:
+                reader = csv.reader(file)
+                next(reader)  # Skip the header row
+                for row in reader:
+                    labels[row[0]] = int(row[1])
+
+            output_folder = os.path.dirname(csv_path)
+            plot_path = os.path.join(output_folder, 'label_distribution.png')
+            plot_label_distribution(labels)
+            plt.savefig(plot_path)
+            print(f"Label distribution plot saved at: {plot_path}")
+        else:
+            print("Invalid CSV file path.")
+    else:
+        print("Invalid choice. Please enter '1' or '2'.")
