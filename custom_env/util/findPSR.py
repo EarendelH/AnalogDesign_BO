@@ -82,6 +82,16 @@ def findPowerSupplyRejectionRatio_Debashis(file_path):
     return result
 
 
+def findPowerSupplyRejectionRatio_FC_SSF(file_path):
+
+    freq_list = [1000, 1000000, 10000000]
+    freq_labels = ['1k', '1M', '10M']
+
+    result = findPowerSupplyRejectionRatio_general(file_path, freq_list, freq_labels)
+
+    return result
+
+
 def scan_and_process(root_dir, highlight_subdir):
     results = {}
 

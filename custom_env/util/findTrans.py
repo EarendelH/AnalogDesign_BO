@@ -316,6 +316,10 @@ def findShoot_Line_Reg_Jianping(filename):
     result = findShoot_general(filename, [(0.00023, 0.00046), (0.00004, 0.00023)], 0.5)
     return result
 
+
+def findShoot_FC_SSF(filename):
+    result = findShoot_general(filename, [(2.5e-6, 7.5e-6), (7.5e-6, 12.5e-6)], 1.0)
+    return result
 # Test Code
 # file = "/Users/hanwu/Downloads/Log_N65/Jianping/select_point/tmp_20240518030545162069028/Trans_Line_Reg.raw/tran.tran.tran.encode"
 # print(findShoot_Line_Reg_Jianping(file))
