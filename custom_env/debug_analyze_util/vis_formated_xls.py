@@ -32,9 +32,11 @@ column_name_list = ['Reward', 'DC_IQ', 'Load_Reg_loadReg', 'Line_Reg_100m_lineRe
                     'PSR_psr_100k', 'PSR_psr_1M']
 
 # Load the Excel file
+print(f"Loading data from file: {file_path}")
 data = pd.read_excel(file_path)
 
 # Extract the timestamp from 'Folder Name' and convert it to datetime
+print(f"Extracting timestamps from 'Folder Name'...")
 data['Timestamp'] = pd.to_datetime(data['Folder Name'].str.extract(r'(\d{14})')[0], format='%Y%m%d%H%M%S')
 
 # Create a directory to store the plots
@@ -43,6 +45,7 @@ os.makedirs(plot_dir, exist_ok=True)
 
 # Plot the data and save each plot as a separate image file
 for column_name in column_name_list:
+    print(f"Drawing scatter plot for column: {column_name}...")
     fig = plot_data(data, column_name)
     plot_file_name = f'{column_name}_scatter_plot.png'
     plot_file_path = os.path.join(plot_dir, plot_file_name)
