@@ -1,11 +1,13 @@
 import pandas as pd
 from sklearn.ensemble import RandomForestRegressor
+from sklearn.cluster import KMeans
 import matplotlib.pyplot as plt
 import os
 import sys
 import numpy as np
 from joblib import Parallel, delayed
 from tqdm import tqdm
+
 
 def convert_to_parquet(excel_file_path):
     """
@@ -21,6 +23,7 @@ def convert_to_parquet(excel_file_path):
     data = pd.read_excel(excel_file_path)
     data.to_parquet(parquet_file_path)
     return parquet_file_path
+
 
 def train_models(X, y):
     """
@@ -40,6 +43,7 @@ def train_models(X, y):
         models.append(rf)
     return models
 
+
 def compute_feature_importances(model):
     """
     Compute feature importances for a given model.
@@ -52,13 +56,13 @@ def compute_feature_importances(model):
     """
     return model.feature_importances_
 
-def plot_feature_importances(importances, output_idx, output_name, excel_dir):
+
+def plot_feature_importances(importances, output_name, excel_dir):
     """
-    Plot feature importances for a specific output.
+    Plot feature importances for a specific output and save the plot.
 
     Args:
         importances (numpy.ndarray): Feature importances.
-        output_idx (int): Index of the output feature.
         output_name (str): Name of the output feature.
         excel_dir (str): Directory path of the Excel file.
     """
@@ -67,11 +71,12 @@ def plot_feature_importances(importances, output_idx, output_name, excel_dir):
     plt.xticks(range(len(importances)), X.columns, rotation=90)
     plt.xlabel('Features')
     plt.ylabel('Importance')
-    plt.title(f'Feature Importances for Output {output_idx+1}: {output_name}')
+    plt.title(f'Feature Importances for Output: {output_name}')
     plt.tight_layout()
-    plot_file_path = os.path.join(excel_dir, f'feature_importances_output_{output_idx+1}.png')
+    plot_file_path = os.path.join(excel_dir, f'feature_importances_{output_name}.png')
     plt.savefig(plot_file_path)
     plt.close()
+
 
 if len(sys.argv) < 2:
     print("Usage: python script.py <excel_file_path>")
@@ -107,48 +112,76 @@ excel_dir = os.path.dirname(excel_file_path)
 tensor_file_path = os.path.join(excel_dir, 'feature_importances_tensor.txt')
 np.savetxt(tensor_file_path, feature_importances_tensor, fmt='%.4f')
 
-# Plot feature importances for each output
+# Plot feature importances for each output and save the plots
 for i in range(y.shape[1]):
-    plot_feature_importances(feature_importances_tensor[i], i, y.columns[i], excel_dir)
+    plot_feature_importances(feature_importances_tensor[i], y.columns[i], excel_dir)
 
-# Normalize feature importances tensor
+# Normalize feature importances for each output
 normalized_importances = feature_importances_tensor / feature_importances_tensor.sum(axis=1, keepdims=True)
 
-# Compute similarity matrix between features
-similarity_matrix = np.dot(normalized_importances.T, normalized_importances)
+# Compute feature similarity matrix
+feature_similarity_matrix = np.zeros((X.shape[1], X.shape[1]))
+for i in range(y.shape[1]):
+    output_importances = normalized_importances[i]
+    feature_similarity_matrix += np.outer(output_importances, output_importances)
 
-# Perform hierarchical clustering on the similarity matrix
-from scipy.cluster.hierarchy import dendrogram, linkage
-Z = linkage(similarity_matrix, method='ward')
+# Save feature similarity matrix to file
+similarity_matrix_file_path = os.path.join(excel_dir, 'feature_similarity_matrix.txt')
+np.savetxt(similarity_matrix_file_path, feature_similarity_matrix, fmt='%.4f')
 
-# Visualize the clustering results
+# Perform hierarchical clustering on the feature similarity matrix
+from scipy.cluster.hierarchy import dendrogram, linkage, fcluster
+
+Z = linkage(feature_similarity_matrix, method='ward')
+
+# Visualize the hierarchical clustering results
 plt.figure(figsize=(10, 6))
 dendrogram(Z, labels=list(X.columns), orientation='right')
 plt.xlabel('Features')
 plt.ylabel('Distance')
-plt.title('Feature Clustering')
+plt.title('Hierarchical Clustering')
 plt.tight_layout()
 
-plot_file_path = os.path.join(excel_dir, 'feature_clustering.png')
-plt.savefig(plot_file_path)
+hierarchical_plot_file_path = os.path.join(excel_dir, 'hierarchical_clustering.png')
+plt.savefig(hierarchical_plot_file_path)
 
-# Group features based on the clustering results
-from scipy.cluster.hierarchy import fcluster
-max_distance = 0.2
-clusters = fcluster(Z, max_distance, criterion='distance')
+# Group features based on the hierarchical clustering results
+max_distance = 0.5
+hierarchical_clusters = fcluster(Z, max_distance, criterion='distance')
 
-feature_groups = {}
-for feature, cluster in zip(X.columns, clusters):
-    if cluster not in feature_groups:
-        feature_groups[cluster] = []
-    feature_groups[cluster].append(feature)
+hierarchical_feature_groups = {}
+for feature, cluster in zip(X.columns, hierarchical_clusters):
+    if cluster not in hierarchical_feature_groups:
+        hierarchical_feature_groups[cluster] = []
+    hierarchical_feature_groups[cluster].append(feature)
 
-print("Feature Grouping:")
-for cluster, features in feature_groups.items():
-    print(f"Group {cluster}: {', '.join(features)}")
+# Perform k-means clustering on the feature similarity matrix
+n_clusters = 5
+kmeans = KMeans(n_clusters=n_clusters, random_state=42)
+kmeans.fit(feature_similarity_matrix)
+kmeans_clusters = kmeans.labels_
 
-grouping_file_path = os.path.join(excel_dir, 'feature_grouping.txt')
-with open(grouping_file_path, 'w') as file:
-    file.write("Feature Grouping:\n\n")
-    for cluster, features in feature_groups.items():
-        file.write(f"Group {cluster}: {', '.join(features)}\n")
+kmeans_feature_groups = {}
+for feature, cluster in zip(X.columns, kmeans_clusters):
+    if cluster not in kmeans_feature_groups:
+        kmeans_feature_groups[cluster] = []
+    kmeans_feature_groups[cluster].append(feature)
+
+# Save clustering results to file
+clustering_results_file_path = os.path.join(excel_dir, 'clustering_results.txt')
+with open(clustering_results_file_path, 'w') as file:
+    file.write("Hierarchical Clustering Results:\n\n")
+    for cluster, features in hierarchical_feature_groups.items():
+        file.write(f"Cluster {cluster}: {', '.join(features)}\n")
+
+    file.write("\nK-means Clustering Results:\n\n")
+    for cluster, features in kmeans_feature_groups.items():
+        file.write(f"Cluster {cluster}: {', '.join(features)}\n")
+
+# Print clustering results to console
+print("Hierarchical Clustering Results:")
+for cluster, features in hierarchical_feature_groups.items():
+    print(f"Cluster {cluster}: {', '.join(features)}")
+print("\nK-means Clustering Results:")
+for cluster, features in kmeans_feature_groups.items():
+    print(f"Cluster {cluster}: {', '.join(features)}")
