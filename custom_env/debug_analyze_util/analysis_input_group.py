@@ -146,7 +146,7 @@ hierarchical_plot_file_path = os.path.join(excel_dir, 'hierarchical_clustering.p
 plt.savefig(hierarchical_plot_file_path)
 
 # Group features based on the hierarchical clustering results
-max_distance = 0.5
+max_distance = 0.25
 hierarchical_clusters = fcluster(Z, max_distance, criterion='distance')
 
 hierarchical_feature_groups = {}
