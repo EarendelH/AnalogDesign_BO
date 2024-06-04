@@ -2,6 +2,7 @@ import os
 import pickle
 import yaml
 import csv
+from multiprocessing import Pool
 
 
 def cal_reward(ideal_specs_dict, cur_specs_dict, norm_specs_dict):
@@ -96,51 +97,39 @@ def parse_parameters(file_path):
     return parameters_dict
 
 
-run_test_path = input("Enter the path of the run_test folder: ")
-config_path = input("Enter the path of the config folder: ")
-output_csv_path = input("Enter the path of the output csv file: ")
+def process_folder(folder_path, ideal_specs, norm_specs):
+    parameters_dict = {}
+    dc_scs_path = os.path.join(folder_path, 'DC.scs')
+    if os.path.exists(dc_scs_path):
+        parameters_dict = parse_parameters(dc_scs_path)
 
-norm_specs_file = config_path + "/norm_specs.yaml"
+    for file in os.listdir(folder_path):
+        if file.endswith(".pkl"):
+            with open(os.path.join(folder_path, file), "rb") as f:
+                single_sim = pickle.load(f)
+            rew_single = cal_reward(ideal_specs, single_sim, norm_specs)
+            return (folder_path, rew_single, single_sim, parameters_dict)
+    return None
 
-with open(norm_specs_file, 'r') as file:
-    norm_specs = yaml.safe_load(file)
 
-ideal_specs_file = config_path + "/norm_specs_cal.yaml"
+if __name__ == '__main__':
+    run_test_path = input("Enter the path of the run_test folder: ")
+    config_path = input("Enter the path of the config folder: ")
+    output_csv_path = input("Enter the path of the output csv file: ")
 
-with open(ideal_specs_file, 'r') as file:
-    ideal_specs = yaml.safe_load(file)
+    with open(os.path.join(config_path, "norm_specs.yaml"), 'r') as file:
+        norm_specs = yaml.safe_load(file)
 
-sim_summary = {}
+    with open(os.path.join(config_path, "norm_specs_cal.yaml"), 'r') as file:
+        ideal_specs = yaml.safe_load(file)
 
-# Iterate over all folder in the path
-for folder in os.listdir(run_test_path):
-    # Check if the folder is a directory
-    if os.path.isdir(os.path.join(run_test_path, folder)):
-        parameters_dict = {}
-        # Check if the DC.scs file exists and parse it
-        dc_scs_path = os.path.join(run_test_path, folder, 'DC.scs')
-        if os.path.exists(dc_scs_path):
-            parameters_dict = parse_parameters(dc_scs_path)
+    folder_paths = [os.path.join(run_test_path, folder) for folder in os.listdir(run_test_path)
+                    if os.path.isdir(os.path.join(run_test_path, folder))]
 
-        # Iterate over all files in the folder
-        for file in os.listdir(os.path.join(run_test_path, folder)):
-            # Check if the file is a pickle file
-            if file.endswith(".pkl"):
-                # Load the pickle file
-                with open(os.path.join(run_test_path, folder, file), "rb") as f:
-                    single_sim = pickle.load(f)
-                # Create sub-dict for the folder
-                sim_summary[folder] = {}
-                sim_summary[folder]["result"] = single_sim
-                sim_summary[folder]["parameters"] = parameters_dict
-                # print(f"Debug, norm_specs: {norm_specs}, single_sim: {single_sim}")
-                rew_single = cal_reward(ideal_specs, single_sim, norm_specs)
-                sim_summary[folder]["reward"] = rew_single
-                print(f"Reward for {folder} is {rew_single} with specs {single_sim}")
+    with Pool() as pool:
+        results = pool.starmap(process_folder, [(path, ideal_specs, norm_specs) for path in folder_paths])
 
-# Save the summary to a csv file
-with open(output_csv_path, mode='w') as file:
-    writer = csv.writer(file)
-    writer.writerow(["Folder Name", "Reward", "Specs", "Parameters"])
-    for key, value in sim_summary.items():
-        writer.writerow([key, value["reward"], value["result"], value["parameters"]])
+    with open(output_csv_path, mode='w', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow(["Folder Name", "Reward", "Specs", "Parameters"])
+        writer.writerows([result for result in results if result])

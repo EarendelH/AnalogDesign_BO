@@ -49,4 +49,4 @@ directory_path = input('Enter the directory path: ')  # e.g., 'path_to_directory
 final_data = combine_sort_xls(directory_path)
 
 # Save the final combined and sorted DataFrame to an Excel file
-final_data.to_excel('final_combined_output.xlsx', index=False)
+final_data.to_excel('combined_output.xlsx', index=False)
