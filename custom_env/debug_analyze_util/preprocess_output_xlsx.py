@@ -22,6 +22,7 @@ def process_excel(filepath):
 
     # Convert values with metric suffixes to float
     for col in df.columns[21:]:
+        print(f'Converting column: {col}')
         df[col] = df[col].apply(convert_to_float)
 
     # Find all columns that start with 'nf_'
@@ -29,6 +30,7 @@ def process_excel(filepath):
 
     # Perform calculations and modify dataframe for each 'nf_' column
     for nf_col in nf_columns:
+        print(f'Processing column: {nf_col}')
         prefix = nf_col.split('_')[1]  # Assume column format is 'nf_MX'
         w_col = f'w_{prefix}_per_finger'  # Corresponding width column
         new_col = f'w_{prefix}'  # New column name
