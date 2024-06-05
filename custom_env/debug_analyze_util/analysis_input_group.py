@@ -45,9 +45,21 @@ def train_models(X, y):
     return models
 
 
-def compute_feature_importances(model, X, y):
+def compute_impurity_importances(model):
     """
-    Compute feature importances for a given model using both impurity-based and permutation-based methods.
+    Compute feature importances for a given model using the impurity-based method.
+
+    Args:
+        model (RandomForestRegressor): Trained random forest model.
+
+    Returns:
+        numpy.ndarray: Feature importances from the impurity-based method.
+    """
+    return model.feature_importances_
+
+def compute_permutation_importances(model, X, y):
+    """
+    Compute feature importances for a given model using the permutation-based method.
 
     Args:
         model (RandomForestRegressor): Trained random forest model.
@@ -55,11 +67,10 @@ def compute_feature_importances(model, X, y):
         y (pandas.Series): Output feature.
 
     Returns:
-        tuple: Feature importances from impurity-based and permutation-based methods.
+        numpy.ndarray: Feature importances from the permutation-based method.
     """
-    impurity_importances = model.feature_importances_
-    permutation_importances = permutation_importance(model, X, y, n_repeats=10, random_state=42).importances_mean
-    return impurity_importances, permutation_importances
+    return permutation_importance(model, X, y, n_repeats=10, random_state=42).importances_mean
+
 
 
 def plot_feature_importances(importances, output_name, excel_dir, method):
@@ -107,10 +118,10 @@ print("Model training complete.")
 
 print("Computing feature importances...")
 impurity_importances_tensor = np.array(Parallel(n_jobs=-1)(
-    delayed(compute_feature_importances)(model, X, y.iloc[:, i])[0] for i, model in enumerate(tqdm(models, desc="Computing impurity-based feature importances"))
+    delayed(compute_impurity_importances)(model) for model in tqdm(models, desc="Computing impurity-based feature importances")
 ))
 permutation_importances_tensor = np.array(Parallel(n_jobs=-1)(
-    delayed(compute_feature_importances)(model, X, y.iloc[:, i])[1] for i, model in enumerate(tqdm(models, desc="Computing permutation-based feature importances"))
+    delayed(compute_permutation_importances)(model, X, y.iloc[:, i]) for i, model in enumerate(tqdm(models, desc="Computing permutation-based feature importances"))
 ))
 print("Feature importance computation complete.")
 
