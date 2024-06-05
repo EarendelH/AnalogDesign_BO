@@ -87,7 +87,7 @@ def findIQ_FC_SSF(filepath):
         print(f"Warning: {e}. Setting IQ to default (100.0).")
         value = 100.0
 
-    if value > 0.00005:
+    if value > 0.001:
         print(f"Power is too large, return to max 100.0 value")
         value = 100.0
     return {"IQ": value}
