@@ -69,7 +69,8 @@ def compute_permutation_importances(model, X, y):
     Returns:
         numpy.ndarray: Feature importances from the permutation-based method.
     """
-    return permutation_importance(model, X, y, n_repeats=10, random_state=42).importances_mean
+    y_array = y.to_numpy().copy()
+    return permutation_importance(model, X, y_array, n_repeats=10, random_state=42).importances_mean
 
 
 
