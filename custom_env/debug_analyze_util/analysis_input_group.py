@@ -163,7 +163,7 @@ for method, importances_tensor in [('impurity', impurity_importances_tensor), ('
     hierarchical_plot_file_path = os.path.join(excel_dir, f'hierarchical_clustering_{method}.png')
     plt.savefig(hierarchical_plot_file_path)
 
-    max_distance = 0.25
+    max_distance = 0.5
     hierarchical_clusters = fcluster(Z, max_distance, criterion='distance')
 
     hierarchical_feature_groups = {}
