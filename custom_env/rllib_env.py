@@ -81,8 +81,9 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
 
         # Load config files
         config_folder_path = os.path.join(self.current_path, 'config', config_folder_name)
-
+        print(f"Debug, config_folder_path is {config_folder_path}")
         self.agent_assign_config = config_folder_path + "/agent_assign.yaml"
+        print(f"Debug, agent_assign_config is {self.agent_assign_config}")
         self.param_range_config = config_folder_path + "/param_range.yaml"
         self.sim_config = config_folder_path + "/simulation.yaml"
         self.dc_sim_config = config_folder_path + "/simulation_region.yaml"
