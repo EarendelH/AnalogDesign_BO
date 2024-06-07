@@ -107,7 +107,11 @@ def process_folder(folder_path, ideal_specs, norm_specs):
         if file.endswith(".pkl"):
             with open(os.path.join(folder_path, file), "rb") as f:
                 single_sim = pickle.load(f)
-            rew_single = cal_reward(ideal_specs, single_sim, norm_specs)
+            try:
+                rew_single = cal_reward(ideal_specs, single_sim, norm_specs)
+            except Exception as e:
+                print(f"Error occurred in cal_reward: {str(e)}. Skipping and continuing.")
+                rew_single = None
             return (folder_path, rew_single, single_sim, parameters_dict)
     return None
 
