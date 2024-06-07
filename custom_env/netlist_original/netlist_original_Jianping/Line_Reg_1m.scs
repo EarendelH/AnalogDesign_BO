@@ -1,0 +1,107 @@
+// Generated for: spectre
+// Generated on: Apr 30 12:39:01 2024
+// Design library name: LDO_JSSC2010_Jianping
+// Design cell name: tb_Line_Reg_1m
+// Design view name: schematic
+simulator lang=spectre
+global 0
+parameters VIN=1.2 C1 C2 CM IB R1
+include "/data/PDK/pdk_installed/tsmc180bcd_g2/pdk/pdk_1p6m_2/tsmc18/../models/spectre/c018bcd_gen2_v1d6_usage.scs" section=pre_simu
+include "/data/PDK/pdk_installed/tsmc180bcd_g2/pdk/pdk_1p6m_2/tsmc18/../models/spectre/c018bcd_gen2_v1d6_usage.scs" section=tt_lib
+
+// Library name: LDO_JSSC2010_Jianping
+// Cell name: LDO_Core
+// View name: schematic
+subckt LDO_Core VFB VIN VOUT VREF VSS
+    M0 (VOUT net26 VIN VIN) pch_mac l=500n w=50u multi=1 nf=1 sigma=1 \
+        sd=540.0n ad=2.4e-11 as=2.4e-11 pd=100.96u ps=100.96u nrd=0.0054 \
+        nrs=0.0054 sa=480.0n sb=480.0n sca=0 scb=0 scc=0 mismatchflag=1
+    M31 (net8 net8 VSS VSS) nch_mac l=180n w=2u multi=1 nf=1 sigma=1 \
+        sd=540n ad=9.6e-13 as=9.6e-13 pd=4.96u ps=4.96u nrd=0.135 \
+        nrs=0.135 sa=480n sb=480n sca=0 scb=0 scc=0 mismatchflag=1
+    M32 (net16 net9 VSS VSS) nch_mac l=180n w=2u multi=1 nf=1 sigma=1 \
+        sd=540n ad=9.6e-13 as=9.6e-13 pd=4.96u ps=4.96u nrd=0.135 \
+        nrs=0.135 sa=480n sb=480n sca=0 scb=0 scc=0 mismatchflag=1
+    M15 (net20 VREF net45 VSS) nch_mac l=180n w=2u multi=1 nf=1 sigma=1 \
+        sd=540n ad=9.6e-13 as=9.6e-13 pd=4.96u ps=4.96u nrd=0.135 \
+        nrs=0.135 sa=480n sb=480n sca=0 scb=0 scc=0 mismatchflag=1
+    M22 (net22 net22 VSS VSS) nch_mac l=180n w=2u multi=1 nf=1 sigma=1 \
+        sd=540n ad=9.6e-13 as=9.6e-13 pd=4.96u ps=4.96u nrd=0.135 \
+        nrs=0.135 sa=480n sb=480n sca=0 scb=0 scc=0 mismatchflag=1
+    M23 (net26 net22 VSS VSS) nch_mac l=180n w=2u multi=1 nf=1 sigma=1 \
+        sd=540n ad=9.6e-13 as=9.6e-13 pd=4.96u ps=4.96u nrd=0.135 \
+        nrs=0.135 sa=480n sb=480n sca=0 scb=0 scc=0 mismatchflag=1
+    M14 (net32 net8 VSS VSS) nch_mac l=180n w=2u multi=1 nf=1 sigma=1 \
+        sd=540n ad=9.6e-13 as=9.6e-13 pd=4.96u ps=4.96u nrd=0.135 \
+        nrs=0.135 sa=480n sb=480n sca=0 scb=0 scc=0 mismatchflag=1
+    M13 (net45 net8 VSS VSS) nch_mac l=180n w=2u multi=1 nf=1 sigma=1 \
+        sd=540n ad=9.6e-13 as=9.6e-13 pd=4.96u ps=4.96u nrd=0.135 \
+        nrs=0.135 sa=480n sb=480n sca=0 scb=0 scc=0 mismatchflag=1
+    M6 (net41 net8 VSS VSS) nch_mac l=180n w=2u multi=1 nf=1 sigma=1 \
+        sd=540n ad=9.6e-13 as=9.6e-13 pd=4.96u ps=4.96u nrd=0.135 \
+        nrs=0.135 sa=480n sb=480n sca=0 scb=0 scc=0 mismatchflag=1
+    M2 (net37 VREF net41 VSS) nch_mac l=180n w=2u multi=1 nf=1 sigma=1 \
+        sd=540n ad=9.6e-13 as=9.6e-13 pd=4.96u ps=4.96u nrd=0.135 \
+        nrs=0.135 sa=480n sb=480n sca=0 scb=0 scc=0 mismatchflag=1
+    M1 (net42 net35 net41 VSS) nch_mac l=180n w=2u multi=1 nf=1 sigma=1 \
+        sd=540n ad=9.6e-13 as=9.6e-13 pd=4.96u ps=4.96u nrd=0.135 \
+        nrs=0.135 sa=480n sb=480n sca=0 scb=0 scc=0 mismatchflag=1
+    M33 (net16 net16 VIN VIN) pch_mac l=180n w=2u multi=1 nf=1 sigma=1 \
+        sd=540n ad=9.6e-13 as=9.6e-13 pd=4.96u ps=4.96u nrd=0.135 \
+        nrs=0.135 sa=480n sb=480n sca=0 scb=0 scc=0 mismatchflag=1
+    M16 (net20 net16 VIN VIN) pch_mac l=180n w=2u multi=1 nf=1 sigma=1 \
+        sd=540n ad=9.6e-13 as=9.6e-13 pd=4.96u ps=4.96u nrd=0.135 \
+        nrs=0.135 sa=480n sb=480n sca=0 scb=0 scc=0 mismatchflag=1
+    M21 (net22 net20 VIN VIN) pch_mac l=180n w=2u multi=1 nf=1 sigma=1 \
+        sd=540n ad=9.6e-13 as=9.6e-13 pd=4.96u ps=4.96u nrd=0.135 \
+        nrs=0.135 sa=480n sb=480n sca=0 scb=0 scc=0 mismatchflag=1
+    M24 (net26 net16 VIN VIN) pch_mac l=180n w=2u multi=1 nf=1 sigma=1 \
+        sd=540n ad=9.6e-13 as=9.6e-13 pd=4.96u ps=4.96u nrd=0.135 \
+        nrs=0.135 sa=480n sb=480n sca=0 scb=0 scc=0 mismatchflag=1
+    M12 (net32 net32 net35 VDD) pch_mac l=180n w=2u multi=1 nf=1 sigma=1 \
+        sd=540n ad=9.6e-13 as=9.6e-13 pd=4.96u ps=4.96u nrd=0.135 \
+        nrs=0.135 sa=480n sb=480n sca=0 scb=0 scc=0 mismatchflag=1
+    M11 (net45 net32 VFB VDD) pch_mac l=180n w=2u multi=1 nf=1 sigma=1 \
+        sd=540n ad=9.6e-13 as=9.6e-13 pd=4.96u ps=4.96u nrd=0.135 \
+        nrs=0.135 sa=480n sb=480n sca=0 scb=0 scc=0 mismatchflag=1
+    M5 (net35 net37 VIN VIN) pch_mac l=180n w=2u multi=1 nf=1 sigma=1 \
+        sd=540n ad=9.6e-13 as=9.6e-13 pd=4.96u ps=4.96u nrd=0.135 \
+        nrs=0.135 sa=480n sb=480n sca=0 scb=0 scc=0 mismatchflag=1
+    M4 (net42 net42 VIN VIN) pch_mac l=180n w=2u multi=1 nf=1 sigma=1 \
+        sd=540n ad=9.6e-13 as=9.6e-13 pd=4.96u ps=4.96u nrd=0.135 \
+        nrs=0.135 sa=480n sb=480n sca=0 scb=0 scc=0 mismatchflag=1
+    M3 (net37 net42 VIN VIN) pch_mac l=180n w=2u multi=1 nf=1 sigma=1 \
+        sd=540n ad=9.6e-13 as=9.6e-13 pd=4.96u ps=4.96u nrd=0.135 \
+        nrs=0.135 sa=480n sb=480n sca=0 scb=0 scc=0 mismatchflag=1
+    C1 (VFB net9) capacitor c=C1
+    C3 (net20 VFB) capacitor c=CM
+    C2 (net37 VSS) capacitor c=C2
+    R1 (net8 net9) resistor r=R1
+    I0 (VIN net8) isource dc=IB type=dc
+ends LDO_Core
+// End of subcircuit definition.
+
+// Library name: LDO_JSSC2010_Jianping
+// Cell name: tb_Line_Reg_1m
+// View name: schematic
+V2 (VIN 0) vsource dc=VIN type=dc
+V1 (VREF 0) vsource dc=500.0m type=dc
+V0 (VSS 0) vsource dc=0 type=dc
+I0 (VOUT VIN VOUT VREF VSS) LDO_Core
+I1 (VOUT VSS) isource dc=1m type=dc
+C0 (VOUT VSS) capacitor c=1f
+simulatorOptions options psfversion="1.1.0" reltol=1e-3 vabstol=1e-6 \
+    iabstol=1e-12 temp=27 tnom=27 scalem=1.0 scale=1.0 gmin=1e-12 rforce=1 \
+    maxnotes=5 maxwarns=5 digits=5 cols=80 pivrel=1e-3 \
+    sensfile="../psf/sens.output" checklimitdest=psf 
+dcOp dc write="spectre.dc" maxiters=150 maxsteps=10000 annotate=status
+dcOpInfo info what=oppoint where=rawfile
+dc dc param=VIN start=0.75 stop=1.2 oppoint=rawfile maxiters=150 \
+    maxsteps=10000 annotate=status
+modelParameter info what=models where=rawfile
+element info what=inst where=rawfile
+outputParameter info what=output where=rawfile
+designParamVals info what=parameters where=rawfile
+primitives info what=primitives where=rawfile
+subckts info what=subckts where=rawfile
+saveOptions options save=allpub
