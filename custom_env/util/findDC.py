@@ -79,15 +79,15 @@ def findIQ(filepath):
 # print(findIQ(path))
 
 
-def findIQ_FC_SSF(filepath):
-    search_keyword = "VIN2:p"
+def findIQ_KNL(filepath):
+    search_keyword = "V2:p"
     try:
         value = extract_dcOP_data(filepath, search_keyword)
     except Exception as e:
         print(f"Warning: {e}. Setting IQ to default (100.0).")
         value = 100.0
 
-    if value > 0.001:
+    if value > 0.00005:
         print(f"Power is too large, return to max 100.0 value")
         value = 100.0
     return {"IQ": value}
