@@ -80,24 +80,16 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
             raise ValueError(f"Root directory {self.run_root_dir} not found.")
 
         # Load config files
-        config_folder_path = os.path.join(self.current_path, 'config')
+        config_folder_path = os.path.join(self.current_path, 'config', config_folder_name)
 
-        self.agent_assign_config = config_folder_name + "/agent_assign.yaml"
-        self.agent_assign_config = os.path.join(config_folder_path, self.agent_assign_config)
-        self.param_range_config = config_folder_name + "/param_range.yaml"
-        self.param_range_config = os.path.join(config_folder_path, self.param_range_config)
-        self.sim_config = config_folder_name + "/simulation.yaml"
-        self.sim_config = os.path.join(config_folder_path, self.sim_config)
-        self.dc_sim_config = config_folder_name + "/simulation_region.yaml"
-        self.dc_sim_config = os.path.join(config_folder_path, self.dc_sim_config)
-        self.predefined_init_param = config_folder_name + "/init_param.yaml"
-        self.predefined_init_param = os.path.join(config_folder_path, self.predefined_init_param)
-        self.device_mask_config = config_folder_name + "/device_mask.yaml"
-        self.device_mask_config = os.path.join(config_folder_path, self.device_mask_config)
-        self.norm_specs_file = config_folder_name + "/norm_specs.yaml"
-        self.norm_specs_file = os.path.join(config_folder_path, self.norm_specs_file)
-        self.generalize_specs_config = config_folder_name + "/generalize_specs.yaml"
-        self.generalize_specs_config = os.path.join(config_folder_path, self.generalize_specs_config)
+        self.agent_assign_config = config_folder_path + "/agent_assign.yaml"
+        self.param_range_config = config_folder_path + "/param_range.yaml"
+        self.sim_config = config_folder_path + "/simulation.yaml"
+        self.dc_sim_config = config_folder_path + "/simulation_region.yaml"
+        self.predefined_init_param = config_folder_path + "/init_param.yaml"
+        self.device_mask_config = config_folder_path + "/device_mask.yaml"
+        self.norm_specs_file = config_folder_path + "/norm_specs.yaml"
+        self.generalize_specs_config = config_folder_path + "/generalize_specs.yaml"
 
         # Set netlist directory
         self.unassigned_netlist_dir = netlist_folder_name
