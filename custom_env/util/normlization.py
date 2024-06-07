@@ -12,11 +12,11 @@ def norm_ideal_spec(input_specs, norm_specs):
         norm_cur_specs_sub = {}
         for sub_key, value in sub_dict.items():
             ideal_value = value
-            # print(f"Debug, cur_value = {cur_value}")
+            print(f"Debug, cur_value = {cur_value}")
             input_value = input_specs[sub_key]['value']
-            # print(f"Debug, ideal_value = {ideal_value}")
+            print(f"Debug, ideal_value = {ideal_value}")
             norm_value = (input_value - ideal_value) / (input_value + ideal_value)
-            # print(f"Debug, norm_value = {norm_value}")
+            print(f"Debug, norm_value = {norm_value}")
             norm_cur_specs_sub[sub_key] = norm_value
         norm_cur_specs[key] = norm_cur_specs_sub
 
