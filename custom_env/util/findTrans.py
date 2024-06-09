@@ -317,6 +317,11 @@ def findShoot_Line_Reg_Jianping(filename):
     return result
 
 
+def findShoot_Jianping_V(filename):
+    result = findShoot_general(filename, [(2.5e-6, 7.5e-6), (7.5e-6, 12.5e-6)], 1.0)
+    return result
+
+
 def findShoot_KNL(filename):
     result = findShoot_general(filename, [(2.5e-6, 7.5e-6), (7.5e-6, 12.5e-6)], 1.0)
     return result
