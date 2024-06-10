@@ -1,14 +1,14 @@
 max_process_limit: false
-cpu_usage: 40
-gpu_usage: 1
+cpu_usage: 69
+gpu_usage: 0
 generalize: true
 netlist_folder_name: netlist_template_KNL_N65
 specs_folder_name: sampled_specs_KNL_N65
 config_folder_name: config_KNL_N65
 run_folder_name: run_test
 sim_output: false
-init_method: half
+init_method: mixed
 dc_check: true
-restore_checkpoint: true
-checkpoint_path: /home/hanwu/ray_results/AnalogDesignEnv_v0/PPO/PPO_AnalogDesignEnv_v0_a5e07_00000_0_2024-06-08_16-11-03/checkpoint_000012
+restore_checkpoint: false
+checkpoint_path:
 train_iterations: 2000
