@@ -45,6 +45,6 @@ def plot_data(results, highlight_subdir, root_dir):
     print(f"Image save to：{plt_path}")
 
 
-# root_dir = '/Users/hanwu/Downloads/Log_N65/Jianping_C/Jianping_UM_N65_C_cd016/select_point/Reward_Sort'
-# highlight_subdir = ''
-# scan_and_process(root_dir, highlight_subdir)
+root_dir = '/Users/hanwu/Downloads/Log_N65/Validation/point_SS_FF'
+highlight_subdir = ''
+scan_and_process(root_dir, highlight_subdir)
