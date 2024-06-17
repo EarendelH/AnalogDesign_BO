@@ -1,8 +1,8 @@
 max_process_limit: false
-cpu_usage: 40
-gpu_usage: 1
+cpu_usage: 69
+gpu_usage: 0
 generalize: true
-netlist_folder_name: netlist_template_Jianping_N65_cap
+netlist_folder_name: netlist_template_Jianping_N65_bk_cap
 specs_folder_name: sampled_specs_Jianping_N65
 config_folder_name: config_Jianping_N65_C
 run_folder_name: run_test
@@ -10,5 +10,5 @@ sim_output: false
 init_method: mixed
 dc_check: true
 restore_checkpoint: true
-checkpoint_path: /home/hanwu/ray_results/AnalogDesignEnv_v0/PPO/PPO_AnalogDesignEnv_v0_30521_00000_0_2024-06-12_20-27-52/checkpoint_000015
+checkpoint_path: /data/share/train_data/Jianping/checkpoint/Jianping_N65_UM_Cap_30521/checkpoint_000015/
 train_iterations: 2000
