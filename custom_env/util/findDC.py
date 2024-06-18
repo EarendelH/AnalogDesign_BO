@@ -98,9 +98,6 @@ def findIQ_Jianping_DC_only(filepath):
     except Exception as e:
         print(f"Warning: {e}. return to max value.")
         value = 100.0
-    if value > 0.00002:
-        print(f"Power is too large, return to max value")
-        value = 100.0
     if value <= 0.0:
         print(f"Power is lower than zero, impossible, return to max value")
         value = 100.0
