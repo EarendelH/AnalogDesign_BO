@@ -88,3 +88,20 @@ def findIQ_KNL(filepath):
         value = 100.0
 
     return {"IQ": value}
+
+
+def findIQ_Jianping_DC_only(filepath):
+    search_keyword = "V2:p"
+    try:
+        value = extract_dcOP_data(filepath, search_keyword)
+        value = value - 0.05
+    except Exception as e:
+        print(f"Warning: {e}. return to max value.")
+        value = 100.0
+    if value > 0.00002:
+        print(f"Power is too large, return to max value")
+        value = 100.0
+    if value <= 0.0:
+        print(f"Power is lower than zero, impossible, return to max value")
+        value = 100.0
+    return {"IQ": value}
