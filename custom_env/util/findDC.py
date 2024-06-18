@@ -94,7 +94,7 @@ def findIQ_Jianping_DC_only(filepath):
     search_keyword = "V2:p"
     try:
         value = extract_dcOP_data(filepath, search_keyword)
-        value = value - 0.05
+        value = value
     except Exception as e:
         print(f"Warning: {e}. return to max value.")
         value = 100.0
