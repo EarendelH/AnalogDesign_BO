@@ -185,7 +185,7 @@ def run_dynamic_simulation(work_dir, sim_config, zero_sim_result, show_output=Fa
 
     # print(f"Debug!!! results: {results} and fail_tag: {fail_tag}")
 
-    return results, fail_tag
+    return results
 
 
 def run_region_simulation(work_dir, sim_config, show_output=False):
