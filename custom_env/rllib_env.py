@@ -395,11 +395,11 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
                                               self.sim_output_enable)
 
             try:
-                sim_result, fail_tage = _run_simulation_with_retry()
+                sim_result = _run_simulation_with_retry()
             except Exception as e:
-                logging.warning(f"Step Warning!!!: {e}. Simulation failed, use zero result instead.")
+                logging.warning(f"Step Warning!!!: {e}. sim_result is {sim_result}."
+                                f" Simulation failed, use zero result instead.")
                 sim_result = copy.deepcopy(self.zero_sim_result)
-                fail_tage = True
             logging.info(f"Step!!!Simulation result: {sim_result} with step number: {self.step_num}")
             logging.debug(f"Debug, sim_result is {sim_result}")
             logging.debug(f"Debug, self.norm_specs is {self.norm_specs}")
