@@ -70,7 +70,8 @@ def retry_decorator(retry_count=2, delay_seconds=1, default_value=None):
                 try:
                     return func(*args, **kwargs)
                 except Exception as e:
-                    print(f"Attempt {attempts + 1} failed for {func.__name__}, retrying after {delay_seconds} seconds...")
+                    print(f"Attempt {attempts + 1} failed for {func.__name__} due to {e},"
+                          f" retrying after {delay_seconds} seconds...")
                     time.sleep(delay_seconds)
                     if attempts == retry_count:
                         print(f"Warning: Function {func.__name__} failed after {retry_count + 1} attempts.")
