@@ -10,7 +10,7 @@ from ray import tune
 from ray.rllib.algorithms.ppo import PPOConfig
 from ray.tune.registry import register_env
 
-from rllib_env import RllibAnalogDesignAutoEnv
+from rllib_env_continous import RllibAnalogDesignAutoEnv
 
 
 def get_user_input(prompt, default_value):
