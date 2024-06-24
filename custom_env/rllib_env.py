@@ -25,7 +25,7 @@ from util.util_func import retry_decorator
 from util.gen_init_param import gen_init_param
 from util.extract_device_param_value import extract_operation_region_w_name
 
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+# logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 
 class RllibAnalogDesignAutoEnv(MultiAgentEnv):
@@ -36,7 +36,14 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
                  run_folder_name='',
                  sim_output=False,
                  init_method='file',
-                 dc_check=True):
+                 dc_check=True,
+                 log_level='INFO'):
+
+        # Set log level
+        numeric_level = getattr(logging, log_level.upper(), None)
+        if not isinstance(numeric_level, int):
+            raise ValueError(f"Invalid log level: {log_level}")
+        logging.basicConfig(level=numeric_level, format='%(asctime)s - %(levelname)s - %(message)s')
 
         # Init values
         self.resetted = None
