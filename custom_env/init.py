@@ -3,24 +3,17 @@ from ray.rllib.algorithms.algorithm import Algorithm
 from rllib_env_continous import RllibAnalogDesignAutoEnv
 from ray.tune.registry import register_env
 
-ray.init()
-
-
-def load_policies(checkpoint_path, policy_ids):
-    algo = Algorithm.from_checkpoint(checkpoint_path)
-    return {pid: algo.get_policy(pid) for pid in policy_ids}
-
 
 def step_inference(policies, env, max_step=20):
 
-    observations, infos = env.reset()
+    observations, _ = env.reset()
     actions = None
 
     for step in range(max_step):
         actions = {}
-        for agent_id, obs in observations.items():
-            policy = policies[agent_id]
-            action = policy.compute_single_action(obs)
+        for agent_id, agent_obs in observations.items():
+            policy_id = f"policy_{agent_id[-1]}"
+            action = policies.compute_single_action(agent_obs, policy_id=policy_id)
             actions[agent_id] = action
 
         observations, rewards, terminated, truncated, infos = env.step(actions)
@@ -44,15 +37,15 @@ def env_creator(env_config):
 
 
 def main(checkpoint_path):
-
-    checkpoint_ids = ['policy_1']
-
-    policies = load_policies(checkpoint_path, checkpoint_ids)
+    ray.init()
 
     register_env("AnalogDesignEnv_v0", lambda env_config: env_creator(env_config))
+
     env = env_creator({})
 
-    valid_actions = step_inference(policies, env, max_step=20)
+    agents = Algorithm.from_checkpoint(checkpoint_path)
+
+    valid_actions = step_inference(agents, env, max_step=20)
 
     print(f"Valid actions: {valid_actions}")
 
