@@ -5,7 +5,7 @@
 // Design view name: schematic
 simulator lang=spectre
 global 0
-parameters VIN=1.8 C1=10p CB=10p CF=10p CL=1n IBN=1u R1=1k VF1=0.9 VF2=0.9 w_M19_per_finger l_M19 nf_M19 w_M0_per_finger l_M0 nf_M0 w_M18_per_finger l_M18 nf_M18 w_M17_per_finger l_M17 nf_M17 w_M16_per_finger l_M16 nf_M16 w_M15_per_finger l_M15 nf_M15 w_M7_per_finger l_M7 nf_M7 w_M8_per_finger l_M8 nf_M8 w_M9_per_finger l_M9 nf_M9 w_M5_per_finger l_M5 nf_M5 w_M10_per_finger l_M10 nf_M10 w_M6_per_finger l_M6 nf_M6 w_M4_per_finger l_M4 nf_M4 w_M3_per_finger l_M3 nf_M3 w_M1_per_finger l_M1 nf_M1 w_M2_per_finger l_M2 nf_M2 w_M13_per_finger l_M13 nf_M13 w_M12_per_finger l_M12 nf_M12 w_M14_per_finger l_M14 nf_M14 w_M11_per_finger l_M11 nf_M11
+parameters CL=300p IBN=1.0u C1 CB CF R1 w_M19_per_finger l_M19 nf_M19 w_M0_per_finger l_M0 nf_M0 w_M18_per_finger l_M18 nf_M18 w_M17_per_finger l_M17 nf_M17 w_M16_per_finger l_M16 nf_M16 w_M15_per_finger l_M15 nf_M15 w_M7_per_finger l_M7 nf_M7 w_M8_per_finger l_M8 nf_M8 w_M9_per_finger l_M9 nf_M9 w_M5_per_finger l_M5 nf_M5 w_M10_per_finger l_M10 nf_M10 w_M6_per_finger l_M6 nf_M6 w_M4_per_finger l_M4 nf_M4 w_M3_per_finger l_M3 nf_M3 w_M1_per_finger l_M1 nf_M1 w_M2_per_finger l_M2 nf_M2 w_M13_per_finger l_M13 nf_M13 w_M12_per_finger l_M12 nf_M12 w_M14_per_finger l_M14 nf_M14 w_M11_per_finger l_M11 nf_M11
 include "/data/PDK/pdk_installed/hlmc55_hv_6v/pdk/HLMC_HV055GE_MV6V_CDS_OA_V1P1/hlmc55hv/../models/spectre/HLMC_55HV_V1P1_CORNER.LIB" section=TT
 include "/data/PDK/pdk_installed/hlmc55_hv_6v/pdk/HLMC_HV055GE_MV6V_CDS_OA_V1P1/hlmc55hv/../models/spectre/HLMC_55HV_V1P1_CORNER.LIB" section=DIO_ALL_TT
 include "/data/PDK/pdk_installed/hlmc55_hv_6v/pdk/HLMC_HV055GE_MV6V_CDS_OA_V1P1/hlmc55hv/../models/spectre/HLMC_55HV_V1P1_CORNER.LIB" section=BJT_ALL_TT
