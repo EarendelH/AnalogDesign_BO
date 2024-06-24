@@ -3,12 +3,21 @@
   netlist_name: DC
   simulation_file: dcOp.dc
   script_name: findDC
-  parse_func: findIQ_KNL
+  parse_func: findIQ_Lab
   simulation_item:
     - IQ
-- simulation_name: Stability_1m
+- simulation_name: Stability_500u
   objective: max
-  netlist_name: Stability_1m
+  netlist_name: Stability_500u
+  simulation_file: stb.margin.stb
+  script_name: findStability
+  parse_func: findPhaseMarginAndGBW
+  simulation_item:
+    - phaseMargin
+    - gainBandWidth
+- simulation_name: Stability_25m
+  objective: max
+  netlist_name: Stability_25m
   simulation_file: stb.margin.stb
   script_name: findStability
   parse_func: findPhaseMarginAndGBW
@@ -24,15 +33,6 @@
   simulation_item:
     - phaseMargin
     - gainBandWidth
-- simulation_name: Stability_100m
-  objective: max
-  netlist_name: Stability_100m
-  simulation_file: stb.margin.stb
-  script_name: findStability
-  parse_func: findPhaseMarginAndGBW
-  simulation_item:
-    - phaseMargin
-    - gainBandWidth
 - simulation_name: Load_Reg
   objective: min
   netlist_name: Load_Reg
@@ -41,9 +41,9 @@
   parse_func: findLoadReg
   simulation_item:
     - loadReg
-- simulation_name: Line_Reg_100m
+- simulation_name: Line_Reg_50m
   objective: min
-  netlist_name: Line_Reg_100m
+  netlist_name: Line_Reg_50m
   simulation_file: dc.dc
   script_name: findLineReg
   parse_func: findLineReg
@@ -62,7 +62,7 @@
   netlist_name: Trans
   simulation_file: tran.tran.tran
   script_name: findTrans
-  parse_func: findShoot_KNL
+  parse_func: findShoot_Lab
   simulation_item:
     - overShoot
     - underShoot
@@ -71,10 +71,8 @@
   netlist_name: PSR
   simulation_file: ac.ac
   script_name: findPSR
-  parse_func: findPowerSupplyRejectionRatio_Jiangping
+  parse_func: findPowerSupplyRejectionRatio_Lab
   simulation_item:
-    - psr_100
     - psr_1k
-    - psr_10k
-    - psr_100k
     - psr_1M
+    - psr_10M

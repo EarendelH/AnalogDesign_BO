@@ -1,0 +1,111 @@
+// Generated for: spectre
+// Generated on: Jun 24 11:32:38 2024
+// Design library name: LDO_Lab
+// Design cell name: tb_Stability_500u
+// Design view name: schematic
+simulator lang=spectre
+global 0
+parameters C1 CB CF CL IBN R1
+include "/data/PDK/pdk_installed/hlmc55_hv_6v/pdk/HLMC_HV055GE_MV6V_CDS_OA_V1P1/hlmc55hv/../models/spectre/HLMC_55HV_V1P1_CORNER.LIB" section=TT
+include "/data/PDK/pdk_installed/hlmc55_hv_6v/pdk/HLMC_HV055GE_MV6V_CDS_OA_V1P1/hlmc55hv/../models/spectre/HLMC_55HV_V1P1_CORNER.LIB" section=DIO_ALL_TT
+include "/data/PDK/pdk_installed/hlmc55_hv_6v/pdk/HLMC_HV055GE_MV6V_CDS_OA_V1P1/hlmc55hv/../models/spectre/HLMC_55HV_V1P1_CORNER.LIB" section=BJT_ALL_TT
+include "/data/PDK/pdk_installed/hlmc55_hv_6v/pdk/HLMC_HV055GE_MV6V_CDS_OA_V1P1/hlmc55hv/../models/spectre/HLMC_55HV_V1P1_CORNER.LIB" section=RES_ALL_TT
+include "/data/PDK/pdk_installed/hlmc55_hv_6v/pdk/HLMC_HV055GE_MV6V_CDS_OA_V1P1/hlmc55hv/../models/spectre/HLMC_55HV_V1P1_CORNER.LIB" section=VAR_ALL_TT
+include "/data/PDK/pdk_installed/hlmc55_hv_6v/pdk/HLMC_HV055GE_MV6V_CDS_OA_V1P1/hlmc55hv/../models/spectre/HLMC_55HV_V1P1_CORNER.LIB" section=MOM_ALL_TT
+
+// Library name: LDO_Lab
+// Cell name: LDO_Core
+// View name: schematic
+subckt LDO_Core IBN_CORE VF1 VF2 VFB VIN VOUT VREF VSS
+    M19 (VF1 VSET VOUT VOUT) plvt12 w=(1u) l=54n sa=144n sb=144n sd=0 \
+        as=144f ad=144f ps=1.288u pd=1.288u nrd=90m nrs=90m sca=361.083 \
+        scb=125.166m scc=41.7362m nf=1 multi=(2) global_flag=0 flag_cpc=1
+    M0 (VOUT VG VIN VIN) plvt12 w=(10u) l=54n sa=144n sb=144n sd=180n \
+        as=1.008p ad=900f ps=4.016u pd=1.8u nrd=9m nrs=9m sca=187.152 \
+        scb=78.0482m scc=18.1259m nf=10 multi=(120) global_flag=0 \
+        flag_cpc=1
+    M18 (net04 net04 VIN VIN) p12 w=(1u) l=500n sa=198n sb=198n sd=0 \
+        as=198f ad=198f ps=1.396u pd=1.396u nrd=90m nrs=90m sca=202.007 \
+        scb=111.763m scc=24.6739m nf=1 multi=(1) global_flag=0 flag_cpc=1
+    M17 (VG VG VIN VIN) p12 w=(500n) l=54n sa=144n sb=144n sd=0 as=72f \
+        ad=72f ps=788n pd=788n nrd=180m nrs=180m sca=498.415 scb=140.523m \
+        scc=52.5528m nf=1 multi=(5) global_flag=0 flag_cpc=1
+    M16 (net042 VF2 VG VG) p12 w=(1u) l=54n sa=144n sb=144n sd=0 as=144f \
+        ad=144f ps=1.288u pd=1.288u nrd=90m nrs=90m sca=384.218 \
+        scb=125.942m scc=42.5405m nf=1 multi=(1) global_flag=0 flag_cpc=1
+    M15 (VG net04 VIN VIN) p12 w=(1u) l=500n sa=144n sb=144n sd=0 as=144f \
+        ad=144f ps=1.288u pd=1.288u nrd=90m nrs=90m sca=247.276 \
+        scb=115.792m scc=28.2229m nf=1 multi=(12) global_flag=0 flag_cpc=1
+    M7 (net073 net073 VIN VIN) p6ud33io w=(1u) l=500n as=224.5f ad=224.5f \
+        ps=1.449u pd=1.449u nrd=170.5m nrs=170.5m nf=1 multi=(1) \
+        global_flag=0
+    M8 (V1 net073 VIN VIN) p6ud33io w=(1u) l=500n as=224.5f ad=224.5f \
+        ps=1.449u pd=1.449u nrd=170.5m nrs=170.5m nf=1 multi=(1) \
+        global_flag=0
+    M9 (V2 V1 VIN VIN) p6ud33io w=(600n) l=600n as=134.7f ad=134.7f \
+        ps=1.049u pd=1.049u nrd=284.167m nrs=284.167m nf=1 multi=(1) \
+        global_flag=0
+    M5 (VSET net073 VIN VIN) p6ud33io w=(1u) l=500n as=224.5f ad=224.5f \
+        ps=1.449u pd=1.449u nrd=170.5m nrs=170.5m nf=1 multi=(1) \
+        global_flag=0
+    R1 (net040 IBN_CORE) resistor r=R1
+    C1 (VOUT net040) capacitor c=C1
+    CL (VOUT VSS) capacitor c=CL
+    CB (VSET VSS) capacitor c=CB
+    CF (VOUT VF1) capacitor c=CF
+    M10 (V1 VFB net060 VSS) n6ud33io w=(600n) l=600n as=134.7f ad=134.7f \
+        ps=1.049u pd=1.049u nrd=284.167m nrs=284.167m nf=1 multi=(1) \
+        global_flag=0
+    M6 (net073 VREF net060 VSS) n6ud33io w=(600n) l=600n as=134.7f \
+        ad=134.7f ps=1.049u pd=1.049u nrd=284.167m nrs=284.167m nf=1 \
+        multi=(1) global_flag=0
+    M4 (V2 V2 VSS VSS) n6ud33io w=(600n) l=600n as=134.7f ad=134.7f \
+        ps=1.049u pd=1.049u nrd=284.167m nrs=284.167m nf=1 multi=(1) \
+        global_flag=0
+    M3 (VSET V2 VSS VSS) n6ud33io w=(600n) l=600n as=134.7f ad=134.7f \
+        ps=1.049u pd=1.049u nrd=284.167m nrs=284.167m nf=1 multi=(1) \
+        global_flag=0
+    M1 (net060 IBN_CORE VSS VSS) n6ud33io w=(600n) l=600n as=134.7f \
+        ad=134.7f ps=1.049u pd=1.049u nrd=284.167m nrs=284.167m nf=1 \
+        multi=(2) global_flag=0
+    M2 (VG net042 VSS VSS) n6ud33io w=(2u) l=540n as=449f ad=449f \
+        ps=2.449u pd=2.449u nrd=85.25m nrs=85.25m nf=1 multi=(5) \
+        global_flag=0
+    M13 (net04 net040 VSS VSS) n6ud33io w=(600n) l=600n as=134.7f \
+        ad=134.7f ps=1.049u pd=1.049u nrd=284.167m nrs=284.167m nf=1 \
+        multi=(1) global_flag=0
+    M12 (net042 IBN_CORE VSS VSS) n6ud33io w=(600n) l=600n as=134.7f \
+        ad=134.7f ps=1.049u pd=1.049u nrd=284.167m nrs=284.167m nf=1 \
+        multi=(5) global_flag=0
+    M14 (IBN_CORE IBN_CORE VSS VSS) n6ud33io w=(600n) l=600n as=134.7f \
+        ad=134.7f ps=1.049u pd=1.049u nrd=284.167m nrs=284.167m nf=1 \
+        multi=(2) global_flag=0
+    M11 (VF1 IBN_CORE VSS VSS) n6ud33io w=(600n) l=600n as=134.7f \
+        ad=134.7f ps=1.049u pd=1.049u nrd=284.167m nrs=284.167m nf=1 \
+        multi=(10) global_flag=0
+ends LDO_Core
+// End of subcircuit definition.
+
+// Library name: LDO_Lab
+// Cell name: tb_Stability_500u
+// View name: schematic
+I0 (IBN_CORE net04 net04 net07 VIN VOUT VREF VSS) LDO_Core
+V3 (net4 0) vsource dc=1.8 type=dc
+V2 (VREF 0) vsource dc=1.2 type=dc
+V1 (VIN 0) vsource dc=1.8 type=dc
+V0 (VSS 0) vsource type=dc
+I2 (net4 IBN_CORE) isource dc=IBN type=dc
+I1 (VOUT VSS) isource dc=500u type=dc
+IPRB0 (VOUT net07) iprobe
+simulatorOptions options psfversion="1.1.0" reltol=1e-3 vabstol=1e-6 \
+    iabstol=1e-12 temp=27 tnom=27 scalem=1.0 scale=1.0 gmin=1e-12 rforce=1 \
+    maxnotes=5 maxwarns=5 digits=5 cols=80 pivrel=1e-3 \
+    sensfile="../psf/sens.output" checklimitdest=psf 
+stb stb start=1 stop=1G probe=IPRB0 localgnd=VSS annotate=status 
+modelParameter info what=models where=rawfile
+element info what=inst where=rawfile
+outputParameter info what=output where=rawfile
+designParamVals info what=parameters where=rawfile
+primitives info what=primitives where=rawfile
+subckts info what=subckts where=rawfile
+saveOptions options save=allpub
