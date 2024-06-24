@@ -1,7 +1,5 @@
 import ray
 from ray.rllib.algorithms.algorithm import Algorithm
-from ray.rllib.policy.policy import Policy
-import numpy as np
 from rllib_env_continous import RllibAnalogDesignAutoEnv
 
 ray.init()
