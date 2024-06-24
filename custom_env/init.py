@@ -35,17 +35,20 @@ def step_inference(policies, env, max_step=20):
     return actions
 
 
+def env_creator(env_config):
+    return RllibAnalogDesignAutoEnv(generalize=True, specs_folder_name='sampled_specs_Jianping_DC',
+                                    netlist_folder_name='netlist_template_Jianping_N65_bk_cap',
+                                    config_folder_name='config_Jianping_N65_DC', run_folder_name='run_init',
+                                    sim_output=False, init_method='random', dc_check=True, log_level='DEBUG')
+
+
 def main(checkpoint_path):
 
     checkpoint_ids = ['policy_1']
 
     policies = load_policies(checkpoint_path, checkpoint_ids)
 
-    env = RllibAnalogDesignAutoEnv(generalize=True, specs_folder_name='sampled_specs_Jianping_DC',
-                                   netlist_folder_name='netlist_template_Jianping_N65_bk_cap',
-                                   config_folder_name='config_Jianping_N65_DC',
-                                   run_folder_name='run_init', sim_output=False, init_method='random',
-                                   dc_check=True, log_level='DEBUG')
+    env = env_creator({})
 
     valid_actions = step_inference(policies, env, max_step=20)
 
