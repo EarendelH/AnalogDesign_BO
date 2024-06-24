@@ -1,6 +1,7 @@
 import ray
 from ray.rllib.algorithms.algorithm import Algorithm
 from rllib_env_continous import RllibAnalogDesignAutoEnv
+from ray.tune.registry import register_env
 
 ray.init()
 
@@ -48,6 +49,7 @@ def main(checkpoint_path):
 
     policies = load_policies(checkpoint_path, checkpoint_ids)
 
+    register_env("AnalogDesignEnv_v0", lambda env_config: env_creator(env_config))
     env = env_creator({})
 
     valid_actions = step_inference(policies, env, max_step=20)
