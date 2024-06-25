@@ -187,8 +187,8 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         logging.info(f"Initialing!!!Zero sim result: {self.zero_sim_result}")
 
         try:
-            sim_result, _ = run_dynamic_simulation(working_dir_reset, self.sim_config_dict, self.zero_sim_result,
-                                                   self.sim_output_enable)
+            sim_result = run_dynamic_simulation(working_dir_reset, self.sim_config_dict, self.zero_sim_result,
+                                                self.sim_output_enable)
         # For avoid simulation error in init, use zero result instead.
         except Exception as e:
             logging.warning(f"Warning!!!: {e}. Simulation failed, use zero result instead.")
