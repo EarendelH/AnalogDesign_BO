@@ -5,7 +5,7 @@
 // Design view name: schematic
 simulator lang=spectre
 global 0
-parameters ILOAD=25m C1 CB CF CL IBN R1
+parameters ILOAD=25m CL=300p IBN=1.0u C1 CB CF R1
 include "/data/PDK/pdk_installed/hlmc55_hv_6v/pdk/HLMC_HV055GE_MV6V_CDS_OA_V1P1/hlmc55hv/../models/spectre/HLMC_55HV_V1P1_CORNER.LIB" section=TT
 include "/data/PDK/pdk_installed/hlmc55_hv_6v/pdk/HLMC_HV055GE_MV6V_CDS_OA_V1P1/hlmc55hv/../models/spectre/HLMC_55HV_V1P1_CORNER.LIB" section=DIO_ALL_TT
 include "/data/PDK/pdk_installed/hlmc55_hv_6v/pdk/HLMC_HV055GE_MV6V_CDS_OA_V1P1/hlmc55hv/../models/spectre/HLMC_55HV_V1P1_CORNER.LIB" section=BJT_ALL_TT
@@ -19,23 +19,23 @@ include "/data/PDK/pdk_installed/hlmc55_hv_6v/pdk/HLMC_HV055GE_MV6V_CDS_OA_V1P1/
 subckt LDO_Core IBN_CORE VF1 VF2 VFB VIN VOUT VREF VSS
     M19 (VF1 VSET VOUT VOUT) plvt12 w=(1u) l=54n sa=144n sb=144n sd=0 \
         as=144f ad=144f ps=1.288u pd=1.288u nrd=90m nrs=90m sca=361.083 \
-        scb=125.166m scc=41.7362m nf=1 multi=(2) global_flag=0 flag_cpc=1
+        scb=125.166m scc=41.7362m nf=1 multi=(1) global_flag=0 flag_cpc=1
     M0 (VOUT VG VIN VIN) plvt12 w=(10u) l=54n sa=144n sb=144n sd=180n \
         as=1.008p ad=900f ps=4.016u pd=1.8u nrd=9m nrs=9m sca=187.152 \
-        scb=78.0482m scc=18.1259m nf=10 multi=(120) global_flag=0 \
+        scb=78.0482m scc=18.1259m nf=10 multi=(1) global_flag=0 \
         flag_cpc=1
     M18 (net04 net04 VIN VIN) p12 w=(1u) l=500n sa=198n sb=198n sd=0 \
         as=198f ad=198f ps=1.396u pd=1.396u nrd=90m nrs=90m sca=202.007 \
         scb=111.763m scc=24.6739m nf=1 multi=(1) global_flag=0 flag_cpc=1
     M17 (VG VG VIN VIN) p12 w=(500n) l=54n sa=144n sb=144n sd=0 as=72f \
         ad=72f ps=788n pd=788n nrd=180m nrs=180m sca=498.415 scb=140.523m \
-        scc=52.5528m nf=1 multi=(5) global_flag=0 flag_cpc=1
+        scc=52.5528m nf=1 multi=(1) global_flag=0 flag_cpc=1
     M16 (net042 VF2 VG VG) p12 w=(1u) l=54n sa=144n sb=144n sd=0 as=144f \
         ad=144f ps=1.288u pd=1.288u nrd=90m nrs=90m sca=384.218 \
         scb=125.942m scc=42.5405m nf=1 multi=(1) global_flag=0 flag_cpc=1
     M15 (VG net04 VIN VIN) p12 w=(1u) l=500n sa=144n sb=144n sd=0 as=144f \
         ad=144f ps=1.288u pd=1.288u nrd=90m nrs=90m sca=247.276 \
-        scb=115.792m scc=28.2229m nf=1 multi=(12) global_flag=0 flag_cpc=1
+        scb=115.792m scc=28.2229m nf=1 multi=(1) global_flag=0 flag_cpc=1
     M7 (net073 net073 VIN VIN) p6ud33io w=(1u) l=500n as=224.5f ad=224.5f \
         ps=1.449u pd=1.449u nrd=170.5m nrs=170.5m nf=1 multi=(1) \
         global_flag=0
@@ -67,22 +67,22 @@ subckt LDO_Core IBN_CORE VF1 VF2 VFB VIN VOUT VREF VSS
         global_flag=0
     M1 (net060 IBN_CORE VSS VSS) n6ud33io w=(600n) l=600n as=134.7f \
         ad=134.7f ps=1.049u pd=1.049u nrd=284.167m nrs=284.167m nf=1 \
-        multi=(2) global_flag=0
+        multi=(1) global_flag=0
     M2 (VG net042 VSS VSS) n6ud33io w=(2u) l=540n as=449f ad=449f \
-        ps=2.449u pd=2.449u nrd=85.25m nrs=85.25m nf=1 multi=(5) \
+        ps=2.449u pd=2.449u nrd=85.25m nrs=85.25m nf=1 multi=(1) \
         global_flag=0
     M13 (net04 net040 VSS VSS) n6ud33io w=(600n) l=600n as=134.7f \
         ad=134.7f ps=1.049u pd=1.049u nrd=284.167m nrs=284.167m nf=1 \
         multi=(1) global_flag=0
     M12 (net042 IBN_CORE VSS VSS) n6ud33io w=(600n) l=600n as=134.7f \
         ad=134.7f ps=1.049u pd=1.049u nrd=284.167m nrs=284.167m nf=1 \
-        multi=(5) global_flag=0
+        multi=(1) global_flag=0
     M14 (IBN_CORE IBN_CORE VSS VSS) n6ud33io w=(600n) l=600n as=134.7f \
         ad=134.7f ps=1.049u pd=1.049u nrd=284.167m nrs=284.167m nf=1 \
-        multi=(2) global_flag=0
+        multi=(1) global_flag=0
     M11 (VF1 IBN_CORE VSS VSS) n6ud33io w=(600n) l=600n as=134.7f \
         ad=134.7f ps=1.049u pd=1.049u nrd=284.167m nrs=284.167m nf=1 \
-        multi=(10) global_flag=0
+        multi=(1) global_flag=0
 ends LDO_Core
 // End of subcircuit definition.
 
