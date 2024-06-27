@@ -1,5 +1,5 @@
 max_process_limit: false
-cpu_usage: 35
+cpu_usage: 69
 gpu_usage: 0
 generalize: true
 netlist_folder_name: netlist_template_Lab_N65
@@ -9,6 +9,6 @@ run_folder_name: run_test
 sim_output: false
 init_method: mixed
 dc_check: true
-restore_checkpoint: false
-checkpoint_path:
+restore_checkpoint: true
+checkpoint_path: /data/share/train_data/Lab/checkpoint/PPO_AnalogDesignEnv_v0_d2f45_00000_0_2024-06-26_17-16-52/checkpoint_000009
 train_iterations: 2000
