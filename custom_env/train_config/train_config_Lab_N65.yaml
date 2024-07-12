@@ -1,5 +1,5 @@
 max_process_limit: false
-cpu_usage: 69
+cpu_usage: 254
 gpu_usage: 0
 generalize: true
 netlist_folder_name: netlist_template_Lab_N65
@@ -7,8 +7,8 @@ specs_folder_name: sampled_specs_Lab_N65
 config_folder_name: config_Lab_N65
 run_folder_name: run_test
 sim_output: false
-init_method: file
+init_method: random
 dc_check: true
-restore_checkpoint: true
-checkpoint_path: /home/wuhan/ray_results/AnalogDesignEnv_v0/PPO/PPO_AnalogDesignEnv_v0_3390e_00000_0_2024-06-28_19-26-02/checkpoint_000029
+restore_checkpoint: false
+checkpoint_path:
 train_iterations: 2000
