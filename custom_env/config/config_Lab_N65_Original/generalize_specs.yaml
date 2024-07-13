@@ -1,0 +1,99 @@
+DC:
+  DC_IQ:
+    objective: min
+    reward_type: optimal
+    bounds:
+    - 0.00002
+    - 0.0001
+Stability_500u:
+  Stability_500u_gainBandWidth:
+    objective: max
+    reward_type: optimal
+    bounds:
+    - 10000000.0
+    - 20000000.0
+  Stability_500u_phaseMargin:
+    objective: max
+    reward_type: satisfactory
+    bounds:
+    - 45.0
+    - 45.1
+Stability_25m:
+  Stability_25m_gainBandWidth:
+    objective: max
+    reward_type: optimal
+    bounds:
+    - 10000000.0
+    - 20000000.0
+  Stability_25m_phaseMargin:
+    objective: max
+    reward_type: satisfactory
+    bounds:
+    - 45.0
+    - 45.1
+Stability_50m:
+  Stability_50m_gainBandWidth:
+    objective: max
+    reward_type: optimal
+    bounds:
+    - 10000000.0
+    - 20000000.0
+  Stability_50m_phaseMargin:
+    objective: max
+    reward_type: satisfactory
+    bounds:
+    - 45.0
+    - 45.1
+Load_Reg:
+  Load_Reg_loadReg:
+    objective: min
+    reward_type: optimal
+    bounds:
+    - 0.15
+    - 0.2
+Line_Reg_1m:
+  Line_Reg_1m_lineReg:
+    objective: min
+    reward_type: optimal
+    bounds:
+    - 0.02
+    - 0.03
+Line_Reg_50m:
+  Line_Reg_50m_lineReg:
+    objective: min
+    reward_type: optimal
+    bounds:
+    - 0.02
+    - 0.03
+Trans:
+  Trans_overShoot:
+    objective: min
+    reward_type: optimal
+    bounds:
+    - 0.08
+    - 0.15
+  Trans_underShoot:
+    objective: min
+    reward_type: optimal
+    bounds:
+    - 0.08
+    - 0.15
+PSR:
+  PSR_psr_1k:
+    objective: max
+    reward_type: optimal
+    bounds:
+    - 40.0
+    - 50.0
+  PSR_psr_1M:
+    objective: max
+    reward_type: optimal
+    bounds:
+    - 10.0
+    - 20.0
+  PSR_psr_10M:
+    objective: max
+    reward_type: optimal
+    bounds:
+    - 10.0
+    - 20.0
