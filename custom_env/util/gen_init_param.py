@@ -46,14 +46,15 @@ def gen_init_param(init_method_flag, init_param_path, action_mask_flag, device_m
             init_param[param] = value_list[random_index]
 
         # Apply device mask to ensure matching parameter values across related devices
-        for master_device, slave_devices in device_mask.items():
-            master_params = [p for p in init_param.keys() if master_device in p]
-            if master_params:
-                for slave_device in slave_devices:
-                    for master_param in master_params:
-                        slave_param = master_param.replace(master_device, slave_device)
-                        if slave_param in param_space:
-                            init_param[slave_param] = init_param[master_param]
+        if device_mask:
+            for master_device, slave_devices in device_mask.items():
+                master_params = [p for p in init_param.keys() if master_device in p]
+                if master_params:
+                    for slave_device in slave_devices:
+                        for master_param in master_params:
+                            slave_param = master_param.replace(master_device, slave_device)
+                            if slave_param in param_space:
+                                init_param[slave_param] = init_param[master_param]
 
         print(f"Initialing!!!init method: random, init param: {init_param}")
 

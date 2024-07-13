@@ -89,44 +89,57 @@ def gen_masked_action_space(device_mask_dict, agent_assign_dict):
     # 1: Keep the same;
     # 2: +1 index;
 
-    device_list = []
-    for device_group in agent_assign_dict.values():
-        device_list.extend(device_group)
-    # print(f"Device list is {device_list}")
+    if device_mask_dict:
+        device_list = []
+        for device_group in agent_assign_dict.values():
+            device_list.extend(device_group)
+        # print(f"Device list is {device_list}")
 
-    for values in device_mask_dict.values():
-        for value in values:
-            device_name = value.replace('_Match', '')  # Remove _Match suffix if exists
-            if device_name not in device_list:
-                raise ValueError(f"Device {device_name} not found in device list")
+        for values in device_mask_dict.values():
+            for value in values:
+                device_name = value.replace('_Match', '')  # Remove _Match suffix if exists
+                if device_name not in device_list:
+                    raise ValueError(f"Device {device_name} not found in device list")
 
-    for key, values in device_mask_dict.items():
-        for value in values:
-            if value.endswith('_Match'):
-                # If the value ends with '_Match', replace the corresponding device in the list with the value
-                device_list = [device if device != value.replace('_Match', '') else value for device in device_list]
-            else:
-                # If the value does not end with '_Match', remove the corresponding device from the list
-                device_list = [device for device in device_list if device != value]
-    # print(f"Device list after mask is {device_list}")
-
-    action_space = {}
-    for group_name, group_device_list in agent_assign_dict.items():
-        space_dict = {}
-        for device in device_list:
-            if device in group_device_list:
-                if device.startswith('M') and not device.endswith('_Match'):
-                    # If the device starts with 'M' and does not end with '_Match', create a MultiDiscrete space
-                    # with 3 actions
-                    space_dict[device] = gymnasium.spaces.MultiDiscrete([3, 3, 3])
+        for key, values in device_mask_dict.items():
+            for value in values:
+                if value.endswith('_Match'):
+                    # If the value ends with '_Match', replace the corresponding device in the list with the value
+                    device_list = [device if device != value.replace('_Match', '') else value for device in device_list]
                 else:
-                    # Otherwise, create a MultiDiscrete space with 1 action
+                    # If the value does not end with '_Match', remove the corresponding device from the list
+                    device_list = [device for device in device_list if device != value]
+        # print(f"Device list after mask is {device_list}")
+
+        action_space = {}
+        for group_name, group_device_list in agent_assign_dict.items():
+            space_dict = {}
+            for device in device_list:
+                if device in group_device_list:
+                    if device.startswith('M') and not device.endswith('_Match'):
+                        # If the device starts with 'M' and does not end with '_Match', create a MultiDiscrete space
+                        # with 3 actions
+                        space_dict[device] = gymnasium.spaces.MultiDiscrete([3, 3, 3])
+                    else:
+                        # Otherwise, create a MultiDiscrete space with 1 action
+                        space_dict[device] = gymnasium.spaces.MultiDiscrete([3])
+                if device.replace('_Match', '') in group_device_list and device.endswith('_Match'):
+                    # If the device ends with '_Match', create a MultiDiscrete space with 1 action and
+                    # add '_Match' suffix
                     space_dict[device] = gymnasium.spaces.MultiDiscrete([3])
-            if device.replace('_Match', '') in group_device_list and device.endswith('_Match'):
-                # If the device ends with '_Match', create a MultiDiscrete space with 1 action and
-                # add '_Match' suffix
-                space_dict[device] = gymnasium.spaces.MultiDiscrete([3])
-        action_space[group_name] = gymnasium.spaces.Dict(space_dict)
+            action_space[group_name] = gymnasium.spaces.Dict(space_dict)
+
+    else:
+        action_space = {}
+        for group_name, device_list in agent_assign_dict.items():
+            space_dict = {}
+            for device in device_list:
+                if device.startswith('M'):
+                    space = gymnasium.spaces.MultiDiscrete([3, 3, 3])
+                else:
+                    space = gymnasium.spaces.MultiDiscrete([3])
+                space_dict[device] = space
+            action_space[group_name] = gymnasium.spaces.Dict(space_dict)
 
     # Return a Dict space containing all the action spaces
     return gymnasium.spaces.Dict(action_space)
@@ -175,44 +188,57 @@ def gen_masked_continuous_action_space(device_mask_dict, agent_assign_dict):
     triple_act_space = gymnasium.spaces.Box(low=0, high=1, shape=(3,), dtype=float)
     single_act_space = gymnasium.spaces.Box(low=0, high=1, shape=(1,), dtype=float)
 
-    device_list = []
-    for device_group in agent_assign_dict.values():
-        device_list.extend(device_group)
-    # print(f"Device list is {device_list}")
+    if device_mask_dict:
+        device_list = []
+        for device_group in agent_assign_dict.values():
+            device_list.extend(device_group)
+        # print(f"Device list is {device_list}")
 
-    for values in device_mask_dict.values():
-        for value in values:
-            device_name = value.replace('_Match', '')  # Remove _Match suffix if exists
-            if device_name not in device_list:
-                raise ValueError(f"Device {device_name} not found in device list")
+        for values in device_mask_dict.values():
+            for value in values:
+                device_name = value.replace('_Match', '')  # Remove _Match suffix if exists
+                if device_name not in device_list:
+                    raise ValueError(f"Device {device_name} not found in device list")
 
-    for key, values in device_mask_dict.items():
-        for value in values:
-            if value.endswith('_Match'):
-                # If the value ends with '_Match', replace the corresponding device in the list with the value
-                device_list = [device if device != value.replace('_Match', '') else value for device in device_list]
-            else:
-                # If the value does not end with '_Match', remove the corresponding device from the list
-                device_list = [device for device in device_list if device != value]
-    # print(f"Device list after mask is {device_list}")
-
-    continuous_action_space_dict = {}
-    for group_name, group_device_list in agent_assign_dict.items():
-        space_dict = {}
-        for device in device_list:
-            if device in group_device_list:
-                if device.startswith('M') and not device.endswith('_Match'):
-                    # If the device starts with 'M' and does not end with '_Match', create a MultiDiscrete space
-                    # with 3 actions
-                    space_dict[device] = triple_act_space
+        for key, values in device_mask_dict.items():
+            for value in values:
+                if value.endswith('_Match'):
+                    # If the value ends with '_Match', replace the corresponding device in the list with the value
+                    device_list = [device if device != value.replace('_Match', '') else value for device in device_list]
                 else:
-                    # Otherwise, create a MultiDiscrete space with 1 action
+                    # If the value does not end with '_Match', remove the corresponding device from the list
+                    device_list = [device for device in device_list if device != value]
+        # print(f"Device list after mask is {device_list}")
+
+        continuous_action_space_dict = {}
+        for group_name, group_device_list in agent_assign_dict.items():
+            space_dict = {}
+            for device in device_list:
+                if device in group_device_list:
+                    if device.startswith('M') and not device.endswith('_Match'):
+                        # If the device starts with 'M' and does not end with '_Match', create a MultiDiscrete space
+                        # with 3 actions
+                        space_dict[device] = triple_act_space
+                    else:
+                        # Otherwise, create a MultiDiscrete space with 1 action
+                        space_dict[device] = single_act_space
+                if device.replace('_Match', '') in group_device_list and device.endswith('_Match'):
+                    # If the device ends with '_Match', create a MultiDiscrete space with 1 action and
+                    # add '_Match' suffix
                     space_dict[device] = single_act_space
-            if device.replace('_Match', '') in group_device_list and device.endswith('_Match'):
-                # If the device ends with '_Match', create a MultiDiscrete space with 1 action and
-                # add '_Match' suffix
-                space_dict[device] = single_act_space
-        continuous_action_space_dict[group_name] = gymnasium.spaces.Dict(space_dict)
+            continuous_action_space_dict[group_name] = gymnasium.spaces.Dict(space_dict)
+
+    else:
+        continuous_action_space_dict = {}
+        for group_name, device_list in agent_assign_dict.items():
+            space_dict = {}
+            for device in device_list:
+                if device.startswith('M'):
+                    space = triple_act_space
+                else:
+                    space = single_act_space
+                space_dict[device] = space
+            continuous_action_space_dict[group_name] = gymnasium.spaces.Dict(space_dict)
 
     return gymnasium.spaces.Dict(continuous_action_space_dict)
 

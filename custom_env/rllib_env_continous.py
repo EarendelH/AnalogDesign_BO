@@ -283,21 +283,18 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         operation_region_dict = {}
 
         step_action_dict = copy.deepcopy(action_dict)
-        for key in self.device_mask_dict:
-            for agent_key in step_action_dict:
-                if key in step_action_dict[agent_key]:
-                    new_values = self.device_mask_dict[key]
-                    for new_key in new_values:
-                        if new_key.endswith('_Match'):
-                            logging.debug(f"Step!!!Key: {key} with new key: {new_key} and "
-                                          f"step_action_dict[agent_key][key] is {step_action_dict[agent_key][key]}")
-                            match_action = step_action_dict[agent_key][key][:2]
-                            logging.debug(f"Step!!!Match action: {match_action}")
-                            new_value = numpy.append(match_action, step_action_dict[agent_key][new_key])
-                            logging.debug(f"Step!!!New value: {new_value}")
-                        else:
-                            new_value = step_action_dict[agent_key][key]
-                        step_action_dict[agent_key][new_key] = new_value
+        if self.device_mask_dict:
+            for key in self.device_mask_dict:
+                for agent_key in step_action_dict:
+                    if key in step_action_dict[agent_key]:
+                        new_values = self.device_mask_dict[key]
+                        for new_key in new_values:
+                            if new_key.endswith('_Match'):
+                                match_action = step_action_dict[agent_key][key][:2]
+                                new_value = numpy.append(match_action, step_action_dict[agent_key][new_key])
+                            else:
+                                new_value = step_action_dict[agent_key][key]
+                            step_action_dict[agent_key][new_key] = new_value
 
         mapped_action_dict = OrderedDict()
         for agent, agent_dict in step_action_dict.items():
