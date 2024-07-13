@@ -19,7 +19,7 @@ def action2param(device_mask_flag, device_mask_dict, flatten_action, param_rang_
     # Extend action space via mask config
     masked_action_space = copy.deepcopy(flatten_action)
 
-    if device_mask_flag:
+    if device_mask_flag and device_mask_dict is not None:
         for master_device in flatten_action:
             if master_device in device_mask_dict:
                 slave_devices = device_mask_dict[master_device]
