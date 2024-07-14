@@ -199,7 +199,6 @@ def run_region_simulation(work_dir, sim_config, show_output=False):
     """
 
     for simulation_config in sim_config:
-        simulation = simulation_config["simulation_name"]
         assigned_netlist_name = simulation_config[f"netlist_name"]
         assigned_netlist_filename = f"{assigned_netlist_name}.scs"
 
