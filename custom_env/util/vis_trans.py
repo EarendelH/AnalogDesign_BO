@@ -37,14 +37,14 @@ def plot_data(results, highlight_subdir, root_dir):
     plt.legend()
     plt.grid(True)
 
-    plt_path = os.path.join(root_dir, 'vout_trans.png')
+    plt_path = os.path.join(root_dir, 'Trans.png')
     plt.savefig(plt_path)
     plt.show()
     print(f"Image save to：{plt_path}")
 
 
-root_dir = '/Users/hanwu/Downloads/Log_N65/Lab/select_point_refined'
-highlight_subdir = ''
+root_dir = '/Users/hanwu/Downloads/Log_N65/Lab/b8cb5/Select_Points'
+highlight_subdir = 'tmp_20240628192613852533942'
 scan_and_process(root_dir, highlight_subdir)
 
 
