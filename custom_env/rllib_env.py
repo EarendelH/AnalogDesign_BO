@@ -55,7 +55,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         self.norm_ideal_specs = None
         self.ideal_specs = None
         self.cur_param = None
-        self.max_step = 10
+        self.max_step = 100
         self.action_mask = True
 
         # Get absolute path
