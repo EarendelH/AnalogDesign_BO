@@ -3,6 +3,7 @@ import os
 import subprocess
 from importlib import import_module
 import pickle
+from extract_device_param_value import extract_operation_region_w_name
 
 
 def run_spectre_simulation(work_dir, sim_config, show_output=False):
@@ -77,7 +78,7 @@ def run_spectre_simulation(work_dir, sim_config, show_output=False):
 # 9.24983891912481}}
 
 
-def run_dynamic_simulation(work_dir, sim_config, zero_sim_result, show_output=False):
+def run_dynamic_simulation(work_dir, sim_config, zero_sim_result, show_output=False, dynamic_queue=True):
     """
     Run spectre simulation. Once the output result is zero (for pwr, reset value is 1), the simulation will be stopped.
     Zero simulation result is given.
@@ -85,6 +86,7 @@ def run_dynamic_simulation(work_dir, sim_config, zero_sim_result, show_output=Fa
     :param sim_config: config simulation item and corresponding result parse function
     :param show_output: show the output of the simulation
     :param zero_sim_result: zero simulation result
+    :param dynamic_queue: if True, use dynamic queue mechanism; if False, run all simulations
     :return: Arranged simulation results
     """
 
@@ -150,32 +152,31 @@ def run_dynamic_simulation(work_dir, sim_config, zero_sim_result, show_output=Fa
 
             # print(f"Debug: {simulation} simulation result: {results}")
 
-            if simulation == "PSR" and not all(value == 0.0 for value in result.values()):
-                fail_tag = False
-            else:
+            if dynamic_queue:
                 if any(value == 100.0 for value in result.values()) and (objective == "min"):
                     fail_tag = True
-                    print(f"Simulation {simulation} failed. Return zero simulation result")
+                    print(f"Simulation {simulation} failed. Return 100.0")
                     print(f"Partial result success: {results}")
                     # print(f"Debug!!! Simulation {simulation} failed. Return zero simulation result")
                 if any(value == 0.0 for value in result.values()) and (objective == "max"):
                     fail_tag = True
-                    print(f"Simulation {simulation} failed. Return zero simulation result")
+                    print(f"Simulation {simulation} failed. Return 0.0")
                     print(f"Partial result success: {results}")
                     # print(f"Debug!!! Simulation {simulation} failed. Return zero simulation result")
-            # Easy way to determine the stability of transient simulation
-            if simulation.startswith("Trans"):
-                # Determine whether processed_file is larger than 1M
-                if os.path.getsize(processed_file_full_path) > 500 * 1024:
-                    print(f"Warning: {processed_file_full_path} is larger than 0.5M, the system is highly likely to "
-                          f"be unstable.")
-                    fail_tag = True
-                    # All items in modified_result{simulation} set to 1
-                    results[simulation] = {key: 100.0 for key in modified_result.keys()}
-                    # print(f"Debug!!! Simulation {simulation} failed. Return zero simulation result")
+                # Easy way to determine the stability of transient simulation
+                if simulation.startswith("Trans"):
+                    # Determine whether processed_file is larger than 1M
+                    if os.path.getsize(processed_file_full_path) > 500 * 1024:
+                        print(
+                            f"Warning: {processed_file_full_path} is larger than 0.5M, the system is highly likely to "
+                            f"be unstable.")
+                        fail_tag = True
+                        # All items in modified_result{simulation} set to 1
+                        results[simulation] = {key: 100.0 for key in modified_result.keys()}
+                        # print(f"Debug!!! Simulation {simulation} failed. Return zero simulation result")
 
         # Break the loop if fail_tag is True
-        if fail_tag:
+        if fail_tag and dynamic_queue:
             # print(f"Debug!!! Simulation {simulation} failed. Break the loop. No more simulation should be run.")
             break
 
@@ -198,6 +199,8 @@ def run_region_simulation(work_dir, sim_config, show_output=False):
     :return: Arranged simulation results
     """
 
+    reset_operation_region_dict = {}
+
     for simulation_config in sim_config:
         assigned_netlist_name = simulation_config[f"netlist_name"]
         assigned_netlist_filename = f"{assigned_netlist_name}.scs"
@@ -213,4 +216,9 @@ def run_region_simulation(work_dir, sim_config, show_output=False):
             subprocess.run(f"spectre -64 ++aps {os.path.join(work_dir, assigned_netlist_filename)}",
                            shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
-    return None
+        dc_reset_raw_result_path = os.path.join(work_dir, "Region.raw/dcOpInfo.info")
+        dc_reset_result_path = os.path.join(work_dir, "Region.raw/dcOpInfo.info.encode")
+        subprocess.run(f"psf {dc_reset_raw_result_path} -o {dc_reset_result_path}", shell=True)
+        reset_operation_region_dict = extract_operation_region_w_name(dc_reset_result_path)
+
+    return reset_operation_region_dict
