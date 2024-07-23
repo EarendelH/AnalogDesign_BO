@@ -63,6 +63,7 @@ def main():
             "sim_output": get_user_input("Enable simulation output (True/False)", "False"),
             "init_method": get_user_input("Initialization method (file/half/random/mixed)", "file"),
             "dc_check": get_user_input("Enable step DC check (True/False)", "True"),
+            "dynamic_queue": get_user_input("Enable dynamic queue (True/False)", "True"),
             "restore_checkpoint": get_user_input("Restore from checkpoint? (True/False)", "False"),
             "checkpoint_path": None,  # To be conditionally updated
             "train_iterations": get_user_input("Train iterations(Default: 200)", "200"),
@@ -85,6 +86,7 @@ def main():
             settings["generalize"] = settings["generalize"] == "True"
             settings["sim_output"] = settings["sim_output"] == "True"
             settings["dc_check"] = settings["dc_check"] == "True"
+            settings["dynamic_queue"] = settings["dynamic_queue"] == "True"
             settings["restore_checkpoint"] = settings["restore_checkpoint"] == "True"
 
         env_settings = {
@@ -96,6 +98,7 @@ def main():
             "sim_output": settings["sim_output"],
             "init_method": settings["init_method"],
             "dc_check": settings["dc_check"],
+            "dynamic_queue": settings["dynamic_queue"],
         }
 
         # Environment initialization
@@ -140,7 +143,7 @@ def main():
                 sgd_minibatch_size=64,
                 num_sgd_iter=24,
                 model={
-                    "fcnet_hiddens": [256, 256, 256, 256, 256, 256, 256, 256],
+                    "fcnet_hiddens": [256, 256, 256, 256, 256],
                 }
             )
             .debugging(log_level="DEBUG")
