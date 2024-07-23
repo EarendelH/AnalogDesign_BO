@@ -25,15 +25,15 @@ from util.device_mask import masked_action_dict_mapping
 
 
 class RllibAnalogDesignAutoEnv(MultiAgentEnv):
-    def __init__(self, generalize=True,
+    def __init__(self, generalize='',
                  netlist_folder_name='',
                  specs_folder_name='',
                  config_folder_name='',
                  run_folder_name='',
-                 sim_output=False,
-                 init_method='file',
-                 dc_check=True,
-                 dynamic_queue=True,
+                 sim_output='',
+                 init_method='',
+                 dc_check='',
+                 dynamic_queue='',
                  log_level='INFO'):
 
         # Set log level
@@ -52,7 +52,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         self.norm_ideal_specs = None
         self.ideal_specs = None
         self.cur_param = None
-        self.max_step = 100
+        self.max_step = 10
         self.action_mask = True
 
         # Get absolute path
