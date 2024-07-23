@@ -3,7 +3,7 @@ import os
 import subprocess
 from importlib import import_module
 import pickle
-from extract_device_param_value import extract_operation_region_w_name
+from util.extract_device_param_value import extract_operation_region_w_name
 
 
 def run_spectre_simulation(work_dir, sim_config, show_output=False):
