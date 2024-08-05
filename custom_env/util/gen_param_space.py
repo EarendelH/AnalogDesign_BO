@@ -35,7 +35,10 @@ def gen_param_space(param_range_dict):
             start, end, step_num = float(start), float(end), float(step_num)
 
         # Generate the list of values in ascending order
-        values = [start + i * step_num for i in range(int((end - start) / step_num) + 1)]
+        if start == end:
+            values = [start]
+        else:
+            values = [start + i * step_num for i in range(int((end - start) / step_num) + 1)]
         if integer_flag:
             # Convert values to integers if required
             values = [str(int(value)) for value in values]

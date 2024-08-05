@@ -115,3 +115,16 @@ def findIQ_Lab(filepath):
         print(f"Power is lower than zero, impossible, return to max value")
         value = 100.0
     return {"IQ": value}
+
+def findIQ_Cai(filepath):
+    search_keyword = "V2:p"
+    try:
+        value = extract_dcOP_data(filepath, search_keyword)
+        value = value - 0.001
+    except Exception as e:
+        print(f"Warning: {e}. return to max value.")
+        value = 100.0
+    if value <= 0.0:
+        print(f"Power is lower than zero, impossible, return to max value")
+        value = 100.0
+    return {"IQ": value}

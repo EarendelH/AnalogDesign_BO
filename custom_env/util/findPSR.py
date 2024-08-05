@@ -85,3 +85,12 @@ def findPowerSupplyRejectionRatio_Lab(file_path):
     result = findPowerSupplyRejectionRatio_general(file_path, freq_list, freq_labels)
 
     return result
+
+def findPowerSupplyRejectionRatio_Cai(file_path):
+
+    freq_list = [1000000, 10000000, 100000000, 1000000000]
+    freq_labels = ['1M', '10M', '100M', '1G']
+
+    result = findPowerSupplyRejectionRatio_general(file_path, freq_list, freq_labels)
+
+    return result

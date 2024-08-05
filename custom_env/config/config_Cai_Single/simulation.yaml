@@ -1,0 +1,63 @@
+- simulation_name: Stability_5u
+  objective: max
+  netlist_name: Stability_5u
+  simulation_file: stb.margin.stb
+  script_name: findStability
+  parse_func: findPhaseMarginAndGBW
+  simulation_item:
+    - phaseMargin
+    - gainBandWidth
+- simulation_name: Stability_1m
+  objective: max
+  netlist_name: Stability_1m
+  simulation_file: stb.margin.stb
+  script_name: findStability
+  parse_func: findPhaseMarginAndGBW
+  simulation_item:
+    - phaseMargin
+    - gainBandWidth
+- simulation_name: Stability_20m
+  objective: max
+  netlist_name: Stability_20m
+  simulation_file: stb.margin.stb
+  script_name: findStability
+  parse_func: findPhaseMarginAndGBW
+  simulation_item:
+    - phaseMargin
+    - gainBandWidth
+- simulation_name: Load_Reg
+  objective: min
+  netlist_name: Load_Reg
+  simulation_file: dc.dc
+  script_name: findLoadReg
+  parse_func: findLoadReg
+  simulation_item:
+    - loadReg
+- simulation_name: Trans
+  objective: min
+  netlist_name: Trans
+  simulation_file: tran.tran.tran
+  script_name: findTrans
+  parse_func: findShoot_Cai
+  simulation_item:
+    - overShoot
+    - underShoot
+- simulation_name: PSR
+  objective: max
+  netlist_name: PSR
+  simulation_file: ac.ac
+  script_name: findPSR
+  parse_func: findPowerSupplyRejectionRatio_Cai
+  simulation_item:
+    - psr_1M
+    - psr_10M
+    - psr_100M
+    - psr_1G
+- simulation_name: DC
+  objective: min
+  netlist_name: DC
+  simulation_file: dcOp.dc
+  script_name: findDC
+  parse_func: findIQ_Cai
+  simulation_item:
+    - IQ

@@ -331,6 +331,11 @@ def findShoot_Lab(filename):
     result = findShoot_general(filename, [(2.5e-6, 7.5e-6), (7.5e-6, 12.5e-6)], 1.2)
     return result
 
+
+def findShoot_Cai(filename):
+    result = findShoot_general(filename, [(2.5e-6, 7.5e-6), (7.5e-6, 12.5e-6)], 1.0)
+    return result
+
 # Test Code
 # file = "/Users/hanwu/Downloads/Log_N65/Jianping/select_point/tmp_20240518030545162069028/Trans_Line_Reg.raw/tran.tran.tran.encode"
 # print(findShoot_Line_Reg_Jianping(file))

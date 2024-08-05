@@ -80,13 +80,16 @@ def parse_action2param(value_range, step, action_value, is_intege):
         magnitude = ''
         min_value, max_value, step = float(min_value), float(max_value), float(step)
 
-    original_value = min_value + (max_value - min_value) * action_value
-    nearest_value = min_value + round((original_value - min_value) / step) * step
+    if min_value == max_value:
+        nearest_value = min_value
+    else:
+        original_value = min_value + (max_value - min_value) * action_value
+        nearest_value = min_value + round((original_value - min_value) / step) * step
 
     # Check within the range
-    if nearest_value < min_value:
+    if nearest_value <= min_value:
         nearest_value = min_value
-    if nearest_value > max_value:
+    if nearest_value >= max_value:
         nearest_value = max_value
 
     nearest_value = round(nearest_value, 2)
