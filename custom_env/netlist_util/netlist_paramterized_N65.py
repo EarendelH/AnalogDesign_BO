@@ -216,8 +216,8 @@ def netlist_parameterized(input_scs_path, output_scs_path, output_yaml_path):
 
 
 if __name__ == "__main__":
-    input_scs_folder = "/Users/hanwu/ML/AnalogDesignAuto_MultiAgent/custom_env/netlist_original/netlist_original_Lab_N65"
-    output_scs_folder = "/Users/hanwu/ML/AnalogDesignAuto_MultiAgent/custom_env/netlist_template/netlist_template_Lab_N65"
+    input_scs_folder = "/Users/hanwu/ML/AnalogDesignAuto_MultiAgent/custom_env/netlist_original/netlist_original_Cai"
+    output_scs_folder = "/Users/hanwu/ML/AnalogDesignAuto_MultiAgent/custom_env/netlist_template/netlist_template_Cai"
     for file in os.listdir(input_scs_folder):
         if file.endswith(".scs"):
             input_scs = os.path.join(input_scs_folder, file)
