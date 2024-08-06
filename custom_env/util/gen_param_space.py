@@ -44,7 +44,7 @@ def gen_param_space(param_range_dict):
             values = [str(int(value)) for value in values]
         else:
             # Add the magnitude character back (if any)
-            values = [f"{round(value, 2)}{magnitude}" if magnitude else str(value) for value in values]
+            values = [f"{round(value, 3)}{magnitude}" if magnitude else str(value) for value in values]
 
         return values
 
