@@ -57,6 +57,51 @@ other_variable:
     value:
       range: [0.3, 1.2]
       step: "0.025"
+M23:
+  instance_type: pch_mac
+  params:
+  - variable_name: w_M23_per_finger
+    value:
+      range: [0.2u, 2u]
+      step: "0.05u"
+  - variable_name: l_M23
+    value:
+      range: [0.06u, 0.2u]
+      step: "0.01u"
+  - variable_name: nf_M23
+    value:
+      range: [1, 10]
+      step: "1"
+M22:
+  instance_type: pch_mac
+  params:
+  - variable_name: w_M22_per_finger
+    value:
+      range: [0.5u, 4u]
+      step: "0.1u"
+  - variable_name: l_M22
+    value:
+      range: [0.06u, 0.1u]
+      step: "0.01u"
+  - variable_name: nf_M22
+    value:
+      range: [1, 10]
+      step: "1"
+M21:
+  instance_type: pch_mac
+  params:
+  - variable_name: w_M21_per_finger
+    value:
+      range: [0.5u, 4u]
+      step: "0.1u"
+  - variable_name: l_M21
+    value:
+      range: [0.06u, 0.1u]
+      step: "0.01u"
+  - variable_name: nf_M21
+    value:
+      range: [1, 10]
+      step: "1"
 M57:
   instance_type: nch_mac
   params:
@@ -671,51 +716,6 @@ M31:
   - variable_name: nf_M31
     value:
       range: [1, 5]
-      step: "1"
-M23:
-  instance_type: pch_mac
-  params:
-  - variable_name: w_M23_per_finger
-    value:
-      range: [0.2u, 2u]
-      step: "0.05u"
-  - variable_name: l_M23
-    value:
-      range: [0.06u, 0.2u]
-      step: "0.01u"
-  - variable_name: nf_M23
-    value:
-      range: [1, 10]
-      step: "1"
-M22:
-  instance_type: pch_mac
-  params:
-  - variable_name: w_M22_per_finger
-    value:
-      range: [0.5u, 4u]
-      step: "0.1u"
-  - variable_name: l_M22
-    value:
-      range: [0.06u, 0.1u]
-      step: "0.01u"
-  - variable_name: nf_M22
-    value:
-      range: [1, 10]
-      step: "1"
-M21:
-  instance_type: pch_mac
-  params:
-  - variable_name: w_M21_per_finger
-    value:
-      range: [0.5u, 4u]
-      step: "0.1u"
-  - variable_name: l_M21
-    value:
-      range: [0.06u, 0.1u]
-      step: "0.01u"
-  - variable_name: nf_M21
-    value:
-      range: [1, 10]
       step: "1"
 M6:
   instance_type: pch_mac
