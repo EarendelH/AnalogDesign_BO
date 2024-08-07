@@ -56,6 +56,7 @@ def main():
                                                    , "10"),
             "gpu_usage": get_user_input(f"Enter use GPU num, total available CPU is {gpu_count}", "0"),
             "generalize": get_user_input("Enable generalization (True/False)", "True"),
+            "max_step": get_user_input("Max step(Default: 100)", "100"),
             "netlist_folder_name": get_user_input("Name of netlist folder", "netlist_template"),
             "specs_folder_name": get_user_input("Name of specs folder", "sampled_specs"),
             "config_folder_name": get_user_input("Name of config folder", "config"),
@@ -91,6 +92,7 @@ def main():
 
         env_settings = {
             "generalize": settings["generalize"],
+            "max_step": settings["max_step"],
             "netlist_folder_name": settings["netlist_folder_name"],
             "specs_folder_name": settings["specs_folder_name"],
             "config_folder_name": settings["config_folder_name"],

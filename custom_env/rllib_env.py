@@ -26,6 +26,7 @@ from util.device_mask import masked_action_dict_mapping
 
 class RllibAnalogDesignAutoEnv(MultiAgentEnv):
     def __init__(self, generalize='',
+                 max_step='',
                  netlist_folder_name='',
                  specs_folder_name='',
                  config_folder_name='',
@@ -52,7 +53,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         self.norm_ideal_specs = None
         self.ideal_specs = None
         self.cur_param = None
-        self.max_step = 100
+        self.max_step = int(max_step)
         self.action_mask = True
 
         # Get absolute path
