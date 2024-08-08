@@ -2,7 +2,7 @@ max_process_limit: false
 cpu_usage: 254
 gpu_usage: 0
 generalize: true
-max_step: 100
+max_step: 64
 netlist_folder_name: netlist_template_Cai
 specs_folder_name: sampled_specs_Cai
 config_folder_name: config_Cai_Single
@@ -11,6 +11,6 @@ sim_output: false
 init_method: random
 dc_check: false
 dynamic_queue: false
-restore_checkpoint: false
-checkpoint_path:
-train_iterations: 1000
+restore_checkpoint: true
+checkpoint_path: /data/share/train_data/Cai/checkpoint/Cai_100_random_single_mask_nodc_nodynmaic_eex04_d6505
+train_iterations: 3000
