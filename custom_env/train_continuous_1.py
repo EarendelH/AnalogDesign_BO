@@ -127,7 +127,7 @@ def main():
             # Use Algorithm.from_checkpoint() to restore the algorithm
             restored_algo = Algorithm.from_checkpoint(
                 checkpoint=checkpoint_path,
-                policy_ids={"policy_1", "policy_2", "policy_3", "policy_4"}
+                policy_ids={"policy_1"}
             )
 
             # Debug: Print information about the restored algorithm
