@@ -6,7 +6,7 @@ if __name__ == "__main__":
                                    netlist_folder_name='netlist_template_Jianping_N65_bk',
                                    config_folder_name='config_Jianping_N65', run_folder_name='run_test',
                                    sim_output=False, init_method='half', dc_check=True, dynamic_queue=True,
-                                   log_level='INFO')
+                                   log_level='INFO', max_step=100)
 
     check_env(env)
     print("Test passed")

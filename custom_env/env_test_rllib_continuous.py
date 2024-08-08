@@ -6,7 +6,7 @@ if __name__ == "__main__":
                                    netlist_folder_name='netlist_template_Cai',
                                    config_folder_name='config_Cai_Single',
                                    run_folder_name='run_test', sim_output=False, init_method='random',
-                                   dc_check=False, dynamic_queue=False, log_level='DEBUG')
+                                   dc_check=False, dynamic_queue=False, log_level='DEBUG', max_step=100)
 
     check_env(env)
     print("Test passed")
