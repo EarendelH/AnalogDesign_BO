@@ -189,6 +189,7 @@ def main():
             user_home_dir = os.path.expanduser("~")
 
             # Run the training
+
             analysis = tune.run(
                 "PPO",
                 name="PPO",
@@ -198,7 +199,6 @@ def main():
                 local_dir=f"{user_home_dir}/ray_results/{env_name}",
                 config=config.to_dict() if isinstance(config, PPOConfig) else config,
             )
-
     else:
         print("Configuration not confirmed. Training aborted.")
 
