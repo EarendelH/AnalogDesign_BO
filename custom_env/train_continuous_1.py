@@ -125,15 +125,27 @@ def main():
             logging.info(f"Restoring from checkpoint: {checkpoint_path}")
 
             # Use Algorithm.from_checkpoint() to restore the algorithm
-            restored_algo = Algorithm.from_checkpoint(checkpoint=checkpoint_path)
+            restored_algo = Algorithm.from_checkpoint(
+                policy_ids={"policy_1", "policy_2", "policy_3", "policy_4"}
+            )
 
             # Debug: Print information about the restored algorithm
             logging.info("Checkpoint restored successfully")
             logging.info(f"Restored algorithm type: {type(restored_algo).__name__}")
-            logging.info(f"Restored policies: {restored_algo.get_policy_ids()}")
+
+            # Get policy information
+            if hasattr(restored_algo, 'workers') and restored_algo.workers:
+                local_worker = restored_algo.workers.local_worker()
+                if local_worker:
+                    policies = local_worker.policy_map
+                    logging.info(f"Restored policies: {list(policies.keys())}")
+                else:
+                    logging.warning("Local worker not available")
+            else:
+                logging.warning("Workers not available in restored algorithm")
 
             # Get the restored configuration
-            config = restored_algo.get_config()
+            config = restored_algo.config
             logging.info("Configuration restored from checkpoint")
         else:
             logging.info("Starting new training session without checkpoint")
@@ -183,7 +195,7 @@ def main():
             checkpoint_freq=25,
             checkpoint_at_end=True,
             local_dir=f"{user_home_dir}/ray_results/{env_name}",
-            config=config.to_dict(),
+            config=config.to_dict() if isinstance(config, PPOConfig) else config,
         )
 
         # Print the best configuration and metrics
