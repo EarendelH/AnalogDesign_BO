@@ -56,6 +56,10 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         self.max_step = int(max_step)
         self.action_mask = True
 
+        self.continue_steps = 16  # Number of steps to continue after positive reward
+        self.steps_after_positive_reward = 0
+        self.had_positive_reward = False
+
         # Get absolute path
         self.current_path = os.getcwd()
 
@@ -153,6 +157,10 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         super().__init__()
 
     def reset(self, *, seed=None, options=None):
+
+        self.steps_after_positive_reward = 0
+        self.had_positive_reward = False
+
         # Reset step number
         self.step_num = 0
 
@@ -306,8 +314,6 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         # Run DC check firstly and only once. If dc_check is True. If DC check failed, return zero sim result and -10
         # reward. End the episode.
 
-        valid_param = None
-
         try:
             working_dir_step_dc = create_work_dir(self.run_root_dir)
             logging.info(f"Step!!!DC Check Working directory: {working_dir_step_dc} "
@@ -408,18 +414,31 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
                 rew[agent_name] = rew_single
             logging.info(f"Step!!!Reward result: {rew_single} with step number: {self.step_num}")
 
-            # Determine termination or truncations
             terminated = {a: False for a in self.agents}
-            for agent_name in terminated:
-                if rew[agent_name] >= 0:
-                    terminated[agent_name] = True
-                    self.terminateds.add(agent_name)
-
             truncated = {a: False for a in self.agents}
-            for agent_name in truncated:
-                if self.step_num >= self.max_step:
-                    truncated[agent_name] = True
-                    self.truncateds.add(agent_name)
+
+            if rew_single > 0:
+                if not self.had_positive_reward:
+                    self.had_positive_reward = True
+                    self.steps_after_positive_reward = 0
+                else:
+                    self.steps_after_positive_reward += 1
+
+            if self.had_positive_reward:
+                if self.steps_after_positive_reward >= self.continue_steps or self.step_num >= self.max_step:
+                    for agent_name in terminated:
+                        terminated[agent_name] = True
+                        self.terminateds.add(agent_name)
+
+            if self.step_num >= self.max_step:
+                if self.had_positive_reward and self.steps_after_positive_reward < self.continue_steps:
+                    for agent_name in terminated:
+                        terminated[agent_name] = True
+                        self.terminateds.add(agent_name)
+                else:
+                    for agent_name in truncated:
+                        truncated[agent_name] = True
+                        self.truncateds.add(agent_name)
 
             # Delete working temp directory, if it exists
             # delete_work_dir(working_dir_step)
