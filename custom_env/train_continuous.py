@@ -98,7 +98,6 @@ def main():
             settings["restore_checkpoint"] = settings["restore_checkpoint"] == "True"
 
         env_settings = {
-            "algorithm": settings["algorithm"],
             "generalize": settings["generalize"],
             "max_step": settings["max_step"],
             "netlist_folder_name": settings["netlist_folder_name"],
