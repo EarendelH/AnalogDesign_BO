@@ -202,15 +202,17 @@ def main():
                         lambda_=0.95,
                         use_gae=True,
                         clip_param=0.3,
-                        grad_clip=10,
+                        grad_clip=40,
                         entropy_coeff=0.01,
-                        vf_loss_coeff=0.25,
+                        vf_loss_coeff=0.5,
                         vtrace=True,
                         use_kl_loss=False,
-                        num_sgd_iter=4,
-                        broadcast_interval=1,
+                        num_sgd_iter=1,
+                        minibatch_buffer_size=1,
+                        replay_proportion=0.2,
+                        replay_buffer_num_slots=1000,
                         max_sample_requests_in_flight_per_worker=2,
-                        minibatch_buffer_size=8,
+                        broadcast_interval=1,
                         model={
                             "fcnet_hiddens": [256, 256, 256, 256, 256],
                         }
@@ -236,12 +238,15 @@ def main():
 
             # Run the training
 
+            alg_name = settings["algorithm"]
+
             tune.run(
-                "PPO",
-                name="PPO",
+                alg_name,
+                name=alg_name,
                 stop={"training_iteration": train_iterations},
                 checkpoint_freq=25,
                 checkpoint_at_end=True,
+                num_envs_per_worker=2,
                 local_dir=f"{user_home_dir}/ray_results/{env_name}",
                 config=config.to_dict() if isinstance(config, PPOConfig) else config,
             )
