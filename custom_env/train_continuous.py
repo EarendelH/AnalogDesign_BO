@@ -207,7 +207,6 @@ def main():
                         vf_loss_coeff=0.25,
                         vtrace=True,
                         use_kl_loss=False,
-                        rollout_fragment_length=64,
                         num_sgd_iter=4,
                         broadcast_interval=1,
                         max_sample_requests_in_flight_per_worker=2,
