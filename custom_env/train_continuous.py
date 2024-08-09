@@ -275,11 +275,6 @@ def main():
                         target_entropy="auto",
                         n_step=1,
                         train_batch_size=512,
-                        optimization={
-                            "actor_learning_rate": 3e-4,
-                            "critic_learning_rate": 3e-4,
-                            "entropy_learning_rate": 3e-4,
-                        },
                         num_steps_sampled_before_learning_starts=1024,
                         target_network_update_freq=0,
                         grad_clip=40,
