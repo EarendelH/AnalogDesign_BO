@@ -10,6 +10,8 @@ import ray
 from ray import tune
 from ray.rllib.algorithms.ppo import PPOConfig
 from ray.rllib.algorithms.appo import APPOConfig
+from ray.rllib.algorithms.impala import ImpalaConfig
+from ray.rllib.algorithms.sac import SACConfig
 from ray.rllib.algorithms.algorithm import Algorithm
 from ray.tune.registry import register_env
 
@@ -60,7 +62,7 @@ def main():
         settings = {
             "cpu_usage": get_user_input(f"Enter use CPU num, total available CPU is {cpu_count}", "10"),
             "gpu_usage": get_user_input(f"Enter use GPU num, total available CPU is {gpu_count}", "0"),
-            "algorithm": get_user_input("Algorithm (PPO/APPO)", "PPO"),
+            "algorithm": get_user_input("Algorithm (PPO/APPO/IMPALA)", "PPO"),
             "generalize": get_user_input("Enable generalization (True/False)", "True"),
             "num_agents": get_user_input("Number of agents(Default: 4)", "4"),
             "max_step": get_user_input("Max step(Default: 100)", "100"),
@@ -217,6 +219,74 @@ def main():
                     .debugging(log_level="DEBUG")
                     .framework("torch")
                     .resources(num_gpus=num_gpu)
+                    .multi_agent(
+                        policies=policies,
+                        policy_mapping_fn=policy_mapping_fn,
+                        policies_to_train=policies_to_train,
+                    )
+                )
+            elif settings["algorithm"] == "IMPALA":
+                config = (
+                    ImpalaConfig()
+                    .environment(env="AnalogDesignEnv_v0", clip_actions=True)
+                    .rollouts(num_rollout_workers=num_cpu)
+                    .training(
+                        train_batch_size=512,
+                        minibatch_size="auto",
+                        num_sgd_iter=1,
+                        lr=2e-4,
+                        gamma=0.96,
+                        grad_clip=40.0,
+                        vf_loss_coeff=0.5,
+                        entropy_coeff=0.01,
+                        vtrace=True,
+                        learner_queue_size=3,
+                        broadcast_interval=1,
+                        model={
+                            "fcnet_hiddens": [256, 256, 256, 256, 256],
+                        },
+                    )
+                    .resources(num_gpus=num_gpu)
+                    .debugging(log_level="DEBUG")
+                    .framework("torch")
+                    .multi_agent(
+                        policies=policies,
+                        policy_mapping_fn=policy_mapping_fn,
+                        policies_to_train=policies_to_train,
+                    )
+                )
+            elif settings["algorithm"] == "SAC":
+                config = (
+                    SACConfig()
+                    .environment(env="AnalogDesignEnv_v0", clip_actions=False)
+                    .rollouts(num_rollout_workers=num_cpu)
+                    .training(
+                        twin_q=True,
+                        q_model_config={
+                            "fcnet_hiddens": [256, 256],
+                            "fcnet_activation": "relu",
+                        },
+                        policy_model_config={
+                            "fcnet_hiddens": [256, 256],
+                            "fcnet_activation": "relu",
+                        },
+                        tau=5e-3,
+                        initial_alpha=1.0,
+                        target_entropy="auto",
+                        n_step=1,
+                        train_batch_size=512,
+                        optimization={
+                            "actor_learning_rate": 3e-4,
+                            "critic_learning_rate": 3e-4,
+                            "entropy_learning_rate": 3e-4,
+                        },
+                        num_steps_sampled_before_learning_starts=1024,
+                        target_network_update_freq=0,
+                        grad_clip=40,
+                    )
+                    .resources(num_gpus=num_gpu)
+                    .debugging(log_level="DEBUG")
+                    .framework("torch")
                     .multi_agent(
                         policies=policies,
                         policy_mapping_fn=policy_mapping_fn,
