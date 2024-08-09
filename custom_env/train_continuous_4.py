@@ -126,7 +126,8 @@ def main():
 
             # Use Algorithm.from_checkpoint() to restore the algorithm
             restored_algo = Algorithm.from_checkpoint(
-                policy_ids={"policy_1", "policy_2", "policy_3", "policy_4"}
+                checkpoint=checkpoint_path,
+                policy_ids={"policy_1"}
             )
 
             # Debug: Print information about the restored algorithm
@@ -145,8 +146,8 @@ def main():
                 logging.warning("Workers not available in restored algorithm")
 
             # Get the restored configuration
-            config = restored_algo.config
             logging.info("Configuration restored from checkpoint")
+            restored_algo.train()
         else:
             logging.info("Starting new training session without checkpoint")
             # If not restoring, use the original configuration
@@ -180,29 +181,24 @@ def main():
                 )
             )
 
-        # Typing Train Iterations
-        train_iterations = settings["train_iterations"]
+            # Typing Train Iterations
+            train_iterations = settings["train_iterations"]
 
-        logging.info("Starting training process...")
+            logging.info("Starting training process...")
 
-        user_home_dir = os.path.expanduser("~")
+            user_home_dir = os.path.expanduser("~")
 
-        # Run the training
-        analysis = tune.run(
-            "PPO",
-            name="PPO",
-            stop={"training_iteration": train_iterations},
-            checkpoint_freq=25,
-            checkpoint_at_end=True,
-            local_dir=f"{user_home_dir}/ray_results/{env_name}",
-            config=config.to_dict() if isinstance(config, PPOConfig) else config,
-        )
+            # Run the training
 
-        # Print the best configuration and metrics
-        best_trial = analysis.get_best_trial("episode_reward_mean")
-        logging.info(f"Best trial config: {best_trial.config}")
-        logging.info(f"Best trial final validation reward: {best_trial.last_result['episode_reward_mean']}")
-
+            analysis = tune.run(
+                "PPO",
+                name="PPO",
+                stop={"training_iteration": train_iterations},
+                checkpoint_freq=25,
+                checkpoint_at_end=True,
+                local_dir=f"{user_home_dir}/ray_results/{env_name}",
+                config=config.to_dict() if isinstance(config, PPOConfig) else config,
+            )
     else:
         print("Configuration not confirmed. Training aborted.")
 
