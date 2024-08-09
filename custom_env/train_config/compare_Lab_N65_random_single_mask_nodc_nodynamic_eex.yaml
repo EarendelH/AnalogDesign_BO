@@ -2,7 +2,9 @@ max_process_limit: false
 cpu_usage: 40
 gpu_usage: 0
 generalize: true
+algorithm: PPO
 max_step: 100
+num_agents: 4
 netlist_folder_name: netlist_template_Lab_N65
 specs_folder_name: sampled_specs_Lab_N65
 config_folder_name: config_Lab_N65_Single
@@ -11,6 +13,6 @@ sim_output: false
 init_method: random
 dc_check: false
 dynamic_queue: false
-restore_checkpoint: false
-checkpoint_path:
+restore_checkpoint: true
+checkpoint_path: /home/wuhan/ray_results/AnalogDesignEnv_v0/PPO/PPO_AnalogDesignEnv_v0_fb6af_00000_0_2024-08-08_13-35-12/checkpoint_000014
 train_iterations: 500
