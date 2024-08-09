@@ -211,7 +211,6 @@ def main():
                         minibatch_buffer_size=1,
                         replay_proportion=0.2,
                         replay_buffer_num_slots=1000,
-                        max_sample_requests_in_flight_per_worker=2,
                         broadcast_interval=1,
                         model={
                             "fcnet_hiddens": [256, 256, 256, 256, 256],
