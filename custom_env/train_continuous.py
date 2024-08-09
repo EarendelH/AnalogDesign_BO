@@ -123,7 +123,6 @@ def main():
 
         # Restore or Initialize train
         restore_checkpoint = settings["restore_checkpoint"]
-        checkpoint_path = None
         if restore_checkpoint:
             checkpoint_path = settings["checkpoint_path"]
             assert os.path.exists(checkpoint_path), "Checkpoint path does not exist"
