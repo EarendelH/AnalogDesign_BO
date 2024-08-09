@@ -245,7 +245,6 @@ def main():
                 stop={"training_iteration": train_iterations},
                 checkpoint_freq=25,
                 checkpoint_at_end=True,
-                num_envs_per_worker=2,
                 local_dir=f"{user_home_dir}/ray_results/{env_name}",
                 config=config.to_dict() if isinstance(config, PPOConfig) else config,
             )
