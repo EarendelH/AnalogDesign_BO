@@ -9,6 +9,7 @@ import logging
 import ray
 from ray import tune
 from ray.rllib.algorithms.ppo import PPOConfig
+from ray.rllib.algorithms.appo import APPOConfig
 from ray.rllib.algorithms.algorithm import Algorithm
 from ray.tune.registry import register_env
 
@@ -59,6 +60,7 @@ def main():
         settings = {
             "cpu_usage": get_user_input(f"Enter use CPU num, total available CPU is {cpu_count}", "10"),
             "gpu_usage": get_user_input(f"Enter use GPU num, total available CPU is {gpu_count}", "0"),
+            "algorithm": get_user_input("Algorithm (PPO/APPO)", "PPO"),
             "generalize": get_user_input("Enable generalization (True/False)", "True"),
             "max_step": get_user_input("Max step(Default: 100)", "100"),
             "netlist_folder_name": get_user_input("Name of netlist folder", "netlist_template"),
@@ -95,6 +97,7 @@ def main():
             settings["restore_checkpoint"] = settings["restore_checkpoint"] == "True"
 
         env_settings = {
+            "algorithm": settings["algorithm"],
             "generalize": settings["generalize"],
             "max_step": settings["max_step"],
             "netlist_folder_name": settings["netlist_folder_name"],
@@ -151,35 +154,73 @@ def main():
         else:
             logging.info("Starting new training session without checkpoint")
             # If not restoring, use the original configuration
-            config = (
-                PPOConfig()
-                .environment(env="AnalogDesignEnv_v0", clip_actions=True)
-                .rollouts(num_rollout_workers=num_cpu)
-                .training(
-                    train_batch_size=512,
-                    lr=2e-4,
-                    gamma=0.96,
-                    lambda_=0.95,
-                    use_gae=True,
-                    clip_param=0.3,
-                    grad_clip=None,
-                    entropy_coeff=0.01,
-                    vf_loss_coeff=0.25,
-                    sgd_minibatch_size=64,
-                    num_sgd_iter=24,
-                    model={
-                        "fcnet_hiddens": [256, 256, 256, 256, 256],
-                    }
+            if settings["algorithm"] == "PPO":
+                config = (
+                    PPOConfig()
+                    .environment(env="AnalogDesignEnv_v0", clip_actions=True)
+                    .rollouts(num_rollout_workers=num_cpu)
+                    .training(
+                        train_batch_size=512,
+                        lr=2e-4,
+                        gamma=0.96,
+                        lambda_=0.95,
+                        use_gae=True,
+                        clip_param=0.3,
+                        grad_clip=None,
+                        entropy_coeff=0.01,
+                        vf_loss_coeff=0.25,
+                        sgd_minibatch_size=64,
+                        num_sgd_iter=24,
+                        model={
+                            "fcnet_hiddens": [256, 256, 256, 256, 256],
+                        }
+                    )
+                    .debugging(log_level="DEBUG")
+                    .framework("torch")
+                    .resources(num_gpus=num_gpu)
+                    .multi_agent(
+                        policies={"policy_1"},
+                        policy_mapping_fn=(lambda aid, episode, worker, **kw: f"policy_{aid[-1]}"),
+                        policies_to_train=["policy_1"],
+                    )
                 )
-                .debugging(log_level="DEBUG")
-                .framework("torch")
-                .resources(num_gpus=num_gpu)
-                .multi_agent(
-                    policies={"policy_1"},
-                    policy_mapping_fn=(lambda aid, episode, worker, **kw: f"policy_{aid[-1]}"),
-                    policies_to_train=["policy_1"],
+            elif settings["algorithm"] == "APPO":
+                config = (
+                    APPOConfig()
+                    .environment(env="AnalogDesignEnv_v0", clip_actions=True)
+                    .rollouts(num_rollout_workers=num_cpu)
+                    .training(
+                        train_batch_size=512,
+                        lr=2e-4,
+                        gamma=0.96,
+                        lambda_=0.95,
+                        use_gae=True,
+                        clip_param=0.3,
+                        grad_clip=10,
+                        entropy_coeff=0.01,
+                        vf_loss_coeff=0.25,
+                        vtrace=True,
+                        use_kl_loss=False,
+                        rollout_fragment_length=64,
+                        num_sgd_iter=4,
+                        broadcast_interval=1,
+                        max_sample_requests_in_flight_per_worker=2,
+                        minibatch_buffer_size=8,
+                        model={
+                            "fcnet_hiddens": [256, 256, 256, 256, 256],
+                        }
+                    )
+                    .debugging(log_level="DEBUG")
+                    .framework("torch")
+                    .resources(num_gpus=num_gpu)
+                    .multi_agent(
+                        policies={"policy_1"},
+                        policy_mapping_fn=(lambda aid, episode, worker, **kw: f"policy_{aid[-1]}"),
+                        policies_to_train=["policy_1"],
+                    )
                 )
-            )
+            else:
+                raise ValueError(f"Unsupported algorithm: {settings['algorithm']}")
 
             # Typing Train Iterations
             train_iterations = settings["train_iterations"]

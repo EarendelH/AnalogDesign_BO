@@ -4,13 +4,19 @@ import os
 import argparse
 import yaml
 import torch
+import logging
 
 import ray
 from ray import tune
 from ray.rllib.algorithms.ppo import PPOConfig
+from ray.rllib.algorithms.appo import APPOConfig
+from ray.rllib.algorithms.algorithm import Algorithm
 from ray.tune.registry import register_env
 
 from rllib_env_continous import RllibAnalogDesignAutoEnv
+
+# Set up logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 
 def get_user_input(prompt, default_value):
@@ -52,10 +58,12 @@ def main():
         confirm_flag = True
     if args.config_mode == 'interactive':
         settings = {
-            "cpu_usage": get_user_input(f"Enter use CPU num, total available CPU is {cpu_count}"
-                                                   , "10"),
+            "cpu_usage": get_user_input(f"Enter use CPU num, total available CPU is {cpu_count}", "10"),
             "gpu_usage": get_user_input(f"Enter use GPU num, total available CPU is {gpu_count}", "0"),
+            "algorithm": get_user_input("Algorithm (PPO/APPO)", "PPO"),
             "generalize": get_user_input("Enable generalization (True/False)", "True"),
+            "num_agents": get_user_input("Number of agents(Default: 4)", "4"),
+            "max_step": get_user_input("Max step(Default: 100)", "100"),
             "netlist_folder_name": get_user_input("Name of netlist folder", "netlist_template"),
             "specs_folder_name": get_user_input("Name of specs folder", "sampled_specs"),
             "config_folder_name": get_user_input("Name of config folder", "config"),
@@ -69,7 +77,7 @@ def main():
             "train_iterations": get_user_input("Train iterations(Default: 200)", "200"),
         }
 
-        if settings["restore_checkpoint"]:
+        if settings["restore_checkpoint"] == "True":
             settings["checkpoint_path"] = get_user_input("Checkpoint path", "")
         confirm_flag = confirm_settings(settings)
 
@@ -90,7 +98,9 @@ def main():
             settings["restore_checkpoint"] = settings["restore_checkpoint"] == "True"
 
         env_settings = {
+            "algorithm": settings["algorithm"],
             "generalize": settings["generalize"],
+            "max_step": settings["max_step"],
             "netlist_folder_name": settings["netlist_folder_name"],
             "specs_folder_name": settings["specs_folder_name"],
             "config_folder_name": settings["config_folder_name"],
@@ -107,68 +117,135 @@ def main():
 
         register_env("AnalogDesignEnv_v0", env_creator)
 
-        # Configuration and launching of the training process would go here
-        # Similar to the previously described code for setting up and running the training
-
         env_name = "AnalogDesignEnv_v0"
         ray.init()
 
         # Restore or Initialize train
         restore_checkpoint = settings["restore_checkpoint"]
         checkpoint_path = None
-        if restore_checkpoint == "True":
+        if restore_checkpoint:
             checkpoint_path = settings["checkpoint_path"]
             assert os.path.exists(checkpoint_path), "Checkpoint path does not exist"
-            print(f"Restoring from checkpoint: {checkpoint_path}")
+            logging.info(f"Restoring from checkpoint: {checkpoint_path}")
 
-        # Typing Train Iterations
-        train_iterations = settings["train_iterations"]
-
-        print("Starting training process...")
-
-        config = (
-            PPOConfig()
-            .environment(env="AnalogDesignEnv_v0", clip_actions=True)
-            .rollouts(num_rollout_workers=num_cpu)
-            .training(
-                train_batch_size=512,
-                lr=2e-4,
-                gamma=0.96,
-                lambda_=0.95,
-                use_gae=True,
-                clip_param=0.3,
-                grad_clip=None,
-                entropy_coeff=0.01,
-                vf_loss_coeff=0.25,
-                sgd_minibatch_size=64,
-                num_sgd_iter=24,
-                model={
-                    "fcnet_hiddens": [256, 256, 256, 256, 256],
-                }
+            # Use Algorithm.from_checkpoint() to restore the algorithm
+            restored_algo = Algorithm.from_checkpoint(
+                checkpoint=checkpoint_path,
+                policy_ids={"policy_1"}
             )
-            .debugging(log_level="DEBUG")
-            .framework("torch")
-            .resources(num_gpus=num_gpu)
-            .multi_agent(
-                policies={"policy_1", "policy_2", "policy_3", "policy_4", "policy_5"},
-                policy_mapping_fn=(lambda aid, episode, worker, **kw: f"policy_{aid[-1]}"),
-                policies_to_train=["policy_1", "policy_2", "policy_3", "policy_4", "policy_5"],
+
+            # Debug: Print information about the restored algorithm
+            logging.info("Checkpoint restored successfully")
+            logging.info(f"Restored algorithm type: {type(restored_algo).__name__}")
+
+            # Get policy information
+            if hasattr(restored_algo, 'workers') and restored_algo.workers:
+                local_worker = restored_algo.workers.local_worker()
+                if local_worker:
+                    policies = local_worker.policy_map
+                    logging.info(f"Restored policies: {list(policies.keys())}")
+                else:
+                    logging.warning("Local worker not available")
+            else:
+                logging.warning("Workers not available in restored algorithm")
+
+            # Get the restored configuration
+            logging.info("Configuration restored from checkpoint")
+            restored_algo.train()
+        if not restore_checkpoint:
+
+            policies = {f"policy_{i + 1}" for i in range(settings["num_agents"])}
+            policies_to_train = list(policies)
+            policy_mapping_fn = lambda aid, episode, worker, **kwargs: f"policy_{int(aid[-1])}"
+
+            logging.info("Starting new training session without checkpoint")
+            # If not restoring, use the original configuration
+            if settings["algorithm"] == "PPO":
+                config = (
+                    PPOConfig()
+                    .environment(env="AnalogDesignEnv_v0", clip_actions=True)
+                    .rollouts(num_rollout_workers=num_cpu)
+                    .training(
+                        train_batch_size=512,
+                        lr=2e-4,
+                        gamma=0.96,
+                        lambda_=0.95,
+                        use_gae=True,
+                        clip_param=0.3,
+                        grad_clip=None,
+                        entropy_coeff=0.01,
+                        vf_loss_coeff=0.25,
+                        sgd_minibatch_size=64,
+                        num_sgd_iter=24,
+                        model={
+                            "fcnet_hiddens": [256, 256, 256, 256, 256],
+                        }
+                    )
+                    .debugging(log_level="DEBUG")
+                    .framework("torch")
+                    .resources(num_gpus=num_gpu)
+                    .multi_agent(
+                        policies=policies,
+                        policy_mapping_fn=policy_mapping_fn,
+                        policies_to_train=policies_to_train,
+                    )
+                )
+            elif settings["algorithm"] == "APPO":
+                config = (
+                    APPOConfig()
+                    .environment(env="AnalogDesignEnv_v0", clip_actions=True)
+                    .rollouts(num_rollout_workers=num_cpu)
+                    .training(
+                        train_batch_size=512,
+                        lr=2e-4,
+                        gamma=0.96,
+                        lambda_=0.95,
+                        use_gae=True,
+                        clip_param=0.3,
+                        grad_clip=10,
+                        entropy_coeff=0.01,
+                        vf_loss_coeff=0.25,
+                        vtrace=True,
+                        use_kl_loss=False,
+                        rollout_fragment_length=64,
+                        num_sgd_iter=4,
+                        broadcast_interval=1,
+                        max_sample_requests_in_flight_per_worker=2,
+                        minibatch_buffer_size=8,
+                        model={
+                            "fcnet_hiddens": [256, 256, 256, 256, 256],
+                        }
+                    )
+                    .debugging(log_level="DEBUG")
+                    .framework("torch")
+                    .resources(num_gpus=num_gpu)
+                    .multi_agent(
+                        policies=policies,
+                        policy_mapping_fn=policy_mapping_fn,
+                        policies_to_train=policies_to_train,
+                    )
+                )
+            else:
+                raise ValueError(f"Unsupported algorithm: {settings['algorithm']}")
+
+            # Typing Train Iterations
+            train_iterations = settings["train_iterations"]
+
+            logging.info("Starting training process...")
+
+            user_home_dir = os.path.expanduser("~")
+
+            # Run the training
+
+            tune.run(
+                "PPO",
+                name="PPO",
+                stop={"training_iteration": train_iterations},
+                checkpoint_freq=25,
+                checkpoint_at_end=True,
+                local_dir=f"{user_home_dir}/ray_results/{env_name}",
+                config=config.to_dict() if isinstance(config, PPOConfig) else config,
             )
-        )
-
-        user_home_dir = os.path.expanduser("~")
-
-        tune.run(
-            "PPO",
-            name="PPO",
-            stop={"training_iteration": train_iterations},
-            restore=checkpoint_path if restore_checkpoint == "True" else None,
-            checkpoint_freq=25,
-            checkpoint_at_end=True,
-            local_dir=f"{user_home_dir}/ray_results/{env_name}",
-            config=config.to_dict(),
-        )
-
     else:
         print("Configuration not confirmed. Training aborted.")
 
