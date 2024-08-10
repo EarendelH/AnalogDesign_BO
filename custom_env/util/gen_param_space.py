@@ -38,7 +38,9 @@ def gen_param_space(param_range_dict):
         if start == end:
             values = [start]
         else:
-            values = [start + i * step_num for i in range(int((end - start) / step_num) + 1)]
+            values = [start + i * step_num for i in range(round((end - start) / step_num) + 1)]
+            if values[-1] > end + 1e-7:
+                values.pop()
         if integer_flag:
             # Convert values to integers if required
             values = [str(int(value)) for value in values]
