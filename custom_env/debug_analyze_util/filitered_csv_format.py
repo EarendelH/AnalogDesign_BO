@@ -1,6 +1,6 @@
 import pandas as pd
 import ast
-from openpyxl import load_workbook
+import openpyxl
 import os
 
 
@@ -39,20 +39,22 @@ def append_df_to_excel(filename, df, sheet_name='Sheet1', startrow=None, **to_ex
         df.to_excel(filename, sheet_name=sheet_name, **to_excel_kwargs)
         return
 
-    # Excel file exists - append data
-    book = load_workbook(filename)
-    writer = pd.ExcelWriter(filename, engine='openpyxl')
-    writer.book = book
-    writer.sheets = {ws.title: ws for ws in book.worksheets}
+    # Excel file exists - append without writing the header
+    book = openpyxl.load_workbook(filename)
+    sheet = book[sheet_name]
+    rows = dataframe_to_rows(df, index=False, header=False)
+    for r_idx, row in enumerate(rows, 1):
+        for c_idx, value in enumerate(row, 1):
+            sheet.cell(row=sheet.max_row + r_idx, column=c_idx, value=value)
 
-    # Find the next available row in the sheet
-    if startrow is None and sheet_name in writer.sheets:
-        startrow = writer.sheets[sheet_name].max_row
+    book.save(filename)
 
-    # Write out the DataFrame, without header
-    df.to_excel(writer, sheet_name, startrow=startrow, header=False, **to_excel_kwargs)
 
-    writer.save()
+def dataframe_to_rows(df, index=False, header=True):
+    if header:
+        yield df.columns.tolist()
+    for idx, row in df.iterrows():
+        yield row.tolist()
 
 
 def main():
