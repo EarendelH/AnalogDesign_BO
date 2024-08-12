@@ -117,14 +117,16 @@ def findIQ_Lab(filepath):
     return {"IQ": value}
 
 def findIQ_Cai(filepath):
-    search_keyword = "V2:p"
+    power_keyword = "V2:p"
+    bias_keyword = "I3:p"
     try:
-        value = extract_dcOP_data(filepath, search_keyword)
-        value = value - 0.001
+        power_value = extract_dcOP_data(filepath, power_keyword)
+        bias_value = extract_dcOP_data(filepath, bias_keyword)
+        power_value = power_value - 0.001 - bias_value
     except Exception as e:
         print(f"Warning: {e}. return to max value.")
-        value = 100.0
-    if value <= 0.0:
+        power_value = 100.0
+    if power_value <= 0.0:
         print(f"Power is lower than zero, impossible, return to max value")
-        value = 100.0
-    return {"IQ": value}
+        power_value = 100.0
+    return {"IQ": power_value}
