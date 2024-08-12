@@ -33,43 +33,38 @@ def process_chunk(chunk):
     return pd.concat([chunk.drop(columns=['Specs', 'Valid_Specs', 'Parameters']), specs_df, params_df], axis=1)
 
 
-def append_df_to_excel(filename, df, sheet_name='Sheet1', startrow=None,
-                       truncate_sheet=False, **to_excel_kwargs):
+def append_df_to_excel(filename, df, sheet_name='Sheet1', startrow=None, **to_excel_kwargs):
+    # Excel file doesn't exist - saving and exiting
     if not os.path.isfile(filename):
-        df.to_excel(filename, sheet_name=sheet_name, startrow=startrow if startrow is not None else 0,
-                    **to_excel_kwargs)
-    else:
-        writer = pd.ExcelWriter(filename, engine='openpyxl', mode='a')
-        writer.book = load_workbook(filename)
+        df.to_excel(filename, sheet_name=sheet_name, **to_excel_kwargs)
+        return
 
-        if startrow is None and sheet_name in writer.book.sheetnames:
-            startrow = writer.book[sheet_name].max_row
+    # Excel file exists - append data
+    book = load_workbook(filename)
+    writer = pd.ExcelWriter(filename, engine='openpyxl')
+    writer.book = book
+    writer.sheets = {ws.title: ws for ws in book.worksheets}
 
-        if truncate_sheet and sheet_name in writer.book.sheetnames:
-            idx = writer.book.sheetnames.index(sheet_name)
-            writer.book.remove(writer.book.worksheets[idx])
-            writer.book.create_sheet(sheet_name, idx)
+    # Find the next available row in the sheet
+    if startrow is None and sheet_name in writer.sheets:
+        startrow = writer.sheets[sheet_name].max_row
 
-        writer.sheets = {ws.title: ws for ws in writer.book.worksheets}
+    # Write out the DataFrame, without header
+    df.to_excel(writer, sheet_name, startrow=startrow, header=False, **to_excel_kwargs)
 
-        if startrow is None:
-            startrow = 0
-
-        df.to_excel(writer, sheet_name, startrow=startrow, **to_excel_kwargs)
-
-        writer.save()
+    writer.save()
 
 
 def main():
     file_path = input('Enter the file path: ')
-    chunksize = 10000 # Number of rows to process at a time
+    chunksize = 10000  # Adjust this value based on your system's memory capacity
     total_processed = 0
     total_valid = 0
 
     new_file_path = file_path.replace('.csv', '_format.xlsx')
 
-    # Get total number of rows in the CSV file
-    total_rows = sum(1 for line in open(file_path)) - 1  # Subtract 1 for the header
+    # Get total number of rows
+    total_rows = sum(1 for line in open(file_path)) - 1  # Subtract header row
     print(f'Total rows in CSV: {total_rows}')
 
     for chunk_number, chunk in enumerate(pd.read_csv(file_path, chunksize=chunksize)):
@@ -80,11 +75,11 @@ def main():
         total_valid += len(processed_chunk)
 
         if chunk_number == 0:
-            # First chunk, include header
+            # First chunk, write with header
             processed_chunk.to_excel(new_file_path, index=False)
         else:
-            # Append to existing file without header
-            append_df_to_excel(new_file_path, processed_chunk, header=False, index=False)
+            # Subsequent chunks, append without header
+            append_df_to_excel(new_file_path, processed_chunk, index=False)
 
         print(f'Processed {total_processed} rows, Valid entries so far: {total_valid}')
 
