@@ -118,7 +118,7 @@ def findIQ_Lab(filepath):
 
 def findIQ_Cai(filepath):
     power_keyword = "V2:p"
-    bias_keyword = "I3:p"
+    bias_keyword = "I3:sink"
     try:
         power_value = extract_dcOP_data(filepath, power_keyword)
         bias_value = extract_dcOP_data(filepath, bias_keyword)
