@@ -1,9 +1,6 @@
 import pandas as pd
 import ast
-import openpyxl
-import os
-
-MAX_ROWS_PER_SHEET = 1000000  # Slightly less than the Excel limit to be safe
+import math
 
 
 def flatten_nested_dict(d):
@@ -20,71 +17,50 @@ def is_valid_entry(flattened_dict):
     return True
 
 
-def process_chunk(chunk):
-    chunk['Valid_Specs'] = chunk['Specs'].apply(lambda x: flatten_nested_dict(ast.literal_eval(x)))
-    chunk = chunk[chunk['Valid_Specs'].apply(is_valid_entry)]
-    specs_df = chunk['Valid_Specs'].apply(pd.Series)
-    params_df = chunk['Parameters'].apply(ast.literal_eval).apply(pd.Series)
-    return pd.concat([chunk.drop(columns=['Specs', 'Valid_Specs', 'Parameters']), specs_df, params_df], axis=1)
+def split_dataframe_to_excel(df, max_rows=1000000, output_prefix='output'):
+    num_files = math.ceil(len(df) / max_rows)
+
+    for i in range(num_files):
+        start_idx = i * max_rows
+        end_idx = min((i + 1) * max_rows, len(df))
+
+        df_subset = df.iloc[start_idx:end_idx]
+
+        output_file = f"{output_prefix}_{i + 1}.xlsx"
+        df_subset.to_excel(output_file, index=False)
+        print(f"Saved {output_file}")
 
 
-def append_df_to_excel(filename, df, sheet_name='Sheet1', startrow=None, **to_excel_kwargs):
-    if not os.path.isfile(filename):
-        df.to_excel(filename, sheet_name=sheet_name, **to_excel_kwargs)
-        return
+# Main process
+file_path = input('Enter the file path: ')
+data = pd.read_csv(file_path)
 
-    book = openpyxl.load_workbook(filename)
-    writer = pd.ExcelWriter(filename, engine='openpyxl')
-    writer.book = book
+# Display the original data length
+original_length = len(data)
+print(f'Original data length: {original_length}')
 
-    if sheet_name not in writer.book.sheetnames:
-        writer.book.create_sheet(sheet_name)
-    sheet = writer.book[sheet_name]
+# Flatten the nested dictionary and filter invalid entries for 'Specs'
+data['Valid_Specs'] = data['Specs'].apply(lambda x: flatten_nested_dict(ast.literal_eval(x)))
+data = data[data['Valid_Specs'].apply(is_valid_entry)]
 
-    if sheet.max_row >= MAX_ROWS_PER_SHEET:
-        sheet_count = sum(1 for s in writer.book.sheetnames if s.startswith(sheet_name))
-        new_sheet_name = f"{sheet_name}_{sheet_count + 1}"
-        writer.book.create_sheet(new_sheet_name)
-        sheet = writer.book[new_sheet_name]
-        startrow = 0
-    else:
-        startrow = sheet.max_row if startrow is None else startrow
+# Convert the valid flattened dictionaries into DataFrame columns for 'Specs'
+specs_df = data['Valid_Specs'].apply(pd.Series)
 
-    df.to_excel(writer, sheet_name=sheet.title, startrow=startrow, **to_excel_kwargs)
-    writer.save()
-    writer.close()
+# Expand 'Parameters' column directly into DataFrame columns
+params_df = data['Parameters'].apply(ast.literal_eval).apply(pd.Series)
 
+# Combine the new columns with the original DataFrame (excluding the original 'Specs' and 'Valid_Specs' columns)
+expanded_data = pd.concat([data.drop(columns=['Specs', 'Valid_Specs', 'Parameters']), specs_df, params_df], axis=1)
 
-def main():
-    file_path = input('Enter the file path: ')
-    chunksize = 10000  # Adjust based on your system's memory capacity
-    total_processed = 0
-    total_valid = 0
+# Generate new file path prefix
+new_file_prefix = file_path.replace('.csv', '_format')
 
-    new_file_path = file_path.replace('.csv', '_format.xlsx')
+# Split and save to multiple Excel files
+split_dataframe_to_excel(expanded_data, max_rows=1000000, output_prefix=new_file_prefix)
 
-    total_rows = sum(1 for line in open(file_path)) - 1  # Subtract header row
-    print(f'Total rows in CSV: {total_rows}')
+valid_length = len(expanded_data)
+print(f'Total valid entries: {valid_length}')
 
-    for chunk_number, chunk in enumerate(pd.read_csv(file_path, chunksize=chunksize)):
-        print(f'Processing chunk {chunk_number + 1}...')
-
-        processed_chunk = process_chunk(chunk)
-        total_processed += len(chunk)
-        total_valid += len(processed_chunk)
-
-        if chunk_number == 0:
-            processed_chunk.to_excel(new_file_path, index=False)
-        else:
-            append_df_to_excel(new_file_path, processed_chunk, index=False, header=False)
-
-        print(f'Processed {total_processed} rows, Valid entries so far: {total_valid}')
-
-    print(f'Total processed entries: {total_processed}')
-    print(f'Total valid entries: {total_valid}')
-    print(f'Entries dropped: {total_processed - total_valid}')
-    print(f'Results saved to {new_file_path}')
-
-
-if __name__ == "__main__":
-    main()
+# Optionally, to show how many entries were dropped
+dropped_entries = original_length - valid_length
+print(f'Entries dropped: {dropped_entries}')
