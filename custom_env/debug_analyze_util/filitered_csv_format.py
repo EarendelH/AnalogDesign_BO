@@ -3,6 +3,8 @@ import ast
 import openpyxl
 import os
 
+MAX_ROWS_PER_SHEET = 1000000  # Slightly less than the Excel limit to be safe
+
 
 def flatten_nested_dict(d):
     flattened_dict = {}
@@ -19,53 +21,48 @@ def is_valid_entry(flattened_dict):
 
 
 def process_chunk(chunk):
-    # Flatten the nested dictionary and filter invalid entries for 'Specs'
     chunk['Valid_Specs'] = chunk['Specs'].apply(lambda x: flatten_nested_dict(ast.literal_eval(x)))
     chunk = chunk[chunk['Valid_Specs'].apply(is_valid_entry)]
-
-    # Convert the valid flattened dictionaries into DataFrame columns for 'Specs'
     specs_df = chunk['Valid_Specs'].apply(pd.Series)
-
-    # Expand 'Parameters' column directly into DataFrame columns
     params_df = chunk['Parameters'].apply(ast.literal_eval).apply(pd.Series)
-
-    # Combine the new columns with the original DataFrame (excluding the original 'Specs' and 'Valid_Specs' columns)
     return pd.concat([chunk.drop(columns=['Specs', 'Valid_Specs', 'Parameters']), specs_df, params_df], axis=1)
 
 
 def append_df_to_excel(filename, df, sheet_name='Sheet1', startrow=None, **to_excel_kwargs):
-    # Excel file doesn't exist - saving and exiting
     if not os.path.isfile(filename):
         df.to_excel(filename, sheet_name=sheet_name, **to_excel_kwargs)
         return
 
-    # Excel file exists - append without writing the header
     book = openpyxl.load_workbook(filename)
-    sheet = book[sheet_name]
-    rows = dataframe_to_rows(df, index=False, header=False)
-    for r_idx, row in enumerate(rows, 1):
-        for c_idx, value in enumerate(row, 1):
-            sheet.cell(row=sheet.max_row + r_idx, column=c_idx, value=value)
+    writer = pd.ExcelWriter(filename, engine='openpyxl')
+    writer.book = book
 
-    book.save(filename)
+    if sheet_name not in writer.book.sheetnames:
+        writer.book.create_sheet(sheet_name)
+    sheet = writer.book[sheet_name]
 
+    if sheet.max_row >= MAX_ROWS_PER_SHEET:
+        sheet_count = sum(1 for s in writer.book.sheetnames if s.startswith(sheet_name))
+        new_sheet_name = f"{sheet_name}_{sheet_count + 1}"
+        writer.book.create_sheet(new_sheet_name)
+        sheet = writer.book[new_sheet_name]
+        startrow = 0
+    else:
+        startrow = sheet.max_row if startrow is None else startrow
 
-def dataframe_to_rows(df, index=False, header=True):
-    if header:
-        yield df.columns.tolist()
-    for idx, row in df.iterrows():
-        yield row.tolist()
+    df.to_excel(writer, sheet_name=sheet.title, startrow=startrow, **to_excel_kwargs)
+    writer.save()
+    writer.close()
 
 
 def main():
     file_path = input('Enter the file path: ')
-    chunksize = 10000  # Adjust this value based on your system's memory capacity
+    chunksize = 10000  # Adjust based on your system's memory capacity
     total_processed = 0
     total_valid = 0
 
     new_file_path = file_path.replace('.csv', '_format.xlsx')
 
-    # Get total number of rows
     total_rows = sum(1 for line in open(file_path)) - 1  # Subtract header row
     print(f'Total rows in CSV: {total_rows}')
 
@@ -77,11 +74,9 @@ def main():
         total_valid += len(processed_chunk)
 
         if chunk_number == 0:
-            # First chunk, write with header
             processed_chunk.to_excel(new_file_path, index=False)
         else:
-            # Subsequent chunks, append without header
-            append_df_to_excel(new_file_path, processed_chunk, index=False)
+            append_df_to_excel(new_file_path, processed_chunk, index=False, header=False)
 
         print(f'Processed {total_processed} rows, Valid entries so far: {total_valid}')
 
