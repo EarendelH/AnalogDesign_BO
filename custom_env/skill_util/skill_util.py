@@ -35,9 +35,9 @@ def generate_skill_commands(yaml_file):
                     skill_param = "simM"
                 else:
                     skill_param = "fingers"
-            elif param_type == 'c' and instance.startswith('C'):
+            elif instance.startswith('C'):
                 skill_param = "c"
-            elif param_type == 'r' and instance.startswith('R'):
+            elif instance.startswith('R'):
                 skill_param = "r"
             else:
                 continue  # Skip if it doesn't match any known patterns
