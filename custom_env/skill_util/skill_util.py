@@ -100,9 +100,9 @@ def send_skill_command(master, command):
         return ""
 
 
-def load_skill_functions(process, master=None, interactive=False):
+def load_skill_functions(master):
 
-    load_command = f'load("modifyInstanceParameterWithCallback")'
+    load_command = f'load("modifyInstanceParameterWithCallback.il")'
     output = send_skill_command(master, load_command)
     print(f"Loading Skill functions: {output}")
     return "Error" not in output
