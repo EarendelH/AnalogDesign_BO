@@ -56,17 +56,24 @@ def start_virtuoso_session(interactive=False):
         return process, None
 
 
-def send_skill_command(process, command):
-    # Send a Skill command to Virtuoso
-    process.stdin.write(command + '\n')
-    process.stdin.flush()
+def send_skill_command(process, command, master=None, interactive=False):
+    if interactive:
+        os.write(master, (command + '\n').encode())
+        time.sleep(0.5)
 
-    # Wait for the command to complete (you might need to adjust the waiting mechanism)
-    time.sleep(0.5)
-
-    # Read the output (optional, depending on your needs)
-    output = process.stdout.readline()
-    return output
+        while True:
+            rlist, _, _ = select.select([master], [], [], 0.1)
+            if not rlist:
+                break
+            output = os.read(master, 1024).decode()
+            print(output, end='')
+        return output
+    else:
+        process.stdin.write(command + '\n')
+        process.stdin.flush()
+        time.sleep(0.5)
+        output = process.stdout.readline()
+        return output
 
 
 def load_skill_functions(process, master=None, interactive=False):
@@ -77,8 +84,7 @@ def load_skill_functions(process, master=None, interactive=False):
         print(f"Loading Skill functions: {output.strip()}")
 
 
-def main(interactive=False):
-
+def main():
     parser = argparse.ArgumentParser(description='Interface with Cadence Virtuoso')
     parser.add_argument('--interactive', action='store_true', help='Enable interactive mode')
     args = parser.parse_args()
