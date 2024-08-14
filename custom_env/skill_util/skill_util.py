@@ -38,42 +38,47 @@ def generate_skill_commands(yaml_file):
     return skill_commands
 
 
-def start_virtuoso_session(interactive=False):
-    if interactive:
-        master, slave = pty.openpty()
-        process = subprocess.Popen(['virtuoso', '-nograph'],
-                                   stdin=slave,
-                                   stdout=slave,
-                                   stderr=slave,
-                                   text=True)
-        return process, master
-    else:
-        process = subprocess.Popen(['virtuoso', '-nograph'],
-                                   stdin=subprocess.PIPE,
-                                   stdout=subprocess.PIPE,
-                                   stderr=subprocess.PIPE,
-                                   text=True)
-        return process, None
+def start_virtuoso_session():
+    master, slave = pty.openpty()
+    process = subprocess.Popen(['virtuoso', '-nograph'],
+                               stdin=slave,
+                               stdout=slave,
+                               stderr=slave,
+                               text=True)
+    return process, master
 
 
-def send_skill_command(process, command, master=None, interactive=False):
-    if interactive:
-        os.write(master, (command + '\n').encode())
-        time.sleep(0.5)
+def wait_for_virtuoso_ready(master):
+    output = ""
+    ready = False
+    while not ready:
+        rlist, _, _ = select.select([master], [], [], 0.1)
+        if rlist:
+            chunk = os.read(master, 1024).decode()
+            print(chunk, end='', flush=True)
+            output += chunk
+            if "> t" in output:
+                os.write(master, b'\n')
+                chunk = os.read(master, 1024).decode()
+                print(chunk, end='', flush=True)
+                if chunk.strip() == ">":
+                    ready = True
+    return output
 
-        while True:
-            rlist, _, _ = select.select([master], [], [], 0.1)
-            if not rlist:
+
+def send_skill_command(master, command):
+    os.write(master, (command + '\n').encode())
+    output = ""
+    while True:
+        rlist, _, _ = select.select([master], [], [], 0.1)
+        if rlist:
+            chunk = os.read(master, 1024).decode()
+            print(chunk, end='', flush=True)
+            output += chunk
+            if output.endswith("> "):
                 break
-            output = os.read(master, 1024).decode()
-            print(output, end='')
-        return output
-    else:
-        process.stdin.write(command + '\n')
-        process.stdin.flush()
-        time.sleep(0.5)
-        output = process.stdout.readline()
-        return output
+    return output
+
 
 
 def load_skill_functions(process, master=None, interactive=False):
@@ -85,30 +90,28 @@ def load_skill_functions(process, master=None, interactive=False):
 
 
 def main():
-    parser = argparse.ArgumentParser(description='Interface with Cadence Virtuoso')
-    parser.add_argument('--interactive', action='store_true', help='Enable interactive mode')
-    args = parser.parse_args()
-
-    yaml_path = os.path.join(os.path.dirname(__file__), "init_param_demo.yaml")
-    commands = generate_skill_commands(yaml_path)
-
-    virtuoso_process, master = start_virtuoso_session(args.interactive)
+    commands = generate_skill_commands("init_param_demo.yaml")
+    virtuoso_process, master = start_virtuoso_session()
 
     try:
-        load_skill_functions(virtuoso_process, master, args.interactive)
+        # Wait for Virtuoso to start and be ready
+        initial_output = wait_for_virtuoso_ready(master)
+        print("Virtuoso is ready to accept commands.")
 
+        # Load necessary Skill functions
+        load_skill_functions(master)
+
+        # Send each command to Virtuoso
         for command in commands:
             print(f"Sending command: {command}")
-            output = send_skill_command(virtuoso_process, command, master, args.interactive)
-            if not args.interactive:
-                print(f"Output: {output.strip()}")
+            output = send_skill_command(master, command)
+            print(f"Output: {output}")
 
-        send_skill_command(virtuoso_process, "exit", master, args.interactive)
+        # Close the Virtuoso session
+        send_skill_command(master, "exit")
     finally:
         virtuoso_process.terminate()
-        if args.interactive:
-            os.close(master)
-
+        os.close(master)
 
 if __name__ == "__main__":
     main()
