@@ -64,3 +64,5 @@ procedure(PrintInstanceDetails(libName cellName viewName instName)
         )
     )
 )
+
+; PrintInstanceDetails("LDO_Cai_Skill" "LDO_Core" "schematic" "M0")

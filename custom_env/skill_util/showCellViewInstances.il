@@ -44,4 +44,4 @@ procedure(showCellViewInstances(libName cellName viewName)
 )
 
 ; Example usage:
-; showCellViewInstances("LDO_Cai" "LDO" "schematic")
+; showCellViewInstances("LDO_Cai" "LDO_Core" "schematic")
