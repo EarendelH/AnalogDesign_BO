@@ -31,10 +31,20 @@ def generate_skill_commands(yaml_file):
             elif param_type == 'l':
                 skill_param = "l"
             elif param_type == 'nf':
-                skill_param = "fingers"
+                if instance == "MP":
+                    skill_param = "simM"
+                else:
+                    skill_param = "fingers"
+            elif param_type == 'c' and instance.startswith('C'):
+                skill_param = "c"
+            elif param_type == 'r' and instance.startswith('R'):
+                skill_param = "r"
+            else:
+                continue  # Skip if it doesn't match any known patterns
 
             # Create Skill command
-            command = f'ModifyInstanceParameter("{lib_name}" "{core_cell_name}" "schematic" "{instance}" "{skill_param}" "{value}")'
+            command = (f'ModifyInstanceParameter("{lib_name}" "{core_cell_name}" '
+                       f'"schematic" "{instance}" "{skill_param}" "{value}")')
             skill_commands.append(command)
 
     return skill_commands
