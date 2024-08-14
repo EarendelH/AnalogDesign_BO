@@ -81,8 +81,8 @@ def send_skill_command(master, command):
 
 
 def load_skill_functions(process, master=None, interactive=False):
-    file_path = os.path.join(os.path.dirname(__file__), "modifyInstanceParameterWithCallback.il")
-    load_command = f'load("{file_path}")'
+
+    load_command = f'load("modifyInstanceParameterWithCallback")'
     output = send_skill_command(master, load_command)
     print(f"Loading Skill functions: {output}")
 
