@@ -1,4 +1,4 @@
-Core:
+Core_Param:
   C1: 0.25p
   C2: 1000.0f
   C3: 1.0f
@@ -148,7 +148,7 @@ Core:
   w_M3_per_finger: 0.2u
   l_M3: 2.0u
   nf_M3: 1
-Testbench:
+Testbench_Param:
   VB1: 0.3
   VB2: 0.93
   VBN1: 0.3
@@ -158,3 +158,15 @@ Testbench:
   VBP2: 0.7
   VD: 1.2
   IBP: 1.0u
+Lib: LDO_Cai_Skill
+Core_Cell:
+  LDO_Core
+Testbench_Cell:
+  tb_DC
+  tb_Load_Reg
+  tb_PSR
+  tb_Region
+  tb_Stability_1m
+  tb_Stability_5u
+  tb_Stability_20m
+  tb_Trans

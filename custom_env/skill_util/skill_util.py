@@ -14,8 +14,10 @@ def generate_skill_commands(yaml_file):
     with open(yaml_file, 'r') as file:
         data = yaml.safe_load(file)
 
-    core_data = data.get('Core', {})
+    core_data = data.get('Core_Param', {})
     skill_commands = []
+    lib_name = data.get('Lib_Name', {})
+    core_cell_name = data.get('Core_Cell', {})
 
     for key, value in core_data.items():
         # Extract instance name and parameter
@@ -32,7 +34,7 @@ def generate_skill_commands(yaml_file):
                 skill_param = "fingers"
 
             # Create Skill command
-            command = f'ModifyInstanceParameter("LDO_Cai_Skill" "LDO_Core" "schematic" "{instance}" "{skill_param}" "{value}")'
+            command = f'ModifyInstanceParameter("{lib_name}" "{core_cell_name}" "schematic" "{instance}" "{skill_param}" "{value}")'
             skill_commands.append(command)
 
     return skill_commands
@@ -101,6 +103,9 @@ def send_skill_command(master, command):
 
 
 def load_skill_functions(master):
+
+    # if running folder do not exist modifyInstanceParameterWithCallback.il
+    # Cp the file from script folder to running folder
 
     load_command = f'load("modifyInstanceParameterWithCallback.il")'
     output = send_skill_command(master, load_command)
