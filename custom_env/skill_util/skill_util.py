@@ -90,7 +90,9 @@ def load_skill_functions(process, master=None, interactive=False):
 
 
 def main():
-    commands = generate_skill_commands("init_param_demo.yaml")
+
+    yaml_path = os.path.join(os.path.dirname(__file__), "init_param_demo.yaml")
+    commands = generate_skill_commands(yaml_path)
     virtuoso_process, master = start_virtuoso_session()
 
     try:
