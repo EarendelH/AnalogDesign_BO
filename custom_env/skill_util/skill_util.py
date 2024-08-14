@@ -105,6 +105,7 @@ def load_skill_functions(process, master=None, interactive=False):
     load_command = f'load("modifyInstanceParameterWithCallback")'
     output = send_skill_command(master, load_command)
     print(f"Loading Skill functions: {output}")
+    return "Error" not in output
 
 
 def main():
@@ -123,7 +124,9 @@ def main():
         print("Virtuoso is ready to accept commands.")
 
         # Load necessary Skill functions
-        load_skill_functions(master)
+        if not load_skill_functions(master):
+            print("Failed to load Skill functions. Exiting.")
+            return
 
         # Send each command to Virtuoso
         for command in commands:
