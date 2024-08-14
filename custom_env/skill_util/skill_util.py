@@ -80,13 +80,11 @@ def send_skill_command(master, command):
     return output
 
 
-
 def load_skill_functions(process, master=None, interactive=False):
     file_path = os.path.join(os.path.dirname(__file__), "modifyInstanceParameterWithCallback.il")
     load_command = f'load("{file_path}")'
-    output = send_skill_command(process, load_command, master, interactive)
-    if not interactive:
-        print(f"Loading Skill functions: {output.strip()}")
+    output = send_skill_command(master, load_command)
+    print(f"Loading Skill functions: {output}")
 
 
 def main():
