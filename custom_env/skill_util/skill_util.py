@@ -39,45 +39,65 @@ def generate_skill_commands(yaml_file):
 
 
 def start_virtuoso_session():
-    master, slave = pty.openpty()
-    process = subprocess.Popen(['virtuoso', '-nograph'],
-                               stdin=slave,
-                               stdout=slave,
-                               stderr=slave,
-                               text=True)
-    return process, master
+    try:
+        master, slave = pty.openpty()
+        process = subprocess.Popen(['virtuoso', '-nograph'],
+                                   stdin=slave,
+                                   stdout=slave,
+                                   stderr=slave,
+                                   text=True)
+        return process, master
+    except Exception as e:
+        print(f"Error starting Virtuoso session: {e}")
+        return None, None
 
 
 def wait_for_virtuoso_ready(master):
+    if master is None:
+        print("Error: Invalid master file descriptor")
+        return ""
+
     output = ""
     ready = False
     while not ready:
-        rlist, _, _ = select.select([master], [], [], 0.1)
-        if rlist:
-            chunk = os.read(master, 1024).decode()
-            print(chunk, end='', flush=True)
-            output += chunk
-            if "> t" in output:
-                os.write(master, b'\n')
+        try:
+            rlist, _, _ = select.select([master], [], [], 0.1)
+            if rlist:
                 chunk = os.read(master, 1024).decode()
                 print(chunk, end='', flush=True)
-                if chunk.strip() == ">":
-                    ready = True
+                output += chunk
+                if "> t" in output:
+                    os.write(master, b'\n')  # Send an enter
+                    chunk = os.read(master, 1024).decode()
+                    print(chunk, end='', flush=True)
+                    if chunk.strip() == ">":
+                        ready = True
+        except Exception as e:
+            print(f"Error while waiting for Virtuoso: {e}")
+            return output
     return output
 
 
 def send_skill_command(master, command):
-    os.write(master, (command + '\n').encode())
-    output = ""
-    while True:
-        rlist, _, _ = select.select([master], [], [], 0.1)
-        if rlist:
-            chunk = os.read(master, 1024).decode()
-            print(chunk, end='', flush=True)
-            output += chunk
-            if output.endswith("> "):
-                break
-    return output
+    if master is None:
+        print("Error: Invalid master file descriptor")
+        return ""
+
+    try:
+        os.write(master, (command + '\n').encode())
+        output = ""
+        while True:
+            rlist, _, _ = select.select([master], [], [], 0.1)
+            if rlist:
+                chunk = os.read(master, 1024).decode()
+                print(chunk, end='', flush=True)
+                output += chunk
+                if output.endswith("> "):
+                    break
+        return output
+    except Exception as e:
+        print(f"Error sending command: {e}")
+        return ""
 
 
 def load_skill_functions(process, master=None, interactive=False):
@@ -92,6 +112,10 @@ def main():
     yaml_path = os.path.join(os.path.dirname(__file__), "init_param_demo.yaml")
     commands = generate_skill_commands(yaml_path)
     virtuoso_process, master = start_virtuoso_session()
+
+    if virtuoso_process is None or master is None:
+        print("Failed to start Virtuoso session. Exiting.")
+        return
 
     try:
         # Wait for Virtuoso to start and be ready
@@ -109,9 +133,14 @@ def main():
 
         # Close the Virtuoso session
         send_skill_command(master, "exit")
+    except Exception as e:
+        print(f"An error occurred: {e}")
     finally:
-        virtuoso_process.terminate()
-        os.close(master)
+        if virtuoso_process:
+            virtuoso_process.terminate()
+        if master:
+            os.close(master)
+
 
 if __name__ == "__main__":
     main()
