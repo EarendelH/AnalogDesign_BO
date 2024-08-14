@@ -21,7 +21,7 @@ def generate_skill_commands(yaml_file):
 
     for key, value in core_data.items():
         # Extract instance name and parameter
-        match = re.match(r'(w|l|nf)_(M\d+|MP)(?:_per_finger)?', key)
+        match = re.match(r'(w|l|nf)_(M\d+|MP|C\w+|R\w+)(?:_per_finger)?', key)
         if match:
             param_type, instance = match.groups()
 
