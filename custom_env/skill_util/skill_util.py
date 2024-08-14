@@ -16,7 +16,7 @@ def generate_skill_commands(yaml_file):
 
     core_data = data.get('Core_Param', {})
     skill_commands = []
-    lib_name = data.get('Lib_Name', {})
+    lib_name = data.get('Lib', {})
     core_cell_name = data.get('Core_Cell', {})
 
     for key, value in core_data.items():
