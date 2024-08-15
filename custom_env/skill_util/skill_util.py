@@ -170,13 +170,101 @@ def load_skill_functions(master):
     output = send_skill_command(master, load_command)
     print(f"Loading showCellViewInstances.il: {output}")
 
+    # Load PrintInstanceDetails.il
+    load_command = 'load("PrintInstanceDetails.il")'
+    output = send_skill_command(master, load_command)
+    print(f"Loading PrintInstanceDetails.il: {output}")
+
     return "Error" not in output
+
+
+def parse_value(value):
+    match = re.match(r"(\d+(?:\.\d+)?)(p|n|u|m)?", value)
+    if match:
+        num, unit = match.groups()
+        num = float(num)
+        if unit == 'f':
+            return num * 1e-15
+        elif unit == 'p':
+            return num * 1e-12
+        elif unit == 'n':
+            return num * 1e-9
+        elif unit == 'u':
+            return num * 1e-6
+        elif unit == 'm':
+            return num * 1e-3
+        elif unit == 'k':
+            return num * 1e3
+        elif unit == 'M':
+            return num * 1e6
+        elif unit == 'G':
+            return num * 1e9
+        else:
+            return num
+    return float(value)
+
+
+def compare_values(yaml_value, skill_value):
+    yaml_parsed = parse_value(yaml_value)
+    skill_parsed = parse_value(skill_value)
+    return abs(yaml_parsed - skill_parsed) < 1e-15  # Use a small threshold to handle floating-point errors
+
+
+def check_instance_parameters(yaml_data, skill_output, instance_name):
+    yaml_params = yaml_data['Core_Param']
+    skill_params = {}
+
+    for line in skill_output.split('\n'):
+        match = re.match(r'^\s*(\w+):\s*"([^"]*)"', line)
+        if match:
+            key, value = match.groups()
+            skill_params[key] = value
+
+    if instance_name.startswith('M'):
+        if instance_name == 'MP':
+            params_to_check = {'l': 'l', 'w': 'w', 'nf': 'simM'}
+        else:
+            params_to_check = {'l': 'l', 'w': 'w', 'nf': 'fingers'}
+            # Check wf
+            w = parse_value(skill_params['w'])
+            fingers = int(skill_params['fingers'])
+            calculated_wf = w * fingers
+            actual_wf = parse_value(skill_params['wf'])
+            if abs(calculated_wf - actual_wf) > 1e-15:
+                print(f"Error: wf value mismatch for {instance_name}. Calculated: {calculated_wf}, Actual: {actual_wf}")
+                return False
+
+        for yaml_key, skill_key in params_to_check.items():
+            if yaml_key == "w":
+                yaml_value = yaml_params[f'{yaml_key}_{instance_name}_per_finger']
+            else:
+                yaml_value = yaml_params[f'{yaml_key}_{instance_name}']
+            skill_value = skill_params[skill_key]
+            if not compare_values(yaml_value, skill_value):
+                print(f"Error: {yaml_key} value mismatch for {instance_name}. YAML: {yaml_value}, Skill: {skill_value}")
+                return False
+
+    elif instance_name.startswith(('C', 'R')):
+        if instance_name.startswith('C'):
+            param_key = 'c'
+        elif instance_name.startswith('R'):
+            param_key = 'r'
+        yaml_value = yaml_params[instance_name]
+        skill_value = skill_params[param_key]
+        if not compare_values(yaml_value, skill_value):
+            print(f"Error: Value mismatch for {instance_name}. YAML: {yaml_value}, Skill: {skill_value}")
+            return False
+
+    return True
 
 
 def main():
     yaml_path = os.path.join(os.path.dirname(__file__), "init_param_demo.yaml")
 
     # Extract instances from YAML
+    with open(yaml_path, 'r') as file:
+        yaml_data = yaml.safe_load(file)
+
     yaml_instances = extract_instances_from_yaml(yaml_path)
     print("Instances extracted from YAML:", yaml_instances)
 
@@ -194,11 +282,8 @@ def main():
             print("Failed to load Skill functions. Exiting.")
             return
 
-        # Read lib_name and core_cell_name from YAML
-        with open(yaml_path, 'r') as file:
-            data = yaml.safe_load(file)
-        lib_name = data.get('Lib', '')
-        core_cell_name = data.get('Core_Cell', '')
+        lib_name = yaml_data.get('Lib', '')
+        core_cell_name = yaml_data.get('Core_Cell', '')
 
         if not lib_name or not core_cell_name:
             print("Error: Lib or Core_Cell not found in YAML file. Exiting.")
@@ -221,7 +306,18 @@ def main():
             print("Exiting program.")
             return
 
-        print("All instances from YAML are present in the schematic. Proceeding with parameter modifications.")
+        print("All instances from YAML are present in the schematic. Proceeding with parameter checks.")
+
+        # Check parameters for each instance
+        for instance in yaml_instances:
+            print(f"Checking parameters for instance {instance}...")
+            command = f'PrintInstanceDetails("{lib_name}" "{core_cell_name}" "schematic" "{instance}")'
+            output = send_skill_command(master, command)
+            if not check_instance_parameters(yaml_data, output, instance):
+                print(f"Parameter mismatch for instance {instance}. Exiting program.")
+                return
+
+        print("All instance parameters match. Proceeding with parameter modifications.")
 
         # Continue with the rest of the script (parameter modifications)
         commands = generate_skill_commands(yaml_path)
