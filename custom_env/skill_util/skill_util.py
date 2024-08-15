@@ -40,10 +40,13 @@ def generate_skill_commands(yaml_file):
         data = yaml.safe_load(file)
 
     core_data = data.get('Core_Param', {})
+    testbench_data = data.get('Testbench_Param', {})
     skill_commands = []
-    lib_name = data.get('Lib', {})
-    core_cell_name = data.get('Core_Cell', {})
+    lib_name = data.get('Lib', '')
+    core_cell_name = data.get('Core_Cell', '')
+    testbench_cells = data.get('Testbench_Cell', [])
 
+    # Generate commands for Core_Param
     for key, value in core_data.items():
         # Handle capacitors and resistors directly
         if key.startswith('C') or key.startswith('R'):
@@ -71,6 +74,19 @@ def generate_skill_commands(yaml_file):
 
             # Create Skill command
             command = f'ModifyInstanceParameter("{lib_name}" "{core_cell_name}" "schematic" "{instance}" "{skill_param}" "{value}")'
+            skill_commands.append(command)
+
+    # Generate commands for Testbench_Param
+    for tb_cell in testbench_cells:
+        for instance, value in testbench_data.items():
+            if instance.startswith('V'):
+                skill_param = "vdc"
+            elif instance.startswith('I'):
+                skill_param = "idc"
+            else:
+                continue  # Skip if it's neither V nor I
+
+            command = f'ModifyInstanceParameter("{lib_name}" "{tb_cell}" "schematic" "{instance}" "{skill_param}" "{value}")'
             skill_commands.append(command)
 
     return skill_commands
