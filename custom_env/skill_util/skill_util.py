@@ -179,7 +179,9 @@ def load_skill_functions(master):
 
 
 def parse_value(value):
-    match = re.match(r"(\d+(?:\.\d+)?)(p|n|u|m)?", value)
+    if isinstance(value, (int, float)):
+        return float(value)
+    match = re.match(r"(\d+(?:\.\d+)?)(f|p|n|u|m|k|M|G)?", str(value))
     if match:
         num, unit = match.groups()
         num = float(num)
@@ -213,7 +215,6 @@ def compare_values(yaml_value, skill_value):
 def check_instance_parameters(yaml_data, skill_output, instance_name):
     yaml_params = yaml_data['Core_Param']
     skill_params = {}
-
     for line in skill_output.split('\n'):
         match = re.match(r'^\s*(\w+):\s*"([^"]*)"', line)
         if match:
@@ -245,12 +246,9 @@ def check_instance_parameters(yaml_data, skill_output, instance_name):
                 return False
 
     elif instance_name.startswith(('C', 'R')):
-        if instance_name.startswith('C'):
-            param_key = 'c'
-        elif instance_name.startswith('R'):
-            param_key = 'r'
-        yaml_value = yaml_params[instance_name]
-        skill_value = skill_params[param_key]
+        param_key = 'c' if instance_name.startswith('C') else 'r'
+        yaml_value = str(yaml_params.get(instance_name, ''))
+        skill_value = str(skill_params.get(param_key, ''))
         if not compare_values(yaml_value, skill_value):
             print(f"Error: Value mismatch for {instance_name}. YAML: {yaml_value}, Skill: {skill_value}")
             return False
