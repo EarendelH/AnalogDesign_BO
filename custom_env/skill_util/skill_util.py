@@ -98,16 +98,20 @@ def send_skill_command(master, command):
 
     try:
         os.write(master, (command + '\n').encode())
+        time.sleep(0.1)  # Give Virtuoso some time to process the command
         output = ""
         while True:
             rlist, _, _ = select.select([master], [], [], 0.1)
             if rlist:
                 chunk = os.read(master, 1024).decode()
-                print(chunk, end='', flush=True)
-                output += chunk
-                if output.endswith("> "):
+                if chunk:
+                    print(chunk, end='', flush=True)
+                    output += chunk
+                else:
                     break
-        return output
+            else:
+                break  # No more data to read
+        return output.strip()
     except Exception as e:
         print(f"Error sending command: {e}")
         return ""
