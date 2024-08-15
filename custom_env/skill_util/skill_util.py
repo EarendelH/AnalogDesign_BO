@@ -20,8 +20,16 @@ def generate_skill_commands(yaml_file):
     core_cell_name = data.get('Core_Cell', {})
 
     for key, value in core_data.items():
-        # Extract instance name and parameter
-        match = re.match(r'(w|l|nf|c|r)_(M\d+|MP|C\w+|R\w+)(?:_per_finger)?', key)
+        # Handle capacitors and resistors directly
+        if key.startswith('C') or key.startswith('R'):
+            instance = key
+            skill_param = 'c' if key.startswith('C') else 'r'
+            command = f'ModifyInstanceParameter("{lib_name}" "{core_cell_name}" "schematic" "{instance}" "{skill_param}" "{value}")'
+            skill_commands.append(command)
+            continue
+
+        # Handle other components (transistors)
+        match = re.match(r'(w|l|nf)_(M\d+|MP)(?:_per_finger)?', key)
         if match:
             param_type, instance = match.groups()
 
@@ -35,16 +43,9 @@ def generate_skill_commands(yaml_file):
                     skill_param = "simM"
                 else:
                     skill_param = "fingers"
-            elif param_type == 'c' and instance.startswith('C'):
-                skill_param = "c"
-            elif param_type == 'r' and instance.startswith('R'):
-                skill_param = "r"
-            else:
-                continue  # Skip if it doesn't match any known patterns
 
             # Create Skill command
-            command = (f'ModifyInstanceParameter("{lib_name}" "{core_cell_name}" '
-                       f'"schematic" "{instance}" "{skill_param}" "{value}")')
+            command = f'ModifyInstanceParameter("{lib_name}" "{core_cell_name}" "schematic" "{instance}" "{skill_param}" "{value}")'
             skill_commands.append(command)
 
     return skill_commands
