@@ -87,8 +87,8 @@ def generate_skill_commands(yaml_file):
                 continue  # Skip if it's neither V nor I
 
             command = f'ModifyInstanceParameter("{lib_name}" "{tb_cell}" "schematic" "{instance}" "{skill_param}" "{value}")'
-            print(f"Debug, Adding command: {command}")
             skill_commands.append(command)
+            print(f"Debug, Adding command: {command}")  # Debug print
 
     return skill_commands
 
