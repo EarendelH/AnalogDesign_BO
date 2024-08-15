@@ -166,8 +166,8 @@ def main():
         for command in commands:
             print(f"\nSending command: {command}")
             output = send_skill_command(master, command)
-            print("\nProcessed Output:")
-            print(output)
+            # print("\nProcessed Output:")
+            # print(output)
             print()  # Add a blank line for better readability
 
         send_skill_command(master, "exit")
