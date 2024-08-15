@@ -308,6 +308,13 @@ def main():
 
         print("All instances from YAML are present in the schematic. Proceeding with parameter checks.")
 
+        # Continue with the rest of the script (parameter modifications)
+        commands = generate_skill_commands(yaml_path)
+        for command in commands:
+            print(f"\nSending command: {command}")
+            output = send_skill_command(master, command)
+            print()  # Add a blank line for better readability
+
         # Check parameters for each instance
         for instance in yaml_instances:
             print(f"Checking parameters for instance {instance}...")
@@ -318,13 +325,6 @@ def main():
                 return
 
         print("All instance parameters match. Proceeding with parameter modifications.")
-
-        # Continue with the rest of the script (parameter modifications)
-        commands = generate_skill_commands(yaml_path)
-        for command in commands:
-            print(f"\nSending command: {command}")
-            output = send_skill_command(master, command)
-            print()  # Add a blank line for better readability
 
         send_skill_command(master, "exit")
     except Exception as e:
