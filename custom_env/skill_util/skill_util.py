@@ -139,22 +139,20 @@ def main():
         return
 
     try:
-        # Wait for Virtuoso to start and be ready
         initial_output = wait_for_virtuoso_ready(master)
         print("Virtuoso is ready to accept commands.")
 
-        # Load necessary Skill functions
         if not load_skill_functions(master):
             print("Failed to load Skill functions. Exiting.")
             return
 
-        # Send each command to Virtuoso
         for command in commands:
             print(f"Sending command: {command}")
             output = send_skill_command(master, command)
-            print(f"Output: {output}")
+            print("Output:")
+            print(output)
+            print()  # Add a blank line for better readability
 
-        # Close the Virtuoso session
         send_skill_command(master, "exit")
     except Exception as e:
         print(f"An error occurred: {e}")
