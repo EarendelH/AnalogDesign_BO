@@ -97,21 +97,38 @@ def send_skill_command(master, command):
         return ""
 
     try:
+        # Send the command
         os.write(master, (command + '\n').encode())
-        time.sleep(0.1)  # Give Virtuoso some time to process the command
+
+        # Read the output
         output = ""
-        while True:
+        prompt_ready = False
+        while not prompt_ready:
             rlist, _, _ = select.select([master], [], [], 0.1)
             if rlist:
                 chunk = os.read(master, 1024).decode()
                 if chunk:
-                    print(chunk, end='', flush=True)
                     output += chunk
-                else:
-                    break
+                    print(chunk, end='', flush=True)  # Print output in real-time
+                    if chunk.strip().endswith(">"):
+                        prompt_ready = True
             else:
-                break  # No more data to read
-        return output.strip()
+                if output.strip().endswith(">"):
+                    prompt_ready = True
+
+        # Process the output
+        lines = output.strip().split('\n')
+        processed_output = []
+        command_seen = False
+        for line in lines:
+            if line.strip() == command:
+                if command_seen:
+                    continue  # Skip duplicate command echo
+                command_seen = True
+            if line.strip() != ">":  # Don't include the prompt in the processed output
+                processed_output.append(line)
+
+        return '\n'.join(processed_output)
     except Exception as e:
         print(f"Error sending command: {e}")
         return ""
@@ -147,9 +164,9 @@ def main():
             return
 
         for command in commands:
-            print(f"Sending command: {command}")
+            print(f"\nSending command: {command}")
             output = send_skill_command(master, command)
-            print("Output:")
+            print("\nProcessed Output:")
             print(output)
             print()  # Add a blank line for better readability
 
