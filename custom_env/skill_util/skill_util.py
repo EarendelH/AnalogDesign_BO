@@ -45,6 +45,7 @@ def generate_skill_commands(yaml_file):
     lib_name = data.get('Lib', '')
     core_cell_name = data.get('Core_Cell', '')
     testbench_cells = data.get('Testbench_Cell', [])
+    print(f"Debug, testbench_cells is {testbench_cells}")
 
     # Generate commands for Core_Param
     for key, value in core_data.items():
