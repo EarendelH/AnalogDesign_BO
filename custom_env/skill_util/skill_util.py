@@ -234,6 +234,8 @@ def check_instance_parameters(yaml_data, skill_output, instance_name):
             if abs(calculated_wf - actual_wf) > 1e-15:
                 print(f"Error: wf value mismatch for {instance_name}. Calculated: {calculated_wf}, Actual: {actual_wf}")
                 return False
+            else:
+                print(f"wf value correct for {instance_name}")
 
         for yaml_key, skill_key in params_to_check.items():
             if yaml_key == "w":
@@ -241,17 +243,23 @@ def check_instance_parameters(yaml_data, skill_output, instance_name):
             else:
                 yaml_value = yaml_params[f'{yaml_key}_{instance_name}']
             skill_value = skill_params[skill_key]
+
             if not compare_values(yaml_value, skill_value):
                 print(f"Error: {yaml_key} value mismatch for {instance_name}. YAML: {yaml_value}, Skill: {skill_value}")
                 return False
+            else:
+                print(f"{yaml_key} value correct for {instance_name}")
 
     elif instance_name.startswith(('C', 'R')):
         param_key = 'c' if instance_name.startswith('C') else 'r'
         yaml_value = str(yaml_params.get(instance_name, ''))
         skill_value = str(skill_params.get(param_key, ''))
+
         if not compare_values(yaml_value, skill_value):
             print(f"Error: Value mismatch for {instance_name}. YAML: {yaml_value}, Skill: {skill_value}")
             return False
+        else:
+            print(f"Value correct for {instance_name}")
 
     return True
 
