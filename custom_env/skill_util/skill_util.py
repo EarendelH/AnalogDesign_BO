@@ -46,6 +46,10 @@ def generate_skill_commands(yaml_file):
     core_cell_name = data.get('Core_Cell', '')
     testbench_cells = data.get('Testbench_Cell', [])
 
+    # Ensure testbench_cells is a list
+    if isinstance(testbench_cells, str):
+        testbench_cells = [testbench_cells]
+
     # Generate commands for Core_Param
     for key, value in core_data.items():
         # Handle capacitors and resistors directly
