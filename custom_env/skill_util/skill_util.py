@@ -45,7 +45,6 @@ def generate_skill_commands(yaml_file):
     lib_name = data.get('Lib', '')
     core_cell_name = data.get('Core_Cell', '')
     testbench_cells = data.get('Testbench_Cell', [])
-    print(f"Debug, testbench_cells is {testbench_cells}")
 
     # Generate commands for Core_Param
     for key, value in core_data.items():
@@ -88,6 +87,7 @@ def generate_skill_commands(yaml_file):
                 continue  # Skip if it's neither V nor I
 
             command = f'ModifyInstanceParameter("{lib_name}" "{tb_cell}" "schematic" "{instance}" "{skill_param}" "{value}")'
+            print(f"Debug, Adding command: {command}")
             skill_commands.append(command)
 
     return skill_commands
