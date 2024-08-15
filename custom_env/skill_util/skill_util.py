@@ -21,11 +21,11 @@ def generate_skill_commands(yaml_file):
 
     for key, value in core_data.items():
         # Extract instance name and parameter
-        match = re.match(r'(w|l|nf)_(M\d+|MP|C\w+|R\w+)(?:_per_finger)?', key)
+        match = re.match(r'(w|l|nf|c|r)_(M\d+|MP|C\w+|R\w+)(?:_per_finger)?', key)
         if match:
             param_type, instance = match.groups()
 
-            # Generate Skill command based on parameter type
+            # Generate Skill command based on parameter type and instance name
             if param_type == 'w':
                 skill_param = "w"
             elif param_type == 'l':
@@ -35,9 +35,9 @@ def generate_skill_commands(yaml_file):
                     skill_param = "simM"
                 else:
                     skill_param = "fingers"
-            elif instance.startswith('C'):
+            elif param_type == 'c' and instance.startswith('C'):
                 skill_param = "c"
-            elif instance.startswith('R'):
+            elif param_type == 'r' and instance.startswith('R'):
                 skill_param = "r"
             else:
                 continue  # Skip if it doesn't match any known patterns
