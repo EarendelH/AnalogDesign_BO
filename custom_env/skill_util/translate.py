@@ -7,20 +7,17 @@ import select
 
 
 def extract_instances_from_yaml(yaml_file):
-    # Read the YAML file
     with open(yaml_file, 'r') as file:
         data = yaml.safe_load(file)
 
     core_data = data.get('Core_Param', {})
     instances = set()
 
-    for key in core_data.keys():
+    for key in core_data:
         match = re.match(r'(w|l|nf)_(M\d+|MP)(?:_per_finger)?', key)
         if match:
-            # For w, l, nf parameters, extract the instance name
             instances.add(match.group(2))
         else:
-            # For other parameters, use the key itself as the instance name
             instances.add(key)
 
     return list(instances)
@@ -35,61 +32,40 @@ def extract_instances_from_skill_output(output):
 
 
 def generate_skill_commands(yaml_file):
-    # Read the YAML file
     with open(yaml_file, 'r') as file:
         data = yaml.safe_load(file)
 
     core_data = data.get('Core_Param', {})
     testbench_data = data.get('Testbench_Param', {})
-    skill_commands = []
     lib_name = data.get('Lib', '')
     core_cell_name = data.get('Core_Cell', '')
     testbench_cells = data.get('Testbench_Cell', [])
 
+    skill_commands = []
+
+    def add_command(lib, cell, view, instance, param, value):
+        command = f'ModifyInstanceParameter("{lib}" "{cell}" "{view}" "{instance}" "{param}" "{value}")'
+        skill_commands.append(command)
+        print(f"Debug, Adding command: {command}")  # Debug print
+
     # Generate commands for Core_Param
     for key, value in core_data.items():
-        # Handle capacitors and resistors directly
-        if key.startswith('C') or key.startswith('R'):
-            instance = key
-            skill_param = 'c' if key.startswith('C') else 'r'
-            command = f'ModifyInstanceParameter("{lib_name}" "{core_cell_name}" "schematic" "{instance}" "{skill_param}" "{value}")'
-            skill_commands.append(command)
+        if key.startswith(('C', 'R')):
+            add_command(lib_name, core_cell_name, "schematic", key, key[0].lower(), value)
             continue
 
-        # Handle other components (transistors)
         match = re.match(r'(w|l|nf)_(M\d+|MP)(?:_per_finger)?', key)
         if match:
             param_type, instance = match.groups()
-
-            # Generate Skill command based on parameter type and instance name
-            if param_type == 'w':
-                skill_param = "w"
-            elif param_type == 'l':
-                skill_param = "l"
-            elif param_type == 'nf':
-                if instance == "MP":
-                    skill_param = "simM"
-                else:
-                    skill_param = "fingers"
-
-            # Create Skill command
-            command = f'ModifyInstanceParameter("{lib_name}" "{core_cell_name}" "schematic" "{instance}" "{skill_param}" "{value}")'
-            skill_commands.append(command)
-            print(f"Debug, Adding command: {command}")  # Debug print
+            skill_param = {"w": "w", "l": "l", "nf": "simM" if instance == "MP" else "fingers"}[param_type]
+            add_command(lib_name, core_cell_name, "schematic", instance, skill_param, value)
 
     # Generate commands for Testbench_Param
     for tb_cell in testbench_cells:
         for instance, value in testbench_data.items():
-            if instance.startswith('V'):
-                skill_param = "vdc"
-            elif instance.startswith('I'):
-                skill_param = "idc"
-            else:
-                continue  # Skip if it's neither V nor I
-
-            command = f'ModifyInstanceParameter("{lib_name}" "{tb_cell}" "schematic" "{instance}" "{skill_param}" "{value}")'
-            skill_commands.append(command)
-            print(f"Debug, Adding command: {command}")  # Debug print
+            if instance.startswith(('V', 'I')):
+                skill_param = "vdc" if instance.startswith('V') else "idc"
+                add_command(lib_name, tb_cell, "schematic", instance, skill_param, value)
 
     return skill_commands
 
@@ -177,21 +153,15 @@ def send_skill_command(master, command):
 
 
 def load_skill_functions(master):
-    # Load modifyInstanceParameterWithCallback.il
-    load_command = 'load("modifyInstanceParameterWithCallback.il")'
-    output = send_skill_command(master, load_command)
-    print(f"Loading modifyInstanceParameterWithCallback.il: {output}")
-
-    # Load showCellViewInstances.il
-    load_command = 'load("showCellViewInstances.il")'
-    output = send_skill_command(master, load_command)
-    print(f"Loading showCellViewInstances.il: {output}")
-
-    # Load PrintInstanceDetails.il
-    load_command = 'load("PrintInstanceDetails.il")'
-    output = send_skill_command(master, load_command)
-    print(f"Loading PrintInstanceDetails.il: {output}")
-
+    skill_files = [
+        "modifyInstanceParameterWithCallback.il",
+        "showCellViewInstances.il",
+        "PrintInstanceDetails.il"
+    ]
+    for file in skill_files:
+        load_command = f'load("{file}")'
+        output = send_skill_command(master, load_command)
+        print(f"Loading {file}: {output}")
     return "Error" not in output
 
 
