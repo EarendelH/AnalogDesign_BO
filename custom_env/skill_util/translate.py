@@ -69,6 +69,7 @@ def generate_skill_commands(yaml_file):
 
     return skill_commands
 
+
 def start_virtuoso_session():
     try:
         master, slave = pty.openpty()
@@ -98,7 +99,7 @@ def wait_for_virtuoso_ready(master):
                 print(chunk, end='', flush=True)
                 output += chunk
                 if "> t" in output:
-                    os.write(master, b'\n')  # Send an enter
+                    os.write(master, b'\n')  # Send enter
                     chunk = os.read(master, 1024).decode()
                     print(chunk, end='', flush=True)
                     if chunk.strip() == ">":
@@ -168,7 +169,7 @@ def load_skill_functions(master):
 def parse_value(value):
     if isinstance(value, (int, float)):
         return float(value)
-    match = re.match(r"(\d+(?:\.\d+)?)(f|p|n|u|m|k|M|G)?", str(value))
+    match = re.match(r"(\d+(?:\.\d+)?)([fpnumkMG])?", str(value))
     if match:
         num, unit = match.groups()
         num = float(num)
@@ -270,7 +271,7 @@ def main():
         return
 
     try:
-        initial_output = wait_for_virtuoso_ready(master)
+        wait_for_virtuoso_ready(master)
         print("Virtuoso is ready to accept commands.")
 
         if not load_skill_functions(master):
@@ -307,7 +308,7 @@ def main():
         commands = generate_skill_commands(yaml_path)
         for command in commands:
             print(f"\nSending command: {command}")
-            output = send_skill_command(master, command)
+            send_skill_command(master, command)
             print()  # Add a blank line for better readability
 
         # Check parameters for each instance
