@@ -7,6 +7,15 @@ import select
 
 
 def extract_instances_from_yaml(yaml_file):
+    """
+    Extract instance names from the YAML file.
+
+    Args:
+    yaml_file (str): Path to the YAML file
+
+    Returns:
+    list: List of instance names found in the YAML file
+    """
     with open(yaml_file, 'r') as file:
         data = yaml.safe_load(file)
 
@@ -24,6 +33,15 @@ def extract_instances_from_yaml(yaml_file):
 
 
 def extract_instances_from_skill_output(output):
+    """
+    Extract instance names from Skill command output.
+
+    Args:
+    output (str): Output string from Skill command
+
+    Returns:
+    list: List of instance names found in the Skill output
+    """
     instances = []
     for line in output.split('\n'):
         if line.strip().startswith("Instance:"):
@@ -32,6 +50,15 @@ def extract_instances_from_skill_output(output):
 
 
 def generate_skill_commands(yaml_file):
+    """
+    Generate Skill commands based on YAML file content.
+
+    Args:
+    yaml_file (str): Path to the YAML file
+
+    Returns:
+    list: List of Skill commands to modify instance parameters
+    """
     with open(yaml_file, 'r') as file:
         data = yaml.safe_load(file)
 
@@ -71,6 +98,12 @@ def generate_skill_commands(yaml_file):
 
 
 def start_virtuoso_session():
+    """
+    Start a Virtuoso session using a pseudo-terminal.
+
+    Returns:
+    tuple: (subprocess.Popen, int) - Virtuoso process and master file descriptor
+    """
     try:
         master, slave = pty.openpty()
         process = subprocess.Popen(['virtuoso', '-nograph'],
@@ -85,6 +118,15 @@ def start_virtuoso_session():
 
 
 def wait_for_virtuoso_ready(master):
+    """
+    Wait for Virtuoso to be ready to accept commands.
+
+    Args:
+    master (int): Master file descriptor of the pseudo-terminal
+
+    Returns:
+    str: Output received while waiting for Virtuoso to be ready
+    """
     if master is None:
         print("Error: Invalid master file descriptor")
         return ""
@@ -111,6 +153,16 @@ def wait_for_virtuoso_ready(master):
 
 
 def send_skill_command(master, command):
+    """
+    Send a Skill command to Virtuoso and return the output.
+
+    Args:
+    master (int): Master file descriptor of the pseudo-terminal
+    command (str): Skill command to send
+
+    Returns:
+    str: Output of the Skill command
+    """
     if master is None:
         print("Error: Invalid master file descriptor")
         return ""
@@ -154,6 +206,15 @@ def send_skill_command(master, command):
 
 
 def load_skill_functions(master):
+    """
+    Load necessary Skill functions into the Virtuoso session.
+
+    Args:
+    master (int): Master file descriptor of the pseudo-terminal
+
+    Returns:
+    bool: True if all functions were loaded successfully, False otherwise
+    """
     skill_files = [
         "modifyInstanceParameterWithCallback.il",
         "showCellViewInstances.il",
@@ -167,6 +228,15 @@ def load_skill_functions(master):
 
 
 def parse_value(value):
+    """
+    Parse a string value into a float, handling unit prefixes.
+
+    Args:
+    value (str or float): Value to parse
+
+    Returns:
+    float: Parsed value
+    """
     if isinstance(value, (int, float)):
         return float(value)
     match = re.match(r"(\d+(?:\.\d+)?)([fpnumkMG])?", str(value))
@@ -183,9 +253,7 @@ def parse_value(value):
             return num * 1e-6
         elif unit == 'm':
             return num * 1e-3
-        elif unit == 'k':
-            return num * 1e3
-        elif unit == 'K':
+        elif unit in ['k', 'K']:
             return num * 1e3
         elif unit == 'M':
             return num * 1e6
@@ -197,12 +265,33 @@ def parse_value(value):
 
 
 def compare_values(yaml_value, skill_value):
+    """
+    Compare two values, handling potential unit differences.
+
+    Args:
+    yaml_value (str or float): Value from YAML file
+    skill_value (str or float): Value from Skill output
+
+    Returns:
+    bool: True if values are equal within a small threshold, False otherwise
+    """
     yaml_parsed = parse_value(yaml_value)
     skill_parsed = parse_value(skill_value)
     return abs(yaml_parsed - skill_parsed) < 1e-15  # Use a small threshold to handle floating-point errors
 
 
 def check_instance_parameters(yaml_data, skill_output, instance_name):
+    """
+    Check if instance parameters in Skill match those in YAML.
+
+    Args:
+    yaml_data (dict): Parsed YAML data
+    skill_output (str): Output from Skill PrintInstanceDetails command
+    instance_name (str): Name of the instance being checked
+
+    Returns:
+    bool: True if all parameters match, False otherwise
+    """
     yaml_params = yaml_data['Core_Param']
     skill_params = {}
     for line in skill_output.split('\n'):
@@ -255,6 +344,9 @@ def check_instance_parameters(yaml_data, skill_output, instance_name):
 
 
 def main():
+    """
+    Main function to orchestrate the Virtuoso parameter modification process.
+    """
     yaml_path = os.path.join(os.path.dirname(__file__), "init_param_demo.yaml")
 
     # Extract instances from YAML
