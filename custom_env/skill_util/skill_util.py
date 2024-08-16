@@ -214,6 +214,8 @@ def parse_value(value):
             return num * 1e-3
         elif unit == 'k':
             return num * 1e3
+        elif unit == 'K':
+            return num * 1e3
         elif unit == 'M':
             return num * 1e6
         elif unit == 'G':
