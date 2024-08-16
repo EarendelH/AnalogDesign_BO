@@ -75,6 +75,7 @@ def generate_skill_commands(yaml_file):
             # Create Skill command
             command = f'ModifyInstanceParameter("{lib_name}" "{core_cell_name}" "schematic" "{instance}" "{skill_param}" "{value}")'
             skill_commands.append(command)
+            print(f"Debug, Adding command: {command}")  # Debug print
 
     # Generate commands for Testbench_Param
     for tb_cell in testbench_cells:
