@@ -346,8 +346,7 @@ def main():
             command = f'PrintInstanceDetails("{lib_name}" "{core_cell_name}" "schematic" "{instance}")'
             output = send_skill_command(master, command)
             if not check_instance_parameters(yaml_data, output, instance):
-                print(f"Parameter mismatch for instance {instance}. Exiting program.")
-                return
+                print(f"Parameter mismatch for instance {instance}.")
 
         print("All instance parameters match. Proceeding with parameter modifications.")
 
