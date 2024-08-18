@@ -1,7 +1,7 @@
 import re
 import yaml
 import os
-
+import sys
 
 def split_transistor_block(lines):
     """Split a block of SPICE lines into sublists, each representing a discrete MOSFET definition.
@@ -70,14 +70,6 @@ def split_transistor_block(lines):
 
     return processed_mosfet_lists
 
-
-# Test Code
-# file_path = "/Users/hanwu/ML/AnalogDesignAuto_MultiAgent/custom_env/netlist_assign_test/DC.scs"
-# with open(file_path, 'r') as f:
-#     lines = f.readlines()
-# print(split_transistor_block(lines))
-
-
 def netlist_parameterized(input_scs_path, output_scs_path, output_yaml_path):
     param_line = None
 
@@ -118,6 +110,7 @@ def netlist_parameterized(input_scs_path, output_scs_path, output_yaml_path):
     netlist_parts = split_transistor_block(lines)
 
     device_info = {}
+    seen_instances = set()
 
     formulas_summary = {
         "pch_mac": {
@@ -232,42 +225,54 @@ def netlist_parameterized(input_scs_path, output_scs_path, output_yaml_path):
         if part[0].lstrip().startswith('M'):
             instance_name = part[0].split()[0]
             instance_type = part[0].split(")")[1].split()[0]
-            # print(f"Instance Name: {instance_name}, Instance Type: {instance_type}")
-            device_info[instance_name] = instance_type
-            data_dict[instance_name] = {
-                "instance_type": instance_type,
-                "params": [{
-                    "variable_name": f"w_{instance_name}_per_finger",
-                    "value": {
-                        "range": None,
-                        "step": None
-                    }
-                },
-                    {
-                        "variable_name": f"l_{instance_name}",
+
+            # Check for duplicate instance names
+            if instance_name in seen_instances:
+                print(f"Error: Duplicate instance name found: {instance_name}")
+                print(f"Offending line: {part[0].strip()}")
+                sys.exit(1)  # Exit the program with an error code
+
+            seen_instances.add(instance_name)
+
+            # Check if the instance contains "\-M"
+
+            if "-M" in part[0]:
+                print(f"Device {instance_name} is standard device, skip parameterizing.")
+            if "-M" not in part[0]:
+                print(f"Device {instance_name} is parameterizing.")
+                device_info[instance_name] = instance_type
+                data_dict[instance_name] = {
+                    "instance_type": instance_type,
+                    "params": [{
+                        "variable_name": f"w_{instance_name}_per_finger",
                         "value": {
                             "range": None,
                             "step": None
                         }
                     },
-                    {
-                        "variable_name": f"nf_{instance_name}",
-                        "value": {
-                            "range": None,
-                            "step": None
-                        }
-                    }]
-            }
-            if instance_type in formulas_summary.keys():
-                for param, formula in formulas_summary[instance_type].items():
-                    formula_instance = formula.format(instance_name)
-                    part[0] = re.sub(f"{param}=[\w\.e\-]+", f"{param}={formula_instance}", part[0])
-                # print(f"Modified Part: {part}")
+                        {
+                            "variable_name": f"l_{instance_name}",
+                            "value": {
+                                "range": None,
+                                "step": None
+                            }
+                        },
+                        {
+                            "variable_name": f"nf_{instance_name}",
+                            "value": {
+                                "range": None,
+                                "step": None
+                            }
+                        }]
+                }
+                if instance_type in formulas_summary.keys():
+                    for param, formula in formulas_summary[instance_type].items():
+                        formula_instance = formula.format(instance_name)
+                        part[0] = re.sub(f"{param}=[\w\.e\-]+", f"{param}={formula_instance}", part[0])
 
     # Save file
     with open(output_scs_path, 'w') as f:
         for part in netlist_parts:
-            # Add l_, w_, nf_ to the parameters line
             if part[0].lstrip().startswith('parameters'):
                 part[0] = part[0].strip() + " " + " ".join(
                     [f"w_{instance_name}_per_finger l_{instance_name} nf_{instance_name}" for instance_name in
@@ -282,8 +287,8 @@ def netlist_parameterized(input_scs_path, output_scs_path, output_yaml_path):
 
 
 if __name__ == "__main__":
-    input_scs_folder = "/Users/hanwu/ML/AnalogDesignAuto_MultiAgent/custom_env/netlist_original_Debashis"
-    output_scs_folder = "/Users/hanwu/ML/AnalogDesignAuto_MultiAgent/custom_env/netlist_template_Debashis"
+    input_scs_folder = "/Users/hanwu/ML/AnalogDesignAuto_MultiAgent/custom_env/netlist_original/netlist_original_Buck"
+    output_scs_folder = "/Users/hanwu/ML/AnalogDesignAuto_MultiAgent/custom_env/netlist_template/netlist_template_Buck"
     for file in os.listdir(input_scs_folder):
         if file.endswith(".scs"):
             input_scs = os.path.join(input_scs_folder, file)
