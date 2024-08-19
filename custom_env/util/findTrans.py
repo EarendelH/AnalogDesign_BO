@@ -2,7 +2,7 @@
 from util.extract_trace import extractTransTrace
 import numpy as np
 import bisect
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 
 
 def find_indices_in_range(nums, range_start, range_end):
