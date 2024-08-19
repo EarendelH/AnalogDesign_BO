@@ -2,6 +2,7 @@
 from util.extract_trace import extractTransTrace
 import numpy as np
 import bisect
+import matplotlib.pyplot as plt
 
 
 def find_indices_in_range(nums, range_start, range_end):
@@ -339,3 +340,76 @@ def findShoot_Cai(filename):
 # Test Code
 # file = "/Users/hanwu/Downloads/Log_N65/Jianping/select_point/tmp_20240518030545162069028/Trans_Line_Reg.raw/tran.tran.tran.encode"
 # print(findShoot_Line_Reg_Jianping(file))
+
+
+def findEff_general(filename, time_ranges, output_voltage_label, load_current, input_voltage, input_current_label):
+    """
+    Extract the efficiency value
+
+    Args:
+    - filename: Path to the file to be processed.
+    - time_ranges: A list of tuples, each defining a time range.
+    - output_voltage_label: The output voltage label.
+    - load_current: The load current value.
+    - input_voltage: The input voltage value.
+    - input_voltage_label: The input voltage label.
+
+    Returns:
+    - Efficiency
+    """
+
+    trans_dict = extractTransTrace(filename)
+    time_series = trans_dict["time"]
+    # print(f"Debug!!! time_series with length: {len(time_series)}")
+    output_voltage_series = trans_dict[output_voltage_label]
+    # print(f"Debug!!! output_voltage_series with length: {len(output_voltage_series)}")
+    input_current_series = trans_dict[input_current_label]
+    # print(f"Debug!!! input_current_series with length: {len(input_current_series)}")
+
+    # Clip time according to time_ranges
+    time_index = find_indices_in_range(time_series, time_ranges[0], time_ranges[1])
+    extracted_time_series = [time_series[i] for i in time_index]
+    # print(f"Debug!!! time_index with length: {len(time_index)}")
+    extracted_output_voltage_series = [output_voltage_series[i] for i in time_index]
+    # print(f"Debug!!! extracted_output_voltage_series with length: {len(extracted_output_voltage_series)}")
+    extracted_input_current_series = [input_current_series[i] for i in time_index]
+    # print(f"Debug!!! extracted_input_current_series with length: {len(extracted_input_current_series)}")
+
+    # Plot extracted_output_voltage_series and extracted_input_current_series against time, keep plt open
+    # plt.figure(figsize=(14, 6))
+    # plt.plot(extracted_time_series, extracted_output_voltage_series, label=output_voltage_label, color="blue")
+    # plt.scatter(extracted_time_series, extracted_input_current_series, label=input_current_label, color="red")
+    # plt.plot(extracted_time_series, extracted_input_current_series, label=input_current_label, color="red")
+    # plt.xlabel("Time")
+    # plt.ylabel("Value")
+    # plt.title(f"'{output_voltage_label}' and '{input_current_label}' Signal Over Time")
+    # plt.legend()
+    # plt.grid(True)
+    # plt.show()
+
+    # Cal average output voltage and input current
+    avg_output_voltage = np.mean(extracted_output_voltage_series)
+    # avg_input_current is given by the integral of extracted_input_current_series in the range of extracted_time_series
+    # and then divided by the time range
+    avg_input_current = (np.trapz(extracted_input_current_series, x=extracted_time_series) /
+                         (time_ranges[1] - time_ranges[0]))
+    # print(f"Debug, avg_output_voltage: {avg_output_voltage}")
+    # print(f"Debug, avg_input_current: {avg_input_current}")
+    avg_input_current = abs(avg_input_current)
+
+    # Calculate efficiency
+    efficiency = avg_output_voltage * load_current / (input_voltage * avg_input_current)
+
+    if avg_output_voltage <
+
+    return efficiency
+
+
+def findEff_Buck(filename):
+    result = findEff_general(filename, (5e-5, 6e-5), "VOUT", 1, 3.3, "V0:p")
+    return result
+
+# Test Code
+
+# filename = "/Users/hanwu/Downloads/tran.tran.tran.encode"
+# print(findEff_Buck(filename))

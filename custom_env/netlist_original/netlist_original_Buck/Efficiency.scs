@@ -13,32 +13,32 @@ include "/data/PDK/pdk_installed/tsmc180bcd_g2/pdk/pdk_1p6m/tsmc18/../models/spe
 // Cell name: driver_s2
 // View name: schematic
 subckt driver_s2 IN OUT VDD VSS
-    M45 (OUT net028 VDD VDD) pch_5_mac l=500n w=50u multi=100 nf=1 sigma=1 \
+    M45 (OUT net028 VDD VDD) pch_5_mac_multi l=500n w=50u multi=100 nf=1 sigma=1 \
         sd=540.0n ad=2.4e-11 as=2.4e-11 pd=100.96u ps=100.96u nrd=0.0054 \
         nrs=0.0054 sa=480.0n sb=480.0n sca=0 scb=0 scc=0 mismatchflag=1
-    M46 (net028 net026 VDD VDD) pch_5_mac l=500n w=3u multi=100 nf=1 \
+    M46 (net028 net026 VDD VDD) pch_5_mac_multi l=500n w=3u multi=100 nf=1 \
         sigma=1 sd=540.0n ad=1.44e-12 as=1.44e-12 pd=6.96u ps=6.96u \
         nrd=0.09 nrs=0.09 sa=480.0n sb=480.0n sca=0 scb=0 scc=0 \
         mismatchflag=1
-    M47 (net026 net024 VDD VDD) pch_5_mac l=500n w=3u multi=10 nf=1 \
+    M47 (net026 net024 VDD VDD) pch_5_mac_multi l=500n w=3u multi=10 nf=1 \
         sigma=1 sd=540.0n ad=1.44e-12 as=1.44e-12 pd=6.96u ps=6.96u \
         nrd=0.09 nrs=0.09 sa=480.0n sb=480.0n sca=0 scb=0 scc=0 \
         mismatchflag=1
-    M48 (net024 IN VDD VDD) pch_5_mac l=500n w=1u multi=10 nf=1 sigma=1 \
+    M48 (net024 IN VDD VDD) pch_5_mac_multi l=500n w=1u multi=10 nf=1 sigma=1 \
         sd=540.0n ad=4.8e-13 as=4.8e-13 pd=2.96u ps=2.96u nrd=0.27 \
         nrs=0.27 sa=480.0n sb=480.0n sca=0 scb=0 scc=0 mismatchflag=1
-    M41 (OUT net028 VSS VSS) nch_5_mac l=600n w=50u multi=100 nf=1 sigma=1 \
+    M41 (OUT net028 VSS VSS) nch_5_mac_multi l=600n w=50u multi=100 nf=1 sigma=1 \
         sd=540.0n ad=2.4e-11 as=2.4e-11 pd=100.96u ps=100.96u nrd=0.0054 \
         nrs=0.0054 sa=480.0n sb=480.0n sca=0 scb=0 scc=0 mismatchflag=1
-    M42 (net028 net026 VSS VSS) nch_5_mac l=600n w=3u multi=100 nf=1 \
+    M42 (net028 net026 VSS VSS) nch_5_mac_multi l=600n w=3u multi=100 nf=1 \
         sigma=1 sd=540.0n ad=1.44e-12 as=1.44e-12 pd=6.96u ps=6.96u \
         nrd=0.09 nrs=0.09 sa=480.0n sb=480.0n sca=0 scb=0 scc=0 \
         mismatchflag=1
-    M43 (net026 net024 VSS VSS) nch_5_mac l=600n w=3u multi=10 nf=1 \
+    M43 (net026 net024 VSS VSS) nch_5_mac_multi l=600n w=3u multi=10 nf=1 \
         sigma=1 sd=540.0n ad=1.44e-12 as=1.44e-12 pd=6.96u ps=6.96u \
         nrd=0.09 nrs=0.09 sa=480.0n sb=480.0n sca=0 scb=0 scc=0 \
         mismatchflag=1
-    M44 (net024 IN VSS VSS) nch_5_mac l=600n w=1u multi=10 nf=1 sigma=1 \
+    M44 (net024 IN VSS VSS) nch_5_mac_multi l=600n w=1u multi=10 nf=1 sigma=1 \
         sd=540.0n ad=4.8e-13 as=4.8e-13 pd=2.96u ps=2.96u nrd=0.27 \
         nrs=0.27 sa=480.0n sb=480.0n sca=0 scb=0 scc=0 mismatchflag=1
 ends driver_s2
@@ -154,28 +154,28 @@ ends deadtime
 // Cell name: driver_s1
 // View name: schematic
 subckt driver_s1 IN OUT VDD VSS
-    M31 (OUT net16 VDD VDD) pch_5_mac l=500n w=50u multi=100 nf=1 sigma=1 \
+    M31 (OUT net16 VDD VDD) pch_5_mac_multi l=500n w=50u multi=100 nf=1 sigma=1 \
         sd=540.0n ad=2.4e-11 as=2.4e-11 pd=100.96u ps=100.96u nrd=0.0054 \
         nrs=0.0054 sa=480.0n sb=480.0n sca=0 scb=0 scc=0 mismatchflag=1
-    M33 (net16 net14 VDD VDD) pch_5_mac l=500n w=3u multi=100 nf=1 sigma=1 \
+    M33 (net16 net14 VDD VDD) pch_5_mac_multi l=500n w=3u multi=100 nf=1 sigma=1 \
         sd=540.0n ad=1.44e-12 as=1.44e-12 pd=6.96u ps=6.96u nrd=0.09 \
         nrs=0.09 sa=480.0n sb=480.0n sca=0 scb=0 scc=0 mismatchflag=1
-    M37 (net14 net13 VDD VDD) pch_5_mac l=500n w=3u multi=10 nf=1 sigma=1 \
+    M37 (net14 net13 VDD VDD) pch_5_mac_multi l=500n w=3u multi=10 nf=1 sigma=1 \
         sd=540.0n ad=1.44e-12 as=1.44e-12 pd=6.96u ps=6.96u nrd=0.09 \
         nrs=0.09 sa=480.0n sb=480.0n sca=0 scb=0 scc=0 mismatchflag=1
-    M38 (net13 IN VDD VDD) pch_5_mac l=500n w=1u multi=10 nf=1 sigma=1 \
+    M38 (net13 IN VDD VDD) pch_5_mac_multi l=500n w=1u multi=10 nf=1 sigma=1 \
         sd=540.0n ad=4.8e-13 as=4.8e-13 pd=2.96u ps=2.96u nrd=0.27 \
         nrs=0.27 sa=480.0n sb=480.0n sca=0 scb=0 scc=0 mismatchflag=1
-    M32 (OUT net16 VSS VSS) nch_5_mac l=600n w=50u multi=100 nf=1 sigma=1 \
+    M32 (OUT net16 VSS VSS) nch_5_mac_multi l=600n w=50u multi=100 nf=1 sigma=1 \
         sd=540.0n ad=2.4e-11 as=2.4e-11 pd=100.96u ps=100.96u nrd=0.0054 \
         nrs=0.0054 sa=480.0n sb=480.0n sca=0 scb=0 scc=0 mismatchflag=1
-    M34 (net16 net14 VSS VSS) nch_5_mac l=600n w=3u multi=100 nf=1 sigma=1 \
+    M34 (net16 net14 VSS VSS) nch_5_mac_multi l=600n w=3u multi=100 nf=1 sigma=1 \
         sd=540.0n ad=1.44e-12 as=1.44e-12 pd=6.96u ps=6.96u nrd=0.09 \
         nrs=0.09 sa=480.0n sb=480.0n sca=0 scb=0 scc=0 mismatchflag=1
-    M35 (net14 net13 VSS VSS) nch_5_mac l=600n w=3u multi=10 nf=1 sigma=1 \
+    M35 (net14 net13 VSS VSS) nch_5_mac_multi l=600n w=3u multi=10 nf=1 sigma=1 \
         sd=540.0n ad=1.44e-12 as=1.44e-12 pd=6.96u ps=6.96u nrd=0.09 \
         nrs=0.09 sa=480.0n sb=480.0n sca=0 scb=0 scc=0 mismatchflag=1
-    M36 (net13 IN VSS VSS) nch_5_mac l=600n w=1u multi=10 nf=1 sigma=1 \
+    M36 (net13 IN VSS VSS) nch_5_mac_multi l=600n w=1u multi=10 nf=1 sigma=1 \
         sd=540.0n ad=4.8e-13 as=4.8e-13 pd=2.96u ps=2.96u nrd=0.27 \
         nrs=0.27 sa=480.0n sb=480.0n sca=0 scb=0 scc=0 mismatchflag=1
 ends driver_s1
