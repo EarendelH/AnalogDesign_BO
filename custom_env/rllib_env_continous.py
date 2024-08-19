@@ -8,6 +8,7 @@ from ray.rllib.env.multi_agent_env import MultiAgentEnv
 
 from util.gen_action_space import gen_masked_continuous_action_space
 from util.gen_obs_space import gen_obs_space_w_region, flatten_obs_space_w_region
+from util.gen_obs_space import gen_obs_space, flatten_obs_space
 from util.action2param import action2param
 from util.gen_param_space import gen_param_space
 from util.util_func import create_work_dir
@@ -16,6 +17,7 @@ from util.run_spectre_simulation import run_dynamic_simulation, run_region_simul
 from util.cal_reward import cal_reward
 from util.generalize_config import generalize_config
 from util.update_obs_space import update_obs_space_w_region, flatten_observation_w_region
+from util.update_obs_space import update_obs_space, flatten_observation
 from util.normlization import norm_ideal_spec, norm_sim_spec
 from util.util_func import retry_decorator
 from util.gen_init_param import gen_init_param
@@ -34,6 +36,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
                  sim_output='',
                  init_method='',
                  dc_check='',
+                 region_extract='',
                  dynamic_queue='',
                  log_level='INFO'):
 
@@ -63,8 +66,14 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         # Get absolute path
         self.current_path = os.getcwd()
 
+        # If region_extract is False, dc_check is impossible to be True. Error and exit
+        if not region_extract and dc_check:
+            logging.error(f"Error!!!: Region extract is False, dc_check can not be True.")
+            exit(1)
+
         # Pass initial dc check and dynamic queue flag
         self.dc_check = dc_check
+        self.region_extract = region_extract
         self.dynamic_queue = dynamic_queue
 
         # Pass generalization flag
@@ -144,9 +153,13 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         self._obs_space_in_preferred_format = True
 
         # Generate observation and action space
-        self.observation_space = flatten_obs_space_w_region(gen_obs_space_w_region(self.sim_config_dict,
-                                                                                   self.param_range_dict,
-                                                                                   agent_assign_dict))
+        if self.region_extract:
+            self.observation_space = flatten_obs_space_w_region(gen_obs_space_w_region(self.sim_config_dict,
+                                                                                       self.param_range_dict,
+                                                                                       agent_assign_dict))
+        else:
+            self.observation_space = flatten_obs_space(gen_obs_space(self.sim_config_dict, self.param_range_dict,
+                                                                     agent_assign_dict))
         logging.debug(f"observation_space: {self.observation_space}")
         self._action_space_in_preferred_format = True
         self.action_space = gen_masked_continuous_action_space(self.device_mask_dict, agent_assign_dict)
@@ -160,6 +173,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
 
         self.steps_after_positive_reward = 0
         self.had_positive_reward = False
+        reset_operation_region_dict = None
 
         # Reset step number
         self.step_num = 0
@@ -199,25 +213,26 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         logging.debug(f"Initialing!!!Normalized ideal specs: {self.norm_ideal_specs}")
         logging.debug(f"Initialing!!!Ideal specs: {self.ideal_specs}")
 
-        # Generate region observation
-        try:
-            # Run psf for converting binary file to text file
-            working_dir_reset_dc = create_work_dir(self.run_root_dir)
-            logging.info(f"Initialing!!!DC Check working directory: {working_dir_reset_dc}")
-            update_netlist(working_dir_reset_dc, self.dc_sim_config_dict, init_param, self.unassigned_netlist_dir)
-            reset_operation_region_dict = copy.deepcopy(
-                run_region_simulation(working_dir_reset_dc, self.dc_sim_config_dict, self.sim_output_enable))
-            logging.debug(f"Initialing!!!Operation region: {reset_operation_region_dict}")
-            # delete_work_dir(working_dir_reset_dc)
-        except Exception as e:
-            logging.warning(f"Resting!!!: {e}. No DC sim file.")
-            reset_operation_region_dict = copy.deepcopy(self.operation_region_dict_zero)
+        if self.region_extract:
+            # Generate region observation
+            try:
+                # Run psf for converting binary file to text file
+                working_dir_reset_dc = create_work_dir(self.run_root_dir)
+                logging.info(f"Initialing!!!DC Check working directory: {working_dir_reset_dc}")
+                update_netlist(working_dir_reset_dc, self.dc_sim_config_dict, init_param, self.unassigned_netlist_dir)
+                reset_operation_region_dict = copy.deepcopy(
+                    run_region_simulation(working_dir_reset_dc, self.dc_sim_config_dict, self.sim_output_enable))
+                logging.debug(f"Initialing!!!Operation region: {reset_operation_region_dict}")
+                # delete_work_dir(working_dir_reset_dc)
+            except Exception as e:
+                logging.warning(f"Resting!!!: {e}. No DC sim file.")
+                reset_operation_region_dict = copy.deepcopy(self.operation_region_dict_zero)
 
-        # Check operation_region_dict length vs self.operation_region_dict_zero length
-        if len(reset_operation_region_dict) != len(self.operation_region_dict_zero):
-            logging.warning(f"Resting!!!: Operation region dict length {len(reset_operation_region_dict)} "
-                            f"does not match with operation_region_dict_zero length {len(self.norm_ideal_specs)}.")
-            reset_operation_region_dict = copy.deepcopy(self.operation_region_dict_zero)
+            # Check operation_region_dict length vs self.operation_region_dict_zero length
+            if len(reset_operation_region_dict) != len(self.operation_region_dict_zero):
+                logging.warning(f"Resting!!!: Operation region dict length {len(reset_operation_region_dict)} "
+                                f"does not match with operation_region_dict_zero length {len(self.norm_ideal_specs)}.")
+                reset_operation_region_dict = copy.deepcopy(self.operation_region_dict_zero)
 
         try:
             sim_result = copy.deepcopy(
@@ -235,10 +250,14 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         logging.debug(f"Initialing!!!Normalized simulation result: {norm_sim_result}")
 
         # Generate observation
-        observation_detail = copy.deepcopy(update_obs_space_w_region(self.norm_ideal_specs, norm_sim_result,
-                                                                     init_param, reset_operation_region_dict))
+        if self.region_extract:
+            observation_detail = copy.deepcopy(update_obs_space_w_region(self.norm_ideal_specs, norm_sim_result,
+                                                                         init_param, reset_operation_region_dict))
+            observation = copy.deepcopy(flatten_observation_w_region(observation_detail))
+        else:
+            observation_detail = copy.deepcopy(update_obs_space(self.norm_ideal_specs, norm_sim_result, init_param))
+            observation = copy.deepcopy(flatten_observation(observation_detail))
         logging.debug(f"Initialing!!!Observation detail: {observation_detail}")
-        observation = copy.deepcopy(flatten_observation_w_region(observation_detail))
         logging.debug(f"Initialing!!!Flatten Observation: {observation}")
 
         # Share all observations among agents
@@ -246,7 +265,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
 
         # Test Rew func
         rew = cal_reward(self.ideal_specs, sim_result, self.norm_specs)
-        logging.info(f"Debug!!!Initialing!!!Reward result: {rew}")
+        logging.info(f"Debug!!!Resetting!!!Reward result: {rew}")
 
         self.cur_param = copy.deepcopy(init_param)
 
@@ -285,7 +304,9 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         # Update step number
         self.step_num += 1
 
-        operation_region_dict = {}
+        operation_region_dict = None
+        valid_param = None
+        sim_result = None
 
         step_action_dict = copy.deepcopy(action_dict)
         if self.device_mask_dict:
@@ -315,36 +336,38 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         # Run DC check firstly and only once. If dc_check is True. If DC check failed, return zero sim result and -10
         # reward. End the episode.
 
-        try:
-            working_dir_step_dc = create_work_dir(self.run_root_dir)
-            logging.info(f"Step!!!DC Check Working directory: {working_dir_step_dc} "
-                         f"with step number: {self.step_num}")
-            # Update DC Netlist File for checking operation region
-            update_netlist(working_dir_step_dc, self.dc_sim_config_dict, updated_param, self.unassigned_netlist_dir)
-            operation_region_dict = copy.deepcopy(run_region_simulation(working_dir_step_dc,
-                                                                        self.dc_sim_config_dict,
-                                                                        self.sim_output_enable))
-            operation_region_list = list(operation_region_dict.values())
-            logging.info(f"Step!!!Operation region: {operation_region_list} with step number: {self.step_num}")
-            # 0 cut-off, 1 triode, 2 saturation, 3 sub-th, 4 breakdown
-            # Check whether all transistors are in saturation/sub-threshold/triode region
-            valid_param = all(item in [1, 2, 3] for item in operation_region_list)
-            # Check operation_region_dict length vs self.operation_region_dict_zero length
-            if len(operation_region_dict) != len(self.operation_region_dict_zero):
-                logging.warning(f"Warning!!!: Operation region dict length {len(operation_region_dict)} does not "
-                                f"match with operation_region_dict_zero length {len(self.norm_ideal_specs)}.")
+        if self.region_extract:
+            try:
+                working_dir_step_dc = create_work_dir(self.run_root_dir)
+                logging.info(f"Step!!!DC Check Working directory: {working_dir_step_dc} "
+                             f"with step number: {self.step_num}")
+                # Update DC Netlist File for checking operation region
+                update_netlist(working_dir_step_dc, self.dc_sim_config_dict, updated_param, self.unassigned_netlist_dir)
+                operation_region_dict = copy.deepcopy(run_region_simulation(working_dir_step_dc,
+                                                                            self.dc_sim_config_dict,
+                                                                            self.sim_output_enable))
+                operation_region_list = list(operation_region_dict.values())
+                logging.info(f"Step!!!Operation region: {operation_region_list} with step number: {self.step_num}")
+                # 0 cut-off, 1 triode, 2 saturation, 3 sub-th, 4 breakdown
+                # Check whether all transistors are in saturation/sub-threshold/triode region
+                valid_param = all(item in [1, 2, 3] for item in operation_region_list)
+                # Check operation_region_dict length vs self.operation_region_dict_zero length
+                if len(operation_region_dict) != len(self.operation_region_dict_zero):
+                    logging.warning(f"Warning!!!: Operation region dict length {len(operation_region_dict)} does not "
+                                    f"match with operation_region_dict_zero length {len(self.norm_ideal_specs)}.")
+                    operation_region_dict = copy.deepcopy(self.operation_region_dict_zero)
+                    valid_param = False
+                # Delete working temp directory, if it exists
+                # delete_work_dir(working_dir_step_dc)
+            except Exception as e:
+                logging.warning(f"Warning!!!: {e}. Failed to run DC check with step number: {self.step_num}")
                 operation_region_dict = copy.deepcopy(self.operation_region_dict_zero)
                 valid_param = False
-            # Delete working temp directory, if it exists
-            # delete_work_dir(working_dir_step_dc)
-        except Exception as e:
-            logging.warning(f"Warning!!!: {e}. Failed to run DC check with step number: {self.step_num}")
-            operation_region_dict = copy.deepcopy(self.operation_region_dict_zero)
-            valid_param = False
 
         # DC check fail condition
-        if self.dc_check and not valid_param:
-            logging.info(f"Step!!! DC_Check is enable and not passed with step number: {self.step_num}")
+        if self.region_extract and self.dc_check and not valid_param:
+            logging.info(f"Step!!! Region_extract & DC_Check is enable and the param is not passed with dc_check"
+                         f" with step number: {self.step_num}")
             sim_result = copy.deepcopy(self.zero_sim_result)
             logging.debug(f"Debug, sim_result is {sim_result}")
             logging.debug(f"Debug, self.norm_specs is {self.norm_specs}")
@@ -356,27 +379,21 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
             observation = copy.deepcopy(flatten_observation_w_region(observation_detail))
             logging.debug(f"Step!!!DC Check fail. Flatten Observation: {observation} with step number: {self.step_num}")
             observations = {agent: observation for agent in self.agents}
-            rew = {a: -10 for a in self.agents}
+            single_rew = -10
 
-            logging.info(f"Step!!!DC_Check is enable and not passed."
-                         f" Reward result: {rew} with step number: {self.step_num}")
-            terminated = {a: False for a in self.agents}
-            truncated = {a: False for a in self.agents}
-            for agent_name in truncated:
-                if self.step_num >= self.max_step:
-                    truncated[agent_name] = True
-                    self.truncateds.add(agent_name)
+            logging.info(f"Step!!!Region_extract & DC_Check is enable and the param is not passed with dc_check."
+                         f" Reward result: {single_rew} with step number: {self.step_num}")
 
         # DC Check pass or not enabled. Run all simulations
         else:
             # Create working directory
             working_dir_step = create_work_dir(self.run_root_dir)
-            if self.dc_check:
-                logging.info(f"Step!!! DC_Check is enable and passed,"
-                             f" Working directory: {working_dir_step} with step number: {self.step_num}")
+            if valid_param:
+                logging.info(f"Step!!!Working directory: {working_dir_step} with step number: {self.step_num} "
+                             f"with region_extract & dc_check enabled and valid param.")
             else:
-                logging.info(f"Step!!! DC_Check is disable,"
-                             f" Working directory: {working_dir_step} with step number: {self.step_num}")
+                logging.info(f"Step!!!Working directory: {working_dir_step} with step number: {self.step_num} "
+                             f"with region_extract: {self.region_extract} and dc_check: {self.dc_check}")
 
             update_netlist(working_dir_step, self.sim_config_dict, updated_param, self.unassigned_netlist_dir)
 
@@ -399,47 +416,52 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
             logging.debug(f"Debug, self.norm_specs is {self.norm_specs}")
             norm_sim_result = norm_sim_spec(sim_result, self.norm_specs)
 
-            observation_detail = update_obs_space_w_region(self.norm_ideal_specs, norm_sim_result, updated_param,
-                                                           operation_region_dict)
+            if self.region_extract:
+                observation_detail = update_obs_space_w_region(self.norm_ideal_specs, norm_sim_result, updated_param,
+                                                               operation_region_dict)
+                observation = copy.deepcopy(flatten_observation_w_region(observation_detail))
+            else:
+                observation_detail = update_obs_space(self.norm_ideal_specs, norm_sim_result, updated_param)
+                observation = copy.deepcopy(flatten_observation(observation_detail))
             logging.debug(f"Step!!!Observation detail: {observation_detail} with step number: {self.step_num}")
-            observation = copy.deepcopy(flatten_observation_w_region(observation_detail))
             logging.debug(f"Step!!!Flatten Observation: {observation} with step number: {self.step_num}")
 
             # Share all observations
             observations = {agent: observation for agent in self.agents}
 
             # Calculate reward
-            rew = {a: -10 for a in self.agents}
             rew_single = cal_reward(self.ideal_specs, sim_result, self.norm_specs)
-            for agent_name in rew:
-                rew[agent_name] = rew_single
             logging.info(f"Step!!!Reward result: {rew_single} with step number: {self.step_num}")
 
-            terminated = {a: False for a in self.agents}
-            truncated = {a: False for a in self.agents}
+        terminated = {a: False for a in self.agents}
+        truncated = {a: False for a in self.agents}
 
-            if rew_single > 0:
-                if not self.had_positive_reward:
-                    self.had_positive_reward = True
-                    self.steps_after_positive_reward = 0
-                else:
-                    self.steps_after_positive_reward += 1
+        rew = {a: -10 for a in self.agents}
+        for agent_name in rew:
+            rew[agent_name] = rew_single
 
-            if self.had_positive_reward:
-                if self.steps_after_positive_reward >= self.continue_steps or self.step_num >= self.max_step:
-                    for agent_name in terminated:
-                        terminated[agent_name] = True
-                        self.terminateds.add(agent_name)
+        if rew_single > 0:
+            if not self.had_positive_reward:
+                self.had_positive_reward = True
+                self.steps_after_positive_reward = 0
+            else:
+                self.steps_after_positive_reward += 1
 
-            if self.step_num >= self.max_step:
-                if self.had_positive_reward and self.steps_after_positive_reward < self.continue_steps:
-                    for agent_name in terminated:
-                        terminated[agent_name] = True
-                        self.terminateds.add(agent_name)
-                else:
-                    for agent_name in truncated:
-                        truncated[agent_name] = True
-                        self.truncateds.add(agent_name)
+        if self.had_positive_reward:
+            if self.steps_after_positive_reward >= self.continue_steps or self.step_num >= self.max_step:
+                for agent_name in terminated:
+                    terminated[agent_name] = True
+                    self.terminateds.add(agent_name)
+
+        if self.step_num >= self.max_step:
+            if self.had_positive_reward and self.steps_after_positive_reward < self.continue_steps:
+                for agent_name in terminated:
+                    terminated[agent_name] = True
+                    self.terminateds.add(agent_name)
+            else:
+                for agent_name in truncated:
+                    truncated[agent_name] = True
+                    self.truncateds.add(agent_name)
 
             # Delete working temp directory, if it exists
             # delete_work_dir(working_dir_step)
