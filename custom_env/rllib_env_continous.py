@@ -59,7 +59,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         self.max_step = int(max_step)
         self.action_mask = True
 
-        self.continue_steps = 16  # Number of steps to continue after positive reward
+        self.continue_steps = 4  # Number of steps to continue after positive reward
         self.steps_after_positive_reward = 0
         self.had_positive_reward = False
 
@@ -440,26 +440,25 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         for agent_name in rew:
             rew[agent_name] = rew_single
 
-        if rew_single > 0:
-            if not self.had_positive_reward:
-                self.had_positive_reward = True
-                self.steps_after_positive_reward = 0
-            else:
-                self.steps_after_positive_reward += 1
+        if rew_single > 0 and not self.had_positive_reward:
+            self.had_positive_reward = True
+            self.steps_after_positive_reward = 0
+        elif self.had_positive_reward:
+            self.steps_after_positive_reward += 1
 
-        if self.had_positive_reward:
-            if self.steps_after_positive_reward >= self.continue_steps or self.step_num >= self.max_step:
-                for agent_name in terminated:
+        episode_over = False
+        if self.had_positive_reward and (
+                self.steps_after_positive_reward >= self.continue_steps or self.step_num >= self.max_step):
+            episode_over = True
+        elif self.step_num >= self.max_step:
+            episode_over = True
+
+        if episode_over:
+            for agent_name in terminated:
+                if self.had_positive_reward:
                     terminated[agent_name] = True
                     self.terminateds.add(agent_name)
-
-        if self.step_num >= self.max_step:
-            if self.had_positive_reward and self.steps_after_positive_reward < self.continue_steps:
-                for agent_name in terminated:
-                    terminated[agent_name] = True
-                    self.terminateds.add(agent_name)
-            else:
-                for agent_name in truncated:
+                else:
                     truncated[agent_name] = True
                     self.truncateds.add(agent_name)
 
