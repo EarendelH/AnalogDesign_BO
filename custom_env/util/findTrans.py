@@ -400,6 +400,10 @@ def findEff_general(filename, time_ranges, output_voltage_label, load_current, i
     # Calculate efficiency
     efficiency = avg_output_voltage * load_current / (input_voltage * avg_input_current)
 
+    if efficiency < 0 or efficiency > 1:
+        efficiency = 0.0
+        print(f"Warning!!! efficiency is {efficiency} and out of range, set to 0.0")
+
     return {"efficiency": efficiency}
 
 
