@@ -99,9 +99,11 @@ def parse_parameters(file_path):
 
 def process_folder(folder_path, ideal_specs, norm_specs):
     parameters_dict = {}
-    dc_scs_path = os.path.join(folder_path, 'DC.scs')
-    if os.path.exists(dc_scs_path):
-        parameters_dict = parse_parameters(dc_scs_path)
+    scs_files = [f for f in os.listdir(folder_path) if f.endswith('.scs')]
+    scs_files.sort()
+    if scs_files:
+        scs_path = os.path.join(folder_path, scs_files[0])
+        parameters_dict = parse_parameters(scs_path)
 
     for file in os.listdir(folder_path):
         if file.endswith(".pkl"):
