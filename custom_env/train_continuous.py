@@ -151,6 +151,7 @@ def main():
             # Get the restored configuration
             logging.info("Configuration restored from checkpoint")
             restored_algo.train()
+
         if not restore_checkpoint:
 
             policies = {f"policy_{i + 1}" for i in range(settings["num_agents"])}
