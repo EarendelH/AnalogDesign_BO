@@ -1,7 +1,7 @@
 import pandas as pd
 import ast
 import math
-import json
+
 
 def flatten_nested_dict(d):
     flattened_dict = {}
@@ -9,11 +9,13 @@ def flatten_nested_dict(d):
         flattened_dict.update(nested_dict)
     return flattened_dict
 
+
 def is_valid_entry(flattened_dict):
     for key, value in flattened_dict.items():
         if value == 100.0 or value == 0.0:
             return False
     return True
+
 
 def split_dataframe_to_excel(df, max_rows=1000000, output_prefix='output'):
     num_files = math.ceil(len(df) / max_rows)
@@ -28,12 +30,6 @@ def split_dataframe_to_excel(df, max_rows=1000000, output_prefix='output'):
         df_subset.to_excel(output_file, index=False)
         print(f"Saved {output_file}")
 
-def safe_eval(x):
-    try:
-        return ast.literal_eval(x)
-    except (ValueError, SyntaxError):
-        print(f"Error evaluating: {x}")
-        return None
 
 # Main process
 file_path = input('Enter the file path: ')
@@ -44,16 +40,14 @@ original_length = len(data)
 print(f'Original data length: {original_length}')
 
 # Flatten the nested dictionary and filter invalid entries for 'Specs'
-data['Valid_Specs'] = data['Specs'].apply(safe_eval)
-data = data.dropna(subset=['Valid_Specs'])
-data['Valid_Specs'] = data['Valid_Specs'].apply(flatten_nested_dict)
+data['Valid_Specs'] = data['Specs'].apply(lambda x: flatten_nested_dict(ast.literal_eval(x)))
 data = data[data['Valid_Specs'].apply(is_valid_entry)]
 
 # Convert the valid flattened dictionaries into DataFrame columns for 'Specs'
-specs_df = pd.DataFrame(data['Valid_Specs'].tolist())
+specs_df = data['Valid_Specs'].apply(pd.Series)
 
 # Expand 'Parameters' column directly into DataFrame columns
-params_df = data['Parameters'].apply(safe_eval).apply(pd.Series)
+params_df = data['Parameters'].apply(ast.literal_eval).apply(pd.Series)
 
 # Combine the new columns with the original DataFrame (excluding the original 'Specs' and 'Valid_Specs' columns)
 expanded_data = pd.concat([data.drop(columns=['Specs', 'Valid_Specs', 'Parameters']), specs_df, params_df], axis=1)
