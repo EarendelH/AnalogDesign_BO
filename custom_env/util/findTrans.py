@@ -2,6 +2,7 @@
 from util.extract_trace import extractTransTrace
 import numpy as np
 import bisect
+import math
 # import matplotlib.pyplot as plt
 
 
@@ -407,6 +408,10 @@ def findEff_general(filename, time_ranges, output_voltage_label, load_current, i
     if efficiency < 0 or efficiency > 1:
         efficiency = 0.0
         print(f"Warning!!! efficiency is {efficiency} and out of range, set to 0.0")
+
+    if math.isnan(efficiency) or math.isinf(efficiency):
+        efficiency = 0.0
+        print(f"Warning!!! efficiency is {efficiency} and is nan, set to 0.0")
 
     return {"efficiency": efficiency}
 
