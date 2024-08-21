@@ -14,6 +14,7 @@ from ray.rllib.algorithms.impala import ImpalaConfig
 from ray.rllib.algorithms.sac import SACConfig
 from ray.rllib.algorithms.algorithm import Algorithm
 from ray.tune.registry import register_env
+from ray.rllib.policy import Policy
 
 from rllib_env_continous import RllibAnalogDesignAutoEnv
 
@@ -123,34 +124,99 @@ def main():
 
         # Restore or Initialize train
         restore_checkpoint = settings["restore_checkpoint"]
-        if restore_checkpoint:
+        if settings["restore_checkpoint"]:
+
+            policies = {f"policy_{i + 1}" for i in range(settings["num_agents"])}
+            policies_to_train = list(policies)
+            policy_mapping_fn = lambda aid, episode, worker, **kwargs: f"policy_{int(aid[-1])}"
+
             checkpoint_path = settings["checkpoint_path"]
             assert os.path.exists(checkpoint_path), "Checkpoint path does not exist"
-            logging.info(f"Restoring from checkpoint: {checkpoint_path}")
+            logging.info(f"Attempting to restore from checkpoint: {checkpoint_path}")
 
-            # Use Algorithm.from_checkpoint() to restore the algorithm
-            restored_algo = Algorithm.from_checkpoint(
-                path=checkpoint_path
-            )
+            try:
+                policy = Policy.from_checkpoint(checkpoint_path)
+                logging.info("Policy loaded from checkpoint successfully")
 
-            # Debug: Print information about the restored algorithm
-            logging.info("Checkpoint restored successfully")
-            logging.info(f"Restored algorithm type: {type(restored_algo).__name__}")
+                weights = policy.get_weights()
+                logging.info(f"Weights extracted. Shape: {len(weights)}")
 
-            # Get policy information
-            if hasattr(restored_algo, 'workers') and restored_algo.workers:
-                local_worker = restored_algo.workers.local_worker()
-                if local_worker:
-                    policies = local_worker.policy_map
-                    logging.info(f"Restored policies: {list(policies.keys())}")
-                else:
-                    logging.warning("Local worker not available")
-            else:
-                logging.warning("Workers not available in restored algorithm")
+                weights = {'default_policy': weights}
+                logging.info("Weights key modified to 'default_policy'")
 
-            # Get the restored configuration
-            logging.info("Configuration restored from checkpoint")
-            restored_algo.train()
+                config = (
+                    PPOConfig()
+                    .environment(env="AnalogDesignEnv_v0", clip_actions=True)
+                    .rollouts(num_rollout_workers=num_cpu)
+                    .training(
+                        train_batch_size=512,
+                        lr=2e-4,
+                        gamma=0.96,
+                        lambda_=0.95,
+                        use_gae=True,
+                        clip_param=0.3,
+                        grad_clip=None,
+                        entropy_coeff=0.01,
+                        vf_loss_coeff=0.25,
+                        sgd_minibatch_size=64,
+                        num_sgd_iter=24,
+                        model={
+                            "fcnet_hiddens": [256, 256, 256, 256, 256],
+                        }
+                    )
+                    .debugging(log_level="DEBUG")
+                    .framework("torch")
+                    .resources(num_gpus=num_gpu)
+                    .multi_agent(
+                        policies=policies,
+                        policy_mapping_fn=policy_mapping_fn,
+                        policies_to_train=policies_to_train,
+                    )
+                )
+                logging.info("New algorithm configuration created")
+
+                algo = config.build()
+                logging.info("New algorithm built from configuration")
+
+                algo.set_weights(weights)
+                logging.info("Weights set to the new algorithm")
+
+                logging.info("Starting training from restored checkpoint")
+                for iteration in range(settings["train_iterations"]):
+                    result = algo.train()
+                    logging.info(f"Iteration {iteration}: {result}")
+
+            except Exception as e:
+                logging.error(f"Error during checkpoint restoration: {e}")
+                sys.exit(1)
+
+            # checkpoint_path = settings["checkpoint_path"]
+            # assert os.path.exists(checkpoint_path), "Checkpoint path does not exist"
+            # logging.info(f"Restoring from checkpoint: {checkpoint_path}")
+            #
+            # # Use Algorithm.from_checkpoint() to restore the algorithm
+            # restored_algo = Algorithm.from_checkpoint(
+            #     path=checkpoint_path
+            # )
+            #
+            # # Debug: Print information about the restored algorithm
+            # logging.info("Checkpoint restored successfully")
+            # logging.info(f"Restored algorithm type: {type(restored_algo).__name__}")
+            #
+            # # Get policy information
+            # if hasattr(restored_algo, 'workers') and restored_algo.workers:
+            #     local_worker = restored_algo.workers.local_worker()
+            #     if local_worker:
+            #         policies = local_worker.policy_map
+            #         logging.info(f"Restored policies: {list(policies.keys())}")
+            #     else:
+            #         logging.warning("Local worker not available")
+            # else:
+            #     logging.warning("Workers not available in restored algorithm")
+            #
+            # # Get the restored configuration
+            # logging.info("Configuration restored from checkpoint")
+            # restored_algo.train()
 
         if not restore_checkpoint:
 
