@@ -145,6 +145,8 @@ def main():
                     print(f"Policy: {policy_id}, Weights: {weights[policy_id]}")
                 logging.info(f"Weights extracted for policies: {list(weights.keys())}")
 
+                print_weights_structure(weights)
+
                 config = (
                     PPOConfig()
                     .environment(env="AnalogDesignEnv_v0", clip_actions=True)
@@ -178,6 +180,10 @@ def main():
 
                 algo = config.build()
                 logging.info("New algorithm built from configuration")
+
+                for policy_id, policy in algo.get_policy_map().items():
+                    logging.info(f"Structure of policy {policy_id}:")
+                    print_model_structure(policy.model)
 
                 algo.set_weights(weights)
                 logging.info("Weights set to the new algorithm")
@@ -381,6 +387,23 @@ def main():
             )
     else:
         print("Configuration not confirmed. Training aborted.")
+
+def print_model_structure(model):
+    logging.info("Model structure:")
+    for name, param in model.named_parameters():
+        logging.info(f"Layer: {name}, Shape: {param.shape}")
+
+def print_weights_structure(weights):
+    logging.info("Weights structure from checkpoint:")
+    for policy_id, policy_weights in weights.items():
+        logging.info(f"Policy: {policy_id}")
+        for key, value in policy_weights.items():
+            if isinstance(value, torch.Tensor):
+                logging.info(f"  Layer: {key}, Shape: {value.shape}")
+            elif isinstance(value, dict):
+                for sub_key, sub_value in value.items():
+                    if isinstance(sub_value, torch.Tensor):
+                        logging.info(f"  Layer: {key}.{sub_key}, Shape: {sub_value.shape}")
 
 
 if __name__ == "__main__":
