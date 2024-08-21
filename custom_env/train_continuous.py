@@ -135,12 +135,14 @@ def main():
             logging.info(f"Attempting to restore from checkpoint: {checkpoint_path}")
 
             try:
-                policy = Policy.from_checkpoint(checkpoint_path)
+                polices = Policy.from_checkpoint(checkpoint_path)
                 logging.info("Policy loaded from checkpoint successfully")
-                print(f"Debug: Policy: {policy}")
+                print(f"Debug: Policy: {polices}")
 
-                weights = policy.get_weights()
-                logging.info(f"Weights extracted. Shape: {len(weights)}")
+                for policy in policies:
+                    print(f"Debug: Policy: {policy}")
+                    weights = policy.get_weights()
+                    logging.info(f"Weights extracted. Shape: {len(weights)}")
 
                 weights = {'default_policy': weights}
                 logging.info("Weights key modified to 'default_policy'")
