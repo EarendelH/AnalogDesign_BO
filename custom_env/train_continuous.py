@@ -141,8 +141,9 @@ def main():
 
                 for policy in policies:
                     print(f"Debug: Policy: {policy}")
-                    weights = policy.get_weights()
-                    logging.info(f"Weights extracted. Shape: {len(weights)}")
+
+                weights = polices.get_weights()
+                logging.info(f"Weights extracted. Shape: {len(weights)}")
 
                 weights = {'default_policy': weights}
                 logging.info("Weights key modified to 'default_policy'")
