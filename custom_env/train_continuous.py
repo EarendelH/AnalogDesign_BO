@@ -137,6 +137,7 @@ def main():
             try:
                 policy = Policy.from_checkpoint(checkpoint_path)
                 logging.info("Policy loaded from checkpoint successfully")
+                print(f"Debug: Policy: {policy}")
 
                 weights = policy.get_weights()
                 logging.info(f"Weights extracted. Shape: {len(weights)}")
