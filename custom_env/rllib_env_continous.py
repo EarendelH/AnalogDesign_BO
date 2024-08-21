@@ -161,6 +161,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
             self.observation_space = flatten_obs_space(gen_obs_space(self.sim_config_dict, self.param_range_dict,
                                                                      agent_assign_dict))
         logging.debug(f"observation_space: {self.observation_space}")
+        logging.debug(f"the size of initial observation_space: {self.observation_space.shape[0]}")
         self._action_space_in_preferred_format = True
         self.action_space = gen_masked_continuous_action_space(self.device_mask_dict, agent_assign_dict)
         logging.debug(f"action_space: {self.action_space}")
@@ -428,6 +429,8 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
 
             # Share all observations
             observations = {agent: observation for agent in self.agents}
+            for agent in self.agents:
+                logging.debug(f"the size of step observation for agent {agent}: {observations[agent].shape[0]}")
 
             # Calculate reward
             rew_single = cal_reward(self.ideal_specs, sim_result, self.norm_specs)
