@@ -294,6 +294,10 @@ def flatten_obs_space(obs_space: gymnasium.spaces.Dict):
         sorted_ideal_specs = {key: agent_space['ideal_specs'][key] for key in sorted(agent_space['ideal_specs'])}
         sorted_cur_param = {key: agent_space['cur_param'][key] for key in sorted(agent_space['cur_param'])}
 
+        logging.debug(f"The size of sorted_cur_specs is {len(sorted_cur_specs)}")
+        logging.debug(f"The size of sorted_ideal_specs is {len(sorted_ideal_specs)}")
+        logging.debug(f"The size of sorted_cur_param is {len(sorted_cur_param)}")
+
         # Print the sorted dicts for debugging
         # print(f"Agent: {agent}")
         # print("Sorted cur_specs:", sorted_cur_specs)
@@ -305,6 +309,8 @@ def flatten_obs_space(obs_space: gymnasium.spaces.Dict):
         combined_boxes.extend(sorted_cur_specs.values())
         combined_boxes.extend(sorted_ideal_specs.values())
         combined_boxes.extend(sorted_cur_param.values())
+
+        logging.debug(f"The size of combined_boxes is {len(combined_boxes)}")
 
         # Convert the combined list to a Tuple space and assign to the agent
         flattened_space[agent] = gymnasium.spaces.Tuple(combined_boxes)

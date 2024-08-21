@@ -57,12 +57,18 @@ def flatten_observation(observation):
     # print("Sorted ideal_specs:", sorted_ideal_specs)
     # print("Sorted cur_param:", sorted_cur_param)
 
+    logging.debug(f"The size of sorted_cur_specs: {len(sorted_cur_specs)}")
+    logging.debug(f"The size of sorted_ideal_specs: {len(sorted_ideal_specs)}")
+    logging.debug(f"The size of sorted_cur_param: {len(sorted_cur_param)}")
+
     # Combine all values from sorted dicts into a single tuple
     combined_values = tuple(
         list(sorted_cur_specs.values()) +
         list(sorted_ideal_specs.values()) +
         list(sorted_cur_param.values())
     )
+
+    logging.debug(f"The size of combined_values: {len(combined_values)}")
 
     return combined_values
 
