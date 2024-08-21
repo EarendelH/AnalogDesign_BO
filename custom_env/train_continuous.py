@@ -181,9 +181,6 @@ def main():
                 algo = config.build()
                 logging.info("New algorithm built from configuration")
 
-                for policy_id, policy in algo.get_policy_map().items():
-                    logging.info(f"Current model structure for {policy_id}:")
-                    print_model_structure(policy.model)
 
                 try:
                     algo.set_weights(weights)
