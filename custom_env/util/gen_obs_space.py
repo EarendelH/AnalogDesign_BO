@@ -1,6 +1,7 @@
 import gymnasium
 import numpy as np
 import yaml
+import logging
 
 from util.util_func import unit_conversion
 # from util_func import unit_conversion
@@ -97,6 +98,11 @@ def flatten_obs_space_w_type(obs_space: gymnasium.spaces.Dict):
         sorted_cur_param = {key: agent_space['cur_param'][key] for key in sorted(agent_space['cur_param'])}
         sorted_device_type = {key: agent_space['device_type'][key] for key in sorted(agent_space['device_type'])}
 
+        logging.debug(f"Debug, the size of sorted_cur_specs: {len(sorted_cur_specs)}")
+        logging.debug(f"Debug, the size of sorted_ideal_specs: {len(sorted_ideal_specs)}")
+        logging.debug(f"Debug, the size of sorted_cur_param: {len(sorted_cur_param)}")
+        logging.debug(f"Debug, the size of sorted_device_type: {len(sorted_device_type)}")
+
         # Print the sorted dicts for debugging
         # print(f"Agent: {agent}")
         # print("Sorted cur_specs:", sorted_cur_specs)
@@ -109,6 +115,8 @@ def flatten_obs_space_w_type(obs_space: gymnasium.spaces.Dict):
         combined_boxes.extend(sorted_ideal_specs.values())
         combined_boxes.extend(sorted_cur_param.values())
         combined_boxes.extend(sorted_device_type.values())
+
+        logging.debug(f"Debug, the size of combined_boxes: {len(combined_boxes)}")
 
         # Convert the combined list to a Tuple space and assign to the agent
         flattened_space[agent] = gymnasium.spaces.Tuple(combined_boxes)

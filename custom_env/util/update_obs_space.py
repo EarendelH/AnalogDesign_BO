@@ -1,6 +1,7 @@
 import yaml
 from collections import OrderedDict
 import numpy as np
+import logging
 
 from util.util_func import unit_conversion
 # from util_func import unit_conversion
@@ -158,6 +159,11 @@ def flatten_observation_w_type(observation):
     sorted_cur_param = OrderedDict(sorted(observation['cur_param'].items()))
     sorted_device_type = OrderedDict(sorted(observation['device_type'].items()))
 
+    logging.debug(f"the size of sorted_cur_specs is {len(sorted_cur_specs)}")
+    logging.debug(f"the size of sorted_ideal_specs is {len(sorted_ideal_specs)}")
+    logging.debug(f"the size of sorted_cur_param is {len(sorted_cur_param)}")
+    logging.debug(f"the size of sorted_device_type is {len(sorted_device_type)}")
+
     # Print the sorted dicts for debugging
     # print("Sorted cur_specs:", sorted_cur_specs)
     # print("Sorted ideal_specs:", sorted_ideal_specs)
@@ -170,6 +176,7 @@ def flatten_observation_w_type(observation):
         list(sorted_cur_param.values()) +
         list(sorted_device_type.values())
     )
+    logging.debug(f"the size of combined_values is {len(combined_values)}")
 
     return combined_values
 

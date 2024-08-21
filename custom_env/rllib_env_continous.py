@@ -264,25 +264,6 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
 
         # Share all observations among agents
         observations = {agent: observation for agent in self.agents}
-        for agent, space in observations.items():
-            logging.debug(f"Reset: Agent {agent} observation space:")
-            if isinstance(space, gymnasium.spaces.Tuple):
-                for i, box in enumerate(space.spaces):
-                    if isinstance(box, gymnasium.spaces.Box):
-                        logging.debug(
-                            f"  Dimension {i}: Box(low={box.low}, high={box.high}, shape={box.shape}, dtype={box.dtype})")
-                    elif isinstance(box, gymnasium.spaces.Discrete):
-                        logging.debug(f"  Dimension {i}: Discrete(n={box.n})")
-                    else:
-                        logging.debug(f"  Dimension {i}: {type(box)}")
-            elif isinstance(space, tuple):
-                for i, item in enumerate(space):
-                    if isinstance(item, np.ndarray):
-                        logging.debug(f"  Dimension {i}: shape={item.shape}, dtype={item.dtype}")
-                    else:
-                        logging.debug(f"  Dimension {i}: type={type(item)}")
-            else:
-                logging.debug(f"  Unexpected space type: {type(space)}")
 
         # Test Rew func
         rew = cal_reward(self.ideal_specs, sim_result, self.norm_specs)
@@ -453,14 +434,6 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
             # Calculate reward
             rew_single = cal_reward(self.ideal_specs, sim_result, self.norm_specs)
             logging.info(f"Step!!!Reward result: {rew_single} with step number: {self.step_num}")
-
-        for agent, obs in observations.items():
-            logging.debug(f"Step: Agent {agent} observation:")
-            for i, value in enumerate(obs):
-                if isinstance(value, np.ndarray):
-                    logging.debug(f"  Dimension {i}: shape={value.shape}, dtype={value.dtype}, value={value}")
-                else:
-                    logging.debug(f"  Dimension {i}: type={type(value)}, value={value}")
 
         terminated = {a: False for a in self.agents}
         truncated = {a: False for a in self.agents}
