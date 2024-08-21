@@ -125,29 +125,23 @@ def main():
         # Restore or Initialize train
         restore_checkpoint = settings["restore_checkpoint"]
         if settings["restore_checkpoint"]:
-
-            policies = {f"policy_{i + 1}" for i in range(settings["num_agents"])}
-            policies_to_train = list(policies)
-            policy_mapping_fn = lambda aid, episode, worker, **kwargs: f"policy_{int(aid[-1])}"
-
             checkpoint_path = settings["checkpoint_path"]
             assert os.path.exists(checkpoint_path), "Checkpoint path does not exist"
             logging.info(f"Attempting to restore from checkpoint: {checkpoint_path}")
 
             try:
-                polices = Policy.from_checkpoint(checkpoint_path)
-                logging.info("Policy loaded from checkpoint successfully")
-                print(f"Debug: Policy: {polices}")
+                # 1. 加载checkpoint
+                restored_policies = Policy.from_checkpoint(checkpoint_path)
+                logging.info("Policies loaded from checkpoint successfully")
+                logging.info(f"Restored policies: {restored_policies}")
 
-                for policy in policies:
-                    print(f"Debug: Policy: {policy}")
+                # 2. 提取每个策略的模型权重
+                weights = {}
+                for policy_id, policy in restored_policies.items():
+                    weights[policy_id] = policy.get_weights()
+                logging.info(f"Weights extracted for policies: {list(weights.keys())}")
 
-                weights = polices.get_weights()
-                logging.info(f"Weights extracted. Shape: {len(weights)}")
-
-                weights = {'default_policy': weights}
-                logging.info("Weights key modified to 'default_policy'")
-
+                # 3. 定义新的算法配置
                 config = (
                     PPOConfig()
                     .environment(env="AnalogDesignEnv_v0", clip_actions=True)
@@ -179,12 +173,15 @@ def main():
                 )
                 logging.info("New algorithm configuration created")
 
+                # 4. 构建新的算法
                 algo = config.build()
                 logging.info("New algorithm built from configuration")
 
+                # 5. 设置权重
                 algo.set_weights(weights)
                 logging.info("Weights set to the new algorithm")
 
+                # 6. 继续训练
                 logging.info("Starting training from restored checkpoint")
                 for iteration in range(settings["train_iterations"]):
                     result = algo.train()
@@ -192,6 +189,7 @@ def main():
 
             except Exception as e:
                 logging.error(f"Error during checkpoint restoration: {e}")
+                logging.exception("Detailed traceback:")
                 sys.exit(1)
 
             # checkpoint_path = settings["checkpoint_path"]
