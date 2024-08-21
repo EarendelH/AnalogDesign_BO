@@ -57,9 +57,9 @@ def flatten_observation(observation):
     # print("Sorted ideal_specs:", sorted_ideal_specs)
     # print("Sorted cur_param:", sorted_cur_param)
 
-    logging.debug(f"The size of sorted_cur_specs: {len(sorted_cur_specs)}")
-    logging.debug(f"The size of sorted_ideal_specs: {len(sorted_ideal_specs)}")
-    logging.debug(f"The size of sorted_cur_param: {len(sorted_cur_param)}")
+    logging.info(f"The size of sorted_cur_specs: {len(sorted_cur_specs)}")
+    logging.info(f"The size of sorted_ideal_specs: {len(sorted_ideal_specs)}")
+    logging.info(f"The size of sorted_cur_param: {len(sorted_cur_param)}")
 
     # Combine all values from sorted dicts into a single tuple
     combined_values = tuple(
@@ -68,7 +68,7 @@ def flatten_observation(observation):
         list(sorted_cur_param.values())
     )
 
-    logging.debug(f"The size of combined_values: {len(combined_values)}")
+    logging.info(f"The size of combined_values: {len(combined_values)}")
 
     return combined_values
 
@@ -305,10 +305,10 @@ def flatten_observation_w_region(observation):
     sorted_cur_param = OrderedDict(sorted(observation['cur_param'].items()))
     sorted_transistor_region = OrderedDict(sorted(observation['region_dict'].items()))
 
-    logging.debug(f"The size of sorted_cur_specs: {len(sorted_cur_specs)}")
-    logging.debug(f"The size of sorted_ideal_specs: {len(sorted_ideal_specs)}")
-    logging.debug(f"The size of sorted_cur_param: {len(sorted_cur_param)}")
-    logging.debug(f"The size of sorted_transistor_region: {len(sorted_transistor_region)}")
+    logging.info(f"The size of sorted_cur_specs: {len(sorted_cur_specs)}")
+    logging.info(f"The size of sorted_ideal_specs: {len(sorted_ideal_specs)}")
+    logging.info(f"The size of sorted_cur_param: {len(sorted_cur_param)}")
+    logging.info(f"The size of sorted_transistor_region: {len(sorted_transistor_region)}")
 
     # Print the sorted dicts for debugging
     # print("Sorted cur_specs:", sorted_cur_specs)
@@ -323,7 +323,7 @@ def flatten_observation_w_region(observation):
         list(sorted_transistor_region.values())
     )
 
-    logging.debug(f"The size of combined_values: {len(combined_values)}")
+    logging.info(f"The size of combined_values: {len(combined_values)}")
 
     return combined_values
 
