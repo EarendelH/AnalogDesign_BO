@@ -159,11 +159,6 @@ def flatten_observation_w_type(observation):
     sorted_cur_param = OrderedDict(sorted(observation['cur_param'].items()))
     sorted_device_type = OrderedDict(sorted(observation['device_type'].items()))
 
-    logging.debug(f"the size of sorted_cur_specs is {len(sorted_cur_specs)}")
-    logging.debug(f"the size of sorted_ideal_specs is {len(sorted_ideal_specs)}")
-    logging.debug(f"the size of sorted_cur_param is {len(sorted_cur_param)}")
-    logging.debug(f"the size of sorted_device_type is {len(sorted_device_type)}")
-
     # Print the sorted dicts for debugging
     # print("Sorted cur_specs:", sorted_cur_specs)
     # print("Sorted ideal_specs:", sorted_ideal_specs)
@@ -176,7 +171,6 @@ def flatten_observation_w_type(observation):
         list(sorted_cur_param.values()) +
         list(sorted_device_type.values())
     )
-    logging.debug(f"the size of combined_values is {len(combined_values)}")
 
     return combined_values
 
@@ -305,6 +299,11 @@ def flatten_observation_w_region(observation):
     sorted_cur_param = OrderedDict(sorted(observation['cur_param'].items()))
     sorted_transistor_region = OrderedDict(sorted(observation['region_dict'].items()))
 
+    logging.debug(f"The size of sorted_cur_specs: {len(sorted_cur_specs)}")
+    logging.debug(f"The size of sorted_ideal_specs: {len(sorted_ideal_specs)}")
+    logging.debug(f"The size of sorted_cur_param: {len(sorted_cur_param)}")
+    logging.debug(f"The size of sorted_transistor_region: {len(sorted_transistor_region)}")
+
     # Print the sorted dicts for debugging
     # print("Sorted cur_specs:", sorted_cur_specs)
     # print("Sorted ideal_specs:", sorted_ideal_specs)
@@ -317,6 +316,8 @@ def flatten_observation_w_region(observation):
         list(sorted_cur_param.values()) +
         list(sorted_transistor_region.values())
     )
+
+    logging.debug(f"The size of combined_values: {len(combined_values)}")
 
     return combined_values
 
