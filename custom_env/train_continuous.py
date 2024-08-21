@@ -126,6 +126,11 @@ def main():
         restore_checkpoint = settings["restore_checkpoint"]
         if settings["restore_checkpoint"]:
             checkpoint_path = settings["checkpoint_path"]
+
+            policies = {f"policy_{i + 1}" for i in range(settings["num_agents"])}
+            policies_to_train = list(policies)
+            policy_mapping_fn = lambda aid, episode, worker, **kwargs: f"policy_{int(aid[-1])}"
+
             assert os.path.exists(checkpoint_path), "Checkpoint path does not exist"
             logging.info(f"Attempting to restore from checkpoint: {checkpoint_path}")
 
