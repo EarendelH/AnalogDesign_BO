@@ -142,10 +142,10 @@ def main():
                 weights = {}
                 for policy_id, policy in restored_policies.items():
                     weights[policy_id] = policy.get_weights()
-                    print(f"Policy: {policy_id}, Weights: {weights[policy_id]}")
-                logging.info(f"Weights extracted for policies: {list(weights.keys())}")
+                    logging.info(f"Checkpoint model structure for {policy_id}:")
+                    print_model_structure(policy.model)
 
-                print_weights_structure(weights)
+                logging.info(f"Weights extracted for policies: {list(weights.keys())}")
 
                 config = (
                     PPOConfig()
@@ -182,14 +182,25 @@ def main():
                 logging.info("New algorithm built from configuration")
 
                 for policy_id, policy in algo.get_policy_map().items():
-                    logging.info(f"Structure of policy {policy_id}:")
+                    logging.info(f"Current model structure for {policy_id}:")
                     print_model_structure(policy.model)
 
-                algo.set_weights(weights)
-                logging.info("Weights set to the new algorithm")
+                try:
+                    algo.set_weights(weights)
+                    logging.info("Weights set to the new algorithm successfully")
+                except RuntimeError as e:
+                    logging.error(f"Error setting weights: {e}")
+                    for policy_id, policy in algo.get_policy_map().items():
+                        state_dict = policy.model.state_dict()
+                        for key, value in state_dict.items():
+                            checkpoint_shape = weights[policy_id][key].shape if key in weights[
+                                policy_id] else "Not in checkpoint"
+                            current_shape = value.shape
+                            logging.info(
+                                f"{policy_id} - {key}: Checkpoint shape: {checkpoint_shape}, Current shape: {current_shape}")
 
                 logging.info("Starting training from restored checkpoint")
-                for iteration in range(settings["train_iterations"]):
+                for iteration in range(int(settings["train_iterations"])):
                     result = algo.train()
                     logging.info(f"Iteration {iteration}: {result}")
 
@@ -388,22 +399,11 @@ def main():
     else:
         print("Configuration not confirmed. Training aborted.")
 
+
 def print_model_structure(model):
     logging.info("Model structure:")
     for name, param in model.named_parameters():
-        logging.info(f"Layer: {name}, Shape: {param.shape}")
-
-def print_weights_structure(weights):
-    logging.info("Weights structure from checkpoint:")
-    for policy_id, policy_weights in weights.items():
-        logging.info(f"Policy: {policy_id}")
-        for key, value in policy_weights.items():
-            if isinstance(value, torch.Tensor):
-                logging.info(f"  Layer: {key}, Shape: {value.shape}")
-            elif isinstance(value, dict):
-                for sub_key, sub_value in value.items():
-                    if isinstance(sub_value, torch.Tensor):
-                        logging.info(f"  Layer: {key}.{sub_key}, Shape: {sub_value.shape}")
+        logging.info(f"  {name}: {param.shape}")
 
 
 if __name__ == "__main__":
