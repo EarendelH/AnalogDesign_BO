@@ -195,7 +195,6 @@ def main():
                 algo = config.build()
                 logging.info("New algorithm built from configuration")
 
-
                 try:
                     algo.set_weights(weights)
                     logging.info("Weights set to the new algorithm successfully")
