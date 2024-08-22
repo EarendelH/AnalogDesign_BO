@@ -224,13 +224,13 @@ def main():
                     logging.info(f"Iteration {iteration}: {result}")
 
                     if iteration % checkpoint_config["checkpoint_frequency"] == 0:
-                        checkpoint = algo.save(restore_checkpoint_dir)
-                        checkpoint_path = os.path.join(restore_checkpoint_dir, os.path.basename(checkpoint))
+                        checkpoint_result = algo.save(restore_checkpoint_dir)
+                        checkpoint_path = checkpoint_result.checkpoint.path
                         logging.info(f"New checkpoint saved at iteration {iteration}: {checkpoint_path}")
 
                 if checkpoint_config["checkpoint_at_end"]:
-                    final_checkpoint = algo.save(restore_checkpoint_dir)
-                    final_checkpoint_path = os.path.join(restore_checkpoint_dir, os.path.basename(final_checkpoint))
+                    final_checkpoint_result = algo.save(restore_checkpoint_dir)
+                    final_checkpoint_path = final_checkpoint_result.checkpoint.path
                     logging.info(f"Final checkpoint saved: {final_checkpoint_path}")
 
             except Exception as e:
