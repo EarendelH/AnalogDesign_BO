@@ -3,7 +3,7 @@ from util.extract_trace import extractTransTrace
 import numpy as np
 import bisect
 import math
-# import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 
 
 def find_indices_in_range(nums, range_start, range_end):
@@ -359,6 +359,11 @@ def findEff_general(filename, time_ranges, output_voltage_label, load_current, i
     - Efficiency
     """
 
+    def calculate_variance_trapz(x, y, mean):
+        squared_diff = (y - mean)**2
+        variance = np.trapz(squared_diff, x) / (x[-1] - x[0])
+        return variance
+
     try:
         trans_dict = extractTransTrace(filename)
         time_series = trans_dict["time"]
@@ -378,23 +383,26 @@ def findEff_general(filename, time_ranges, output_voltage_label, load_current, i
         # print(f"Debug!!! extracted_input_current_series with length: {len(extracted_input_current_series)}")
 
         # Plot extracted_output_voltage_series and extracted_input_current_series against time, keep plt open
-        # plt.figure(figsize=(14, 6))
-        # plt.plot(extracted_time_series, extracted_output_voltage_series, label=output_voltage_label, color="blue")
+        plt.figure(figsize=(14, 6))
+        plt.plot(extracted_time_series, extracted_output_voltage_series, label=output_voltage_label, color="blue")
         # plt.scatter(extracted_time_series, extracted_input_current_series, label=input_current_label, color="red")
-        # plt.plot(extracted_time_series, extracted_input_current_series, label=input_current_label, color="red")
-        # plt.xlabel("Time")
-        # plt.ylabel("Value")
-        # plt.title(f"'{output_voltage_label}' and '{input_current_label}' Signal Over Time")
-        # plt.legend()
-        # plt.grid(True)
-        # plt.show()
+        plt.plot(extracted_time_series, extracted_input_current_series, label=input_current_label, color="red")
+        plt.xlabel("Time")
+        plt.ylabel("Value")
+        plt.title(f"'{output_voltage_label}' and '{input_current_label}' Signal Over Time")
+        plt.legend()
+        plt.grid(True)
+        plt.show()
 
-        # Cal average output voltage and input current
-        avg_output_voltage = np.mean(extracted_output_voltage_series)
-        # avg_input_current is given by the integral of extracted_input_current_series in the range of extracted_time_series
-        # and then divided by the time range
+        # avg_output_voltage is given by the integral of extracted_output_voltage_series in the range of
+        # extracted_time_series and then divided by the time range
+        avg_output_voltage = (np.trapz(extracted_output_voltage_series, x=extracted_time_series) /
+                              (time_ranges[1] - time_ranges[0]))
+        output_voltage_variance = calculate_variance_trapz(extracted_time_series, extracted_output_voltage_series, avg_output_voltage)
+        # avg_input_current is given by the integral of extracted_input_current_series in the range of
+        # extracted_time_series and then divided by the time range
         avg_input_current = (np.trapz(extracted_input_current_series, x=extracted_time_series) /
-                            (time_ranges[1] - time_ranges[0]))
+                             (time_ranges[1] - time_ranges[0]))
         # print(f"Debug, avg_output_voltage: {avg_output_voltage}")
         # print(f"Debug, avg_input_current: {avg_input_current}")
         avg_input_current = abs(avg_input_current)
@@ -404,16 +412,25 @@ def findEff_general(filename, time_ranges, output_voltage_label, load_current, i
     except Exception as e:
         print(f"Error!!! {e}")
         efficiency = 0.0
+        avg_output_voltage = 0.0
+        output_voltage_variance = 100.0
+
+    if avg_output_voltage < 0.0:
+        efficiency = 0.0
+        print(f"Warning!!! avg_output_voltage is negative, set to 0.0")
 
     if efficiency < 0 or efficiency > 1:
         efficiency = 0.0
         print(f"Warning!!! efficiency is {efficiency} and out of range, set to 0.0")
 
-    if math.isnan(efficiency) or math.isinf(efficiency):
-        efficiency = 0.0
-        print(f"Warning!!! efficiency is {efficiency} and is nan, set to 0.0")
+    # If any value is NaN or Inf, set to 0
+    for value in [efficiency, avg_output_voltage, output_voltage_variance]:
+        if math.isnan(value) or math.isinf(value):
+            value = 0.0
+            print(f"Warning!!! value is {value} and is NaN or Inf, set to 0.0")
 
-    return {"efficiency": efficiency}
+    return {"efficiency": efficiency, "vo_mean": avg_output_voltage,
+            "vo_var": output_voltage_variance}
 
 
 def findEff_Buck(filename):
