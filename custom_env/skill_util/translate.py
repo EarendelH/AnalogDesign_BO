@@ -194,7 +194,7 @@ def start_virtuoso_session():
         return None, None
 
 
-def wait_for_virtuoso_ready(master, timeout=2):
+def wait_for_virtuoso_ready(master, timeout=60):
     """
     Wait for Virtuoso to be ready to accept commands.
 
