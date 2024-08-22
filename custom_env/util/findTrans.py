@@ -416,7 +416,7 @@ def findEff_general(filename, time_ranges, output_voltage_label, load_current, i
         output_voltage_variance = 100.0
 
     if avg_output_voltage < 0.0:
-        efficiency = 0.0
+        avg_output_voltage = 0.0
         print(f"Warning!!! avg_output_voltage is negative, set to 0.0")
 
     if efficiency < 0 or efficiency > 1:
