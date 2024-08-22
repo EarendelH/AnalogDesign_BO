@@ -203,13 +203,12 @@ def wait_for_virtuoso_ready(master, timeout=60):
     timeout (int): Maximum time to wait in seconds
 
     Returns:
-    str: Output received while waiting for Virtuoso to be ready
+    bool: True if Virtuoso is ready, False otherwise
     """
     if master is None:
         print("Error: Invalid master file descriptor")
-        return ""
+        return False
 
-    output = ""
     start_time = time.time()
     while True:
         try:
@@ -217,17 +216,16 @@ def wait_for_virtuoso_ready(master, timeout=60):
             if rlist:
                 chunk = os.read(master, 1024).decode()
                 print(chunk, end='', flush=True)
-                output += chunk
-                if "> " in output:
-                    print("\nVirtuoso is ready.")
-                    return output
+                if chunk.strip().endswith(">"):
+                    print("Virtuoso is ready.")
+                    return True
             else:
                 if time.time() - start_time > timeout:
                     print(f"Timeout: Virtuoso did not become ready within {timeout} seconds.")
-                    return output
+                    return False
         except Exception as e:
             print(f"Error while waiting for Virtuoso: {e}")
-            return output
+            return False
 
 
 def send_skill_command(master, command):
@@ -441,10 +439,10 @@ def main():
         return
 
     try:
-        output = wait_for_virtuoso_ready(master)
-        if "Virtuoso is ready" not in output:
+        if not wait_for_virtuoso_ready(master):
             print("Failed to detect Virtuoso ready state. Exiting.")
             return
+
         print("Virtuoso is ready to accept commands.")
 
         if not load_skill_functions(master):
