@@ -15,11 +15,28 @@ from ray.rllib.algorithms.sac import SACConfig
 from ray.rllib.algorithms.algorithm import Algorithm
 from ray.tune.registry import register_env
 from ray.rllib.policy import Policy
+from ray.rllib.algorithms.callbacks import DefaultCallbacks
+from ray.rllib.utils.typing import PolicyID
+from typing import Dict
 
 from rllib_env_continous import RllibAnalogDesignAutoEnv
 
 # Set up logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
+
+class MetricsCallback(DefaultCallbacks):
+    def on_train_result(self, *, algorithm, result: dict, **kwargs) -> None:
+        episode_reward_mean = result.get("episode_reward_mean", 0)
+        episode_reward_max = result.get("episode_reward_max", 0)
+        episode_reward_min = result.get("episode_reward_min", 0)
+        episode_len_mean = result.get("episode_len_mean", 0)
+
+        logging.info(f"Iteration: {result['training_iteration']}")
+        logging.info(f"Episode Reward Mean: {episode_reward_mean}")
+        logging.info(f"Episode Reward Max: {episode_reward_max}")
+        logging.info(f"Episode Reward Min: {episode_reward_min}")
+        logging.info(f"Episode Length Mean: {episode_len_mean}")
 
 
 def get_user_input(prompt, default_value):
@@ -100,19 +117,19 @@ def main():
                         "restore_checkpoint"]:
                 settings[key] = settings[key].lower() == "true"
 
-        env_settings = {
-            "generalize": settings["generalize"],
-            "max_step": settings["max_step"],
-            "netlist_folder_name": settings["netlist_folder_name"],
-            "specs_folder_name": settings["specs_folder_name"],
-            "config_folder_name": settings["config_folder_name"],
-            "run_folder_name": settings["run_folder_name"],
-            "sim_output": settings["sim_output"],
-            "init_method": settings["init_method"],
-            "dc_check": settings["dc_check"],
-            "region_extract": settings["region_extract"],
-            "dynamic_queue": settings["dynamic_queue"],
-        }
+        # env_settings = {
+        #     "generalize": settings["generalize"],
+        #     "max_step": settings["max_step"],
+        #     "netlist_folder_name": settings["netlist_folder_name"],
+        #     "specs_folder_name": settings["specs_folder_name"],
+        #     "config_folder_name": settings["config_folder_name"],
+        #     "run_folder_name": settings["run_folder_name"],
+        #     "sim_output": settings["sim_output"],
+        #     "init_method": settings["init_method"],
+        #     "dc_check": settings["dc_check"],
+        #     "region_extract": settings["region_extract"],
+        #     "dynamic_queue": settings["dynamic_queue"],
+        # }
 
         # Environment initialization
         def env_creator(_):
@@ -181,6 +198,7 @@ def main():
                             "fcnet_hiddens": [256, 256, 256, 256, 256],
                         }
                     )
+                    .callbacks(MetricsCallback)
                     .debugging(log_level="DEBUG")
                     .framework("torch")
                     .resources(num_gpus=num_gpu)
