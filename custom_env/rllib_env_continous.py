@@ -1,12 +1,10 @@
 import copy
 import os
-import numpy as np
-import gymnasium
 import yaml
 from collections import OrderedDict
-import pickle
 import logging
 from ray.rllib.env.multi_agent_env import MultiAgentEnv
+from typing import Dict, Any, Union
 
 from util.gen_action_space import gen_masked_continuous_action_space
 from util.gen_obs_space import gen_obs_space_w_region, flatten_obs_space_w_region
@@ -29,23 +27,30 @@ from util.device_mask import masked_action_dict_mapping
 
 
 class RllibAnalogDesignAutoEnv(MultiAgentEnv):
-    def __init__(self, generalize='',
-                 max_step='',
-                 netlist_folder_name='',
-                 specs_folder_name='',
-                 config_folder_name='',
-                 run_folder_name='',
-                 sim_output='',
-                 init_method='',
-                 dc_check='',
-                 region_extract='',
-                 dynamic_queue='',
-                 log_level='INFO'):
+    def __init__(self, config: Dict[str, Any]):
+
+        self.expected_params: Dict[str, Union[type, tuple]] = {
+            'generalize': bool,
+            'max_step': int,
+            'netlist_folder_name': str,
+            'specs_folder_name': str,
+            'config_folder_name': str,
+            'run_folder_name': str,
+            'sim_output': bool,
+            'init_method': str,
+            'dc_check': bool,
+            'region_extract': bool,
+            'dynamic_queue': bool,
+            'log_level': str
+        }
+
+        for key, value in config.items():
+            setattr(self, key, value)
 
         # Set log level
-        numeric_level = getattr(logging, log_level.upper(), None)
+        numeric_level = getattr(logging, self.log_level.upper(), None)
         if not isinstance(numeric_level, int):
-            raise ValueError(f"Invalid log level: {log_level}")
+            raise ValueError(f"Invalid log level: {self.log_level}")
         logging.basicConfig(level=numeric_level, format='%(asctime)s - %(levelname)s - %(message)s')
 
         # Init values
@@ -58,7 +63,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         self.norm_ideal_specs = None
         self.ideal_specs = None
         self.cur_param = None
-        self.max_step = int(max_step)
+        self.max_step = int(self.max_step)
         self.action_mask = True
 
         self.continue_steps = 4  # Number of steps to continue after positive reward
@@ -69,24 +74,24 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         self.current_path = os.getcwd()
 
         # If region_extract is False, dc_check is impossible to be True. Error and exit
-        if not region_extract and dc_check:
+        if not self.region_extract and self.region_extract:
             logging.error(f"Error!!!: Region extract is False, dc_check can not be True.")
             exit(1)
 
         # Pass initial dc check and dynamic queue flag
-        self.dc_check = dc_check
-        self.region_extract = region_extract
-        self.dynamic_queue = dynamic_queue
+        # self.dc_check = dc_check
+        # self.region_extract = region_extract
+        # self.dynamic_queue = dynamic_queue
 
         # Pass generalization flag
-        self.generalize = generalize
-        self.ideal_specs_path = os.path.join(self.current_path, 'ideal_specs', specs_folder_name)
+        # self.generalize = generalize
+        self.ideal_specs_path = os.path.join(self.current_path, 'ideal_specs', self.specs_folder_name)
 
         # Pass init method
-        self.init_method = init_method
+        self.init_method = self.init_method
 
         # Pass sim_output flag
-        self.sim_output_enable = sim_output
+        self.sim_output_enable = self.sim_output
 
         # Get home directory
         self.home_dir = os.path.expanduser("~")
@@ -94,14 +99,14 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         # Set root directory based on home directory
         # Avoid run folder placing in /tmp directory when running on cluster
         # ~/AnalogDesignAuto/AnalogDesignAuto_MultiAgent/custom_env/ + self.run_root_dir
-        self.run_root_dir = run_folder_name
+        self.run_root_dir = self.run_folder_name
         self.run_root_dir = os.path.join(self.home_dir, "AnalogDesignAuto/AnalogDesignAuto_MultiAgent/custom_env",
                                          self.run_root_dir)
         if not os.path.exists(self.run_root_dir):
             os.mkdir(self.run_root_dir)
 
         # Load config files
-        config_folder_path = os.path.join(self.current_path, 'config', config_folder_name)
+        config_folder_path = os.path.join(self.current_path, 'config', self.config_folder_name)
         self.agent_assign_config = config_folder_path + "/agent_assign.yaml"
         self.param_range_config = config_folder_path + "/param_range.yaml"
         self.sim_config = config_folder_path + "/simulation.yaml"
@@ -112,7 +117,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         self.generalize_specs_config = config_folder_path + "/generalize_specs.yaml"
 
         # Set netlist directory
-        self.unassigned_netlist_dir = netlist_folder_name
+        self.unassigned_netlist_dir = self.netlist_folder_name
         self.unassigned_netlist_dir = os.path.join(self.current_path, 'netlist_template', self.unassigned_netlist_dir)
 
         # Load YAML
@@ -488,3 +493,26 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         #     pickle.dump(self.trajectory_data, f)
 
         return observations, rew, terminated, truncated, info
+
+    def validate_input(self, config: Dict[str, Any]) -> None:
+        for param, expected_type in self.expected_params.items():
+            if param not in config:
+                raise ValueError(f"Missing required parameter: {param}")
+
+            value = config[param]
+            if not isinstance(value, expected_type):
+                raise ValueError(f"Invalid type for {param}. Expected {expected_type}, got {type(value)}")
+
+            if param == 'init_method' and value not in ['file', 'half', 'random', 'mixed']:
+                raise ValueError(
+                    f"Invalid value for init_method. Expected one of ['file', 'half', 'random', 'mixed'], got {value}")
+
+            if param == 'log_level' and value not in ['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL']:
+                raise ValueError(
+                    f"Invalid value for log_level. Expected one of ['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'], "
+                    f"got {value}")
+
+        for key in config:
+            if key not in self.expected_params:
+                raise ValueError(f"Unexpected parameter: {key}")
+

@@ -73,9 +73,10 @@ def main():
             "run_folder_name": get_user_input("Name of run folder", "run_test"),
             "sim_output": get_user_input("Enable simulation output (True/False)", "False"),
             "init_method": get_user_input("Initialization method (file/half/random/mixed)", "file"),
-            "region_extract": get_user_input("Enable region extraction (True/False)", "True"),
             "dc_check": get_user_input("Enable step DC check (True/False)", "True"),
+            "region_extract": get_user_input("Enable region extraction (True/False)", "True"),
             "dynamic_queue": get_user_input("Enable dynamic queue (True/False)", "True"),
+            "log_level": get_user_input("Log level (DEBUG/INFO/WARNING/ERROR/CRITICAL)", "INFO"),
             "restore_checkpoint": get_user_input("Restore from checkpoint? (True/False)", "False"),
             "checkpoint_path": None,  # To be conditionally updated
             "train_iterations": get_user_input("Train iterations(Default: 200)", "200"),
@@ -95,12 +96,9 @@ def main():
     if confirm_flag:
         if args.config_mode == 'interactive':
             # Convert string boolean values to Python boolean values
-            settings["generalize"] = settings["generalize"] == "True"
-            settings["sim_output"] = settings["sim_output"] == "True"
-            settings["dc_check"] = settings["dc_check"] == "True"
-            settings["region_extract"] = settings["region_extract"] == "True"
-            settings["dynamic_queue"] = settings["dynamic_queue"] == "True"
-            settings["restore_checkpoint"] = settings["restore_checkpoint"] == "True"
+            for key in ["generalize", "sim_output", "dc_check", "region_extract", "dynamic_queue",
+                        "restore_checkpoint"]:
+                settings[key] = settings[key].lower() == "true"
 
         env_settings = {
             "generalize": settings["generalize"],
@@ -118,7 +116,20 @@ def main():
 
         # Environment initialization
         def env_creator(_):
-            return RllibAnalogDesignAutoEnv(**env_settings)
+            return RllibAnalogDesignAutoEnv({
+                "generalize": settings["generalize"],
+                "max_step": int(settings["max_step"]),
+                "netlist_folder_name": settings["netlist_folder_name"],
+                "specs_folder_name": settings["specs_folder_name"],
+                "config_folder_name": settings["config_folder_name"],
+                "run_folder_name": settings["run_folder_name"],
+                "sim_output": settings["sim_output"],
+                "init_method": settings["init_method"],
+                "dc_check": settings["dc_check"],
+                "region_extract": settings["region_extract"],
+                "dynamic_queue": settings["dynamic_queue"],
+                "log_level": settings.get("log_level", "INFO")
+            })
 
         register_env("AnalogDesignEnv_v0", env_creator)
 
