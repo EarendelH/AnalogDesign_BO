@@ -219,7 +219,7 @@ def wait_for_virtuoso_ready(master, timeout=60):
                 print(chunk, end='', flush=True)
                 output += chunk
                 if "> " in output:
-                    print("Virtuoso is ready.\n")
+                    print("\nVirtuoso is ready.")
                     return output
             else:
                 if time.time() - start_time > timeout:
