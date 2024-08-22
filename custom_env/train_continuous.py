@@ -215,17 +215,23 @@ def main():
                     "checkpoint_at_end": True,
                 }
 
+                restore_checkpoint_dir = os.path.join(os.path.dirname(checkpoint_path), "restored_training_checkpoints")
+                os.makedirs(restore_checkpoint_dir, exist_ok=True)
+                logging.info(f"New checkpoints will be saved in: {restore_checkpoint_dir}")
+
                 for iteration in range(int(settings["train_iterations"])):
                     result = algo.train()
                     logging.info(f"Iteration {iteration}: {result}")
 
                     if iteration % checkpoint_config["checkpoint_frequency"] == 0:
-                        checkpoint = algo.save()
-                        logging.info(f"Checkpoint saved at iteration {iteration}: {checkpoint}")
+                        checkpoint = algo.save(restore_checkpoint_dir)
+                        checkpoint_path = os.path.join(restore_checkpoint_dir, os.path.basename(checkpoint))
+                        logging.info(f"New checkpoint saved at iteration {iteration}: {checkpoint_path}")
 
                 if checkpoint_config["checkpoint_at_end"]:
-                    final_checkpoint = algo.save()
-                    logging.info(f"Final checkpoint saved: {final_checkpoint}")
+                    final_checkpoint = algo.save(restore_checkpoint_dir)
+                    final_checkpoint_path = os.path.join(restore_checkpoint_dir, os.path.basename(final_checkpoint))
+                    logging.info(f"Final checkpoint saved: {final_checkpoint_path}")
 
             except Exception as e:
                 logging.error(f"Error during checkpoint restoration: {e}")
