@@ -5,6 +5,7 @@ import os
 import pty
 import select
 import sys
+import time
 
 
 def parse_listLibraryCellviews_output(output):
@@ -193,12 +194,13 @@ def start_virtuoso_session():
         return None, None
 
 
-def wait_for_virtuoso_ready(master):
+def wait_for_virtuoso_ready(master, timeout=2):
     """
     Wait for Virtuoso to be ready to accept commands.
 
     Args:
     master (int): Master file descriptor of the pseudo-terminal
+    timeout (int): Maximum time to wait in seconds
 
     Returns:
     str: Output received while waiting for Virtuoso to be ready
@@ -208,24 +210,24 @@ def wait_for_virtuoso_ready(master):
         return ""
 
     output = ""
-    ready = False
-    while not ready:
+    start_time = time.time()
+    while True:
         try:
             rlist, _, _ = select.select([master], [], [], 0.1)
             if rlist:
                 chunk = os.read(master, 1024).decode()
                 print(chunk, end='', flush=True)
                 output += chunk
-                if "> t" in output:
-                    os.write(master, b'\n')  # Send enter
-                    chunk = os.read(master, 1024).decode()
-                    print(chunk, end='', flush=True)
-                    if chunk.strip() == ">":
-                        ready = True
+                if "> " in output:
+                    print("Virtuoso is ready.")
+                    return output
+            else:
+                if time.time() - start_time > timeout:
+                    print(f"Timeout: Virtuoso did not become ready within {timeout} seconds.")
+                    return output
         except Exception as e:
             print(f"Error while waiting for Virtuoso: {e}")
             return output
-    return output
 
 
 def send_skill_command(master, command):
@@ -439,7 +441,10 @@ def main():
         return
 
     try:
-        wait_for_virtuoso_ready(master)
+        output = wait_for_virtuoso_ready(master)
+        if "Virtuoso is ready" not in output:
+            print("Failed to detect Virtuoso ready state. Exiting.")
+            return
         print("Virtuoso is ready to accept commands.")
 
         if not load_skill_functions(master):
