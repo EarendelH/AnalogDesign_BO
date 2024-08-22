@@ -4,6 +4,78 @@ import subprocess
 import os
 import pty
 import select
+import sys
+
+
+def parse_listLibraryCellviews_output(output):
+    """
+    Parse the output of listLibraryCellviews and return core_cell_list and tb_cell_list.
+
+    Args:
+    output (str): Output string from listLibraryCellviews command
+
+    Returns:
+    tuple: (core_cell_list, tb_cell_list)
+    """
+    core_cell_list = []
+    tb_cell_list = []
+    current_cell = None
+
+    for line in output.split('\n'):
+        if line.strip().startswith("Cell:"):
+            current_cell = line.split(":")[1].strip()
+        elif line.strip().startswith("View: schematic"):
+            if current_cell:
+                if current_cell.startswith("tb_"):
+                    tb_cell_list.append(current_cell)
+                else:
+                    core_cell_list.append(current_cell)
+
+    return core_cell_list, tb_cell_list
+
+
+def get_instances_for_cellview(master, lib_name, cell_name):
+    """
+    Get all instances in a specified cellview.
+
+    Args:
+    master: Master file descriptor for Virtuoso session
+    lib_name (str): Library name
+    cell_name (str): Cell name
+
+    Returns:
+    list: List of instance names
+    """
+    command = f'showCellViewInstances("{lib_name}" "{cell_name}" "schematic")'
+    output = send_skill_command(master, command)
+    return extract_instances_from_skill_output(output)
+
+
+def match_instances_to_cellviews(yaml_instances, cellview_instances):
+    """
+    Match instances from YAML to cellviews.
+
+    Args:
+    yaml_instances (list): List of instances extracted from YAML
+    cellview_instances (dict): Dictionary of cellviews and their instances
+
+    Returns:
+    dict: Mapping of instance names to cellviews
+    """
+    instance_to_cellview = {}
+    for instance in yaml_instances:
+        matching_cellviews = []
+        for cellview, instances in cellview_instances.items():
+            if instance in instances:
+                matching_cellviews.append(cellview)
+
+        if len(matching_cellviews) > 1:
+            print(f"Error: Instance {instance} found in multiple cellviews: {matching_cellviews}")
+            sys.exit(1)
+        elif len(matching_cellviews) == 1:
+            instance_to_cellview[instance] = matching_cellviews[0]
+
+    return instance_to_cellview
 
 
 def extract_instances_from_yaml(yaml_file):
@@ -49,12 +121,14 @@ def extract_instances_from_skill_output(output):
     return instances
 
 
-def generate_skill_commands(yaml_file):
+def generate_skill_commands(yaml_file, instance_to_cellview, tb_cell_list):
     """
-    Generate Skill commands based on YAML file content.
+    Generate Skill commands based on YAML file content, instance to cellview mapping, and testbench cell list.
 
     Args:
     yaml_file (str): Path to the YAML file
+    instance_to_cellview (dict): Mapping of instance names to cellviews
+    tb_cell_list (list): List of testbench cells
 
     Returns:
     list: List of Skill commands to modify instance parameters
@@ -65,34 +139,36 @@ def generate_skill_commands(yaml_file):
     core_data = data.get('Core_Param', {})
     testbench_data = data.get('Testbench_Param', {})
     lib_name = data.get('Lib', '')
-    core_cell_name = data.get('Core_Cell', '')
-    testbench_cells = data.get('Testbench_Cell', [])
 
     skill_commands = []
 
     def add_command(lib, cell, view, instance, param, value):
+        cell = instance_to_cellview.get(instance, cell)
         command = f'ModifyInstanceParameter("{lib}" "{cell}" "{view}" "{instance}" "{param}" "{value}")'
         skill_commands.append(command)
-        print(f"Debug, Adding command: {command}")  # Debug print
+        print(f"Debug: Adding command: {command}")  # Debug print
 
     # Generate commands for Core_Param
     for key, value in core_data.items():
         if key.startswith(('C', 'R')):
-            add_command(lib_name, core_cell_name, "schematic", key, key[0].lower(), value)
+            add_command(lib_name, instance_to_cellview.get(key, ''), "schematic", key, key[0].lower(), value)
             continue
 
         match = re.match(r'(w|l|nf)_(M\d+|MP)(?:_per_finger)?', key)
         if match:
             param_type, instance = match.groups()
             skill_param = {"w": "w", "l": "l", "nf": "simM" if instance == "MP" else "fingers"}[param_type]
-            add_command(lib_name, core_cell_name, "schematic", instance, skill_param, value)
+            add_command(lib_name, instance_to_cellview.get(instance, ''), "schematic", instance, skill_param, value)
 
     # Generate commands for Testbench_Param
-    for tb_cell in testbench_cells:
-        for instance, value in testbench_data.items():
-            if instance.startswith(('V', 'I')):
-                skill_param = "vdc" if instance.startswith('V') else "idc"
-                add_command(lib_name, tb_cell, "schematic", instance, skill_param, value)
+    if testbench_data or tb_cell_list:
+        for tb_cell in tb_cell_list:
+            for instance, value in testbench_data.items():
+                if instance.startswith(('V', 'I')):
+                    skill_param = "vdc" if instance.startswith('V') else "idc"
+                    add_command(lib_name, tb_cell, "schematic", instance, skill_param, value)
+    else:
+        print("Debug: Testbench_Param is empty or not present. Skipping testbench parameter modifications.")
 
     return skill_commands
 
@@ -371,33 +447,30 @@ def main():
             return
 
         lib_name = yaml_data.get('Lib', '')
-        core_cell_name = yaml_data.get('Core_Cell', '')
 
-        if not lib_name or not core_cell_name:
-            print("Error: Lib or Core_Cell not found in YAML file. Exiting.")
+        if not lib_name:
+            print("Error: Lib not found in YAML file. Exiting.")
             return
 
-        # Run showCellViewInstances
-        show_command = f'showCellViewInstances("{lib_name}" "{core_cell_name}" "schematic")'
-        output = send_skill_command(master, show_command)
+        # Run listLibraryCellviews
+        list_command = f'listLibraryCellviews("{lib_name}")'
+        output = send_skill_command(master, list_command)
+        core_cell_list, tb_cell_list = parse_listLibraryCellviews_output(output)
+        print("Core cells:", core_cell_list)
+        print("Testbench cells:", tb_cell_list)
 
-        # Extract instances from Skill output
-        skill_instances = extract_instances_from_skill_output(output)
-        print("Instances extracted from Skill output:", skill_instances)
+        # Get instances for each core cell
+        cellview_instances = {}
+        for cell in core_cell_list:
+            instances = get_instances_for_cellview(master, lib_name, cell)
+            cellview_instances[cell] = instances
 
-        # Compare instances
-        missing_instances = set(yaml_instances) - set(skill_instances)
-        if missing_instances:
-            print("Error: The following instances are missing in the schematic:")
-            for instance in missing_instances:
-                print(f"  - {instance}")
-            print("Exiting program.")
-            return
+        # Match YAML instances to cellviews
+        instance_to_cellview = match_instances_to_cellviews(yaml_instances, cellview_instances)
+        print(f"Map dict is {instance_to_cellview}")
 
-        print("All instances from YAML are present in the schematic. Proceeding with parameter checks.")
-
-        # Continue with the rest of the script (parameter modifications)
-        commands = generate_skill_commands(yaml_path)
+        # Generate and send Skill commands
+        commands = generate_skill_commands(yaml_path, instance_to_cellview, tb_cell_list)
         for command in commands:
             print(f"\nSending command: {command}")
             send_skill_command(master, command)
@@ -405,13 +478,17 @@ def main():
 
         # Check parameters for each instance
         for instance in yaml_instances:
-            print(f"Checking parameters for instance {instance}...")
-            command = f'PrintInstanceDetails("{lib_name}" "{core_cell_name}" "schematic" "{instance}")'
-            output = send_skill_command(master, command)
-            if not check_instance_parameters(yaml_data, output, instance):
-                print(f"Parameter mismatch for instance {instance}.")
+            cellview = instance_to_cellview.get(instance)
+            if cellview:
+                print(f"Checking parameters for instance {instance} in {cellview}...")
+                command = f'PrintInstanceDetails("{lib_name}" "{cellview}" "schematic" "{instance}")'
+                output = send_skill_command(master, command)
+                if not check_instance_parameters(yaml_data, output, instance):
+                    print(f"Parameter mismatch for instance {instance}.")
+            else:
+                print(f"Warning: No matching cellview found for instance {instance}.")
 
-        print("All instance parameters match. Proceeding with parameter modifications.")
+        print("All instance parameters checked. Proceeding with parameter modifications.")
 
         send_skill_command(master, "exit")
     except Exception as e:
