@@ -210,9 +210,23 @@ def main():
                                 f"{policy_id} - {key}: Checkpoint shape: {checkpoint_shape}, Current shape: {current_shape}")
 
                 logging.info("Starting training from restored checkpoint")
+                # 设置checkpoint配置
+                checkpoint_config = {
+                    "checkpoint_frequency": 10,
+                    "checkpoint_at_end": True,
+                }
+
                 for iteration in range(int(settings["train_iterations"])):
                     result = algo.train()
                     logging.info(f"Iteration {iteration}: {result}")
+
+                    if iteration % checkpoint_config["checkpoint_frequency"] == 0:
+                        checkpoint = algo.save()
+                        logging.info(f"Checkpoint saved at iteration {iteration}: {checkpoint}")
+
+                if checkpoint_config["checkpoint_at_end"]:
+                    final_checkpoint = algo.save()
+                    logging.info(f"Final checkpoint saved: {final_checkpoint}")
 
             except Exception as e:
                 logging.error(f"Error during checkpoint restoration: {e}")
