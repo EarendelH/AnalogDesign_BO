@@ -294,7 +294,8 @@ def load_skill_functions(master):
     skill_files = [
         "modifyInstanceParameterWithCallback.il",
         "showCellViewInstances.il",
-        "PrintInstanceDetails.il"
+        "PrintInstanceDetails.il",
+        "listLibraryCellviews.il"
     ]
     for file in skill_files:
         load_command = f'load("{file}")'
