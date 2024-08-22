@@ -210,7 +210,6 @@ def main():
                                 f"{policy_id} - {key}: Checkpoint shape: {checkpoint_shape}, Current shape: {current_shape}")
 
                 logging.info("Starting training from restored checkpoint")
-                # 设置checkpoint配置
                 checkpoint_config = {
                     "checkpoint_frequency": 10,
                     "checkpoint_at_end": True,
