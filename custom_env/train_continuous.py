@@ -37,6 +37,7 @@ class MetricsCallback(DefaultCallbacks):
         logging.info(f"Episode Reward Max: {episode_reward_max}")
         logging.info(f"Episode Reward Min: {episode_reward_min}")
         logging.info(f"Episode Length Mean: {episode_len_mean}")
+        logging.info(f"Iter Num: {result['iterations_since_restore']}")
 
 
 def get_user_input(prompt, default_value):
@@ -239,7 +240,7 @@ def main():
 
                 for iteration in range(int(settings["train_iterations"])):
                     result = algo.train()
-                    logging.info(f"Iteration {iteration}: {result}")
+                    # logging.debug(f"Iteration {iteration}: {result}")
 
                     if iteration % checkpoint_config["checkpoint_frequency"] == 0:
                         checkpoint_result = algo.save(restore_checkpoint_dir)
