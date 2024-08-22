@@ -383,16 +383,16 @@ def findEff_general(filename, time_ranges, output_voltage_label, load_current, i
         # print(f"Debug!!! extracted_input_current_series with length: {len(extracted_input_current_series)}")
 
         # Plot extracted_output_voltage_series and extracted_input_current_series against time, keep plt open
-        plt.figure(figsize=(14, 6))
-        plt.plot(extracted_time_series, extracted_output_voltage_series, label=output_voltage_label, color="blue")
+        # plt.figure(figsize=(14, 6))
+        # plt.plot(extracted_time_series, extracted_output_voltage_series, label=output_voltage_label, color="blue")
         # plt.scatter(extracted_time_series, extracted_input_current_series, label=input_current_label, color="red")
-        plt.plot(extracted_time_series, extracted_input_current_series, label=input_current_label, color="red")
-        plt.xlabel("Time")
-        plt.ylabel("Value")
-        plt.title(f"'{output_voltage_label}' and '{input_current_label}' Signal Over Time")
-        plt.legend()
-        plt.grid(True)
-        plt.show()
+        # plt.plot(extracted_time_series, extracted_input_current_series, label=input_current_label, color="red")
+        # plt.xlabel("Time")
+        # plt.ylabel("Value")
+        # plt.title(f"'{output_voltage_label}' and '{input_current_label}' Signal Over Time")
+        # plt.legend()
+        # plt.grid(True)
+        # plt.show()
 
         # avg_output_voltage is given by the integral of extracted_output_voltage_series in the range of
         # extracted_time_series and then divided by the time range
