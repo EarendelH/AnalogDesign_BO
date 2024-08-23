@@ -16,8 +16,9 @@ def determine_param_mapping(instance_name):
         sys.exit(1)
 
     scs_files = scs_files[0]  # Only consider the first .scs file
+    scs_file_path = os.path.join(os.path.dirname(__file__), scs_files)
 
-    with open(scs_files, 'r') as file:
+    with open(scs_file_path, 'r') as file:
         content = file.read()
 
     # Extract the parameter mapping
