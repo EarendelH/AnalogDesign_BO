@@ -163,7 +163,7 @@ def main():
             logging.info(f"Restoring from checkpoint: {checkpoint_path}")
 
             # Use Algorithm.from_checkpoint() to restore the algorithm
-            restored_algo = Algorithm.from_checkpoint(checkpoint_path)
+            restored_algo = Algorithm.from_checkpoint(path=checkpoint_path)
 
             # Debug: Print information about the restored algorithm
             logging.info("Checkpoint restored successfully")
