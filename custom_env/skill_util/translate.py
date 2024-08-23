@@ -8,6 +8,35 @@ import sys
 import time
 
 
+def determine_param_mapping(instance_name):
+    scs_files = [f for f in os.listdir('.') if f.endswith('.scs')]
+    if not scs_files:
+        print("Error: No .scs files found in the current directory.")
+        sys.exit(1)
+
+    scs_files = scs_files[0]  # Only consider the first .scs file
+
+    with open(scs_files, 'r') as file:
+        content = file.read()
+
+    # Extract the parameter mapping
+    instance_match = re.search(r'^\s*(' + re.escape(instance_name) + r')\s\(', content, re.MULTILINE)
+    if instance_match:
+        line_start = instance_match.start()
+        line_end = content.find('\n', line_start)
+        line = content[line_start:line_end]
+
+        if f'multi=nf_{instance_name}' in line:
+            return {"w": "w", "l": "l", "nf": "simM"}
+        elif f'nf=nf_{instance_name}' in line:
+            return {"w": "w", "l": "l", "nf": "nf"}
+        else:
+            print(f"Error: Unable to determine parameter mapping for instance {instance_name}.")
+            sys.exit(1)
+    else:
+        print(f"Error: Instance {instance_name} not found in the .scs file.")
+        sys.exit(1)
+
 def parse_listLibraryCellviews_output(output):
     """
     Parse the output of listLibraryCellviews and return core_cell_list and tb_cell_list.
@@ -151,14 +180,15 @@ def generate_skill_commands(yaml_file, instance_to_cellview, tb_cell_list):
 
     # Generate commands for Core_Param
     for key, value in core_data.items():
-        if key.startswith(('C', 'R')):
+        if key.startswith(('C', 'R', 'L')):
             add_command(lib_name, instance_to_cellview.get(key, ''), "schematic", key, key[0].lower(), value)
             continue
 
-        match = re.match(r'(w|l|nf)_(M\d+|MP)(?:_per_finger)?', key)
+        match = re.match(r'(w|l|nf)_(M\w+)(?:_per_finger)?', key)
         if match:
             param_type, instance = match.groups()
-            skill_param = {"w": "w", "l": "l", "nf": "simM" if instance == "MP" else "fingers"}[param_type]
+            param_mapping = determine_param_mapping(instance)
+            skill_param = param_mapping[param_type]
             add_command(lib_name, instance_to_cellview.get(instance, ''), "schematic", instance, skill_param, value)
 
     # Generate commands for Testbench_Param
@@ -168,6 +198,8 @@ def generate_skill_commands(yaml_file, instance_to_cellview, tb_cell_list):
                 if instance.startswith(('V', 'I')):
                     skill_param = "vdc" if instance.startswith('V') else "idc"
                     add_command(lib_name, tb_cell, "schematic", instance, skill_param, value)
+                if instance.startswith(('C', 'R', 'L')):
+                    add_command(lib_name, tb_cell, "schematic", instance, instance[0].lower(), value)
     else:
         print("Debug: Testbench_Param is empty or not present. Skipping testbench parameter modifications.")
 
@@ -406,8 +438,8 @@ def check_instance_parameters(yaml_data, skill_output, instance_name):
             else:
                 print(f"{yaml_key} value correct for {instance_name}")
 
-    elif instance_name.startswith(('C', 'R')):
-        param_key = 'c' if instance_name.startswith('C') else 'r'
+    elif instance_name.startswith(('C', 'R', 'L')):
+        param_key = instance_name[0].lower()
         yaml_value = str(yaml_params.get(instance_name, ''))
         skill_value = str(skill_params.get(param_key, ''))
 
