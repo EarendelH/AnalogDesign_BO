@@ -5,6 +5,7 @@ import argparse
 import yaml
 import torch
 import logging
+import datetime
 
 import ray
 from ray import tune
@@ -25,19 +26,19 @@ from rllib_env_continous import RllibAnalogDesignAutoEnv
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 
-class MetricsCallback(DefaultCallbacks):
-    def on_train_result(self, *, algorithm, result: dict, **kwargs) -> None:
-        episode_reward_mean = result.get("episode_reward_mean", 0)
-        episode_reward_max = result.get("episode_reward_max", 0)
-        episode_reward_min = result.get("episode_reward_min", 0)
-        episode_len_mean = result.get("episode_len_mean", 0)
+def format_time(seconds):
+    return str(datetime.timedelta(seconds=int(seconds)))
 
-        logging.info(f"Iteration: {result['training_iteration']}")
-        logging.info(f"Episode Reward Mean: {episode_reward_mean}")
-        logging.info(f"Episode Reward Max: {episode_reward_max}")
-        logging.info(f"Episode Reward Min: {episode_reward_min}")
-        logging.info(f"Episode Length Mean: {episode_len_mean}")
-        logging.info(f"Iter Num: {result['iterations_since_restore']}")
+
+def print_progress_table(result, iteration, total_time):
+    table = (
+        "┌───────────────────────────────────────────────────────────────────────────────────────────────────┐\n"
+        f"│ {'PPO_restored' :<21} | {'iter' :>4} | {'total time' :>10} | {'ts' :>9} | {'reward' :>6} | {'episode_reward_max' :>10} | {'episode_reward_min' :>10} | {'episode_len_mean' :>8} │\n"
+        "├───────────────────────────────────────────────────────────────────────────────────────────────────┤\n"
+        f"│ {'PPO_restored' :<21} | {iteration:4d} | {format_time(total_time):>10} | {result['timesteps_total']:9d} | {result['episode_reward_mean']:6.2f} | {result['episode_reward_max']:10.2f} | {result['episode_reward_min']:10.2f} | {result['episode_len_mean']:8.2f} │\n"
+        "└───────────────────────────────────────────────────────────────────────────────────────────────────┘"
+    )
+    print(table)
 
 
 def get_user_input(prompt, default_value):
@@ -181,7 +182,6 @@ def main():
                         "fcnet_hiddens": [256, 256, 256, 256, 256],
                     }
                 )
-                .callbacks(MetricsCallback)
                 .debugging(log_level="DEBUG")
                 .framework("torch")
                 .resources(num_gpus=int(settings["gpu_usage"]))
@@ -211,6 +211,8 @@ def main():
                 for iteration in range(int(settings["train_iterations"])):
                     result = algo.train()
                     logging.info(f"Iteration {iteration}: {result}")
+
+                    print_progress_table(result, iteration, total_time)
 
                     if iteration % 10 == 0:
                         checkpoint_result = algo.save(restore_checkpoint_dir)
