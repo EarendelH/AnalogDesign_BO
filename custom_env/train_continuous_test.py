@@ -6,6 +6,7 @@ import yaml
 import torch
 import logging
 import datetime
+import time
 
 import ray
 from ray import tune
@@ -208,9 +209,11 @@ def main():
                 os.makedirs(restore_checkpoint_dir, exist_ok=True)
                 logging.info(f"New checkpoints will be saved in: {restore_checkpoint_dir}")
 
+                start_time = time.time()
                 for iteration in range(int(settings["train_iterations"])):
                     result = algo.train()
                     logging.info(f"Iteration {iteration}: {result}")
+                    total_time = time.time() - start_time
 
                     print_progress_table(result, iteration, total_time)
 
