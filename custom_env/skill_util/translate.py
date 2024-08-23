@@ -189,6 +189,7 @@ def generate_skill_commands(yaml_file, instance_to_cellview, tb_cell_list):
         match = re.match(r'(w|l|nf)_(M\w+)(?:_per_finger)?', key)
         if match:
             param_type, instance = match.groups()
+            instance = instance.replace('_per_finger', '')
             param_mapping = determine_param_mapping(instance)
             skill_param = param_mapping[param_type]
             add_command(lib_name, instance_to_cellview.get(instance, ''), "schematic", instance, skill_param, value)
