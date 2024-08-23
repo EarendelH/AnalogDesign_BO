@@ -218,11 +218,14 @@ def main():
                     print_progress_table(result, iteration, total_time)
 
                     if iteration % 10 == 0:
-                        checkpoint_result = algo.save(restore_checkpoint_dir)
+                        # Checkpoint folder name with iteration number under checkpoint_path
+                        checkpoint_folder_iter = os.path.join(restore_checkpoint_dir, f"checkpoint_{iteration}")
+                        checkpoint_result = algo.save(checkpoint_folder_iter)
                         new_checkpoint_path = checkpoint_result.checkpoint.path
                         logging.info(f"New checkpoint saved at iteration {iteration}: {new_checkpoint_path}")
 
-                final_checkpoint_result = algo.save(restore_checkpoint_dir)
+                checkpoint_folder_final = os.path.join(restore_checkpoint_dir, "final_checkpoint")
+                final_checkpoint_result = algo.save(checkpoint_folder_final)
                 final_checkpoint_path = final_checkpoint_result.checkpoint.path
                 logging.info(f"Final checkpoint saved: {final_checkpoint_path}")
 
