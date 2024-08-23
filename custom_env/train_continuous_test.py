@@ -157,32 +157,73 @@ def main():
         # Restore or Initialize train
         restore_checkpoint = settings["restore_checkpoint"]
         if settings["restore_checkpoint"]:
+            policies = {f"policy_{i + 1}" for i in range(int(settings["num_agents"]))}
+            policies_to_train = list(policies)
+            policy_mapping_fn = lambda aid, episode, worker, **kwargs: f"policy_{int(aid[-1])}"
+
+            config = (
+                PPOConfig()
+                .environment(env="AnalogDesignEnv_v0", clip_actions=True)
+                .rollouts(num_rollout_workers=int(settings["cpu_usage"]))
+                .training(
+                    train_batch_size=512,
+                    lr=2e-4,
+                    gamma=0.96,
+                    lambda_=0.95,
+                    use_gae=True,
+                    clip_param=0.3,
+                    grad_clip=None,
+                    entropy_coeff=0.01,
+                    vf_loss_coeff=0.25,
+                    sgd_minibatch_size=64,
+                    num_sgd_iter=24,
+                    model={
+                        "fcnet_hiddens": [256, 256, 256, 256, 256],
+                    }
+                )
+                .callbacks(MetricsCallback)
+                .debugging(log_level="DEBUG")
+                .framework("torch")
+                .resources(num_gpus=int(settings["gpu_usage"]))
+                .multi_agent(
+                    policies=policies,
+                    policy_mapping_fn=policy_mapping_fn,
+                    policies_to_train=policies_to_train,
+                )
+            )
 
             checkpoint_path = settings["checkpoint_path"]
             assert os.path.exists(checkpoint_path), "Checkpoint path does not exist"
-            logging.info(f"Restoring from checkpoint: {checkpoint_path}")
+            logging.info(f"Attempting to restore from checkpoint: {checkpoint_path}")
 
-            # Use Algorithm.from_checkpoint() to restore the algorithm
-            restored_algo = Algorithm.from_checkpoint(path=checkpoint_path)
+            try:
+                algo = config.build()
+                logging.info("New algorithm instance built from configuration")
 
-            # Debug: Print information about the restored algorithm
-            logging.info("Checkpoint restored successfully")
-            logging.info(f"Restored algorithm type: {type(restored_algo).__name__}")
+                algo.restore(checkpoint_path)
+                logging.info(f"Algorithm state restored from checkpoint: {checkpoint_path}")
 
-            # Get policy information
-            if hasattr(restored_algo, 'workers') and restored_algo.workers:
-                local_worker = restored_algo.workers.local_worker()
-                if local_worker:
-                    policies = local_worker.policy_map
-                    logging.info(f"Restored policies: {list(policies.keys())}")
-                else:
-                    logging.warning("Local worker not available")
-            else:
-                logging.warning("Workers not available in restored algorithm")
+                restore_checkpoint_dir = os.path.join(os.path.dirname(checkpoint_path), "restored_training_checkpoints")
+                os.makedirs(restore_checkpoint_dir, exist_ok=True)
+                logging.info(f"New checkpoints will be saved in: {restore_checkpoint_dir}")
 
-            # Get the restored configuration
-            logging.info("Configuration restored from checkpoint")
-            restored_algo.train()
+                for iteration in range(int(settings["train_iterations"])):
+                    result = algo.train()
+                    logging.info(f"Iteration {iteration}: {result}")
+
+                    if iteration % 10 == 0:
+                        checkpoint_result = algo.save(restore_checkpoint_dir)
+                        new_checkpoint_path = checkpoint_result.checkpoint.path
+                        logging.info(f"New checkpoint saved at iteration {iteration}: {new_checkpoint_path}")
+
+                final_checkpoint_result = algo.save(restore_checkpoint_dir)
+                final_checkpoint_path = final_checkpoint_result.checkpoint.path
+                logging.info(f"Final checkpoint saved: {final_checkpoint_path}")
+
+            except Exception as e:
+                logging.error(f"Error during checkpoint restoration or training: {e}")
+                logging.exception("Detailed traceback:")
+                sys.exit(1)
 
         if not restore_checkpoint:
 
