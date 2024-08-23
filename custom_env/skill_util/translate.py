@@ -414,6 +414,7 @@ def check_instance_parameters(yaml_data, skill_output, instance_name):
 
     if instance_name.startswith('M'):
         param_mapping = determine_param_mapping(instance_name)
+        print(f"Debug, for {instance_name}, the param_mapping is {param_mapping}")
 
         if param_mapping['nf'] == 'simM':
             params_to_check = {'l': 'l', 'w': 'w', 'nf': 'simM'}
