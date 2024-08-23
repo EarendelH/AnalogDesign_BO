@@ -9,7 +9,7 @@ import time
 
 
 def determine_param_mapping(instance_name):
-    scs_files = [f for f in os.listdir('__file__') if f.endswith('.scs')]
+    scs_files = [f for f in os.listdir(os.path.dirname(__file__)) if f.endswith('.scs')]
     if not scs_files:
         print("Error: No .scs files found in the current directory.")
         sys.exit(1)
