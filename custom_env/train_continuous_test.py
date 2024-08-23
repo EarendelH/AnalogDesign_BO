@@ -199,6 +199,7 @@ def main():
             try:
                 algo = config.build()
                 logging.info("New algorithm instance built from configuration")
+                logging.info(f"Algorithm: {algo}")
 
                 algo.restore(checkpoint_path)
                 logging.info(f"Algorithm state restored from checkpoint: {checkpoint_path}")
