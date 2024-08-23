@@ -410,20 +410,32 @@ def check_instance_parameters(yaml_data, skill_output, instance_name):
             skill_params[key] = value
 
     if instance_name.startswith('M'):
-        if instance_name == 'MP':
-            params_to_check = {'l': 'l', 'w': 'w', 'nf': 'simM'}
+        # if instance_name == 'MP':
+        #     params_to_check = {'l': 'l', 'w': 'w', 'nf': 'simM'}
+        # else:
+        #     params_to_check = {'l': 'l', 'w': 'w', 'nf': 'fingers'}
+        #     # Check wf
+        #     w = parse_value(skill_params['w'])
+        #     fingers = int(skill_params['fingers'])
+        #     calculated_wf = w * fingers
+        #     actual_wf = parse_value(skill_params['wf'])
+        #     if abs(calculated_wf - actual_wf) > 1e-15:
+        #         print(f"Error: wf value mismatch for {instance_name}. Calculated:
+        #         {calculated_wf}, Actual: {actual_wf}")
+        #         return False
+        #     else:
+        #         print(f"wf value correct for {instance_name}")
+        params_to_check = {'l': 'l', 'w': 'w', 'nf': 'fingers'}
+        # Check wf
+        w = parse_value(skill_params['w'])
+        fingers = int(skill_params['fingers'])
+        calculated_wf = w * fingers
+        actual_wf = parse_value(skill_params['wf'])
+        if abs(calculated_wf - actual_wf) > 1e-15:
+            print(f"Error: wf value mismatch for {instance_name}. Calculated: {calculated_wf}, Actual: {actual_wf}")
+            return False
         else:
-            params_to_check = {'l': 'l', 'w': 'w', 'nf': 'fingers'}
-            # Check wf
-            w = parse_value(skill_params['w'])
-            fingers = int(skill_params['fingers'])
-            calculated_wf = w * fingers
-            actual_wf = parse_value(skill_params['wf'])
-            if abs(calculated_wf - actual_wf) > 1e-15:
-                print(f"Error: wf value mismatch for {instance_name}. Calculated: {calculated_wf}, Actual: {actual_wf}")
-                return False
-            else:
-                print(f"wf value correct for {instance_name}")
+            print(f"wf value correct for {instance_name}")
 
         for yaml_key, skill_key in params_to_check.items():
             if yaml_key == "w":
