@@ -31,7 +31,7 @@ def determine_param_mapping(instance_name):
         if f'multi=nf_{instance_name}' in line:
             return {"w": "w", "l": "l", "nf": "simM"}
         elif f'nf=nf_{instance_name}' in line:
-            return {"w": "w", "l": "l", "nf": "nf"}
+            return {"w": "w", "l": "l", "nf": "fingers"}
         else:
             print(f"Error: Unable to determine parameter mapping for instance {instance_name}.")
             sys.exit(1)
