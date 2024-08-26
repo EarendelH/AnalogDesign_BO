@@ -212,17 +212,19 @@ def main():
                 start_time = time.time()
                 for iteration in range(int(settings["train_iterations"])):
                     result = algo.train()
-                    logging.info(f"Iteration {iteration}: {result}")
+                    # logging.info(f"Iteration {iteration}: {result}")
                     total_time = time.time() - start_time
 
                     print_progress_table(result, iteration, total_time)
 
+                    checkpoint_index = 0
                     if iteration % 10 == 0:
                         # Checkpoint folder name with iteration number under checkpoint_path
-                        checkpoint_folder_iter = os.path.join(restore_checkpoint_dir, f"checkpoint_{iteration}")
+                        checkpoint_folder_iter = os.path.join(restore_checkpoint_dir, f"checkpoint_{checkpoint_index}")
                         checkpoint_result = algo.save(checkpoint_folder_iter)
                         new_checkpoint_path = checkpoint_result.checkpoint.path
                         logging.info(f"New checkpoint saved at iteration {iteration}: {new_checkpoint_path}")
+                        checkpoint_index += 1
 
                 checkpoint_folder_final = os.path.join(restore_checkpoint_dir, "final_checkpoint")
                 final_checkpoint_result = algo.save(checkpoint_folder_final)
