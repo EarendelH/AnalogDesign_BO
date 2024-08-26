@@ -146,7 +146,8 @@ def main():
                 "dc_check": settings["dc_check"],
                 "region_extract": settings["region_extract"],
                 "dynamic_queue": settings["dynamic_queue"],
-                "log_level": settings.get("log_level", "INFO")
+                "log_level": settings["log_level"],
+                "reward_func": settings["reward_func"]
             })
 
         register_env("AnalogDesignEnv_v0", env_creator)
