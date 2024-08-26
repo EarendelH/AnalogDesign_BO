@@ -1,4 +1,5 @@
 # from extract_trace import extractTransTrace
+import os.path
 from util.extract_trace import extractTransTrace
 import numpy as np
 import bisect
@@ -260,11 +261,15 @@ def findShoot_general(filename, time_ranges, stable_voltage):
     #     overshoot = 100.0
     #     undershoot = 100.0
     if stable_high_load_voltage == 0.0 or stable_light_load_voltage == 0.0:
-        print("Warning! No shoot be found.")
+        print(f"Warning! No shoot be found.")
         overshoot = 100.0
         undershoot = 100.0
     if overshoot == 0.0 or undershoot == 0.0:
-        print("Warning! Shoot is zero. Too good to be true")
+        print(f"Warning! Shoot is zero. Too good to be true")
+        overshoot = 100.0
+        undershoot = 100.0
+    if os.path.getsize(filename) > 500 * 1024:
+        print(f"Warning! {filename} is larger than 500KB, the system is highly like to be unstable")
         overshoot = 100.0
         undershoot = 100.0
     # if overshoot >= stable_voltage or undershoot >= stable_voltage:

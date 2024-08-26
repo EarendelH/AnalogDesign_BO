@@ -164,25 +164,11 @@ def run_dynamic_simulation(work_dir, sim_config, zero_sim_result, show_output=Fa
                     print(f"Partial result success: {results}")
                     # print(f"Debug!!! Simulation {simulation} failed. Return zero simulation result")
                 # Easy way to determine the stability of transient simulation
-                if simulation.startswith("Trans"):
-                    # Determine whether processed_file is larger than 1M
-                    if os.path.getsize(processed_file_full_path) > 500 * 1024:
-                        print(
-                            f"Warning: {processed_file_full_path} is larger than 0.5M, the system is highly likely to "
-                            f"be unstable.")
-                        fail_tag = True
-                        # All items in modified_result{simulation} set to 1
-                        results[simulation] = {key: 100.0 for key in modified_result.keys()}
-                        # print(f"Debug!!! Simulation {simulation} failed. Return zero simulation result")
 
         # Break the loop if fail_tag is True
         if fail_tag and dynamic_queue:
             # print(f"Debug!!! Simulation {simulation} failed. Break the loop. No more simulation should be run.")
             break
-
-        # Save result as pickle file
-    with open(f"{work_dir}/result.pkl", "wb") as f:
-        pickle.dump(results, f)
 
     # print(f"Debug!!! results: {results} and fail_tag: {fail_tag}")
 

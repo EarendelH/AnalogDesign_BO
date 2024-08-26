@@ -5,6 +5,8 @@ from collections import OrderedDict
 import logging
 from ray.rllib.env.multi_agent_env import MultiAgentEnv
 from typing import Dict, Any, Union
+import importlib
+import pickle
 
 from util.gen_action_space import gen_masked_continuous_action_space
 from util.gen_obs_space import gen_obs_space_w_region, flatten_obs_space_w_region
@@ -14,7 +16,6 @@ from util.gen_param_space import gen_param_space
 from util.util_func import create_work_dir
 from util.assign_param2netlist import update_netlist
 from util.run_spectre_simulation import run_dynamic_simulation, run_region_simulation
-from util.cal_reward import cal_reward
 from util.generalize_config import generalize_config
 from util.update_obs_space import update_obs_space_w_region, flatten_observation_w_region
 from util.update_obs_space import update_obs_space, flatten_observation
@@ -41,7 +42,8 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
             'dc_check': bool,
             'region_extract': bool,
             'dynamic_queue': bool,
-            'log_level': str
+            'log_level': str,
+            'reward_func': str
         }
 
         for key, value in config.items():
@@ -119,6 +121,14 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         # Set netlist directory
         self.unassigned_netlist_dir = self.netlist_folder_name
         self.unassigned_netlist_dir = os.path.join(self.current_path, 'netlist_template', self.unassigned_netlist_dir)
+
+        # Import Reward Func
+        try:
+            reward_module = importlib.import_module('util.cal_reward')
+            self.cal_reward = getattr(reward_module, self.reward_func)
+        except (ImportError, AttributeError) as e:
+            logging.error(f"Error importing reward function '{self.reward_func}': {e}")
+            raise
 
         # Load YAML
         with open(self.sim_config, 'r') as file:
@@ -271,7 +281,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         observations = {agent: observation for agent in self.agents}
 
         # Test Rew func
-        rew = cal_reward(self.ideal_specs, sim_result, self.norm_specs)
+        rew = self.cal_reward(self.ideal_specs, sim_result, self.norm_specs)
         logging.info(f"Debug!!!Resetting!!!Reward result: {rew}")
 
         self.cur_param = copy.deepcopy(init_param)
@@ -282,27 +292,15 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
 
         info = {agent: {} for agent in self.agents}
 
-        # # Generate log pickle file
-        # self.log_file_name = f"{datetime.datetime.now().strftime('%Y%m%d%H%M%S')}{random.randint(1000, 9999)}.pkl"
-        # self.log_file_path = os.path.join(self.run_root_dir, self.log_file_name)
-        #
-        # # Save trajectory reset info
-        # self.trajectory_data = {
-        #     'initial_data': {
-        #         'ideal_specs': self.ideal_specs,
-        #         'norm_specs': self.norm_specs,
-        #         'sim_result': sim_result,
-        #         'init_param': init_param,
-        #         'rew': rew
-        #     },
-        #     'steps_data': []
-        # }
-        #
-        # with open(self.log_file_path, 'wb') as f:
-        #     pickle.dump(self.trajectory_data, f)
-
-        # Delete working temp directory, if it exists
-        # delete_work_dir(working_dir_reset)
+        # Save init step to pickle file
+        step_data = {
+            'param': init_param,
+            'sim_result': sim_result,
+            'reward': rew
+        }
+        pickle_path = os.path.join(working_dir_reset, 'result.pkl')
+        with open(pickle_path, 'wb') as f:
+            pickle.dump(step_data, f)
 
         return observations, info
 
@@ -437,7 +435,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
             observations = {agent: observation for agent in self.agents}
 
             # Calculate reward
-            rew_single = cal_reward(self.ideal_specs, sim_result, self.norm_specs)
+            rew_single = self.cal_reward(self.ideal_specs, sim_result, self.norm_specs)
             logging.info(f"Step!!!Reward result: {rew_single} with step number: {self.step_num}")
 
         terminated = {a: False for a in self.agents}
@@ -479,6 +477,15 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
 
         logging.info(f"Step!!!terminated: {terminated} with step number: {self.step_num}")
         logging.info(f"Step!!!truncated: {truncated} with step number: {self.step_num}")
+
+        step_data = {
+            'param': updated_param,
+            'sim_result': sim_result,
+            'reward': rew
+        }
+        pickle_path = os.path.join(working_dir_step, 'result.pkl')
+        with open(pickle_path, 'wb') as f:
+            pickle.dump(step_data, f)
 
         # step_data = {
         #     'step_num': self.step_num,
