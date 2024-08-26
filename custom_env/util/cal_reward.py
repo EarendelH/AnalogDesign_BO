@@ -116,11 +116,11 @@ def cal_reward_general(ideal_specs_dict, cur_specs_dict, norm_specs_dict):
 
         single_reward = single_reward * reward_weight[spec]
         rew += float(single_reward)
-        print(f"Debug, spec: {spec}, single_reward: {single_reward}, ideal_spec_value: {ideal_spec_value}, "
-              f"cur_spec_value: {cur_spec_value}, constrain_objective: {constrain_objective}, "
-              f"reward_weight: {reward_weight[spec]}")
+        # print(f"Debug, spec: {spec}, single_reward: {single_reward}, ideal_spec_value: {ideal_spec_value}, "
+        #       f"cur_spec_value: {cur_spec_value}, constrain_objective: {constrain_objective}, "
+        #       f"reward_weight: {reward_weight[spec]}")
     rew = -1 * rew / reward_weight_sum * min_rew_bound
-    print(f"Debug, rew: {rew}, reward_weight_sum: {reward_weight_sum}, min_rew_bound: {min_rew_bound}")
+    # print(f"Debug, rew: {rew}, reward_weight_sum: {reward_weight_sum}, min_rew_bound: {min_rew_bound}")
 
     if rew >= 0:
         rew = 10
@@ -141,9 +141,9 @@ def cal_reward_general(ideal_specs_dict, cur_specs_dict, norm_specs_dict):
 
             single_reward = single_reward * reward_weight[spec]
             rew += float(single_reward)
-            print(f"Debug, spec: {spec}, single_reward: {single_reward}, general_ideal_spec_value: "
-                  f"{general_ideal_spec_value}, cur_spec_value: {cur_spec_value}, constrain_objective: "
-                  f"{constrain_objective}, reward_type: {reward_type}, reward_weight: {reward_weight[spec]}")
+            # print(f"Debug, spec: {spec}, single_reward: {single_reward}, general_ideal_spec_value: "
+            #       f"{general_ideal_spec_value}, cur_spec_value: {cur_spec_value}, constrain_objective: "
+            #       f"{constrain_objective}, reward_type: {reward_type}, reward_weight: {reward_weight[spec]}")
 
     return rew
 
@@ -202,11 +202,11 @@ def cal_reward_LDO(ideal_specs_dict, cur_specs_dict, norm_specs_dict):
 
         single_reward = single_reward * reward_weight[spec]
         rew += float(single_reward)
-        print(f"Debug, spec: {spec}, single_reward: {single_reward}, ideal_spec_value: {ideal_spec_value}, "
-              f"cur_spec_value: {cur_spec_value}, constrain_objective: {constrain_objective}, "
-              f"reward_weight: {reward_weight[spec]}")
+        # print(f"Debug, spec: {spec}, single_reward: {single_reward}, ideal_spec_value: {ideal_spec_value}, "
+        #       f"cur_spec_value: {cur_spec_value}, constrain_objective: {constrain_objective}, "
+        #       f"reward_weight: {reward_weight[spec]}")
     rew = -1 * rew / reward_weight_sum * min_rew_bound
-    print(f"Debug, rew: {rew}, reward_weight_sum: {reward_weight_sum}, min_rew_bound: {min_rew_bound}")
+    # print(f"Debug, rew: {rew}, reward_weight_sum: {reward_weight_sum}, min_rew_bound: {min_rew_bound}")
 
     if rew >= 0:
         rew = 10
@@ -227,9 +227,9 @@ def cal_reward_LDO(ideal_specs_dict, cur_specs_dict, norm_specs_dict):
 
             single_reward = single_reward * reward_weight[spec]
             rew += float(single_reward)
-            print(f"Debug, spec: {spec}, single_reward: {single_reward}, general_ideal_spec_value: "
-                  f"{general_ideal_spec_value}, cur_spec_value: {cur_spec_value}, constrain_objective: "
-                  f"{constrain_objective}, reward_type: {reward_type}, reward_weight: {reward_weight[spec]}")
+            # print(f"Debug, spec: {spec}, single_reward: {single_reward}, general_ideal_spec_value: "
+            #       f"{general_ideal_spec_value}, cur_spec_value: {cur_spec_value}, constrain_objective: "
+            #       f"{constrain_objective}, reward_type: {reward_type}, reward_weight: {reward_weight[spec]}")
 
     return rew
 
