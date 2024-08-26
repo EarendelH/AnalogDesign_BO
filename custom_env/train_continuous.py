@@ -5,6 +5,8 @@ import argparse
 import yaml
 import torch
 import logging
+import datetime
+import time
 
 import ray
 from ray import tune
@@ -25,19 +27,19 @@ from rllib_env_continous import RllibAnalogDesignAutoEnv
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 
-class MetricsCallback(DefaultCallbacks):
-    def on_train_result(self, *, algorithm, result: dict, **kwargs) -> None:
-        episode_reward_mean = result.get("episode_reward_mean", 0)
-        episode_reward_max = result.get("episode_reward_max", 0)
-        episode_reward_min = result.get("episode_reward_min", 0)
-        episode_len_mean = result.get("episode_len_mean", 0)
+def format_time(seconds):
+    return str(datetime.timedelta(seconds=int(seconds)))
 
-        logging.info(f"Iteration: {result['training_iteration']}")
-        logging.info(f"Episode Reward Mean: {episode_reward_mean}")
-        logging.info(f"Episode Reward Max: {episode_reward_max}")
-        logging.info(f"Episode Reward Min: {episode_reward_min}")
-        logging.info(f"Episode Length Mean: {episode_len_mean}")
-        logging.info(f"Iter Num: {result['iterations_since_restore']}")
+
+def print_progress_table(result, iteration, total_time):
+    table = (
+        "┌───────────────────────────────────────────────────────────────────────────────────────────────────┐\n"
+        f"│ {'PPO_restored' :<21} | {'iter' :>4} | {'total time' :>10} | {'ts' :>9} | {'reward' :>6} | {'episode_reward_max' :>10} | {'episode_reward_min' :>10} | {'episode_len_mean' :>8} │\n"
+        "├───────────────────────────────────────────────────────────────────────────────────────────────────┤\n"
+        f"│ {'PPO_restored' :<21} | {iteration:4d} | {format_time(total_time):>10} | {result['timesteps_total']:9d} | {result['episode_reward_mean']:6.2f} | {result['episode_reward_max']:10.2f} | {result['episode_reward_min']:10.2f} | {result['episode_len_mean']:8.2f} │\n"
+        "└───────────────────────────────────────────────────────────────────────────────────────────────────┘"
+    )
+    print(table)
 
 
 def get_user_input(prompt, default_value):
@@ -95,6 +97,7 @@ def main():
             "region_extract": get_user_input("Enable region extraction (True/False)", "True"),
             "dynamic_queue": get_user_input("Enable dynamic queue (True/False)", "True"),
             "log_level": get_user_input("Log level (DEBUG/INFO/WARNING/ERROR/CRITICAL)", "INFO"),
+            "reward_func": get_user_input("Reward function", "cal_reward_general"),
             "restore_checkpoint": get_user_input("Restore from checkpoint? (True/False)", "False"),
             "checkpoint_path": None,  # To be conditionally updated
             "train_iterations": get_user_input("Train iterations(Default: 200)", "200"),
@@ -158,133 +161,82 @@ def main():
         # Restore or Initialize train
         restore_checkpoint = settings["restore_checkpoint"]
         if settings["restore_checkpoint"]:
-            checkpoint_path = settings["checkpoint_path"]
-
-            policies = {f"policy_{i + 1}" for i in range(settings["num_agents"])}
+            policies = {f"policy_{i + 1}" for i in range(int(settings["num_agents"]))}
             policies_to_train = list(policies)
             policy_mapping_fn = lambda aid, episode, worker, **kwargs: f"policy_{int(aid[-1])}"
 
+            config = (
+                PPOConfig()
+                .environment(env="AnalogDesignEnv_v0", clip_actions=True)
+                .rollouts(num_rollout_workers=int(settings["cpu_usage"]))
+                .training(
+                    train_batch_size=512,
+                    lr=2e-4,
+                    gamma=0.96,
+                    lambda_=0.95,
+                    use_gae=True,
+                    clip_param=0.3,
+                    grad_clip=None,
+                    entropy_coeff=0.01,
+                    vf_loss_coeff=0.25,
+                    sgd_minibatch_size=64,
+                    num_sgd_iter=24,
+                    model={
+                        "fcnet_hiddens": [256, 256, 256, 256, 256],
+                    }
+                )
+                .debugging(log_level="DEBUG")
+                .framework("torch")
+                .resources(num_gpus=int(settings["gpu_usage"]))
+                .multi_agent(
+                    policies=policies,
+                    policy_mapping_fn=policy_mapping_fn,
+                    policies_to_train=policies_to_train,
+                )
+            )
+
+            checkpoint_path = settings["checkpoint_path"]
             assert os.path.exists(checkpoint_path), "Checkpoint path does not exist"
             logging.info(f"Attempting to restore from checkpoint: {checkpoint_path}")
 
             try:
-                restored_policies = Policy.from_checkpoint(checkpoint_path)
-                logging.info("Policies loaded from checkpoint successfully")
-                logging.info(f"Restored policies: {restored_policies}")
-
-                weights = {}
-                for policy_id, policy in restored_policies.items():
-                    weights[policy_id] = policy.get_weights()
-                    logging.info(f"Checkpoint model structure for {policy_id}:")
-                    print_model_structure(policy.model)
-
-                logging.info(f"Weights extracted for policies: {list(weights.keys())}")
-
-                config = (
-                    PPOConfig()
-                    .environment(env="AnalogDesignEnv_v0", clip_actions=True)
-                    .rollouts(num_rollout_workers=num_cpu)
-                    .training(
-                        train_batch_size=512,
-                        lr=2e-4,
-                        gamma=0.96,
-                        lambda_=0.95,
-                        use_gae=True,
-                        clip_param=0.3,
-                        grad_clip=None,
-                        entropy_coeff=0.01,
-                        vf_loss_coeff=0.25,
-                        sgd_minibatch_size=64,
-                        num_sgd_iter=24,
-                        model={
-                            "fcnet_hiddens": [256, 256, 256, 256, 256],
-                        }
-                    )
-                    .callbacks(MetricsCallback)
-                    .debugging(log_level="DEBUG")
-                    .framework("torch")
-                    .resources(num_gpus=num_gpu)
-                    .multi_agent(
-                        policies=policies,
-                        policy_mapping_fn=policy_mapping_fn,
-                        policies_to_train=policies_to_train,
-                    )
-                )
-                logging.info("New algorithm configuration created")
-
                 algo = config.build()
-                logging.info("New algorithm built from configuration")
+                logging.info("New algorithm instance built from configuration")
+                logging.info(f"Algorithm: {algo}")
 
-                try:
-                    algo.set_weights(weights)
-                    logging.info("Weights set to the new algorithm successfully")
-                except RuntimeError as e:
-                    logging.error(f"Error setting weights: {e}")
-                    for policy_id, policy in algo.get_policy_map().items():
-                        state_dict = policy.model.state_dict()
-                        for key, value in state_dict.items():
-                            checkpoint_shape = weights[policy_id][key].shape if key in weights[
-                                policy_id] else "Not in checkpoint"
-                            current_shape = value.shape
-                            logging.info(
-                                f"{policy_id} - {key}: Checkpoint shape: {checkpoint_shape}, Current shape: {current_shape}")
-
-                logging.info("Starting training from restored checkpoint")
-                checkpoint_config = {
-                    "checkpoint_frequency": 10,
-                    "checkpoint_at_end": True,
-                }
+                algo.restore(checkpoint_path)
+                logging.info(f"Algorithm state restored from checkpoint: {checkpoint_path}")
 
                 restore_checkpoint_dir = os.path.join(os.path.dirname(checkpoint_path), "restored_training_checkpoints")
                 os.makedirs(restore_checkpoint_dir, exist_ok=True)
                 logging.info(f"New checkpoints will be saved in: {restore_checkpoint_dir}")
 
+                start_time = time.time()
                 for iteration in range(int(settings["train_iterations"])):
                     result = algo.train()
-                    # logging.debug(f"Iteration {iteration}: {result}")
+                    # logging.info(f"Iteration {iteration}: {result}")
+                    total_time = time.time() - start_time
 
-                    if iteration % checkpoint_config["checkpoint_frequency"] == 0:
-                        checkpoint_result = algo.save(restore_checkpoint_dir)
-                        checkpoint_path = checkpoint_result.checkpoint.path
-                        logging.info(f"New checkpoint saved at iteration {iteration}: {checkpoint_path}")
+                    print_progress_table(result, iteration, total_time)
 
-                if checkpoint_config["checkpoint_at_end"]:
-                    final_checkpoint_result = algo.save(restore_checkpoint_dir)
-                    final_checkpoint_path = final_checkpoint_result.checkpoint.path
-                    logging.info(f"Final checkpoint saved: {final_checkpoint_path}")
+                    checkpoint_index = 0
+                    if iteration % 10 == 0:
+                        # Checkpoint folder name with iteration number under checkpoint_path
+                        checkpoint_folder_iter = os.path.join(restore_checkpoint_dir, f"checkpoint_{checkpoint_index}")
+                        checkpoint_result = algo.save(checkpoint_folder_iter)
+                        new_checkpoint_path = checkpoint_result.checkpoint.path
+                        logging.info(f"New checkpoint saved at iteration {iteration}: {new_checkpoint_path}")
+                        checkpoint_index += 1
+
+                checkpoint_folder_final = os.path.join(restore_checkpoint_dir, "final_checkpoint")
+                final_checkpoint_result = algo.save(checkpoint_folder_final)
+                final_checkpoint_path = final_checkpoint_result.checkpoint.path
+                logging.info(f"Final checkpoint saved: {final_checkpoint_path}")
 
             except Exception as e:
-                logging.error(f"Error during checkpoint restoration: {e}")
+                logging.error(f"Error during checkpoint restoration or training: {e}")
                 logging.exception("Detailed traceback:")
                 sys.exit(1)
-
-            # checkpoint_path = settings["checkpoint_path"]
-            # assert os.path.exists(checkpoint_path), "Checkpoint path does not exist"
-            # logging.info(f"Restoring from checkpoint: {checkpoint_path}")
-            #
-            # # Use Algorithm.from_checkpoint() to restore the algorithm
-            # restored_algo = Algorithm.from_checkpoint(
-            #     path=checkpoint_path
-            # )
-            #
-            # # Debug: Print information about the restored algorithm
-            # logging.info("Checkpoint restored successfully")
-            # logging.info(f"Restored algorithm type: {type(restored_algo).__name__}")
-            #
-            # # Get policy information
-            # if hasattr(restored_algo, 'workers') and restored_algo.workers:
-            #     local_worker = restored_algo.workers.local_worker()
-            #     if local_worker:
-            #         policies = local_worker.policy_map
-            #         logging.info(f"Restored policies: {list(policies.keys())}")
-            #     else:
-            #         logging.warning("Local worker not available")
-            # else:
-            #     logging.warning("Workers not available in restored algorithm")
-            #
-            # # Get the restored configuration
-            # logging.info("Configuration restored from checkpoint")
-            # restored_algo.train()
 
         if not restore_checkpoint:
 
