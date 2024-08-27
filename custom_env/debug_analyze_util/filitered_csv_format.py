@@ -31,6 +31,17 @@ def split_dataframe_to_excel(df, max_rows=1000000, output_prefix='output'):
         print(f"Saved {output_file}")
 
 
+def process_reward(reward):
+    if isinstance(reward, str):
+        try:
+            reward_dict = ast.literal_eval(reward)
+            if isinstance(reward_dict, dict):
+                return next(iter(reward_dict.values()))
+        except:
+            pass
+    return reward
+
+
 # Main process
 file_path = input('Enter the file path: ')
 data = pd.read_csv(file_path)
@@ -48,6 +59,9 @@ specs_df = data['Valid_Specs'].apply(pd.Series)
 
 # Expand 'Parameters' column directly into DataFrame columns
 params_df = data['Parameters'].apply(ast.literal_eval).apply(pd.Series)
+
+# Process the 'Reward' column
+data['Reward'] = data['Reward'].apply(process_reward)
 
 # Combine the new columns with the original DataFrame (excluding the original 'Specs' and 'Valid_Specs' columns)
 expanded_data = pd.concat([data.drop(columns=['Specs', 'Valid_Specs', 'Parameters']), specs_df, params_df], axis=1)
