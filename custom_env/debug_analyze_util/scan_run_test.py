@@ -1,6 +1,5 @@
 import os
 import pickle
-import yaml
 import csv
 from multiprocessing import Pool
 
@@ -55,7 +54,7 @@ if __name__ == '__main__':
                     if os.path.isdir(os.path.join(run_test_path, folder))]
 
     with Pool() as pool:
-        results = pool.starmap(process_folder, [(path) for path in folder_paths])
+        results = pool.map(process_folder, folder_paths)
 
     with open(output_csv_path, mode='w', newline='') as file:
         writer = csv.writer(file)
