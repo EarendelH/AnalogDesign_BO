@@ -26,8 +26,7 @@ def plot_data(data, column_name):
 
 # Example usage
 file_path = input('Enter the path to the processed Excel file: ')
-column_name_list = ['Reward', 'DC_IQ', 'Load_Reg_loadReg', 'Line_Reg_50m_lineReg', 'Line_Reg_1m_lineReg',
-                    'Trans_overShoot', 'Trans_underShoot', 'PSR_psr_1k', 'PSR_psr_1M', 'PSR_psr_10M']
+column_name_list = ['Reward', 'Efficiency_efficiency', 'Efficiency_vo_mean', 'Efficiency_vo_var']
 
 # Load the Excel file
 print(f"Loading data from file: {file_path}")
