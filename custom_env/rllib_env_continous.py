@@ -481,7 +481,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         step_data = {
             'param': updated_param,
             'sim_result': sim_result,
-            'reward': rew
+            'reward': rew_single
         }
         pickle_path = os.path.join(working_dir_step, 'result.pkl')
         with open(pickle_path, 'wb') as f:
