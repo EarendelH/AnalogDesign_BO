@@ -121,19 +121,25 @@ def assign_param2netlist(param_dict, unassigned_netlist_file_path, assigned_netl
 # assign_param2netlist(param_dict, unassigned_netlist_file_path, assigned_netlist_file_path, assigned_yaml_file_path)
 
 
-def update_netlist(work_dir, sim_config, param_dict, unassigned_netlist_dir_path):
+def update_netlist(work_dir, sim_config, param_dict, unassigned_netlist_dir_path, tag=''):
     """
     Update the netlist file based on the given parameter dictionary
-    :param work_dir:  working directory
-    :param sim_config:  simulation configuration
-    :param param_dict:  parameter dictionary
-    :param unassigned_netlist_dir_path:  unassigned netlist file path
+    :param work_dir: working directory
+    :param sim_config: simulation configuration
+    :param param_dict: parameter dictionary
+    :param unassigned_netlist_dir_path: unassigned netlist file path
+    :param tag: additional tag (string), default is empty string
     :return: Assigned SCS file
     """
     for simulation_config in sim_config:
 
         sim_name = simulation_config["simulation_name"]
-        unassigned_netlist_filename = f"{sim_name}_parameterized.scs"
+
+        if tag:
+            unassigned_netlist_filename = f"{sim_name}_parameterized_{tag}.scs"
+        else:
+            unassigned_netlist_filename = f"{sim_name}_parameterized.scs"
+
         assigned_netlist_filename = f"{sim_name}.scs"
         unassigned_netlist_file_path = os.path.join(unassigned_netlist_dir_path, unassigned_netlist_filename)
         assigned_netlist_file_path = os.path.join(work_dir, assigned_netlist_filename)

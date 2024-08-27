@@ -438,6 +438,15 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
             rew_single = self.cal_reward(self.ideal_specs, sim_result, self.norm_specs)
             logging.info(f"Step!!!Reward result: {rew_single} with step number: {self.step_num}")
 
+            step_data = {
+                'param': updated_param,
+                'sim_result': sim_result,
+                'reward': rew_single
+            }
+            pickle_path = os.path.join(working_dir_step, 'result.pkl')
+            with open(pickle_path, 'wb') as f:
+                pickle.dump(step_data, f)
+
         terminated = {a: False for a in self.agents}
         truncated = {a: False for a in self.agents}
 
@@ -478,15 +487,6 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         logging.info(f"Step!!!terminated: {terminated} with step number: {self.step_num}")
         logging.info(f"Step!!!truncated: {truncated} with step number: {self.step_num}")
 
-        step_data = {
-            'param': updated_param,
-            'sim_result': sim_result,
-            'reward': rew_single
-        }
-        pickle_path = os.path.join(working_dir_step, 'result.pkl')
-        with open(pickle_path, 'wb') as f:
-            pickle.dump(step_data, f)
-
         # step_data = {
         #     'step_num': self.step_num,
         #     'sim_result': sim_result,
@@ -522,4 +522,3 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         for key in config:
             if key not in self.expected_params:
                 raise ValueError(f"Unexpected parameter: {key}")
-
