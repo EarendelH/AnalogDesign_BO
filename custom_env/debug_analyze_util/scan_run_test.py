@@ -5,11 +5,6 @@ from multiprocessing import Pool
 
 
 def parse_parameters(file_path):
-    """
-    Parse the DC.scs file to extract the parameters line.
-    :param file_path: Path to the DC.scs file
-    :return: Dictionary of parameters
-    """
     parameters_dict = {}
     with open(file_path, 'r') as file:
         for line in file:
