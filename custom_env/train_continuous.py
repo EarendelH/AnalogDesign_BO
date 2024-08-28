@@ -214,7 +214,7 @@ def main():
                 start_time = time.time()
                 for iteration in range(int(settings["train_iterations"])):
                     result = algo.train()
-                    # logging.info(f"Iteration {iteration}: {result}")
+                    logging.info(f"Iteration {iteration}: {result}")
                     total_time = time.time() - start_time
 
                     print_progress_table(result, iteration, total_time)
