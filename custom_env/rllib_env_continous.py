@@ -420,7 +420,6 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
             else:
 
                 corner_simu_result = {
-                    'tt': {},
                     'ff': {},
                     'fs': {},
                     'sf': {},
@@ -441,6 +440,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
                         'sim_result': sim_result,
                         'rew_single': rew_single
                     }
+                corner_simu_result['tt'] = {}
                 corner_simu_result['tt']['working_dir_step'] = working_dir_step_tt
                 corner_simu_result['tt']['sim_result'] = sim_result_tt
                 corner_simu_result['tt']['rew_single'] = rew_single_tt
