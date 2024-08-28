@@ -447,6 +447,8 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
 
                 # Extract the min reward from all corners and replace the reward
                 rew_single_min = min([corner_simu_result[corner]['rew_single'] for corner in corner_simu_result])
+                if rew_single_min < 0:
+                    rew_single_min = 10
                 for corner in corner_simu_result:
                     corner_simu_result[corner]['rew_single'] = rew_single_min
                     step_data = {
