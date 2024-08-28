@@ -35,7 +35,8 @@ def process_single_directory(args):
         result_path = os.path.join(dir_path, 'result.pkl')
         if os.path.exists(result_path):
             with open(result_path, 'rb') as file:
-                result_dict = pickle.load(file)
+                all_result = pickle.load(file)
+                result_dict = all_result['sim_result']
             return dir_name, is_valid_entry(result_dict)
         else:
             return dir_name, 0
