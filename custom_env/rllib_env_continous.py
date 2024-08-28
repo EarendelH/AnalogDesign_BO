@@ -420,6 +420,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
             else:
 
                 corner_simu_result = {
+                    'tt': {},
                     'ff': {},
                     'fs': {},
                     'sf': {},
