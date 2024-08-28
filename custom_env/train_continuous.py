@@ -20,6 +20,8 @@ from ray.rllib.policy import Policy
 from ray.rllib.algorithms.callbacks import DefaultCallbacks
 from ray.rllib.utils.typing import PolicyID
 from typing import Dict
+from ray.tune.logger import UnifiedLogger
+from ray.tune.result import DEFAULT_RESULTS_DIR
 
 from rllib_env_continous import RllibAnalogDesignAutoEnv
 
@@ -200,7 +202,14 @@ def main():
             logging.info(f"Attempting to restore from checkpoint: {checkpoint_path}")
 
             try:
-                algo = config.build()
+
+                new_log_dir = os.path.join(DEFAULT_RESULTS_DIR, "restored_training_logs")
+                os.makedirs(new_log_dir, exist_ok=True)
+
+                def new_logger_creator(config):
+                    return UnifiedLogger(config, new_log_dir, loggers=None)
+
+                algo = config.build(logger_creator=new_logger_creator)
                 logging.info("New algorithm instance built from configuration")
                 logging.info(f"Algorithm: {algo}")
 
@@ -210,6 +219,7 @@ def main():
                 restore_checkpoint_dir = os.path.join(os.path.dirname(checkpoint_path), "restored_training_checkpoints")
                 os.makedirs(restore_checkpoint_dir, exist_ok=True)
                 logging.info(f"New checkpoints will be saved in: {restore_checkpoint_dir}")
+                logging.info(f"New logs will be saved in: {new_log_dir}")
 
                 start_time = time.time()
                 for iteration in range(int(settings["train_iterations"])):
