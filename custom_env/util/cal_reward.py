@@ -243,7 +243,7 @@ def cal_reward_LDO(ideal_specs_dict, cur_specs_dict, norm_specs_dict):
 #                'Trans_overShoot': {'objective': 'min', 'reward_type': 'optimal', 'value': 1.3},
 #                'DC_IQ': {'objective': 'min', 'reward_type': 'optimal', 'value': 1.4}}
 #
-# cur_specs = {'Efficiency': {'Efficiency_efficiency': 0.95, 'Efficiency_vo_mean': 0.93, 'Efficiency_vo_var': 0.000001},
+# cur_specs = {'Efficiency': {'Efficiency_efficiency': 0.99, 'Efficiency_vo_mean': 0.99, 'Efficiency_vo_var': 0.000001},
 #              'Load_Reg': {'Load_Reg_loadReg': 1.1}, 'Trans': {'Trans_overShoot': 1.1}, 'DC': {'DC_IQ': 1.1}}
 #
 # norm_specs = {'Efficiency': {'Efficiency_efficiency': 0.93, 'Efficiency_vo_mean': 1.1, 'Efficiency_vo_var': 0.000001},
