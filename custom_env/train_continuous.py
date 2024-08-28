@@ -1,4 +1,4 @@
-import subprocess
+
 import sys
 import os
 import argparse
@@ -7,6 +7,8 @@ import torch
 import logging
 import datetime
 import time
+import string
+import random
 
 import ray
 from ray import tune
@@ -33,15 +35,42 @@ def format_time(seconds):
     return str(datetime.timedelta(seconds=int(seconds)))
 
 
-def print_progress_table(result, iteration, total_time):
-    table = (
-        "┌───────────────────────────────────────────────────────────────────────────────────────────────────┐\n"
-        f"│ {'PPO_restored' :<21} | {'iter' :>4} | {'total time' :>10} | {'ts' :>9} | {'reward' :>6} | {'episode_reward_max' :>10} | {'episode_reward_min' :>10} | {'episode_len_mean' :>8} │\n"
-        "├───────────────────────────────────────────────────────────────────────────────────────────────────┤\n"
-        f"│ {'PPO_restored' :<21} | {iteration:4d} | {format_time(total_time):>10} | {result['timesteps_total']:9d} | {result['episode_reward_mean']:6.2f} | {result['episode_reward_max']:10.2f} | {result['episode_reward_min']:10.2f} | {result['episode_len_mean']:8.2f} │\n"
-        "└───────────────────────────────────────────────────────────────────────────────────────────────────┘"
-    )
-    print(table)
+def generated_restore_id(length=6):
+    characters = string.digits + string.ascii_letters
+    random_string = ''.join(random.choice(characters) for _ in range(length))
+
+    return random_string
+
+
+def print_progress_table(id, result, iteration, total_time):
+    # Define the columns and their formats
+    columns = [
+        ("ID", id, 6),
+        ("Algorithm", "PPO_restored", 21),
+        ("Iter", iteration, 4),
+        ("Total Time", format_time(total_time), 10),
+        ("Timesteps", result['timesteps_total'], 9),
+        ("Reward Mean", result['episode_reward_mean'], 6, ".4f"),
+        ("Reward Max", result['episode_reward_max'], 10, ".4f"),
+        ("Reward Min", result['episode_reward_min'], 10, ".4f"),
+        ("Ep Len Mean", result['episode_len_mean'], 8, ".4f")
+    ]
+
+    # Calculate the total width of the table
+    total_width = sum(col[2] for col in columns) + len(columns) * 3 - 1
+
+    # Create the header row
+    header = "│ " + " │ ".join(f"{col[0]:<{col[2]}}" for col in columns) + " │"
+
+    # Create the data row
+    data = "│ " + " │ ".join(f"{col[1]:{col[2]}{col[3] if len(col) > 3 else ''}}" for col in columns) + " │"
+
+    # Print the table
+    print("┌" + "─" * total_width + "┐")
+    print(header)
+    print("├" + "─" * total_width + "┤")
+    print(data)
+    print("└" + "─" * total_width + "┘")
 
 
 def get_user_input(prompt, default_value):
@@ -203,7 +232,9 @@ def main():
 
             try:
 
-                new_log_dir = os.path.join(DEFAULT_RESULTS_DIR, "restored_training_logs")
+                restore_id = generated_restore_id()
+
+                new_log_dir = os.path.join(DEFAULT_RESULTS_DIR, f"restore_{restore_id}")
                 os.makedirs(new_log_dir, exist_ok=True)
 
                 def new_logger_creator(config):
@@ -216,7 +247,7 @@ def main():
                 algo.restore(checkpoint_path)
                 logging.info(f"Algorithm state restored from checkpoint: {checkpoint_path}")
 
-                restore_checkpoint_dir = os.path.join(os.path.dirname(checkpoint_path), "restored_training_checkpoints")
+                restore_checkpoint_dir = os.path.join(new_log_dir, "checkpoints")
                 os.makedirs(restore_checkpoint_dir, exist_ok=True)
                 logging.info(f"New checkpoints will be saved in: {restore_checkpoint_dir}")
                 logging.info(f"New logs will be saved in: {new_log_dir}")
@@ -227,7 +258,7 @@ def main():
                     logging.info(f"Detail data for iteration {iteration}: {result}")
                     total_time = time.time() - start_time
 
-                    print_progress_table(result, iteration, total_time)
+                    print_progress_table(restore_id, result, iteration, total_time)
 
                     if iteration % 10 == 0:
                         # Checkpoint folder name with iteration number under checkpoint_path
