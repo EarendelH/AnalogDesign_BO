@@ -50,10 +50,10 @@ def print_progress_table(id, result, iteration, total_time):
         ("Iter", iteration, 4),
         ("Total Time", format_time(total_time), 10),
         ("Timesteps", result['timesteps_total'], 9),
-        ("Reward Mean", result['episode_reward_mean'], 6, ".4f"),
+        ("Reward Mean", result['episode_reward_mean'], 11, ".4f"),
         ("Reward Max", result['episode_reward_max'], 10, ".4f"),
         ("Reward Min", result['episode_reward_min'], 10, ".4f"),
-        ("Ep Len Mean", result['episode_len_mean'], 8, ".4f")
+        ("Ep Len Mean", result['episode_len_mean'], 11, ".4f")
     ]
 
     # Calculate the total width of the table
@@ -63,7 +63,10 @@ def print_progress_table(id, result, iteration, total_time):
     header = "│ " + " │ ".join(f"{col[0]:<{col[2]}}" for col in columns) + " │"
 
     # Create the data row
-    data = "│ " + " │ ".join(f"{col[1]:{col[2]}{col[3] if len(col) > 3 else ''}}" for col in columns) + " │"
+    data = "│ " + " │ ".join(
+        f"{str(col[1]):{col[2]}.{col[3]}}" if len(col) > 3 else f"{str(col[1]):<{col[2]}}"
+        for col in columns
+    ) + " │"
 
     # Print the table
     print("┌" + "─" * total_width + "┐")
@@ -234,7 +237,7 @@ def main():
 
                 restore_id = generated_restore_id()
 
-                new_log_dir = os.path.join(DEFAULT_RESULTS_DIR, f"restore_{restore_id}")
+                new_log_dir = os.path.join(DEFAULT_RESULTS_DIR, env_name, f"restore_{restore_id}")
                 os.makedirs(new_log_dir, exist_ok=True)
 
                 def new_logger_creator(config):
