@@ -24,6 +24,7 @@ from util.util_func import retry_decorator
 from util.gen_init_param import gen_init_param
 from util.device_mask import masked_action_dict_mapping
 
+
 # logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 
@@ -48,6 +49,23 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
 
         for key, value in config.items():
             setattr(self, key, value)
+
+        # Pass args
+        self.init_method = self.init_method
+        self.run_root_dir = self.run_folder_name
+        self.config_folder_name = self.config_folder_name
+        self.netlist_folder_name = self.netlist_folder_name
+        self.reward_func = self.reward_func
+        self.log_level = self.log_level
+        self.max_step = self.max_step
+        self.specs_folder_name = self.specs_folder_name
+
+        # Pass flag
+        self.sim_output_enable = self.sim_output
+        self.region_extract = self.region_extract
+        self.dc_check = self.dc_check
+        self.dynamic_queue = self.dynamic_queue
+        self.generalize = self.generalize
 
         # Set log level
         numeric_level = getattr(logging, self.log_level.upper(), None)
@@ -75,25 +93,13 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         # Get absolute path
         self.current_path = os.getcwd()
 
+        # Pass generalization flag
+        self.ideal_specs_path = os.path.join(self.current_path, 'ideal_specs', self.specs_folder_name)
+
         # If region_extract is False, dc_check is impossible to be True. Error and exit
         if not self.region_extract and self.region_extract:
             logging.error(f"Error!!!: Region extract is False, dc_check can not be True.")
             exit(1)
-
-        # Pass initial dc check and dynamic queue flag
-        # self.dc_check = dc_check
-        # self.region_extract = region_extract
-        # self.dynamic_queue = dynamic_queue
-
-        # Pass generalization flag
-        # self.generalize = generalize
-        self.ideal_specs_path = os.path.join(self.current_path, 'ideal_specs', self.specs_folder_name)
-
-        # Pass init method
-        self.init_method = self.init_method
-
-        # Pass sim_output flag
-        self.sim_output_enable = self.sim_output
 
         # Get home directory
         self.home_dir = os.path.expanduser("~")
@@ -101,7 +107,6 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         # Set root directory based on home directory
         # Avoid run folder placing in /tmp directory when running on cluster
         # ~/AnalogDesignAuto/AnalogDesignAuto_MultiAgent/custom_env/ + self.run_root_dir
-        self.run_root_dir = self.run_folder_name
         self.run_root_dir = os.path.join(self.home_dir, "AnalogDesignAuto/AnalogDesignAuto_MultiAgent/custom_env",
                                          self.run_root_dir)
         if not os.path.exists(self.run_root_dir):
@@ -308,10 +313,10 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         logging.debug(f"Step!!!Action dict: {action_dict}")
         # Update step number
         self.step_num += 1
+        rew_single = -10
 
         operation_region_dict = None
         valid_param = None
-        sim_result = None
 
         step_action_dict = copy.deepcopy(action_dict)
         if self.device_mask_dict:
@@ -391,61 +396,69 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
 
         # DC Check pass or not enabled. Run all simulations
         else:
-            # Create working directory
-            working_dir_step = create_work_dir(self.run_root_dir)
-            if valid_param:
-                logging.info(f"Step!!!Working directory: {working_dir_step} with step number: {self.step_num} "
-                             f"with region_extract & dc_check enabled and valid param.")
+            working_dir_step_tt, observations_tt, sim_result_tt, rew_single_tt = (
+                step_simulation_process(self.region_extract, self.run_root_dir, valid_param, self.step_num,
+                                        self.dc_check, self.sim_config_dict, updated_param,
+                                        self.unassigned_netlist_dir, self.zero_sim_result, self.sim_output_enable,
+                                        self.dynamic_queue, self.norm_specs, self.norm_ideal_specs, self.agents,
+                                        self.ideal_specs, self.cal_reward, operation_region_dict))
+
+            if rew_single_tt < 0:
+                working_dir_step = working_dir_step_tt
+                observations = observations_tt
+                sim_result = sim_result_tt
+                rew_single = rew_single_tt
+
+                step_data = {
+                    'param': updated_param,
+                    'sim_result': sim_result,
+                    'reward': rew_single
+                }
+                pickle_path = os.path.join(working_dir_step, 'result.pkl')
+                with open(pickle_path, 'wb') as f:
+                    pickle.dump(step_data, f)
             else:
-                logging.info(f"Step!!!Working directory: {working_dir_step} with step number: {self.step_num} "
-                             f"with region_extract: {self.region_extract} and dc_check: {self.dc_check}")
 
-            update_netlist(working_dir_step, self.sim_config_dict, updated_param, self.unassigned_netlist_dir)
+                corner_simu_result = {
+                    'ff': {},
+                    'fs': {},
+                    'sf': {},
+                    'ss': {}
+                }
+                for corner in corner_simu_result:
+                    working_dir_step, _, sim_result, rew_single = (
+                        step_simulation_process(self.region_extract, self.run_root_dir, valid_param, self.step_num,
+                                                self.dc_check, self.sim_config_dict, updated_param,
+                                                self.unassigned_netlist_dir, self.zero_sim_result,
+                                                self.sim_output_enable, self.dynamic_queue, self.norm_specs,
+                                                self.norm_ideal_specs, self.agents, self.ideal_specs,
+                                                self.cal_reward, operation_region_dict, corner))
+                    logging.info(f"Step!!!Positive reward: {rew_single_tt} in TT corner with step number: "
+                                 f"{self.step_num} archived running simulation with corner: {corner}")
+                    corner_simu_result[corner] = {
+                        'working_dir_step': working_dir_step,
+                        'sim_result': sim_result,
+                        'rew_single': rew_single
+                    }
+                corner_simu_result['tt']['working_dir_step'] = working_dir_step_tt
+                corner_simu_result['tt']['sim_result'] = sim_result_tt
+                corner_simu_result['tt']['rew_single'] = rew_single_tt
 
-            # Run spectre simulation and normalize the result
-            # Define a private function for retrying
-            @retry_decorator(retry_count=2, delay_seconds=0.5, default_value=self.zero_sim_result)
-            def _run_simulation_with_retry():
-                return run_dynamic_simulation(working_dir_step, self.sim_config_dict, self.zero_sim_result,
-                                              self.sim_output_enable, self.dynamic_queue)
+                # Extract the min reward from all corners and replace the reward
+                rew_single_min = min([corner_simu_result[corner]['rew_single'] for corner in corner_simu_result])
+                for corner in corner_simu_result:
+                    corner_simu_result[corner]['rew_single'] = rew_single_min
+                    step_data = {
+                        'param': updated_param,
+                        'sim_result': corner_simu_result[corner]['sim_result'],
+                        'reward': corner_simu_result[corner]['rew_single']
+                    }
+                    pickle_path = os.path.join(corner_simu_result[corner]['working_dir_step'], 'result.pkl')
+                    with open(pickle_path, 'wb') as f:
+                        pickle.dump(step_data, f)
 
-            try:
-                sim_result = copy.deepcopy(_run_simulation_with_retry())
-            except Exception as e:
-                logging.warning(f"Step Warning!!!: {e}. sim_result is {sim_result}."
-                                f" Simulation failed, use zero result instead.")
-                sim_result = copy.deepcopy(self.zero_sim_result)
-
-            logging.info(f"Step!!!Simulation result: {sim_result} with step number: {self.step_num}")
-            logging.debug(f"Debug, sim_result is {sim_result}")
-            logging.debug(f"Debug, self.norm_specs is {self.norm_specs}")
-            norm_sim_result = norm_sim_spec(sim_result, self.norm_specs)
-
-            if self.region_extract:
-                observation_detail = update_obs_space_w_region(self.norm_ideal_specs, norm_sim_result, updated_param,
-                                                               operation_region_dict)
-                observation = copy.deepcopy(flatten_observation_w_region(observation_detail))
-            else:
-                observation_detail = update_obs_space(self.norm_ideal_specs, norm_sim_result, updated_param)
-                observation = copy.deepcopy(flatten_observation(observation_detail))
-            logging.debug(f"Step!!!Observation detail: {observation_detail} with step number: {self.step_num}")
-            logging.debug(f"Step!!!Flatten Observation: {observation} with step number: {self.step_num}")
-
-            # Share all observations
-            observations = {agent: observation for agent in self.agents}
-
-            # Calculate reward
-            rew_single = self.cal_reward(self.ideal_specs, sim_result, self.norm_specs)
-            logging.info(f"Step!!!Reward result: {rew_single} with step number: {self.step_num}")
-
-            step_data = {
-                'param': updated_param,
-                'sim_result': sim_result,
-                'reward': rew_single
-            }
-            pickle_path = os.path.join(working_dir_step, 'result.pkl')
-            with open(pickle_path, 'wb') as f:
-                pickle.dump(step_data, f)
+                observations = observations_tt
+                rew_single = rew_single_min
 
         terminated = {a: False for a in self.agents}
         truncated = {a: False for a in self.agents}
@@ -522,3 +535,64 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         for key in config:
             if key not in self.expected_params:
                 raise ValueError(f"Unexpected parameter: {key}")
+
+
+def step_simulation_process(region_extract_tag, run_root_dir, valid_param, step_num, dc_check_tag, sim_config_dict,
+                            updated_param, unassigned_netlist_dir, zero_sim_result, sim_output_enable_tag,
+                            dynamic_queue_tag, norm_specs, norm_ideal_specs, agents, ideal_specs, cal_reward,
+                            operation_region_dict=None, corner_tag=None):
+    sim_result = None
+
+    if region_extract_tag:
+        if operation_region_dict is None:
+            logging.error("Error: region_extract is True but operation_region_dict is None.")
+            raise ValueError("operation_region_dict is None when region_extract is True")
+
+    # Create working directory
+    working_dir_step = create_work_dir(run_root_dir)
+    if valid_param:
+        logging.info(f"Step!!!Working directory: {working_dir_step} with step number: {step_num} "
+                     f"with region_extract & dc_check enabled and valid param.")
+    else:
+        logging.info(f"Step!!!Working directory: {working_dir_step} with step number: {step_num} "
+                     f"with region_extract: {region_extract_tag} and dc_check: {dc_check_tag}")
+
+    update_netlist(working_dir_step, sim_config_dict, updated_param, unassigned_netlist_dir, corner_tag)
+
+    # Run spectre simulation and normalize the result
+    # Define a private function for retrying
+    @retry_decorator(retry_count=2, delay_seconds=0.5, default_value=zero_sim_result)
+    def _run_simulation_with_retry():
+        return run_dynamic_simulation(working_dir_step, sim_config_dict, zero_sim_result,
+                                      sim_output_enable_tag, dynamic_queue_tag)
+
+    try:
+        sim_result = copy.deepcopy(_run_simulation_with_retry())
+    except Exception as e:
+        logging.warning(f"Step Warning!!!: {e}. sim_result is {sim_result}."
+                        f" Simulation failed, use zero result instead.")
+        sim_result = copy.deepcopy(zero_sim_result)
+
+    logging.info(f"Step!!!Simulation result: {sim_result} with step number: {step_num} in corner: {corner_tag}")
+    logging.debug(f"Debug, sim_result is {sim_result}")
+    logging.debug(f"Debug, self.norm_specs is {norm_specs}")
+    norm_sim_result = norm_sim_spec(sim_result, norm_specs)
+
+    if region_extract_tag:
+        observation_detail = update_obs_space_w_region(norm_ideal_specs, norm_sim_result, updated_param,
+                                                       operation_region_dict)
+        observation = copy.deepcopy(flatten_observation_w_region(observation_detail))
+    else:
+        observation_detail = update_obs_space(norm_ideal_specs, norm_sim_result, updated_param)
+        observation = copy.deepcopy(flatten_observation(observation_detail))
+    logging.debug(f"Step!!!Observation detail: {observation_detail} with step number: {step_num}")
+    logging.debug(f"Step!!!Flatten Observation: {observation} with step number: {step_num}")
+
+    # Share all observations
+    observations = {agent: observation for agent in agents}
+
+    # Calculate reward
+    rew_single = cal_reward(ideal_specs, sim_result, norm_specs)
+    logging.info(f"Step!!!Reward result: {rew_single} with step number: {step_num}")
+
+    return working_dir_step, observations, sim_result, rew_single
