@@ -9,6 +9,7 @@ import time
 
 
 def determine_param_mapping(instance_name, config_folder):
+    print(f"Debug, config_folder is {config_folder}")
     # List scs file in the file directory
     scs_files = [file for file in config_folder if file.endswith('.scs')]
     if not scs_files:
