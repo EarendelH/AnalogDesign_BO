@@ -8,9 +8,9 @@ import sys
 import time
 
 
-def determine_param_mapping(instance_name):
+def determine_param_mapping(instance_name, config_folder):
     # List scs file in the file directory
-    scs_files = [file for file in os.listdir(os.path.dirname(__file__)) if file.endswith('.scs')]
+    scs_files = [file for file in config_folder if file.endswith('.scs')]
     if not scs_files:
         print(f"Error: No .scs files found in {os.listdir(os.getcwd())} directory.")
         sys.exit(1)
@@ -152,7 +152,7 @@ def extract_instances_from_skill_output(output):
     return instances
 
 
-def generate_skill_commands(yaml_data, instance_to_cellview, tb_cell_list):
+def generate_skill_commands(yaml_data, instance_to_cellview, tb_cell_list, config_folder):
     """
     Generate Skill commands based on YAML file content, instance to cellview mapping, and testbench cell list.
 
@@ -187,7 +187,7 @@ def generate_skill_commands(yaml_data, instance_to_cellview, tb_cell_list):
         if match:
             param_type, instance = match.groups()
             instance = instance.replace('_per_finger', '')
-            param_mapping = determine_param_mapping(instance)
+            param_mapping = determine_param_mapping(instance, config_folder)
             skill_param = param_mapping[param_type]
             add_command(lib_name, instance_to_cellview.get(instance, ''), "schematic", instance, skill_param, value)
 
@@ -391,7 +391,7 @@ def compare_values(yaml_value, skill_value):
     return abs(yaml_parsed - skill_parsed) < 1e-15  # Use a small threshold to handle floating-point errors
 
 
-def check_instance_parameters(yaml_data, skill_output, instance_name):
+def check_instance_parameters(yaml_data, skill_output, instance_name, config_folder):
     """
     Check if instance parameters in Skill match those in YAML.
 
@@ -412,7 +412,7 @@ def check_instance_parameters(yaml_data, skill_output, instance_name):
             skill_params[key] = value
 
     if instance_name.startswith('M'):
-        param_mapping = determine_param_mapping(instance_name)
+        param_mapping = determine_param_mapping(instance_name, config_folder)
         print(f"Debug, for {instance_name}, the param_mapping is {param_mapping}")
 
         if param_mapping['nf'] == 'simM':
