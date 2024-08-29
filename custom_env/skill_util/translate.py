@@ -331,7 +331,8 @@ def load_skill_functions(master):
         "showCellViewInstances.il",
         "PrintInstanceDetails.il",
         "listLibraryCellviews.il",
-        "copyEntireLibrary.il"
+        "copyEntireLibrary.il",
+        "closeTechSaveDrmForm.il"
     ]
     for file in skill_files:
         load_command = f'load("{file}")'
@@ -528,3 +529,7 @@ def translate(source_lib, yaml_data, config_folder, master):
         send_skill_command(master, "exit")
     except Exception as e:
         print(f"An error occurred: {e}")
+    finally:
+        # 确保在函数结束时再次尝试关闭表单
+        close_form_command = 'closeTechSaveDrmForm()'
+        send_skill_command(master, close_form_command)
