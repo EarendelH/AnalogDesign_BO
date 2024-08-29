@@ -8,6 +8,16 @@ import sys
 import time
 
 
+def close_virtuoso_session(virtuoso_process, master):
+    if virtuoso_process:
+        send_skill_command(master, "exit")
+        virtuoso_process.terminate()
+        virtuoso_process.wait()
+    if master:
+        os.close(master)
+    print("Virtuoso session closed.")
+
+
 def determine_param_mapping(instance_name, config_folder):
     print(f"Debug, config_folder is {config_folder}")
     # List scs file in the file directory
