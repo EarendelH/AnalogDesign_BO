@@ -39,7 +39,7 @@ def main(input_dir):
             with open(yaml_path, 'r') as f:
                 yaml_data = yaml.safe_load(f)
 
-            translate(source_lib, yaml_data, master)
+            translate(source_lib, yaml_data, input_dir, master)
 
     except Exception as e:
         print(f"An error occurred: {e}")

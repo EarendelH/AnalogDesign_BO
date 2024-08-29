@@ -457,7 +457,7 @@ def check_instance_parameters(yaml_data, skill_output, instance_name, config_fol
     return True
 
 
-def translate(source_lib, yaml_data, master):
+def translate(source_lib, yaml_data, config_folder, master):
 
     yaml_instances = extract_instances_from_yaml(yaml_data)
 
@@ -503,7 +503,7 @@ def translate(source_lib, yaml_data, master):
         print(f"Map dict is {instance_to_cellview}")
 
         # Generate and send Skill commands
-        commands = generate_skill_commands(yaml_data, instance_to_cellview, tb_cell_list)
+        commands = generate_skill_commands(yaml_data, instance_to_cellview, tb_cell_list, config_folder)
         for command in commands:
             print(f"\nSending command: {command}")
             send_skill_command(master, command)
