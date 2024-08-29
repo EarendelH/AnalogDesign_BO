@@ -154,7 +154,7 @@ def extract_instances_from_skill_output(output):
     return instances
 
 
-def generate_skill_commands(yaml_data, instance_to_cellview, tb_cell_list, config_folder):
+def generate_skill_commands(yaml_data, instance_to_cellview, tb_cell_list, config_folder, target_lib):
     """
     Generate Skill commands based on YAML file content, instance to cellview mapping, and testbench cell list.
 
@@ -169,7 +169,7 @@ def generate_skill_commands(yaml_data, instance_to_cellview, tb_cell_list, confi
 
     core_data = yaml_data.get('Core_Param', {})
     testbench_data = yaml_data.get('Testbench_Param', {})
-    lib_name = yaml_data.get('Lib', '')
+    lib_name = target_lib
 
     skill_commands = []
 
@@ -505,7 +505,7 @@ def translate(source_lib, yaml_data, config_folder, master):
         print(f"Map dict is {instance_to_cellview}")
 
         # Generate and send Skill commands
-        commands = generate_skill_commands(yaml_data, instance_to_cellview, tb_cell_list, config_folder)
+        commands = generate_skill_commands(yaml_data, instance_to_cellview, tb_cell_list, config_folder, target_lib)
         for command in commands:
             print(f"\nSending command: {command}")
             send_skill_command(master, command)
