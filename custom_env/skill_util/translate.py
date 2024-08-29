@@ -518,7 +518,7 @@ def translate(source_lib, yaml_data, config_folder, master):
                 print(f"Checking parameters for instance {instance} in {cellview}...")
                 command = f'PrintInstanceDetails("{target_lib}" "{cellview}" "schematic" "{instance}")'
                 output = send_skill_command(master, command)
-                if not check_instance_parameters(yaml_data, output, instance):
+                if not check_instance_parameters(yaml_data, output, instance, config_folder):
                     print(f"Parameter mismatch for instance {instance}.")
             else:
                 print(f"Warning: No matching cellview found for instance {instance}.")
