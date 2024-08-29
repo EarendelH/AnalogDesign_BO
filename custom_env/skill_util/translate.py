@@ -6,16 +6,16 @@ import pty
 import select
 import sys
 import time
+import signal
 
 
 def close_virtuoso_session(virtuoso_process, master):
     if virtuoso_process:
-        send_skill_command(master, "exit")
-        virtuoso_process.terminate()
+        os.kill(virtuoso_process.pid, signal.SIGKILL)
         virtuoso_process.wait()
     if master:
         os.close(master)
-    print("Virtuoso session closed.")
+    print("Virtuoso session forcibly closed.")
 
 
 def determine_param_mapping(instance_name, config_folder):
@@ -536,6 +536,6 @@ def translate(source_lib, yaml_data, config_folder, master):
 
         print("All instance parameters checked. Proceeding with parameter modifications.")
 
-        send_skill_command(master, "exit")
+        # send_skill_command(master, "exit")
     except Exception as e:
         print(f"An error occurred: {e}")
