@@ -39,6 +39,7 @@ def determine_param_mapping(instance_name):
         print(f"Error: Instance {instance_name} not found in the .scs file.")
         sys.exit(1)
 
+
 def parse_listLibraryCellviews_output(output):
     """
     Parse the output of listLibraryCellviews and return core_cell_list and tb_cell_list.
@@ -110,18 +111,16 @@ def match_instances_to_cellviews(yaml_instances, cellview_instances):
     return instance_to_cellview
 
 
-def extract_instances_from_yaml(yaml_file):
+def extract_instances_from_yaml(data):
     """
     Extract instance names from the YAML file.
 
     Args:
-    yaml_file (str): Path to the YAML file
+    data (dict): Parsed YAML data
 
     Returns:
     list: List of instance names found in the YAML file
     """
-    with open(yaml_file, 'r') as file:
-        data = yaml.safe_load(file)
 
     core_data = data.get('Core_Param', {})
     instances = set()
@@ -153,24 +152,22 @@ def extract_instances_from_skill_output(output):
     return instances
 
 
-def generate_skill_commands(yaml_file, instance_to_cellview, tb_cell_list):
+def generate_skill_commands(yaml_data, instance_to_cellview, tb_cell_list):
     """
     Generate Skill commands based on YAML file content, instance to cellview mapping, and testbench cell list.
 
     Args:
-    yaml_file (str): Path to the YAML file
+    yaml_data (dict): Parsed YAML data
     instance_to_cellview (dict): Mapping of instance names to cellviews
     tb_cell_list (list): List of testbench cells
 
     Returns:
     list: List of Skill commands to modify instance parameters
     """
-    with open(yaml_file, 'r') as file:
-        data = yaml.safe_load(file)
 
-    core_data = data.get('Core_Param', {})
-    testbench_data = data.get('Testbench_Param', {})
-    lib_name = data.get('Lib', '')
+    core_data = yaml_data.get('Core_Param', {})
+    testbench_data = yaml_data.get('Testbench_Param', {})
+    lib_name = yaml_data.get('Lib', '')
 
     skill_commands = []
 
@@ -326,11 +323,13 @@ def load_skill_functions(master):
     Returns:
     bool: True if all functions were loaded successfully, False otherwise
     """
+    output = None
     skill_files = [
         "modifyInstanceParameterWithCallback.il",
         "showCellViewInstances.il",
         "PrintInstanceDetails.il",
-        "listLibraryCellviews.il"
+        "listLibraryCellviews.il",
+        "copyEntireLibrary.il"
     ]
     for file in skill_files:
         load_command = f'load("{file}")'
@@ -458,44 +457,36 @@ def check_instance_parameters(yaml_data, skill_output, instance_name):
     return True
 
 
-def main():
-    """
-    Main function to orchestrate the Virtuoso parameter modification process.
-    """
-    yaml_path = os.path.join(os.path.dirname(__file__), "init_param_demo.yaml")
+def translate(source_lib, yaml_data, master):
 
-    # Extract instances from YAML
-    with open(yaml_path, 'r') as file:
-        yaml_data = yaml.safe_load(file)
+    yaml_instances = extract_instances_from_yaml(yaml_data)
 
-    yaml_instances = extract_instances_from_yaml(yaml_path)
-    print("Instances extracted from YAML:", yaml_instances)
-
-    virtuoso_process, master = start_virtuoso_session()
-
-    if virtuoso_process is None or master is None:
-        print("Failed to start Virtuoso session. Exiting.")
-        return
+    # virtuoso_process, master = start_virtuoso_session()
+    #
+    # if virtuoso_process is None or master is None:
+    #     print("Failed to start Virtuoso session. Exiting.")
+    #     return
+    #
+    # try:
+    #     if not wait_for_virtuoso_ready(master):
+    #         print("Failed to detect Virtuoso ready state. Exiting.")
+    #         return
+    #
+    #     print("Virtuoso is ready to accept commands.")
+    #
+    #     if not load_skill_functions(master):
+    #         print("Failed to load Skill functions. Exiting.")
+    #         return
 
     try:
-        if not wait_for_virtuoso_ready(master):
-            print("Failed to detect Virtuoso ready state. Exiting.")
-            return
-
-        print("Virtuoso is ready to accept commands.")
-
-        if not load_skill_functions(master):
-            print("Failed to load Skill functions. Exiting.")
-            return
-
-        lib_name = yaml_data.get('Lib', '')
-
-        if not lib_name:
-            print("Error: Lib not found in YAML file. Exiting.")
-            return
+        # Copy new lib
+        target_lib = f"{source_lib}_{yaml_data['index']}_{yaml_data['id']}"
+        copy_command = f'copyEntireLibrary("{source_lib}" "{target_lib}")'
+        output = send_skill_command(master, copy_command)
+        print(f"Library copy output: {output}")
 
         # Run listLibraryCellviews
-        list_command = f'listLibraryCellviews("{lib_name}")'
+        list_command = f'listLibraryCellviews("{target_lib}")'
         output = send_skill_command(master, list_command)
         core_cell_list, tb_cell_list = parse_listLibraryCellviews_output(output)
         print("Core cells:", core_cell_list)
@@ -504,7 +495,7 @@ def main():
         # Get instances for each core cell
         cellview_instances = {}
         for cell in core_cell_list:
-            instances = get_instances_for_cellview(master, lib_name, cell)
+            instances = get_instances_for_cellview(master, target_lib, cell)
             cellview_instances[cell] = instances
 
         # Match YAML instances to cellviews
@@ -512,7 +503,7 @@ def main():
         print(f"Map dict is {instance_to_cellview}")
 
         # Generate and send Skill commands
-        commands = generate_skill_commands(yaml_path, instance_to_cellview, tb_cell_list)
+        commands = generate_skill_commands(yaml_data, instance_to_cellview, tb_cell_list)
         for command in commands:
             print(f"\nSending command: {command}")
             send_skill_command(master, command)
@@ -523,7 +514,7 @@ def main():
             cellview = instance_to_cellview.get(instance)
             if cellview:
                 print(f"Checking parameters for instance {instance} in {cellview}...")
-                command = f'PrintInstanceDetails("{lib_name}" "{cellview}" "schematic" "{instance}")'
+                command = f'PrintInstanceDetails("{target_lib}" "{cellview}" "schematic" "{instance}")'
                 output = send_skill_command(master, command)
                 if not check_instance_parameters(yaml_data, output, instance):
                     print(f"Parameter mismatch for instance {instance}.")
@@ -535,12 +526,3 @@ def main():
         send_skill_command(master, "exit")
     except Exception as e:
         print(f"An error occurred: {e}")
-    finally:
-        if virtuoso_process:
-            virtuoso_process.terminate()
-        if master:
-            os.close(master)
-
-
-if __name__ == "__main__":
-    main()

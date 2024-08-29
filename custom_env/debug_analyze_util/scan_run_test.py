@@ -32,6 +32,7 @@ def process_folder(folder_path):
                 step_data = pickle.load(f)
             try:
                 rew = step_data['reward']
+                rew = float(rew)
                 sim_result = step_data['sim_result']
             except Exception as e:
                 print(f"Error occurred in cal_reward: {str(e)}. Skipping and continuing.")
