@@ -261,7 +261,7 @@ def main():
                     logging.info(f"Detail data for iteration {iteration}: {result}")
                     total_time = time.time() - start_time
 
-                    print_progress_table(restore_id, result, iteration, total_time)
+                    # print_progress_table(restore_id, result, iteration, total_time)
 
                     if iteration % 10 == 0:
                         # Checkpoint folder name with iteration number under checkpoint_path
