@@ -64,7 +64,7 @@ def print_progress_table(id, result, iteration, total_time):
 
     # Create the data row
     data = "│ " + " │ ".join(
-        f"{col[1]:{col[2]}.{col[3]}}" if len(col) > 3 else f"{str(col[1]):<{col[2]}}"
+        f"{col[1]:{col[2]}.{col[3]}}" if len(col) > 3 else f"{col[1]:<{col[2]}}"
         for col in columns
     ) + " │"
 
