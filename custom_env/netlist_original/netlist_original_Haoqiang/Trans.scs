@@ -1,0 +1,280 @@
+// Generated for: spectre
+// Generated on: Sep  2 16:28:04 2024
+// Design library name: LDO_Haoqiang
+// Design cell name: tb_Trans
+// Design view name: schematic
+simulator lang=spectre
+global 0
+parameters cpp=2p edge=10n ibias=1u iload1=200u iload2=50m
+include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_bip
+include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_dio
+include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_dio_33
+include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_mim
+include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_dio_dnw
+include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_dio_18
+include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_bip_npn
+include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_33
+include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_rfrtmom
+include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_mos_cap_25
+include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_18
+include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_disres
+include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_res
+include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_dio_na
+include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_rfmos_33
+include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_dio_hvt
+include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_rfmvar
+include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_rfmos_18
+include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_na
+include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_dio_na33
+include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_dio_lvt
+include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_rfres_sa
+include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_na33
+include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_dio_esd
+include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_rfmim
+include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_dio_25od33
+include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_25od33
+include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt
+include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_mos_cap
+include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_dio_25
+include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_dio_25ud18
+include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_25
+include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_rfmos
+include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_25ud18
+include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_dio_na25od33
+include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_rfjvar
+include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_rfmos_25
+include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_rtmom
+include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_na25od33
+include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_dio_na25
+include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_rfres_rpo
+include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_hvt
+include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_rfind
+include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_rfmvar_25
+include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_na25
+include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_lvt
+
+// Library name: LDO_Haoqiang
+// Cell name: bonding_wire
+// View name: schematic
+subckt bonding_wire VIN VOUT
+    L0 (VIN net5) inductor l=1n
+    R0 (net5 VOUT) resistor r=50m
+ends bonding_wire
+// End of subcircuit definition.
+
+// Library name: LDO_Haoqiang
+// Cell name: LDO_Core
+// View name: schematic
+subckt LDO_Core IBIAS VBODY VF1 VF2 VFB_FFRC VH VIN VOUT VOUT_MIR VREF \
+        VSET VSET_FB VSS
+    M40 (VIN VG net0102 net0102) nch_lvt_mac l=60n w=120.0n multi=1 nf=1 \
+        sigma=1 sd=350.0n ad=3.45e-14 as=3.45e-14 pd=800n ps=800n \
+        nrd=1.45833 nrs=1.45833 sa=100n sb=100n sca=0 scb=0 scc=0 \
+        mismatchflag=1
+    M0 (VIN VG VOUT VBODY) nch_lvt_mac l=60n w=150.00000u multi=4 nf=15 \
+        sigma=1 sd=200n ad=1.575e-11 as=1.575e-11 pd=163.15u ps=163.15u \
+        nrd=0.000666667 nrs=0.000666667 sa=175.00n sb=175.00n sca=0 scb=0 \
+        scc=0 mismatchflag=1
+    M47 (V2_FFRC net077 VIN VIN) pch_mac l=1u w=500n multi=1 nf=1 sigma=1 \
+        sd=200n ad=8.75e-14 as=8.75e-14 pd=1.35u ps=1.35u nrd=0.2 nrs=0.2 \
+        sa=175.00n sb=175.00n sca=0 scb=0 scc=0 mismatchflag=1
+    M46 (net077 net077 VIN VIN) pch_mac l=1u w=500n multi=4 nf=1 sigma=1 \
+        sd=200n ad=8.75e-14 as=8.75e-14 pd=1.35u ps=1.35u nrd=0.2 nrs=0.2 \
+        sa=175.00n sb=175.00n sca=0 scb=0 scc=0 mismatchflag=1
+    M42 (net068 net068 VOUT VOUT) pch_mac l=1u w=500n multi=1 nf=1 sigma=1 \
+        sd=200n ad=8.75e-14 as=8.75e-14 pd=1.35u ps=1.35u nrd=0.2 nrs=0.2 \
+        sa=175.00n sb=175.00n sca=0 scb=0 scc=0 mismatchflag=1
+    M41 (net069 net068 net0102 net0102) pch_mac l=1u w=3u multi=1 nf=6 \
+        sigma=1 sd=200n ad=3e-13 as=3.75e-13 pd=4.2u ps=5.5u nrd=0.0333333 \
+        nrs=0.0333333 sa=175.00n sb=175.00n sca=0 scb=0 scc=0 \
+        mismatchflag=1
+    M27 (net066 net066 VIN VIN) pch_mac l=1u w=1u multi=1 nf=1 sigma=1 \
+        sd=200n ad=1.75e-13 as=1.75e-13 pd=2.35u ps=2.35u nrd=0.1 nrs=0.1 \
+        sa=175.00n sb=175.00n sca=0 scb=0 scc=0 mismatchflag=1
+    M26 (VG_FFRC net066 VIN VIN) pch_mac l=1u w=1u multi=1 nf=1 sigma=1 \
+        sd=200n ad=1.75e-13 as=1.75e-13 pd=2.35u ps=2.35u nrd=0.1 nrs=0.1 \
+        sa=175.00n sb=175.00n sca=0 scb=0 scc=0 mismatchflag=1
+    M25 (V1_FFRC VG_FFRC VIN VIN) pch_mac l=400n w=450.0n multi=1 nf=1 \
+        sigma=1 sd=200n ad=7.875e-14 as=7.875e-14 pd=1.25u ps=1.25u \
+        nrd=0.222222 nrs=0.222222 sa=175.00n sb=175.00n sca=0 scb=0 scc=0 \
+        mismatchflag=1
+    M24 (V2_FFRC V2_FFRC VIN VIN) pch_mac l=1.4u w=150.0n multi=1 nf=1 \
+        sigma=1 sd=200n ad=2.625e-14 as=2.625e-14 pd=650.0n ps=650.0n \
+        nrd=0.666667 nrs=0.666667 sa=175.00n sb=175.00n sca=0 scb=0 scc=0 \
+        mismatchflag=1
+    M23 (V3_SSF V2_FFRC VBODY VBODY) pch_mac l=100n w=600n multi=1 nf=3 \
+        sigma=1 sd=200n ad=7.5e-14 as=7.5e-14 pd=1.55u ps=1.55u \
+        nrd=0.166667 nrs=0.166667 sa=175.00n sb=175.00n sca=0 scb=0 scc=0 \
+        mismatchflag=1
+    M19 (VOUT_MIR VG_VSET VIN VIN) pch_mac l=350.0n w=200n multi=2 nf=1 \
+        sigma=1 sd=200n ad=3.5e-14 as=3.5e-14 pd=750.0n ps=750.0n nrd=0.5 \
+        nrs=0.5 sa=175.00n sb=175.00n sca=0 scb=0 scc=0 mismatchflag=1
+    M22 (VBODY net090 VIN VIN) pch_mac l=1u w=500n multi=5 nf=1 sigma=1 \
+        sd=200n ad=8.75e-14 as=8.75e-14 pd=1.35u ps=1.35u nrd=0.2 nrs=0.2 \
+        sa=175.00n sb=175.00n sca=0 scb=0 scc=0 mismatchflag=1
+    M15 (VG_VSET net054 VIN VIN) pch_mac l=500n w=500n multi=1 nf=1 \
+        sigma=1 sd=200n ad=8.75e-14 as=8.75e-14 pd=1.35u ps=1.35u nrd=0.2 \
+        nrs=0.2 sa=175.00n sb=175.00n sca=0 scb=0 scc=0 mismatchflag=1
+    M14 (net054 net054 VIN VIN) pch_mac l=500n w=500n multi=1 nf=1 sigma=1 \
+        sd=200n ad=8.75e-14 as=8.75e-14 pd=1.35u ps=1.35u nrd=0.2 nrs=0.2 \
+        sa=175.00n sb=175.00n sca=0 scb=0 scc=0 mismatchflag=1
+    M6 (VSET VSET VOUT_MIR VOUT_MIR) pch_mac l=300n w=300n multi=1 nf=1 \
+        sigma=1 sd=200n ad=5.25e-14 as=5.25e-14 pd=950.0n ps=950.0n \
+        nrd=0.333333 nrs=0.333333 sa=175.00n sb=175.00n sca=0 scb=0 scc=0 \
+        mismatchflag=1
+    M21 (net090 net090 VIN VIN) pch_mac l=1u w=500n multi=1 nf=1 sigma=1 \
+        sd=200n ad=8.75e-14 as=8.75e-14 pd=1.35u ps=1.35u nrd=0.2 nrs=0.2 \
+        sa=175.00n sb=175.00n sca=0 scb=0 scc=0 mismatchflag=1
+    M1 (VF1 VSET VOUT VOUT) pch_mac l=300n w=300n multi=4 nf=1 sigma=1 \
+        sd=200n ad=5.25e-14 as=5.25e-14 pd=950.0n ps=950.0n nrd=0.333333 \
+        nrs=0.333333 sa=175.00n sb=175.00n sca=0 scb=0 scc=0 \
+        mismatchflag=1
+    M36 (net092 IBIAS VSS VSS) nch_25_mac l=1u w=400n multi=1 nf=1 sigma=1 \
+        sd=310.0n ad=9.2e-14 as=9.2e-14 pd=1.26u ps=1.26u nrd=0.3875 \
+        nrs=0.3875 sa=230.0n sb=230.0n sca=0 scb=0 scc=0 mismatchflag=1
+    M35 (net067 IB_FFRC VSS VSS) nch_25_mac l=1u w=400n multi=2 nf=1 \
+        sigma=1 sd=310.0n ad=9.2e-14 as=9.2e-14 pd=1.26u ps=1.26u \
+        nrd=0.3875 nrs=0.3875 sa=230.0n sb=230.0n sca=0 scb=0 scc=0 \
+        mismatchflag=1
+    M34 (net090 IB_FFRC VSS VSS) nch_25_mac l=1u w=400n multi=2 nf=1 \
+        sigma=1 sd=310.0n ad=9.2e-14 as=9.2e-14 pd=1.26u ps=1.26u \
+        nrd=0.3875 nrs=0.3875 sa=230.0n sb=230.0n sca=0 scb=0 scc=0 \
+        mismatchflag=1
+    M13 (V3_SSF IB_FFRC VSS VSS) nch_25_mac l=1u w=400n multi=5 nf=1 \
+        sigma=1 sd=310.0n ad=9.2e-14 as=9.2e-14 pd=1.26u ps=1.26u \
+        nrd=0.3875 nrs=0.3875 sa=230.0n sb=230.0n sca=0 scb=0 scc=0 \
+        mismatchflag=1
+    M33 (IB_FFRC IB_FFRC VSS VSS) nch_25_mac l=1u w=400n multi=1 nf=1 \
+        sigma=1 sd=310.0n ad=9.2e-14 as=9.2e-14 pd=1.26u ps=1.26u \
+        nrd=0.3875 nrs=0.3875 sa=230.0n sb=230.0n sca=0 scb=0 scc=0 \
+        mismatchflag=1
+    M32 (VG_FFRC VFB_FFRC net067 VSS) nch_25_mac l=2u w=800n multi=2 nf=1 \
+        sigma=1 sd=310.0n ad=1.84e-13 as=1.84e-13 pd=2.06u ps=2.06u \
+        nrd=0.19375 nrs=0.19375 sa=230.0n sb=230.0n sca=0 scb=0 scc=0 \
+        mismatchflag=1
+    M31 (net066 VREF net067 VSS) nch_25_mac l=2u w=800n multi=2 nf=1 \
+        sigma=1 sd=310.0n ad=1.84e-13 as=1.84e-13 pd=2.06u ps=2.06u \
+        nrd=0.19375 nrs=0.19375 sa=230.0n sb=230.0n sca=0 scb=0 scc=0 \
+        mismatchflag=1
+    M20 (net053 IBIAS VSS VSS) nch_25_mac l=1u w=400n multi=2 nf=1 sigma=1 \
+        sd=310.0n ad=9.2e-14 as=9.2e-14 pd=1.26u ps=1.26u nrd=0.3875 \
+        nrs=0.3875 sa=230.0n sb=230.0n sca=0 scb=0 scc=0 mismatchflag=1
+    M18 (VSET IBIAS VSS VSS) nch_25_mac l=1u w=400n multi=1 nf=1 sigma=1 \
+        sd=310.0n ad=9.2e-14 as=9.2e-14 pd=1.26u ps=1.26u nrd=0.3875 \
+        nrs=0.3875 sa=230.0n sb=230.0n sca=0 scb=0 scc=0 mismatchflag=1
+    M11 (IBIAS IBIAS VSS VSS) nch_25_mac l=1u w=400n multi=1 nf=1 sigma=1 \
+        sd=310.0n ad=9.2e-14 as=9.2e-14 pd=1.26u ps=1.26u nrd=0.3875 \
+        nrs=0.3875 sa=230.0n sb=230.0n sca=0 scb=0 scc=0 mismatchflag=1
+    M10 (net25 IBIAS VSS VSS) nch_25_mac l=1u w=400n multi=1 nf=1 sigma=1 \
+        sd=310.0n ad=9.2e-14 as=9.2e-14 pd=1.26u ps=1.26u nrd=0.3875 \
+        nrs=0.3875 sa=230.0n sb=230.0n sca=0 scb=0 scc=0 mismatchflag=1
+    M8 (VF3 VREF VF2 VSS) nch_25_mac l=280.0n w=700n multi=1 nf=1 sigma=1 \
+        sd=310.0n ad=1.61e-13 as=1.61e-13 pd=1.86u ps=1.86u nrd=0.221429 \
+        nrs=0.221429 sa=230.0n sb=230.0n sca=0 scb=0 scc=0 mismatchflag=1
+    M7 (VF2 IBIAS VSS VSS) nch_25_mac l=1u w=400n multi=4 nf=1 sigma=1 \
+        sd=310.0n ad=9.2e-14 as=9.2e-14 pd=1.26u ps=1.26u nrd=0.3875 \
+        nrs=0.3875 sa=230.0n sb=230.0n sca=0 scb=0 scc=0 mismatchflag=1
+    M12 (VG VF2 VSS VSS) nch_25_mac l=280.0n w=700n multi=1 nf=1 sigma=1 \
+        sd=310.0n ad=1.61e-13 as=1.61e-13 pd=1.86u ps=1.86u nrd=0.221429 \
+        nrs=0.221429 sa=230.0n sb=230.0n sca=0 scb=0 scc=0 mismatchflag=1
+    M4 (VG IBIAS VSS VSS) nch_25_mac l=1u w=400n multi=2 nf=1 sigma=1 \
+        sd=310.0n ad=9.2e-14 as=9.2e-14 pd=1.26u ps=1.26u nrd=0.3875 \
+        nrs=0.3875 sa=230.0n sb=230.0n sca=0 scb=0 scc=0 mismatchflag=1
+    M2 (VF1 IBIAS VSS VSS) nch_25_mac l=1u w=400n multi=4 nf=1 sigma=1 \
+        sd=310.0n ad=9.2e-14 as=9.2e-14 pd=1.26u ps=1.26u nrd=0.3875 \
+        nrs=0.3875 sa=230.0n sb=230.0n sca=0 scb=0 scc=0 mismatchflag=1
+    M38 (IB_FFRC net092 VIN VIN) pch_25_mac l=500n w=500n multi=1 nf=1 \
+        sigma=1 sd=310.0n ad=1.15e-13 as=1.15e-13 pd=1.46u ps=1.46u \
+        nrd=0.31 nrs=0.31 sa=230.0n sb=230.0n sca=0 scb=0 scc=0 \
+        mismatchflag=1
+    M37 (net092 net092 VIN VIN) pch_25_mac l=500n w=500n multi=1 nf=1 \
+        sigma=1 sd=310.0n ad=1.15e-13 as=1.15e-13 pd=1.46u ps=1.46u \
+        nrd=0.31 nrs=0.31 sa=230.0n sb=230.0n sca=0 scb=0 scc=0 \
+        mismatchflag=1
+    M9 (net25 net25 VH VH) pch_25_mac l=500n w=400n multi=1 nf=1 sigma=1 \
+        sd=310.0n ad=9.2e-14 as=9.2e-14 pd=1.26u ps=1.26u nrd=0.3875 \
+        nrs=0.3875 sa=230.0n sb=230.0n sca=0 scb=0 scc=0 mismatchflag=1
+    M5 (VG VF3 VH VH) pch_25_mac l=280.0n w=400n multi=1 nf=1 sigma=1 \
+        sd=310.0n ad=9.2e-14 as=9.2e-14 pd=1.26u ps=1.26u nrd=0.3875 \
+        nrs=0.3875 sa=230.0n sb=230.0n sca=0 scb=0 scc=0 mismatchflag=1
+    M3 (VF3 net25 VH VH) pch_25_mac l=500n w=400n multi=4 nf=1 sigma=1 \
+        sd=310.0n ad=9.2e-14 as=9.2e-14 pd=1.26u ps=1.26u nrd=0.3875 \
+        nrs=0.3875 sa=230.0n sb=230.0n sca=0 scb=0 scc=0 mismatchflag=1
+    R0 (VG net43) resistor r=2K
+    C8 (V2_FFRC VSS) capacitor c=5f
+    C4 (VG_FFRC VSS) capacitor c=6p
+    C2 (VOUT_MIR VSS) capacitor c=5p
+    C3 (VSET VSS) capacitor c=1p
+    C0 (net43 VSS) capacitor c=4p
+    M43 (net068 net069 VSS VSS) nch_mac l=1u w=500n multi=1 nf=1 sigma=1 \
+        sd=200n ad=8.75e-14 as=8.75e-14 pd=1.35u ps=1.35u nrd=0.2 nrs=0.2 \
+        sa=175.00n sb=175.00n sca=0 scb=0 scc=0 mismatchflag=1
+    M44 (net069 net069 VSS VSS) nch_mac l=1u w=500n multi=6 nf=1 sigma=1 \
+        sd=200n ad=8.75e-14 as=8.75e-14 pd=1.35u ps=1.35u nrd=0.2 nrs=0.2 \
+        sa=175.00n sb=175.00n sca=0 scb=0 scc=0 mismatchflag=1
+    M30 (V1_FFRC V1_FFRC VSS VSS) nch_mac l=400n w=300n multi=1 nf=1 \
+        sigma=1 sd=200n ad=5.25e-14 as=5.25e-14 pd=950.0n ps=950.0n \
+        nrd=0.333333 nrs=0.333333 sa=175.00n sb=175.00n sca=0 scb=0 scc=0 \
+        mismatchflag=1
+    M29 (V2_FFRC V1_FFRC VSS VSS) nch_mac l=400n w=300n multi=1 nf=1 \
+        sigma=1 sd=200n ad=5.25e-14 as=5.25e-14 pd=950.0n ps=950.0n \
+        nrd=0.333333 nrs=0.333333 sa=175.00n sb=175.00n sca=0 scb=0 scc=0 \
+        mismatchflag=1
+    M28 (VBODY V3_SSF VSS VSS) nch_mac l=60n w=300n multi=1 nf=1 sigma=1 \
+        sd=200n ad=5.25e-14 as=5.25e-14 pd=950.0n ps=950.0n nrd=0.333333 \
+        nrs=0.333333 sa=175.00n sb=175.00n sca=0 scb=0 scc=0 \
+        mismatchflag=1
+    M17 (VG_VSET VREF net053 VSS) nch_mac l=800n w=400n multi=1 nf=1 \
+        sigma=1 sd=200n ad=7e-14 as=7e-14 pd=1.15u ps=1.15u nrd=0.25 \
+        nrs=0.25 sa=175.00n sb=175.00n sca=0 scb=0 scc=0 mismatchflag=1
+    M16 (net054 VSET_FB net053 VSS) nch_mac l=800n w=400n multi=1 nf=1 \
+        sigma=1 sd=200n ad=7e-14 as=7e-14 pd=1.15u ps=1.15u nrd=0.25 \
+        nrs=0.25 sa=175.00n sb=175.00n sca=0 scb=0 scc=0 mismatchflag=1
+    M45 (net077 net069 VSS VSS) nch_mac l=1u w=500n multi=1 nf=1 sigma=1 \
+        sd=200n ad=8.75e-14 as=8.75e-14 pd=1.35u ps=1.35u nrd=0.2 nrs=0.2 \
+        sa=175.00n sb=175.00n sca=0 scb=0 scc=0 mismatchflag=1
+    C1 (VIN V1_FFRC V1_FFRC) crtmom nv=20 nh=20 w=100n s=100n stm=(3) \
+        spm=(5) mf=1 mismatchflag=0
+ends LDO_Core
+// End of subcircuit definition.
+
+// Library name: LDO_Haoqiang
+// Cell name: probe
+// View name: schematic
+subckt probe VIN VSS
+    C0 (VIN VSS) capacitor c=10p
+    R0 (VIN VSS) resistor r=1M
+ends probe
+// End of subcircuit definition.
+
+// Library name: LDO_Haoqiang
+// Cell name: tb_Trans
+// View name: schematic
+I5 (VOUT_IS VOUT_OS) bonding_wire
+V4 (VSS 0) vsource dc=0 type=dc
+V3 (VH VSS) vsource dc=2 type=dc
+V1 (VREF VSS) vsource dc=1 type=dc
+V0 (VIN VSS) vsource dc=1.2 type=dc
+I2 (VIN net6) isource dc=ibias type=dc
+R0 (net014 VOUT_IS) resistor r=0
+C0 (VOUT_IS VSS) capacitor c=cpp
+I10 (net6 VBODY VFB_MIAN VFB_MIAN VBODY VH VIN net014 VFB_VSET VREF VSET \
+        VFB_VSET VSS) LDO_Core
+I4 (VOUT_IS VSS) isource type=pwl wave=[ 2u iload1 (2u+edge) iload2 7u \
+        iload2 (7u+edge) iload1 ]
+I6 (VOUT_OS VSS) probe
+simulatorOptions options psfversion="1.1.0" reltol=1e-3 vabstol=1e-6 \
+    iabstol=1e-12 temp=27 tnom=27 scalem=1.0 scale=1.0 gmin=1e-12 rforce=1 \
+    maxnotes=5 maxwarns=5 digits=5 cols=80 pivrel=1e-3 \
+    sensfile="../psf/sens.output" checklimitdest=psf 
+tran tran stop=10u errpreset=conservative write="spectre.ic" \
+    writefinal="spectre.fc" annotate=status maxiters=5 
+finalTimeOP info what=oppoint where=rawfile
+modelParameter info what=models where=rawfile
+element info what=inst where=rawfile
+outputParameter info what=output where=rawfile
+designParamVals info what=parameters where=rawfile
+primitives info what=primitives where=rawfile
+subckts info what=subckts where=rawfile
+save R0:1 I10.M5:3 I10.M12:1 
+saveOptions options save=allpub
