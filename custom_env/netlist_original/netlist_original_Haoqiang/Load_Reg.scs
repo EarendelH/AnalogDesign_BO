@@ -1,11 +1,11 @@
 // Generated for: spectre
-// Generated on: Sep  2 15:00:43 2024
+// Generated on: Sep  2 17:21:22 2024
 // Design library name: LDO_Haoqiang
 // Design cell name: tb_Load_Reg
 // Design view name: schematic
 simulator lang=spectre
 global 0
-parameters iload=1m cpp=2p edge=10n ibias=1u iload1=1m iload2=50m
+parameters cpp=2p iload=1m ibias
 include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_bip
 include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_dio
 include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_dio_33
@@ -255,8 +255,8 @@ V4 (VSS 0) vsource dc=0 type=dc
 V3 (VH VSS) vsource dc=2 type=dc
 V1 (VREF VSS) vsource dc=1 type=dc
 V0 (VIN VSS) vsource dc=1.2 type=dc
-I12 (VOUT_IS VSS) isource dc=iload type=dc
 I2 (VIN net6) isource dc=ibias type=dc
+I12 (VOUT_IS VSS) isource dc=iload type=dc
 R0 (net014 VOUT_IS) resistor r=0
 C0 (VOUT_IS VSS) capacitor c=cpp
 I10 (net6 VBODY VFB_MIAN VFB_MIAN VBODY VH VIN net014 VFB_VSET VREF VSET \

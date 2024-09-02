@@ -1,11 +1,11 @@
 // Generated for: spectre
-// Generated on: Sep  2 15:09:39 2024
+// Generated on: Sep  2 17:34:41 2024
 // Design library name: LDO_Haoqiang
 // Design cell name: tb_PSR
 // Design view name: schematic
 simulator lang=spectre
 global 0
-parameters vh=2 vin=1.2 vref=1 iload=50m ibias=1u cpp=30p
+parameters cpp=30p iload=50m ibias
 include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_bip
 include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_dio
 include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_dio_33
@@ -235,9 +235,9 @@ ends LDO_Core
 I0 (net6 VBODY net017 net05 net016 VH VIN net014 VOUT_MIR VREF VSET net015 \
         VSS) LDO_Core
 V4 (VSS 0) vsource dc=0 type=dc
-V3 (VH VSS) vsource dc=vh type=dc
-V1 (VREF VSS) vsource dc=vref type=dc
-V0 (VIN VSS) vsource dc=vin mag=1 type=dc
+V3 (VH VSS) vsource dc=2 type=dc
+V1 (VREF VSS) vsource dc=1 type=dc
+V0 (VIN VSS) vsource dc=1.2 mag=1 type=dc
 I3 (VOUT VSS) isource dc=iload type=dc
 I2 (VIN net6) isource dc=ibias type=dc
 IPRB1 (net015 VOUT_MIR) iprobe
