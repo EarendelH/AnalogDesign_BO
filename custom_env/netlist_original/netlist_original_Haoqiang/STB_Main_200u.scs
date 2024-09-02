@@ -5,7 +5,7 @@
 // Design view name: schematic
 simulator lang=spectre
 global 0
-parameters cpp=30p iload=0.2m ibias
+parameters cpp=30p iload=0.2m ibias C0 C1 C2 C3 C4 C8 R0
 include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_bip
 include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_dio
 include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_dio_33
@@ -191,12 +191,12 @@ subckt LDO_Core IBIAS VBODY VF1 VF2 VFB_FFRC VH VIN VOUT VOUT_MIR VREF \
     M3 (VF3 net25 VH VH) pch_25_mac l=500n w=400n multi=4 nf=1 sigma=1 \
         sd=310.0n ad=9.2e-14 as=9.2e-14 pd=1.26u ps=1.26u nrd=0.3875 \
         nrs=0.3875 sa=230.0n sb=230.0n sca=0 scb=0 scc=0 mismatchflag=1
-    R0 (VG net43) resistor r=2K
-    C8 (V2_FFRC VSS) capacitor c=5f
-    C4 (VG_FFRC VSS) capacitor c=6p
-    C2 (VOUT_MIR VSS) capacitor c=5p
-    C3 (VSET VSS) capacitor c=1p
-    C0 (net43 VSS) capacitor c=4p
+    R0 (VG net43) resistor r=R0
+    C8 (V2_FFRC VSS) capacitor c=C8
+    C4 (VG_FFRC VSS) capacitor c=C4
+    C2 (VOUT_MIR VSS) capacitor c=C2
+    C3 (VSET VSS) capacitor c=C3
+    C0 (net43 VSS) capacitor c=C0
     M43 (net068 net069 VSS VSS) nch_mac l=1u w=500n multi=1 nf=1 sigma=1 \
         sd=200n ad=8.75e-14 as=8.75e-14 pd=1.35u ps=1.35u nrd=0.2 nrs=0.2 \
         sa=175.00n sb=175.00n sca=0 scb=0 scc=0 mismatchflag=1
@@ -224,8 +224,7 @@ subckt LDO_Core IBIAS VBODY VF1 VF2 VFB_FFRC VH VIN VOUT VOUT_MIR VREF \
     M45 (net077 net069 VSS VSS) nch_mac l=1u w=500n multi=1 nf=1 sigma=1 \
         sd=200n ad=8.75e-14 as=8.75e-14 pd=1.35u ps=1.35u nrd=0.2 nrs=0.2 \
         sa=175.00n sb=175.00n sca=0 scb=0 scc=0 mismatchflag=1
-    C1 (VIN V1_FFRC V1_FFRC) crtmom nv=20 nh=20 w=100n s=100n stm=(3) \
-        spm=(5) mf=1 mismatchflag=0
+    C1 (VIN V1_FFRC) capacitor c=C1
 ends LDO_Core
 // End of subcircuit definition.
 
