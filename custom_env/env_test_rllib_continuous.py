@@ -9,7 +9,7 @@ if __name__ == "__main__":
                                     'config_folder_name': 'config_Haoqiang',
                                     'run_folder_name': 'run_test',
                                     'sim_output': False,
-                                    'init_method': 'random',
+                                    'init_method': 'file',
                                     'dc_check': False,
                                     'region_extract': True,
                                     'dynamic_queue': False,
