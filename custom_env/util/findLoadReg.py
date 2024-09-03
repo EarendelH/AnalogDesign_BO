@@ -1,7 +1,7 @@
 from util.extract_trace import extractTrace
 
 
-def findLoadReg(filename):
+def findLoadReg_general(iload_name, vout_name, filename):
     """
     Extract the trace data from a file and return the trace data.
 
@@ -9,8 +9,8 @@ def findLoadReg(filename):
     - filename: Path to the file to be processed.
     - trace_name: Name of the trace to be extracted.
     """
-    iload_name = '"ILOAD"'
-    vout_name = '"VOUT"'
+    # iload_name = '"ILOAD"'
+    # vout_name = '"VOUT"'
 
     trace_dict = extractTrace(filename)
 
@@ -30,6 +30,16 @@ def findLoadReg(filename):
         print("Warning: Division by zero. Setting load regulation to 100.0.")
 
     return {"loadReg": load_reg}
+
+def findLoadReg(filename):
+    iload_name = '"ILOAD"'
+    vout_name = '"VOUT"'
+    return findLoadReg_general(iload_name, vout_name, filename)
+
+def findLoadReg_Haoqiang(filename):
+    iload_name = '"iload"'
+    vout_name = '"VOUT_OS"'
+    return findLoadReg_general(iload_name, vout_name, filename)
 
 # Test Code
 # file = "/Users/hanwu/ML/AnalogDesignAuto_MultiAgent/custom_env/netlist_assign_test/Load_Reg.raw/dc.dc.encode"
