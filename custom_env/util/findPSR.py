@@ -110,7 +110,7 @@ def findPowerSupplyRejectionRatio_Cai(file_path):
 
 def findPowerSupplyRejectionRatio_Haoqiang(file_path):
 
-    vout_name = 'VOUT_OS'
+    vout_name = 'VOUT'
 
     freq_list = [10, 1000, 1000000, 10000000, 100000000]
     freq_labels = ['10', '1k', '1M', '10M', '100M']
