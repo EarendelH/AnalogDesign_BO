@@ -2,10 +2,10 @@ from util.extract_trace import extractACTrace
 from util.util_func import find_closest_value_index
 import math
 
-def findPowerSupplyRejectionRatio_general(file_path, freq_list, freq_labels):
+def findPowerSupplyRejectionRatio_general(vout_name, file_path, freq_list, freq_labels):
 
     freq_name = 'freq'
-    vout_name = 'VOUT'
+    # vout_name = 'VOUT'
 
     psr_values = {}
     try:
@@ -34,20 +34,24 @@ def findPowerSupplyRejectionRatio_general(file_path, freq_list, freq_labels):
 
 def findPowerSupplyRejectionRatio(file_path):
 
+    vout_name = 'VOUT'
+
     freq_list = [100000, 1000000, 10000000]
     freq_labels = ['100k', '1M', '10M']
 
-    result = findPowerSupplyRejectionRatio_general(file_path, freq_list, freq_labels)
+    result = findPowerSupplyRejectionRatio_general(vout_name, file_path, freq_list, freq_labels)
 
     return result
 
 
 def findPowerSupplyRejectionRatio_Yan(file_path):
 
+    vout_name = 'VOUT'
+
     freq_list = [1000, 1000000, 100000000, 1000000000, 10000000000]
     freq_labels = ['1k', '1M', '100M', '1G', '10G']
 
-    result = findPowerSupplyRejectionRatio_general(file_path, freq_list, freq_labels)
+    result = findPowerSupplyRejectionRatio_general(vout_name, file_path, freq_list, freq_labels)
 
     return result
 # Test the function with the provided file
@@ -57,10 +61,12 @@ def findPowerSupplyRejectionRatio_Yan(file_path):
 
 def findPowerSupplyRejectionRatio_Jiangping(file_path):
 
+    vout_name = 'VOUT'
+
     freq_list = [100, 1000, 10000, 100000, 1000000]
     freq_labels = ['100', '1k', '10k', '100k', '1M']
 
-    result = findPowerSupplyRejectionRatio_general(file_path, freq_list, freq_labels)
+    result = findPowerSupplyRejectionRatio_general(vout_name, file_path, freq_list, freq_labels)
 
     return result
 # Test the function with the provided file
@@ -69,38 +75,46 @@ def findPowerSupplyRejectionRatio_Jiangping(file_path):
 
 def findPowerSupplyRejectionRatio_Debashis(file_path):
 
+    vout_name = 'VOUT'
+
     freq_list = [1000, 1000000, 10000000]
     freq_labels = ['1k', '1M', '10M']
 
-    result = findPowerSupplyRejectionRatio_general(file_path, freq_list, freq_labels)
+    result = findPowerSupplyRejectionRatio_general(vout_name, file_path, freq_list, freq_labels)
 
     return result
 
 
 def findPowerSupplyRejectionRatio_Lab(file_path):
 
+    vout_name = 'VOUT'
+
     freq_list = [1000, 1000000, 10000000]
     freq_labels = ['1k', '1M', '10M']
 
-    result = findPowerSupplyRejectionRatio_general(file_path, freq_list, freq_labels)
+    result = findPowerSupplyRejectionRatio_general(vout_name, file_path, freq_list, freq_labels)
 
     return result
 
 def findPowerSupplyRejectionRatio_Cai(file_path):
 
+    vout_name = 'VOUT'
+
     freq_list = [1000000, 10000000, 100000000, 1000000000]
     freq_labels = ['1M', '10M', '100M', '1G']
 
-    result = findPowerSupplyRejectionRatio_general(file_path, freq_list, freq_labels)
+    result = findPowerSupplyRejectionRatio_general(vout_name, file_path, freq_list, freq_labels)
 
     return result
 
 
 def findPowerSupplyRejectionRatio_Haoqiang(file_path):
 
+    vout_name = 'VOUT_OS'
+
     freq_list = [10, 1000, 1000000, 10000000, 100000000]
     freq_labels = ['10', '1k', '1M', '10M', '100M']
 
-    result = findPowerSupplyRejectionRatio_general(file_path, freq_list, freq_labels)
+    result = findPowerSupplyRejectionRatio_general(vout_name, file_path, freq_list, freq_labels)
 
     return result
