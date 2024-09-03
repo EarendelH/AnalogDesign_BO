@@ -332,9 +332,11 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
                     all_action_flatten[key] = value
 
         # Update param with new action
+        logging.debug(f"Step!!!Action Mask: {self.action_mask}")
+        logging.debug(f"Step!!!Device Mask: {self.device_mask_dict}")
         logging.debug(f"Step!!!All action flatten: {all_action_flatten}")
         logging.debug(f"Step!!!Current param: {self.cur_param}")
-        logging.debug(f"Step!!!Param range config: {self.param_range_config}")
+        logging.debug(f"Step!!!Param range: {self.param_range_dict}")
         updated_param = copy.deepcopy(action2param(self.action_mask, self.device_mask_dict, all_action_flatten,
                                                    self.param_range_dict))
         logging.info(f"Step!!!Updated param: {updated_param} with step number: {self.step_num}")
