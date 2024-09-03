@@ -113,8 +113,8 @@ def check_param_compliance(init_params, param_ranges):
 
 
 def main():
-    init_params = load_yaml('init_param.yaml')
-    param_ranges = load_yaml('param_range.yaml')
+    init_params = load_yaml('../config/config_Haoqiang/init_param.yaml')
+    param_ranges = load_yaml('../config/config_Haoqiang/param_range.yaml')
 
     if check_param_compliance(init_params, param_ranges):
         print("\nAll parameter sets comply with range and step requirements.")

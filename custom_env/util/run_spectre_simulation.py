@@ -3,6 +3,7 @@ import os
 import subprocess
 from importlib import import_module
 import pickle
+import logging
 from util.extract_device_param_value import extract_operation_region_w_name
 
 
@@ -98,17 +99,17 @@ def run_dynamic_simulation(work_dir, sim_config, zero_sim_result, show_output=Fa
         assigned_netlist_name = simulation_config[f"netlist_name"]
         assigned_netlist_filename = f"{assigned_netlist_name}.scs"
         objective = simulation_config["objective"]
-        # print(f"Debug!!! Running Simulation: {simulation}")
+        logging.debug(f"Debug!!! Running Simulation: {simulation}")
 
         # Check if the assigned netlist file exists
         file_list = os.listdir(work_dir)
-        print(f"Debug!!! File List: {file_list}")
+        logging.debug(f"Debug!!! File List: {file_list}")
         if assigned_netlist_filename not in file_list:
             raise ValueError(f"Assigned netlist file {assigned_netlist_filename} not found.")
 
         # Run spectre simulation
-        # print(f"Execute command: spectre -64 {os.path.join(work_dir, assigned_netlist_filename)}")
-        # print(f"Run spectre simulation for: {simulation}")
+        logging.debug(f"Execute command: spectre -64 {os.path.join(work_dir, assigned_netlist_filename)}")
+        logging.debug(f"Run spectre simulation for: {simulation}")
         if show_output:
             subprocess.run(f"spectre -64 ++aps {os.path.join(work_dir, assigned_netlist_filename)}", shell=True)
         else:
@@ -130,48 +131,42 @@ def run_dynamic_simulation(work_dir, sim_config, zero_sim_result, show_output=Fa
             file_to_process = os.path.join(raw_dir, sim_file)
             processed_file = f"{file_to_process}.encode"
             subprocess.run(f"psf {file_to_process} -o {processed_file}", shell=True)
-            # print(f"Debug!!! Processed file: {sim_file}")
+            logging.debug(f"Debug!!! Processed file: {sim_file}")
 
             # Load the function to process the results and execute it
             script_name = simulation_config["script_name"]
             function_name = parse_funcs[idx]
             module = import_module(f"util.{script_name}")
-            # print(f"Debug!!!Current Path: {current_path}")
-            # print(f"Debug!!!Work Dict: {work_dir}")
-            # print(f"Debug!!!Processing file: {processed_file}")
+            logging.debug(f"Debug!!!Work Dict: {work_dir}")
+            logging.debug(f"Debug!!!Processing file: {processed_file}")
             # Apply absolute path for avoiding file not found error
             processed_file_full_path = os.path.join(raw_dir, processed_file)
             function = getattr(module, function_name)
             result = function(processed_file_full_path)
             results[simulation] = result
 
-            # print(f"Debug in run_dynamic_simulation.py, result in {simulation} is {result}")
+            logging.debug(f"Debug in run_dynamic_simulation.py, result in {simulation} is {result}")
 
             # Add Simulation Name before each keys in the result dictionary. Avoid error in flatten the dictionary
             modified_result = {f"{simulation}_{key}": value for key, value in result.items()}
             results[simulation] = modified_result
 
-            # print(f"Debug: {simulation} simulation result: {results}")
-
             if dynamic_queue:
                 if any(value == 100.0 for value in result.values()) and (objective == "min"):
                     fail_tag = True
-                    print(f"Simulation {simulation} failed. Return 100.0")
-                    print(f"Partial result success: {results}")
-                    # print(f"Debug!!! Simulation {simulation} failed. Return zero simulation result")
+                    logging.warning(f"Simulation {simulation} failed. Return 100.0")
+                    logging.warning(f"Partial result success: {results}")
                 if any(value == 0.0 for value in result.values()) and (objective == "max"):
                     fail_tag = True
-                    print(f"Simulation {simulation} failed. Return 0.0")
-                    print(f"Partial result success: {results}")
-                    # print(f"Debug!!! Simulation {simulation} failed. Return zero simulation result")
-                # Easy way to determine the stability of transient simulation
+                    logging.warning(f"Simulation {simulation} failed. Return 0.0")
+                    logging.warning(f"Partial result success: {results}")
 
         # Break the loop if fail_tag is True
         if fail_tag and dynamic_queue:
-            # print(f"Debug!!! Simulation {simulation} failed. Break the loop. No more simulation should be run.")
+            logging.warning(f"Debug!!! Simulation {simulation} failed. Break the loop. No more simulation should be run.")
             break
 
-    # print(f"Debug!!! results: {results} and fail_tag: {fail_tag}")
+    logging.debug(f"Debug!!! results: {results} and fail_tag: {fail_tag}")
 
     return results
 
