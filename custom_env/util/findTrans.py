@@ -197,7 +197,7 @@ def findSlewRate(file_path):
 # print(dict)
 
 
-def findShoot_general(filename, time_ranges, stable_voltage):
+def findShoot_general(filename, time_ranges, stable_voltage, output_voltage_label="VOUT"):
     """
     Extract the overshoot and undershoot value from trans file
 
@@ -213,7 +213,7 @@ def findShoot_general(filename, time_ranges, stable_voltage):
     trans_dict = extractTransTrace(filename)
     time_series = trans_dict["time"]
     # print(f"Debug!!! time_series: {time_series} \n with length: {len(time_series)}")
-    vout_trace = trans_dict["VOUT"]
+    vout_trace = trans_dict[output_voltage_label]
     # print(f"Debug!!! vout_trace: {vout_trace} \n with length: {len(vout_trace)}")
 
     # Clip time according to time_ranges
@@ -346,7 +346,8 @@ def findShoot_Cai(filename):
 
 
 def findShoot_Haoqiang(filename):
-    result = findShoot_general(filename, [(1.0e-6, 4.5e-6), (4.5e-6, 9.0e-6)], 1.0)
+    output_voltage_label = "VOUT_OS"
+    result = findShoot_general(filename, [(1.0e-6, 4.5e-6), (4.5e-6, 9.0e-6)], 1.0, output_voltage_label)
     return result
 
 # Test Code
