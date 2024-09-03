@@ -61,5 +61,4 @@ def masked_action_dict_mapping(device_mask_dict, step_action_dict):
     #         new_agent_dict[new_key] = value
     #     mapped_action_dict[agent] = new_agent_dict
     # mapped_step_action_dict = copy.deepcopy(mapped_action_dict)
-
     return mapped_step_action_dict
