@@ -247,9 +247,10 @@ def findShoot_general(filename, time_ranges, stable_voltage):
     # print(f"Debug, stable_high_load_voltage: {stable_high_load_voltage}")
 
     # Calculate penalty coefficient for punishing the max difference between ideal and real stable voltage
-    max_stable_voltage_diff = max(abs(stable_high_load_voltage - stable_voltage), abs(stable_light_load_voltage - stable_voltage))
+    # max_stable_voltage_diff = max(abs(stable_high_load_voltage - stable_voltage),
+    #                               abs(stable_light_load_voltage - stable_voltage))
     # print(f"Debug, max_stable_voltage_diff: {max_stable_voltage_diff}")
-    penalty_coeff = max_stable_voltage_diff/stable_voltage
+    # penalty_coeff = max_stable_voltage_diff/stable_voltage
     # print(f"Debug, penalty_coeff: {penalty_coeff}")
 
     # if stable_high_load_voltage >= stable_voltage * 1.1 or stable_high_load_voltage <= stable_voltage * 0.9:
@@ -341,6 +342,11 @@ def findShoot_Lab(filename):
 
 def findShoot_Cai(filename):
     result = findShoot_general(filename, [(2.5e-6, 7.5e-6), (7.5e-6, 12.5e-6)], 1.0)
+    return result
+
+
+def findShoot_Haoqiang(filename):
+    result = findShoot_general(filename, [(1.0e-6, 4.5e-6), (4.5e-6, 9.0e-6)], 1.0)
     return result
 
 # Test Code
