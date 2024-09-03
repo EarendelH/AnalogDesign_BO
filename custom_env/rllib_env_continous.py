@@ -320,17 +320,16 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
 
         step_action_dict = copy.deepcopy(action_dict)
         if self.device_mask_dict:
-            mapped_step_action_dict = copy.deepcopy(masked_action_dict_mapping(self.device_mask_dict, step_action_dict))
-            logging.debug(f"Step!!!Action dict w/ device mask: {mapped_step_action_dict}")
+            all_action_flatten = copy.deepcopy(masked_action_dict_mapping(self.device_mask_dict, step_action_dict))
+            logging.debug(f"Step!!!Action dict w/ device mask: {all_action_flatten}")
         else:
             mapped_step_action_dict = copy.deepcopy(step_action_dict)
             logging.debug(f"Step!!!Action dict w/o device mask: {mapped_step_action_dict}")
-
-        # Flatten all actions
-        all_action_flatten = OrderedDict()
-        for group in mapped_step_action_dict.values():
-            for key, value in group.items():
-                all_action_flatten[key] = value
+            # Flatten all actions
+            all_action_flatten = OrderedDict()
+            for group in mapped_step_action_dict.values():
+                for key, value in group.items():
+                    all_action_flatten[key] = value
 
         # Update param with new action
         logging.debug(f"Step!!!All action flatten: {all_action_flatten}")
