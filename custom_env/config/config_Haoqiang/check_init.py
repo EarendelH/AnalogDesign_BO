@@ -63,7 +63,7 @@ def extract_param_ranges(param_ranges):
         if key == 'other_variable':
             for param in value['params']:
                 extracted_ranges[param['variable_name']] = param['value']
-        else:
+        elif 'params' in value:
             for param in value['params']:
                 extracted_ranges[f"{key}.{param['variable_name']}"] = param['value']
     return extracted_ranges
@@ -78,11 +78,14 @@ def check_param_compliance(init_params, param_ranges):
         print(f"\nChecking parameter set {i + 1}:")
         set_compliant = True
         for param, value in param_set.items():
-            if '.' not in param:  # It's a global parameter
-                range_key = param
-            else:  # It's a device parameter
-                device, param_name = param.split('.')
-                range_key = f"{device}.{param_name}"
+            range_key = param
+            if '.' not in param:
+                # Check if this is a device parameter
+                for device in param_ranges:
+                    if device != 'other_variable' and param in [p['variable_name'] for p in
+                                                                param_ranges[device]['params']]:
+                        range_key = f"{device}.{param}"
+                        break
 
             if range_key in extracted_ranges:
                 init_value = parse_value(value)
