@@ -193,6 +193,7 @@ def run_region_simulation(work_dir, sim_config, show_output=False):
 
         # Check if the assigned netlist file exists
         file_list = os.listdir(work_dir)
+        print(f"Debug!!! File List: {file_list}")
         if assigned_netlist_filename not in file_list:
             raise ValueError(f"Assigned netlist file {assigned_netlist_filename} not found.")
 
