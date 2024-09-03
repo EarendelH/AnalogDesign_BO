@@ -13,7 +13,7 @@ if __name__ == "__main__":
                                     'dc_check': False,
                                     'region_extract': True,
                                     'dynamic_queue': False,
-                                    'log_level': 'INFO',
+                                    'log_level': 'DEBUG',
                                     'reward_func': 'cal_reward_LDO'
                                 })
 
