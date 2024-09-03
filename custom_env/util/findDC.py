@@ -138,7 +138,9 @@ def findIQ_Haoqiang(filepath):
     bias_keyword = "I2:sink"
     try:
         power_value = extract_dcOP_data(filepath, power_keyword)
+        print(f"Debug!!! power_value: {power_value}")
         bias_value = extract_dcOP_data(filepath, bias_keyword)
+        print(f"Debug!!! bias_value: {bias_value}")
         power_value = power_value - bias_value
     except Exception as e:
         print(f"Warning: {e}. return to max value.")
