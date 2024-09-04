@@ -301,7 +301,8 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         step_data = {
             'param': init_param,
             'sim_result': sim_result,
-            'reward': rew
+            'reward': rew,
+            'corner': 'tt'
         }
         pickle_path = os.path.join(working_dir_reset, 'result.pkl')
         with open(pickle_path, 'wb') as f:
@@ -413,7 +414,8 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
                 step_data = {
                     'param': updated_param,
                     'sim_result': sim_result,
-                    'reward': rew_single
+                    'reward': rew_single,
+                    'corner': 'tt'
                 }
                 pickle_path = os.path.join(working_dir_step, 'result.pkl')
                 with open(pickle_path, 'wb') as f:
@@ -455,7 +457,8 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
                     step_data = {
                         'param': updated_param,
                         'sim_result': corner_simu_result[corner]['sim_result'],
-                        'reward': corner_simu_result[corner]['rew_single']
+                        'reward': corner_simu_result[corner]['rew_single'],
+                        'corner': corner
                     }
                     pickle_path = os.path.join(corner_simu_result[corner]['working_dir_step'], 'result.pkl')
                     with open(pickle_path, 'wb') as f:
