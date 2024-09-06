@@ -127,6 +127,7 @@ def main():
             "run_folder_name": get_user_input("Name of run folder", "run_test"),
             "sim_output": get_user_input("Enable simulation output (True/False)", "False"),
             "init_method": get_user_input("Initialization method (file/half/random/mixed)", "file"),
+            "corner_sim": get_user_input("Enable corner simulation (True/False)", "False"),
             "dc_check": get_user_input("Enable step DC check (True/False)", "True"),
             "region_extract": get_user_input("Enable region extraction (True/False)", "True"),
             "dynamic_queue": get_user_input("Enable dynamic queue (True/False)", "True"),
@@ -151,7 +152,7 @@ def main():
     if confirm_flag:
         if args.config_mode == 'interactive':
             # Convert string boolean values to Python boolean values
-            for key in ["generalize", "sim_output", "dc_check", "region_extract", "dynamic_queue",
+            for key in ["generalize", "sim_output", "corner_sim", "dc_check", "region_extract", "dynamic_queue",
                         "restore_checkpoint"]:
                 settings[key] = settings[key].lower() == "true"
 
@@ -180,6 +181,7 @@ def main():
                 "run_folder_name": settings["run_folder_name"],
                 "sim_output": settings["sim_output"],
                 "init_method": settings["init_method"],
+                "corner_sim": settings["corner_sim"],
                 "dc_check": settings["dc_check"],
                 "region_extract": settings["region_extract"],
                 "dynamic_queue": settings["dynamic_queue"],
