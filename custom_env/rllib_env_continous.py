@@ -209,8 +209,10 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
                                     self.device_mask_dict, self.param_space)
         logging.debug(f"Initialing!!!Init param: {init_param}")
 
-        # Generate working directory
-        working_dir_reset = create_work_dir(self.run_root_dir)
+        # Add _init in the path
+        working_dir_reset_path = create_work_dir(self.run_root_dir)
+        working_dir_reset = working_dir_reset_path + "_init"
+        os.makedirs(working_dir_reset, exist_ok=True)
         logging.info(f"Initialing!!!Working directory: {working_dir_reset}")
 
         # Update Netlist File
@@ -239,8 +241,10 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
             # Generate region observation
             try:
                 # Run psf for converting binary file to text file
-                working_dir_reset_dc = create_work_dir(self.run_root_dir)
-                logging.info(f"Initialing!!!DC Check working directory: {working_dir_reset_dc}")
+                working_dir_reset_dc_path = create_work_dir(self.run_root_dir)
+                working_dir_reset_dc = working_dir_reset_dc_path + "_init_dc"
+                os.makedirs(working_dir_reset_dc, exist_ok=True)
+                logging.info(f"Initialing!!! DC Check working directory: {working_dir_reset_dc}")
                 update_netlist(working_dir_reset_dc, self.dc_sim_config_dict, init_param, self.unassigned_netlist_dir)
                 reset_operation_region_dict = copy.deepcopy(
                     run_region_simulation(working_dir_reset_dc, self.dc_sim_config_dict, self.sim_output_enable))
@@ -350,7 +354,9 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
 
         if self.region_extract:
             try:
-                working_dir_step_dc = create_work_dir(self.run_root_dir)
+                working_dir_step_dc_path = create_work_dir(self.run_root_dir)
+                working_dir_step_dc = working_dir_step_dc_path + "_dc"
+                os.makedirs(working_dir_step_dc, exist_ok=True)
                 logging.info(f"Step!!!DC Check Working directory: {working_dir_step_dc} "
                              f"with step number: {self.step_num}")
                 # Update DC Netlist File for checking operation region
@@ -398,12 +404,14 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
 
         # DC Check pass or not enabled. Run all simulations
         else:
-            working_dir_step_tt, observations_tt, sim_result_tt, rew_single_tt = (
-                step_simulation_process(self.region_extract, self.run_root_dir, valid_param, self.step_num,
+            step_dir_base_path = create_work_dir(self.run_root_dir)
+            working_dir_step_tt = step_dir_base_path + "_tt"
+            observations_tt, sim_result_tt, rew_single_tt = (
+                step_simulation_process(working_dir_step_tt, self.region_extract, valid_param, self.step_num,
                                         self.dc_check, self.sim_config_dict, updated_param,
                                         self.unassigned_netlist_dir, self.zero_sim_result, self.sim_output_enable,
                                         self.dynamic_queue, self.norm_specs, self.norm_ideal_specs, self.agents,
-                                        self.ideal_specs, self.cal_reward, operation_region_dict))
+                                        self.ideal_specs, self.cal_reward, 'tt', operation_region_dict))
 
             if rew_single_tt < 0:
                 working_dir_step = working_dir_step_tt
@@ -429,17 +437,18 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
                     'ss': {}
                 }
                 for corner in corner_simu_result:
-                    working_dir_step, _, sim_result, rew_single = (
-                        step_simulation_process(self.region_extract, self.run_root_dir, valid_param, self.step_num,
-                                                self.dc_check, self.sim_config_dict, updated_param,
-                                                self.unassigned_netlist_dir, self.zero_sim_result,
+                    working_dir_step_corner = step_dir_base_path + f"_{corner}"
+                    _, sim_result, rew_single = (
+                        step_simulation_process(working_dir_step_corner, self.region_extract,
+                                                valid_param, self.step_num, self.dc_check, self.sim_config_dict,
+                                                updated_param, self.unassigned_netlist_dir, self.zero_sim_result,
                                                 self.sim_output_enable, self.dynamic_queue, self.norm_specs,
                                                 self.norm_ideal_specs, self.agents, self.ideal_specs,
-                                                self.cal_reward, operation_region_dict, corner))
+                                                self.cal_reward, corner, operation_region_dict))
                     logging.info(f"Step!!!Positive reward: {rew_single_tt} in TT corner with step number: "
                                  f"{self.step_num} archived running simulation with corner: {corner}")
                     corner_simu_result[corner] = {
-                        'working_dir_step': working_dir_step,
+                        'working_dir_step': working_dir_step_corner,
                         'sim_result': sim_result,
                         'rew_single': rew_single
                     }
@@ -544,11 +553,14 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
                 raise ValueError(f"Unexpected parameter: {key}")
 
 
-def step_simulation_process(region_extract_tag, run_root_dir, valid_param, step_num, dc_check_tag, sim_config_dict,
+def step_simulation_process(working_dir_step, region_extract_tag, valid_param, step_num, dc_check_tag, sim_config_dict,
                             updated_param, unassigned_netlist_dir, zero_sim_result, sim_output_enable_tag,
                             dynamic_queue_tag, norm_specs, norm_ideal_specs, agents, ideal_specs, cal_reward,
-                            operation_region_dict=None, corner_tag=None):
+                            corner_tag, operation_region_dict=None):
     sim_result = None
+
+    # Generate working directory
+    os.makedirs(working_dir_step, exist_ok=True)
 
     if region_extract_tag:
         if operation_region_dict is None:
@@ -556,7 +568,6 @@ def step_simulation_process(region_extract_tag, run_root_dir, valid_param, step_
             raise ValueError("operation_region_dict is None when region_extract is True")
 
     # Create working directory
-    working_dir_step = create_work_dir(run_root_dir)
     if valid_param:
         logging.info(f"Step!!!Working directory: {working_dir_step} with step number: {step_num} "
                      f"with region_extract & dc_check enabled and valid param.")
@@ -602,4 +613,4 @@ def step_simulation_process(region_extract_tag, run_root_dir, valid_param, step_
     rew_single = cal_reward(ideal_specs, sim_result, norm_specs)
     logging.info(f"Step!!!Reward result: {rew_single} with step number: {step_num}")
 
-    return working_dir_step, observations, sim_result, rew_single
+    return observations, sim_result, rew_single
