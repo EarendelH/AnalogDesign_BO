@@ -119,21 +119,19 @@ def read_excel_with_progress(file_path):
     print(f"Loading data from file: {file_path}")
 
     # Get the total number of rows in the Excel file
-    total_rows = sum(1 for row in open(file_path, 'rb')) - 1  # Subtract 1 to account for header
+    xl = pd.ExcelFile(file_path)
+    sheet_name = xl.sheet_names[0]  # Assume we're reading the first sheet
+    total_rows = xl.book.sheet_by_name(sheet_name).nrows - 1  # Subtract 1 for header
 
     # Create a tqdm progress bar
     pbar = tqdm(total=total_rows, unit='rows')
 
-    # Read the Excel file in chunks
-    chunks = []
-    for chunk in pd.read_excel(file_path, chunksize=1000):
-        chunks.append(chunk)
-        pbar.update(len(chunk))
+    # Read the Excel file
+    data = pd.read_excel(file_path, sheet_name=sheet_name)
 
+    # Update progress bar
+    pbar.update(total_rows)
     pbar.close()
-
-    # Concatenate all chunks into a single DataFrame
-    data = pd.concat(chunks, ignore_index=True)
 
     return data
 
