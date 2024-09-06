@@ -15,8 +15,8 @@ corner_sim: true
 dc_check: false
 region_extract: true
 dynamic_queue: false
-restore_checkpoint: false
-checkpoint_path:
-train_iterations: 2500
-reward_func: cal_reward_LDO
+restore_checkpoint: true
+checkpoint_path: /data/share/train_data/Haoqiang/checkpoint/Haoqiang_10_file_multi_mask_region_nodc_nodynamic_eex04_5e7e7/checkpoint_000032
+train_iterations: 2000
+reward_func: cal_reward_Haoqiang
 log_level: INFO
