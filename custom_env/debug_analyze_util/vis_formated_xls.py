@@ -106,41 +106,12 @@ def sort_data_by_path(data):
     return sorted_data
 
 
-def read_excel_with_progress(file_path):
-    """
-    Read Excel file with a progress bar.
-
-    Args:
-    file_path (str): Path to the Excel file.
-
-    Returns:
-    pd.DataFrame: Loaded data.
-    """
-    print(f"Loading data from file: {file_path}")
-
-    # Get the total number of rows in the Excel file
-    xl = pd.ExcelFile(file_path)
-    sheet_name = xl.sheet_names[0]  # Assume we're reading the first sheet
-    total_rows = xl.book.sheet_by_name(sheet_name).nrows - 1  # Subtract 1 for header
-
-    # Create a tqdm progress bar
-    pbar = tqdm(total=total_rows, unit='rows')
-
-    # Read the Excel file
-    data = pd.read_excel(file_path, sheet_name=sheet_name)
-
-    # Update progress bar
-    pbar.update(total_rows)
-    pbar.close()
-
-    return data
-
 
 # Example usage
 file_path = input('Enter the path to the processed Excel file: ')
 
 # Load the Excel file with progress bar
-data = read_excel_with_progress(file_path)
+data = pd.read_excel(file_path)
 
 # Filter data by Tag
 filtered_data = filter_by_tag(data)
