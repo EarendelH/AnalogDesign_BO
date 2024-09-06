@@ -38,10 +38,14 @@ print(f'Original data length: {original_length}')
 
 # Flatten the nested dictionary and filter invalid entries for 'Specs'
 print("Processing 'Specs' column...")
-data['Valid_Specs'] = data['Specs'].apply(lambda x: flatten_nested_dict(ast.literal_eval(x)))
+tqdm.pandas(desc="Flattening Specs")
+data['Valid_Specs'] = data['Specs'].progress_apply(lambda x: flatten_nested_dict(ast.literal_eval(x)))
+
+print("Filtering invalid entries...")
 data = data[data['Valid_Specs'].apply(is_valid_entry)]
 
 # Convert the valid flattened dictionaries into DataFrame columns for 'Specs'
+print("Expanding Specs into columns...")
 specs_df = data['Valid_Specs'].apply(pd.Series)
 
 # Expand 'Parameters' column directly into DataFrame columns with progress bar
