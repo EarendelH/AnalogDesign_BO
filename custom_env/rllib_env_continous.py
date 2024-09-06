@@ -40,6 +40,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
             'run_folder_name': str,
             'sim_output': bool,
             'init_method': str,
+            'corner_sim': bool,
             'dc_check': bool,
             'region_extract': bool,
             'dynamic_queue': bool,
@@ -62,6 +63,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
 
         # Pass flag
         self.sim_output_enable = self.sim_output
+        self.corner_sim = self.corner_sim
         self.region_extract = self.region_extract
         self.dc_check = self.dc_check
         self.dynamic_queue = self.dynamic_queue
@@ -428,8 +430,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
                 pickle_path = os.path.join(working_dir_step, 'result.pkl')
                 with open(pickle_path, 'wb') as f:
                     pickle.dump(step_data, f)
-            else:
-
+            elif self.corner_sim:
                 corner_simu_result = {
                     'ff': {},
                     'fs': {},
