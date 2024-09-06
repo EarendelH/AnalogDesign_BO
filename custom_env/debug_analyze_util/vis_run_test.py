@@ -5,6 +5,7 @@ import multiprocessing as mp
 import numpy as np
 from matplotlib.colors import LinearSegmentedColormap
 import matplotlib.pyplot as plt
+from tqdm import tqdm
 
 
 # Function to validate entries using specific criteria
@@ -13,13 +14,17 @@ def is_valid_entry(input_dict):
     valid_values = [value for value in flattened_dict.values() if value not in [0.0, 100.0]]
     return len(valid_values)
 
-
 # Function to scan directories and sort them by timestamp
 def scan_and_sort_directories(base_path):
     dirs = [d for d in os.listdir(base_path) if os.path.isdir(os.path.join(base_path, d))]
+
+    def sort_key(dir_name):
+        timestamp = dir_name[4:18] if dir_name.startswith("tmp_") else dir_name
+        return (timestamp, dir_name)
+
     sorted_dirs = sorted(
         (d for d in dirs if d.startswith("tmp_")),
-        key=lambda x: x[4:18]  # Extracting the timestamp part from the folder name
+        key=sort_key
     )
     return sorted_dirs
 
@@ -45,7 +50,8 @@ def process_single_directory(args):
 # Function to label directories and write labels to a CSV file using multiprocessing
 def label_directories(base_path, sorted_dirs):
     with mp.Pool(processes=mp.cpu_count()) as pool:
-        results = pool.map(process_single_directory, [(base_path, dir_name) for dir_name in sorted_dirs])
+        results = list(tqdm(pool.imap(process_single_directory, [(base_path, dir_name) for dir_name in sorted_dirs]),
+                            total=len(sorted_dirs), desc="Processing directories"))
 
     labels = {dir_name: label for dir_name, label in results}
     with open('directory_labels.csv', 'w', newline='') as file:
@@ -53,7 +59,6 @@ def label_directories(base_path, sorted_dirs):
         writer.writerow(['Directory Name', 'Label'])
         for dir_name, label in labels.items():
             writer.writerow([dir_name, label])
-            print(f"Directory {dir_name} labeled as {label}")
     return labels
 
 
@@ -100,21 +105,32 @@ if __name__ == "__main__":
 
     if choice == '1':
         base_path = input("Enter the path to the directory: ")
+        print("Scanning and sorting directories...")
         sorted_dirs = scan_and_sort_directories(base_path)
+        print(f"Found {len(sorted_dirs)} directories to process.")
+
+        print("Labeling directories...")
         labels = label_directories(base_path, sorted_dirs)
+
+        print("Plotting label distribution...")
         plot_label_distribution(labels)
+        plt.savefig('label_distribution.png')
+        print("Label distribution plot saved as 'label_distribution.png'")
+
     elif choice == '2':
         csv_path = input("Enter the path to the CSV file: ")
         if os.path.exists(csv_path):
+            print("Reading CSV file...")
             labels = {}
             with open(csv_path, 'r') as file:
                 reader = csv.reader(file)
                 next(reader)  # Skip the header row
-                for row in reader:
+                for row in tqdm(reader, desc="Processing CSV rows"):
                     labels[row[0]] = int(row[1])
 
             output_folder = os.path.dirname(csv_path)
             plot_path = os.path.join(output_folder, 'label_distribution.png')
+            print("Plotting label distribution...")
             plot_label_distribution(labels)
             plt.savefig(plot_path)
             print(f"Label distribution plot saved at: {plot_path}")
