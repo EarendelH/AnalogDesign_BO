@@ -413,7 +413,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
                                         self.dc_check, self.sim_config_dict, updated_param,
                                         self.unassigned_netlist_dir, self.zero_sim_result, self.sim_output_enable,
                                         self.dynamic_queue, self.norm_specs, self.norm_ideal_specs, self.agents,
-                                        self.ideal_specs, self.cal_reward, 'tt', operation_region_dict))
+                                        self.ideal_specs, self.cal_reward, None, operation_region_dict))
 
             if rew_single_tt < 0:
                 working_dir_step = working_dir_step_tt
