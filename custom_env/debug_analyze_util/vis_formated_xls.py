@@ -106,7 +106,6 @@ def sort_data_by_path(data):
     return sorted_data
 
 
-
 # Example usage
 file_path = input('Enter the path to the processed Excel file: ')
 
