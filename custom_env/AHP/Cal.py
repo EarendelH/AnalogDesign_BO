@@ -19,6 +19,11 @@ class CompleteAHPCalculator:
         self.setup_matrix_tab()
         self.setup_results_tab()
 
+        self.scale_values = [
+            "9", "8", "7", "6", "5", "4", "3", "2", "1",
+            "1/2", "1/3", "1/4", "1/5", "1/6", "1/7", "1/8", "1/9"
+        ]
+
     def setup_params_tab(self):
         params_frame = ttk.Frame(self.notebook)
         self.notebook.add(params_frame, text="Parameters")
@@ -35,6 +40,8 @@ class CompleteAHPCalculator:
         self.matrix_frame = ttk.Frame(self.notebook)
         self.notebook.add(self.matrix_frame, text="Comparison Matrix")
 
+        self.add_matrix_example()
+
     def setup_results_tab(self):
         self.results_frame = ttk.Frame(self.notebook)
         self.notebook.add(self.results_frame, text="Results")
@@ -46,6 +53,24 @@ class CompleteAHPCalculator:
         self.canvas = FigureCanvasTkAgg(self.fig, master=self.results_frame)
         self.canvas.get_tk_widget().pack()
 
+    def add_matrix_example(self):
+        example_text = """
+填写示例:
+1. 从下拉菜单中选择值，范围从 1/9 到 9
+2. 含义:
+   1: 同等重要
+   3: 稍微重要
+   5: 明显重要
+   7: 强烈重要
+   9: 极其重要
+   2,4,6,8: 中间值
+3. 示例: 如果A比B重要程度是5，则在A行B列选择5，B行A列会自动设置为1/5
+4. 对角线元素默认为1，无需填写
+5. 只需填写上三角矩阵，下三角矩阵会自动计算
+        """
+        example_label = ttk.Label(self.matrix_frame, text=example_text, justify=tk.LEFT)
+        example_label.pack(pady=10, padx=10, anchor="w")
+
     def set_params(self):
         params = [p.strip() for p in self.params_entry.get().split(',')]
         if len(params) < 2:
@@ -54,6 +79,8 @@ class CompleteAHPCalculator:
 
         for widget in self.matrix_frame.winfo_children():
             widget.destroy()
+
+        self.add_matrix_example()
 
         canvas = tk.Canvas(self.matrix_frame)
         scrollbar = ttk.Scrollbar(self.matrix_frame, orient="vertical", command=canvas.yview)
@@ -69,7 +96,7 @@ class CompleteAHPCalculator:
         canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
         canvas.configure(yscrollcommand=scrollbar.set)
 
-        self.entries = []
+        self.comboboxes = []
         for i, param1 in enumerate(params):
             row = []
             for j, param2 in enumerate(params):
@@ -77,14 +104,14 @@ class CompleteAHPCalculator:
                     label = ttk.Label(scrollable_frame, text="1")
                     label.grid(row=i + 1, column=j + 1)
                 elif i < j:
-                    entry = ttk.Entry(scrollable_frame, width=5)
-                    entry.grid(row=i + 1, column=j + 1)
-                    entry.bind("<KeyRelease>", self.check_consistency)
-                    row.append(entry)
+                    combobox = ttk.Combobox(scrollable_frame, values=self.scale_values, width=5)
+                    combobox.grid(row=i + 1, column=j + 1)
+                    combobox.bind("<<ComboboxSelected>>", lambda e, i=i, j=j: self.update_inverse(i, j))
+                    row.append(combobox)
                 else:
                     label = ttk.Label(scrollable_frame, text="-")
                     label.grid(row=i + 1, column=j + 1)
-            self.entries.append(row)
+            self.comboboxes.append(row)
 
         for i, param in enumerate(params):
             ttk.Label(scrollable_frame, text=param).grid(row=0, column=i + 1)
@@ -94,6 +121,15 @@ class CompleteAHPCalculator:
         scrollbar.pack(side="right", fill="y")
 
         ttk.Button(self.matrix_frame, text="Calculate", command=self.calculate).pack(pady=10)
+
+    def update_inverse(self, i, j):
+        value = self.comboboxes[i][j - i - 1].get()
+        if value in self.scale_values:
+            inverse_index = self.scale_values.index(value)
+            inverse_value = self.scale_values[-(inverse_index + 1)]
+            if j - i - 1 < len(self.comboboxes[j]) and i < len(self.comboboxes):
+                self.comboboxes[j][i].set(inverse_value)
+        self.check_consistency()
 
     def get_ri(self, n):
         ri_table = {
@@ -106,7 +142,7 @@ class CompleteAHPCalculator:
         else:
             return 1.98 * (n - 2) / n
 
-    def check_consistency(self, event=None):
+    def check_consistency(self):
         try:
             matrix = self.get_matrix()
             n = len(matrix)
@@ -124,12 +160,17 @@ class CompleteAHPCalculator:
             self.master.configure(background='yellow')
 
     def get_matrix(self):
-        n = len(self.entries) + 1
+        n = len(self.comboboxes) + 1
         matrix = np.ones((n, n))
         for i in range(n):
             for j in range(i + 1, n):
                 try:
-                    value = float(self.entries[i][j - i - 1].get())
+                    value = self.comboboxes[i][j - i - 1].get()
+                    if '/' in value:
+                        num, denom = value.split('/')
+                        value = float(num) / float(denom)
+                    else:
+                        value = float(value)
                     matrix[i, j] = value
                     matrix[j, i] = 1 / value
                 except:
@@ -140,12 +181,15 @@ class CompleteAHPCalculator:
         try:
             matrix = self.get_matrix()
             n = len(matrix)
+
+            # Calculate the principal eigenvector
             eigenvalues, eigenvectors = np.linalg.eig(matrix)
             max_index = np.argmax(eigenvalues.real)
-            eigenvector = eigenvectors[:, max_index].real
-            weights = eigenvector / np.sum(eigenvector)
+            principal_eigenvector = eigenvectors[:, max_index].real
+            weights = principal_eigenvector / np.sum(principal_eigenvector)
 
-            lambda_max = np.max(eigenvalues.real)
+            # Calculate Consistency Ratio
+            lambda_max = eigenvalues[max_index].real
             ci = (lambda_max - n) / (n - 1)
             ri = self.get_ri(n)
             cr = ci / ri if ri != 0 else 0
@@ -188,7 +232,13 @@ class CompleteAHPCalculator:
                 self.set_params()
                 for i in range(len(params)):
                     for j in range(i + 1, len(params)):
-                        self.entries[i][j - i - 1].insert(0, str(df.iloc[i, j]))
+                        value = df.iloc[i, j]
+                        if value != 1:
+                            if value < 1:
+                                value = f"1/{int(1/value)}"
+                            else:
+                                value = str(int(value))
+                            self.comboboxes[i][j - i - 1].set(value)
                 self.check_consistency()
             except Exception as e:
                 messagebox.showerror("Error", f"Failed to import CSV: {str(e)}")
