@@ -31,9 +31,9 @@ def process_folder(folder_path):
             with open(os.path.join(folder_path, file), "rb") as f:
                 step_data = pickle.load(f)
             try:
+                corner_tag = step_data['corner']
                 rew = step_data['reward']
                 rew = float(rew)
-                corner_tag = step_data['corner']
                 sim_result = step_data['sim_result']
             except Exception as e:
                 print(f"Error occurred in cal_reward: {str(e)}. Skipping and continuing.")
