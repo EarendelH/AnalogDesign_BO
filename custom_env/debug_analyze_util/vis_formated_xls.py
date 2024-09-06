@@ -94,11 +94,8 @@ def sort_data_by_path(data):
     """
     print("Sorting data based on file paths...")
 
-    # Combine 'Folder Name' and 'File Name' to create a full path
-    data['Full Path'] = data['Folder Name'].astype(str) + '/' + data['File Name'].astype(str)
-
     # Sort the data based on the full path with progress bar
-    sorted_data = data.sort_values('Full Path')
+    sorted_data = data.sort_values('Folder Name')
 
     # Reset the index after sorting
     sorted_data = sorted_data.reset_index(drop=True)
@@ -128,7 +125,7 @@ sorted_data = sort_data_by_path(filtered_data)
 
 # Get all column names except 'Folder Name', 'Timestamp', 'Tag', 'File Name', and 'Full Path'
 all_columns = [col for col in sorted_data.columns if
-               col not in ['Folder Name', 'Timestamp', 'Tag', 'File Name', 'Full Path']]
+               col not in ['Folder Name', 'Timestamp', 'Tag']]
 
 # Let the user select columns
 column_name_list = select_columns(all_columns)
