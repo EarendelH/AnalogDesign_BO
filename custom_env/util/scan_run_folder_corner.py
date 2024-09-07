@@ -45,7 +45,7 @@ def process_folder_update_rew(folder_path, cal_rew_func, ideal_specs_dict, norm_
                 print(f"Error occurred in cal_reward: {str(e)}. Skipping and continuing.")
                 rew = None
                 sim_result = None
-            return folder_name, rew, tag_name, sim_result, parameters_dict
+            return folder_name, tag_name, rew, sim_result, parameters_dict
     return None
 
 
@@ -73,7 +73,7 @@ def process_folder(folder_path):
                 print(f"Error occurred in cal_reward: {str(e)}. Skipping and continuing.")
                 rew = None
                 sim_result = None
-            return folder_name, rew, tag_name, sim_result, parameters_dict
+            return folder_name, tag_name, rew, sim_result, parameters_dict
     return None
 
 
