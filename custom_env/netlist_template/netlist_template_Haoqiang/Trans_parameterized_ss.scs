@@ -53,6 +53,14 @@ include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_
 include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=ss_na25
 include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=ss_lvt
 // Library name: LDO_Haoqiang
+// Cell name: bonding_wire
+// View name: schematic
+subckt bonding_wire VIN VOUT
+    L0 (VIN net5) inductor l=1n
+    R0 (net5 VOUT) resistor r=50m
+ends bonding_wire
+// End of subcircuit definition.
+// Library name: LDO_Haoqiang
 // Cell name: LDO_Core
 // View name: schematic
 subckt LDO_Core IBIAS VBODY VF1 VF2 VFB_FFRC VH VIN VOUT VOUT_MIR VREF \
