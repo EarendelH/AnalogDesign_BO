@@ -7,6 +7,7 @@ import select
 import sys
 import time
 import signal
+import shutil
 
 
 def close_virtuoso_session(virtuoso_process, master):
