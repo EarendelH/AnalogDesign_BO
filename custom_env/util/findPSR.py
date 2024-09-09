@@ -155,5 +155,5 @@ def findPowerSupplyRejectionRatio_Haoqiang(file_path):
     return result
 
 # Test the function with the provided file
-value_dict = findPowerSupplyRejectionRatio_Haoqiang("/Users/hanwu/Downloads/Test_Run/PSR.raw/ac.ac.encode")
-print(value_dict)
+# value_dict = findPowerSupplyRejectionRatio_Haoqiang("/Users/hanwu/Downloads/Test_Run/PSR.raw/ac.ac.encode")
+# print(value_dict)
