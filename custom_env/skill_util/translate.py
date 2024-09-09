@@ -328,6 +328,7 @@ def send_skill_command(master, command):
 def load_skill_functions(master):
     """
     Load necessary Skill functions into the Virtuoso session.
+    If skill files are not found in the current directory, copy them from the script's directory.
 
     Args:
     master (int): Master file descriptor of the pseudo-terminal
@@ -344,10 +345,29 @@ def load_skill_functions(master):
         "copyEntireLibrary.il",
         "closeTechSaveDrmForm.il"
     ]
+
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    current_dir = os.getcwd()
+
     for file in skill_files:
+        if not os.path.exists(os.path.join(current_dir, file)):
+            try:
+                shutil.copy(os.path.join(script_dir, file), current_dir)
+                print(f"Copied {file} from script directory to current directory.")
+            except FileNotFoundError:
+                print(f"Error: {file} not found in script directory.")
+                return False
+            except PermissionError:
+                print(f"Error: Permission denied when copying {file}.")
+                return False
+            except Exception as e:
+                print(f"Error copying {file}: {str(e)}")
+                return False
+
         load_command = f'load("{file}")'
         output = send_skill_command(master, load_command)
         print(f"Loading {file}: {output}")
+
     return "Error" not in output
 
 
