@@ -1,5 +1,5 @@
-# from extract_trace import extractTransTrace
 import os.path
+# from extract_trace import extractTransTrace
 from util.extract_trace import extractTransTrace
 import numpy as np
 import bisect
@@ -197,7 +197,7 @@ def findSlewRate(file_path):
 # print(dict)
 
 
-def findShoot_general(filename, time_ranges, stable_voltage, output_voltage_label="VOUT"):
+def findShoot_general(filename, time_ranges, stable_voltage, output_voltage_label="VOUT", file_size_threshold=500):
     """
     Extract the overshoot and undershoot value from trans file
 
@@ -269,8 +269,8 @@ def findShoot_general(filename, time_ranges, stable_voltage, output_voltage_labe
         print(f"Warning! Shoot is zero. Too good to be true")
         overshoot = 100.0
         undershoot = 100.0
-    if os.path.getsize(filename) > 500 * 1024:
-        print(f"Warning! {filename} is larger than 500KB, the system is highly like to be unstable")
+    if os.path.getsize(filename) > file_size_threshold * 1024:
+        print(f"Warning! {filename} is larger than {file_size_threshold}K, the system is highly like to be unstable")
         overshoot = 100.0
         undershoot = 100.0
     # if overshoot >= stable_voltage or undershoot >= stable_voltage:
@@ -347,12 +347,13 @@ def findShoot_Cai(filename):
 
 def findShoot_Haoqiang(filename):
     output_voltage_label = "VOUT_OS"
-    result = findShoot_general(filename, [(1.0e-6, 4.5e-6), (4.5e-6, 9.0e-6)], 1.0, output_voltage_label)
+    file_size_threshold = 150
+    result = findShoot_general(filename, [(1.0e-6, 4.5e-6), (4.5e-6, 9.0e-6)], 1.0, output_voltage_label, file_size_threshold)
     return result
 
 # Test Code
-# file = "/Users/hanwu/Downloads/Log_N65/Jianping/select_point/tmp_20240518030545162069028/Trans_Line_Reg.raw/tran.tran.tran.encode"
-# print(findShoot_Line_Reg_Jianping(file))
+# file = "/Users/hanwu/Downloads/Test_Run/Trans.raw/tran.tran.tran.encode"
+# print(findShoot_Haoqiang(file))
 
 
 def findEff_general(filename, time_ranges, output_voltage_label, load_current, input_voltage, input_current_label):
