@@ -13,9 +13,11 @@ def masked_action_dict_mapping(device_mask_dict, step_action_dict):
     :return: mapped_step_action_dict: mapped step action dictionary
     """
 
+    device_mask_dict_processed = copy.deepcopy(device_mask_dict)
+
     # Remove 'Other_Constrain' dict from device_mask_dict
-    if 'Other_Constrain' in device_mask_dict:
-        del device_mask_dict['Other_Constrain']
+    if 'Other_Constrain' in device_mask_dict_processed:
+        del device_mask_dict_processed['Other_Constrain']
 
     flattened_action_dict = {}
     for agent_key, agent_dict in step_action_dict.items():
@@ -25,9 +27,9 @@ def masked_action_dict_mapping(device_mask_dict, step_action_dict):
             flattened_action_dict[key] = value
     # print(flattened_action_dict)
 
-    for key in device_mask_dict:
+    for key in device_mask_dict_processed:
         if key in flattened_action_dict:
-            new_values = device_mask_dict[key]
+            new_values = device_mask_dict_processed[key]
             for new_key in new_values:
                 if new_key.endswith('_Match'):
                     match_action = flattened_action_dict[key][:2]

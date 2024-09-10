@@ -1,3 +1,5 @@
+import copy
+
 import gymnasium
 import yaml
 
@@ -188,23 +190,25 @@ def gen_masked_continuous_action_space(device_mask_dict, agent_assign_dict):
     triple_act_space = gymnasium.spaces.Box(low=0, high=1, shape=(3,), dtype=float)
     single_act_space = gymnasium.spaces.Box(low=0, high=1, shape=(1,), dtype=float)
 
-    # Remove 'Other_Constrain' dict from device_mask_dict
-    if 'Other_Constrain' in device_mask_dict:
-        del device_mask_dict['Other_Constrain']
+    device_mask_dict_processed = copy.deepcopy(device_mask_dict)
 
-    if device_mask_dict:
+    # Remove 'Other_Constrain' dict from device_mask_dict
+    if 'Other_Constrain' in device_mask_dict_processed:
+        del device_mask_dict_processed['Other_Constrain']
+
+    if device_mask_dict_processed:
         device_list = []
         for device_group in agent_assign_dict.values():
             device_list.extend(device_group)
         # print(f"Device list is {device_list}")
 
-        for values in device_mask_dict.values():
+        for values in device_mask_dict_processed.values():
             for value in values:
                 device_name = value.replace('_Match', '')  # Remove _Match suffix if exists
                 if device_name not in device_list:
                     raise ValueError(f"Device {device_name} not found in device list")
 
-        for key, values in device_mask_dict.items():
+        for key, values in device_mask_dict_processed.items():
             for value in values:
                 if value.endswith('_Match'):
                     # If the value ends with '_Match', replace the corresponding device in the list with the value
