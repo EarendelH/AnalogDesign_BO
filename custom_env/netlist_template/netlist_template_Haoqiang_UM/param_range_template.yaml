@@ -1,0 +1,740 @@
+other_variable:
+  instance_type: other_variable
+  params:
+  - variable_name: ibias
+    value:
+      range: [1u, 2u]
+      step: "0.1u"
+  - variable_name: C0
+    value:
+      range: [0.1p, 10p]
+      step: "0.1p"
+  - variable_name: C1
+    value:
+      range: [1f, 50f]
+      step: "1f"
+  - variable_name: C2
+    value:
+      range: [1p, 15p]
+      step: "1p"
+  - variable_name: C3
+    value:
+      range: [0.1p, 5p]
+      step: "0.1p"
+  - variable_name: C4
+    value:
+      range: [1p, 15p]
+      step: "1p"
+  - variable_name: C8
+    value:
+      range: [1f, 15f]
+      step: "1f"
+  - variable_name: R0
+    value:
+      range: [0.5k, 15k]
+      step: "0.1k"
+M40:
+  instance_type: nch_lvt_mac
+  params:
+  - variable_name: w_M40_per_finger
+    value:
+      range: [0.06u, 1u]
+      step: "0.01u"
+  - variable_name: l_M40
+    value:
+      range: [60n, 60n]
+      step: "1n"
+  - variable_name: nf_M40
+    value:
+      range: [1, 5]
+      step: "1"
+M0:
+  instance_type: nch_lvt_mac
+  params:
+  - variable_name: w_M0_per_finger
+    value:
+      range: [10u, 10u]
+      step: "1u"
+  - variable_name: l_M0
+    value:
+      range: [60n, 60n]
+      step: "1n"
+  - variable_name: nf_M0
+    value:
+      range: [5, 80]
+      step: "5"
+M47:
+  instance_type: pch_mac
+  params:
+  - variable_name: w_M47_per_finger
+    value:
+      range: [0.5u, 1u]
+      step: "0.1u"
+  - variable_name: l_M47
+    value:
+      range: [0.5u, 2u]
+      step: "0.1u"
+  - variable_name: nf_M47
+    value:
+      range: [1, 5]
+      step: "1"
+M46:
+  instance_type: pch_mac
+  params:
+  - variable_name: w_M46_per_finger
+    value:
+      range: [0.5u, 1u]
+      step: "0.1u"
+  - variable_name: l_M46
+    value:
+      range: [0.5u, 2u]
+      step: "0.1u"
+  - variable_name: nf_M46
+    value:
+      range: [1, 5]
+      step: "1"
+M42:
+  instance_type: pch_mac
+  params:
+  - variable_name: w_M42_per_finger
+    value:
+      range: [0.5u, 1u]
+      step: "0.1u"
+  - variable_name: l_M42
+    value:
+      range: [0.5u, 2u]
+      step: "0.1u"
+  - variable_name: nf_M42
+    value:
+      range: [1, 5]
+      step: "1"
+M41:
+  instance_type: pch_mac
+  params:
+  - variable_name: w_M41_per_finger
+    value:
+      range: [0.5u, 1u]
+      step: "0.1u"
+  - variable_name: l_M41
+    value:
+      range: [0.5u, 2u]
+      step: "0.1u"
+  - variable_name: nf_M41
+    value:
+      range: [1, 5]
+      step: "1"
+M27:
+  instance_type: pch_mac
+  params:
+  - variable_name: w_M27_per_finger
+    value:
+      range: [0.5u, 1u]
+      step: "0.1u"
+  - variable_name: l_M27
+    value:
+      range: [0.5u, 2u]
+      step: "0.1u"
+  - variable_name: nf_M27
+    value:
+      range: [1, 5]
+      step: "1"
+M26:
+  instance_type: pch_mac
+  params:
+  - variable_name: w_M26_per_finger
+    value:
+      range: [0.5u, 1u]
+      step: "0.1u"
+  - variable_name: l_M26
+    value:
+      range: [0.5u, 2u]
+      step: "0.1u"
+  - variable_name: nf_M26
+    value:
+      range: [1, 5]
+      step: "1"
+M25:
+  instance_type: pch_mac
+  params:
+  - variable_name: w_M25_per_finger
+    value:
+      range: [0.4u, 1u]
+      step: "0.1u"
+  - variable_name: l_M25
+    value:
+      range: [0.4u, 1u]
+      step: "0.1u"
+  - variable_name: nf_M25
+    value:
+      range: [1, 3]
+      step: "1"
+M24:
+  instance_type: pch_mac
+  params:
+  - variable_name: w_M24_per_finger
+    value:
+      range: [0.1u, 1u]
+      step: "0.1u"
+  - variable_name: l_M24
+    value:
+      range: [0.4u, 3u]
+      step: "0.1u"
+  - variable_name: nf_M24
+    value:
+      range: [1, 3]
+      step: "1"
+M23:
+  instance_type: pch_mac
+  params:
+  - variable_name: w_M23_per_finger
+    value:
+      range: [0.1u, 1u]
+      step: "0.1u"
+  - variable_name: l_M23
+    value:
+      range: [60n, 500n]
+      step: "10n"
+  - variable_name: nf_M23
+    value:
+      range: [1, 5]
+      step: "1"
+M19:
+  instance_type: pch_mac
+  params:
+  - variable_name: w_M19_per_finger
+    value:
+      range: [0.1u, 1u]
+      step: "0.1u"
+  - variable_name: l_M19
+    value:
+      range: [0.06u, 1u]
+      step: "0.01u"
+  - variable_name: nf_M19
+    value:
+      range: [1, 5]
+      step: "1"
+M22:
+  instance_type: pch_mac
+  params:
+  - variable_name: w_M22_per_finger
+    value:
+      range: [0.5u, 1u]
+      step: "0.1u"
+  - variable_name: l_M22
+    value:
+      range: [0.5u, 2u]
+      step: "0.1u"
+  - variable_name: nf_M22
+    value:
+      range: [1, 10]
+      step: "1"
+M15:
+  instance_type: pch_mac
+  params:
+  - variable_name: w_M15_per_finger
+    value:
+      range: [0.5u, 1u]
+      step: "0.1u"
+  - variable_name: l_M15
+    value:
+      range: [0.5u, 2u]
+      step: "0.1u"
+  - variable_name: nf_M15
+    value:
+      range: [1, 5]
+      step: "1"
+M14:
+  instance_type: pch_mac
+  params:
+  - variable_name: w_M14_per_finger
+    value:
+      range: [0.5u, 1u]
+      step: "0.1u"
+  - variable_name: l_M14
+    value:
+      range: [0.5u, 2u]
+      step: "0.1u"
+  - variable_name: nf_M14
+    value:
+      range: [1, 5]
+      step: "1"
+M6:
+  instance_type: pch_mac
+  params:
+  - variable_name: w_M6_per_finger
+    value:
+      range: [0.1u, 2u]
+      step: "0.1u"
+  - variable_name: l_M6
+    value:
+      range: [0.1u, 2u]
+      step: "0.1u"
+  - variable_name: nf_M6
+    value:
+      range: [1, 5]
+      step: "1"
+M21:
+  instance_type: pch_mac
+  params:
+  - variable_name: w_M21_per_finger
+    value:
+      range: [0.5u, 1u]
+      step: "0.1u"
+  - variable_name: l_M21
+    value:
+      range: [0.5u, 2u]
+      step: "0.1u"
+  - variable_name: nf_M21
+    value:
+      range: [1, 5]
+      step: "1"
+M1:
+  instance_type: pch_mac
+  params:
+  - variable_name: w_M1_per_finger
+    value:
+      range: [0.1u, 2u]
+      step: "0.1u"
+  - variable_name: l_M1
+    value:
+      range: [0.1u, 2u]
+      step: "0.1u"
+  - variable_name: nf_M1
+    value:
+      range: [1, 10]
+      step: "1"
+M36:
+  instance_type: nch_25_mac
+  params:
+  - variable_name: w_M36_per_finger
+    value:
+      range: [0.5u, 1u]
+      step: "0.1u"
+  - variable_name: l_M36
+    value:
+      range: [0.5u, 2u]
+      step: "0.1u"
+  - variable_name: nf_M36
+    value:
+      range: [1, 5]
+      step: "1"
+M35:
+  instance_type: nch_25_mac
+  params:
+  - variable_name: w_M35_per_finger
+    value:
+      range: [0.5u, 1u]
+      step: "0.1u"
+  - variable_name: l_M35
+    value:
+      range: [0.5u, 2u]
+      step: "0.1u"
+  - variable_name: nf_M35
+    value:
+      range: [1, 5]
+      step: "1"
+M34:
+  instance_type: nch_25_mac
+  params:
+  - variable_name: w_M34_per_finger
+    value:
+      range: [0.5u, 1u]
+      step: "0.1u"
+  - variable_name: l_M34
+    value:
+      range: [0.5u, 2u]
+      step: "0.1u"
+  - variable_name: nf_M34
+    value:
+      range: [1, 5]
+      step: "1"
+M13:
+  instance_type: nch_25_mac
+  params:
+  - variable_name: w_M13_per_finger
+    value:
+      range: [0.5u, 1u]
+      step: "0.1u"
+  - variable_name: l_M13
+    value:
+      range: [0.5u, 2u]
+      step: "0.1u"
+  - variable_name: nf_M13
+    value:
+      range: [1, 10]
+      step: "1"
+M33:
+  instance_type: nch_25_mac
+  params:
+  - variable_name: w_M33_per_finger
+    value:
+      range: [0.5u, 1u]
+      step: "0.1u"
+  - variable_name: l_M33
+    value:
+      range: [0.5u, 2u]
+      step: "0.1u"
+  - variable_name: nf_M33
+    value:
+      range: [1, 5]
+      step: "1"
+M32:
+  instance_type: nch_25_mac
+  params:
+  - variable_name: w_M32_per_finger
+    value:
+      range: [0.5u, 1u]
+      step: "0.1u"
+  - variable_name: l_M32
+    value:
+      range: [0.5u, 3u]
+      step: "0.1u"
+  - variable_name: nf_M32
+    value:
+      range: [1, 5]
+      step: "1"
+M31:
+  instance_type: nch_25_mac
+  params:
+  - variable_name: w_M31_per_finger
+    value:
+      range: [0.5u, 1u]
+      step: "0.1u"
+  - variable_name: l_M31
+    value:
+      range: [0.5u, 3u]
+      step: "0.1u"
+  - variable_name: nf_M31
+    value:
+      range: [1, 5]
+      step: "1"
+M20:
+  instance_type: nch_25_mac
+  params:
+  - variable_name: w_M20_per_finger
+    value:
+      range: [0.5u, 1u]
+      step: "0.1u"
+  - variable_name: l_M20
+    value:
+      range: [0.5u, 2u]
+      step: "0.1u"
+  - variable_name: nf_M20
+    value:
+      range: [1, 5]
+      step: "1"
+M18:
+  instance_type: nch_25_mac
+  params:
+  - variable_name: w_M18_per_finger
+    value:
+      range: [0.5u, 1u]
+      step: "0.1u"
+  - variable_name: l_M18
+    value:
+      range: [0.5u, 2u]
+      step: "0.1u"
+  - variable_name: nf_M18
+    value:
+      range: [1, 5]
+      step: "1"
+M11:
+  instance_type: nch_25_mac
+  params:
+  - variable_name: w_M11_per_finger
+    value:
+      range: [0.5u, 1u]
+      step: "0.1u"
+  - variable_name: l_M11
+    value:
+      range: [0.5u, 2u]
+      step: "0.1u"
+  - variable_name: nf_M11
+    value:
+      range: [1, 5]
+      step: "1"
+M10:
+  instance_type: nch_25_mac
+  params:
+  - variable_name: w_M10_per_finger
+    value:
+      range: [0.5u, 1u]
+      step: "0.1u"
+  - variable_name: l_M10
+    value:
+      range: [0.5u, 2u]
+      step: "0.1u"
+  - variable_name: nf_M10
+    value:
+      range: [1, 5]
+      step: "1"
+M8:
+  instance_type: nch_25_mac
+  params:
+  - variable_name: w_M8_per_finger
+    value:
+      range: [0.4u, 1u]
+      step: "0.1u"
+  - variable_name: l_M8
+    value:
+      range: [0.3u, 1u]
+      step: "0.1u"
+  - variable_name: nf_M8
+    value:
+      range: [1, 5]
+      step: "1"
+M7:
+  instance_type: nch_25_mac
+  params:
+  - variable_name: w_M7_per_finger
+    value:
+      range: [0.5u, 1u]
+      step: "0.1u"
+  - variable_name: l_M7
+    value:
+      range: [0.5u, 2u]
+      step: "0.1u"
+  - variable_name: nf_M7
+    value:
+      range: [1, 5]
+      step: "1"
+M12:
+  instance_type: nch_25_mac
+  params:
+  - variable_name: w_M12_per_finger
+    value:
+      range: [0.5u, 1u]
+      step: "0.1u"
+  - variable_name: l_M12
+    value:
+      range: [0.5u, 2u]
+      step: "0.1u"
+  - variable_name: nf_M12
+    value:
+      range: [1, 5]
+      step: "1"
+M4:
+  instance_type: nch_25_mac
+  params:
+  - variable_name: w_M4_per_finger
+    value:
+      range: [0.5u, 1u]
+      step: "0.1u"
+  - variable_name: l_M4
+    value:
+      range: [0.5u, 2u]
+      step: "0.1u"
+  - variable_name: nf_M4
+    value:
+      range: [1, 5]
+      step: "1"
+M2:
+  instance_type: nch_25_mac
+  params:
+  - variable_name: w_M2_per_finger
+    value:
+      range: [0.5u, 1u]
+      step: "0.1u"
+  - variable_name: l_M2
+    value:
+      range: [0.5u, 2u]
+      step: "0.1u"
+  - variable_name: nf_M2
+    value:
+      range: [1, 5]
+      step: "1"
+M38:
+  instance_type: pch_25_mac
+  params:
+  - variable_name: w_M38_per_finger
+    value:
+      range: [0.5u, 1u]
+      step: "0.1u"
+  - variable_name: l_M38
+    value:
+      range: [0.5u, 2u]
+      step: "0.1u"
+  - variable_name: nf_M38
+    value:
+      range: [1, 5]
+      step: "1"
+M37:
+  instance_type: pch_25_mac
+  params:
+  - variable_name: w_M37_per_finger
+    value:
+      range: [0.5u, 1u]
+      step: "0.1u"
+  - variable_name: l_M37
+    value:
+      range: [0.5u, 2u]
+      step: "0.1u"
+  - variable_name: nf_M37
+    value:
+      range: [1, 5]
+      step: "1"
+M9:
+  instance_type: pch_25_mac
+  params:
+  - variable_name: w_M9_per_finger
+    value:
+      range: [0.5u, 1u]
+      step: "0.1u"
+  - variable_name: l_M9
+    value:
+      range: [0.5u, 2u]
+      step: "0.1u"
+  - variable_name: nf_M9
+    value:
+      range: [1, 5]
+      step: "1"
+M5:
+  instance_type: pch_25_mac
+  params:
+  - variable_name: w_M5_per_finger
+    value:
+      range: [0.4u, 1u]
+      step: "0.1u"
+  - variable_name: l_M5
+    value:
+      range: [0.3u, 1u]
+      step: "0.1u"
+  - variable_name: nf_M5
+    value:
+      range: [1, 3]
+      step: "1"
+M3:
+  instance_type: pch_25_mac
+  params:
+  - variable_name: w_M3_per_finger
+    value:
+      range: [0.4u, 1u]
+      step: "0.1u"
+  - variable_name: l_M3
+    value:
+      range: [0.4u, 2u]
+      step: "0.1u"
+  - variable_name: nf_M3
+    value:
+      range: [1, 3]
+      step: "1"
+M43:
+  instance_type: nch_mac
+  params:
+  - variable_name: w_M43_per_finger
+    value:
+      range: [0.5u, 1u]
+      step: "0.1u"
+  - variable_name: l_M43
+    value:
+      range: [0.5u, 2u]
+      step: "0.1u"
+  - variable_name: nf_M43
+    value:
+      range: [1, 5]
+      step: "1"
+M44:
+  instance_type: nch_mac
+  params:
+  - variable_name: w_M44_per_finger
+    value:
+      range: [0.5u, 1u]
+      step: "0.1u"
+  - variable_name: l_M44
+    value:
+      range: [0.5u, 2u]
+      step: "0.1u"
+  - variable_name: nf_M44
+    value:
+      range: [1, 5]
+      step: "1"
+M30:
+  instance_type: nch_mac
+  params:
+  - variable_name: w_M30_per_finger
+    value:
+      range: [0.2u, 1u]
+      step: "0.1u"
+  - variable_name: l_M30
+    value:
+      range: [0.1u, 1u]
+      step: "0.1u"
+  - variable_name: nf_M30
+    value:
+      range: [1, 5]
+      step: "1"
+M29:
+  instance_type: nch_mac
+  params:
+  - variable_name: w_M29_per_finger
+    value:
+      range: [0.2u, 1u]
+      step: "0.1u"
+  - variable_name: l_M29
+    value:
+      range: [0.1u, 1u]
+      step: "0.1u"
+  - variable_name: nf_M29
+    value:
+      range: [1, 5]
+      step: "1"
+M28:
+  instance_type: nch_mac
+  params:
+  - variable_name: w_M28_per_finger
+    value:
+      range: [60n, 500n]
+      step: "10n"
+  - variable_name: l_M28
+    value:
+      range: [60n, 500n]
+      step: "10n"
+  - variable_name: nf_M28
+    value:
+      range: [1, 5]
+      step: "1"
+M17:
+  instance_type: nch_mac
+  params:
+  - variable_name: w_M17_per_finger
+    value:
+      range: [0.3u, 1u]
+      step: "0.1u"
+  - variable_name: l_M17
+    value:
+      range: [0.4u, 2u]
+      step: "0.1u"
+  - variable_name: nf_M17
+    value:
+      range: [1, 5]
+      step: "1"
+M16:
+  instance_type: nch_mac
+  params:
+  - variable_name: w_M16_per_finger
+    value:
+      range: [0.3u, 1u]
+      step: "0.1u"
+  - variable_name: l_M16
+    value:
+      range: [0.4u, 2u]
+      step: "0.1u"
+  - variable_name: nf_M16
+    value:
+      range: [1, 5]
+      step: "1"
+M45:
+  instance_type: nch_mac
+  params:
+  - variable_name: w_M45_per_finger
+    value:
+      range: [0.5u, 1u]
+      step: "0.1u"
+  - variable_name: l_M45
+    value:
+      range: [0.5u, 2u]
+      step: "0.1u"
+  - variable_name: nf_M45
+    value:
+      range: [1, 5]
+      step: "1"
