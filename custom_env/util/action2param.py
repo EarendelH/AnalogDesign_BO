@@ -60,6 +60,7 @@ def action2param(device_mask_flag, device_mask_dict, flatten_action, param_rang_
             param_dict[variable_name] = param_value
 
     # Apply Other_Constrain
+    print(f"Other_Constrain is {device_mask_dict['Other_Constrain']}")
     if device_mask_flag and device_mask_dict is not None and 'Other_Constrain' in device_mask_dict:
         other_constrain = device_mask_dict['Other_Constrain']
         for constraint in other_constrain:
