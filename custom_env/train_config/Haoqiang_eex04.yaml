@@ -10,13 +10,13 @@ specs_folder_name: sampled_specs_Haoqiang
 config_folder_name: config_Haoqiang
 run_folder_name: run_test
 sim_output: false
-init_method: file
+init_method: random
 corner_sim: true
 dc_check: false
 region_extract: true
 dynamic_queue: false
-restore_checkpoint: true
-checkpoint_path: /data/share/train_data/Haoqiang/checkpoint/Haoqiang_10_file_multi_mask_region_nodc_nodynamic_eex04_5e7e7/checkpoint_000032
+restore_checkpoint: false
+checkpoint_path:
 train_iterations: 2000
 reward_func: cal_reward_Haoqiang
 log_level: INFO
