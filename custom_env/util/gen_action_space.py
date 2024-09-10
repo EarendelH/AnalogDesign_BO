@@ -188,6 +188,10 @@ def gen_masked_continuous_action_space(device_mask_dict, agent_assign_dict):
     triple_act_space = gymnasium.spaces.Box(low=0, high=1, shape=(3,), dtype=float)
     single_act_space = gymnasium.spaces.Box(low=0, high=1, shape=(1,), dtype=float)
 
+    # Remove 'Other_Constrain' dict from device_mask_dict
+    if 'Other_Constrain' in device_mask_dict:
+        del device_mask_dict['Other_Constrain']
+
     if device_mask_dict:
         device_list = []
         for device_group in agent_assign_dict.values():
@@ -245,13 +249,13 @@ def gen_masked_continuous_action_space(device_mask_dict, agent_assign_dict):
 
 # Test Code
 
-# agent_assign_yaml_path = "../config/agent_assign.yaml"
+# agent_assign_yaml_path = "/Users/hanwu/ML/AnalogDesignAuto_MultiAgent/custom_env/config/config_Haoqiang/agent_assign.yaml"
 # with open(agent_assign_yaml_path, 'r') as file:
 #     agent_assign_dict = yaml.safe_load(file)
-# device_mask_yaml_path = "../config/device_mask_test.yaml"
+# device_mask_yaml_path = "/Users/hanwu/ML/AnalogDesignAuto_MultiAgent/custom_env/config/config_Haoqiang/device_mask_bk.yaml"
 # with open(device_mask_yaml_path, 'r') as file:
 #     device_mask_dict = yaml.safe_load(file)
-# action_space_dict = gen_masked_continuous_action_space(True, device_mask_dict, agent_assign_dict)
+# action_space_dict = gen_masked_continuous_action_space(device_mask_dict, agent_assign_dict)
 # print(action_space_dict)
 # print(action_space_dict.sample())
 
