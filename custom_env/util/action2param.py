@@ -60,15 +60,15 @@ def action2param(device_mask_flag, device_mask_dict, flatten_action, param_rang_
             param_dict[variable_name] = param_value
 
     # Apply Other_Constrain
-    print(f"Other_Constrain is {device_mask_dict}")
+    # print(f"Other_Constrain is {device_mask_dict}")
     if device_mask_flag and device_mask_dict is not None and 'Other_Constrain' in device_mask_dict:
         other_constrain = device_mask_dict['Other_Constrain']
         for constraint in other_constrain:
             for master_param, slave_param in constraint.items():
                 if master_param in param_dict and slave_param in param_dict:
-                    print(f"slave_param is {slave_param} with value {param_dict[slave_param]} and master_param is {master_param} with value {param_dict[master_param]}")
+                    # print(f"slave_param is {slave_param} with value {param_dict[slave_param]} and master_param is {master_param} with value {param_dict[master_param]}")
                     param_dict[slave_param] = param_dict[master_param]
-                    print(f"Update, slave_param is {slave_param} with value {param_dict[slave_param]} and master_param is {master_param} with value {param_dict[master_param]}")
+                    # print(f"Update, slave_param is {slave_param} with value {param_dict[slave_param]} and master_param is {master_param} with value {param_dict[master_param]}")
                 else:
                     print(f"Warning: {master_param} or {slave_param} not found in param_dict")
 
