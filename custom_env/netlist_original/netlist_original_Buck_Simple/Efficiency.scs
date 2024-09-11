@@ -1,0 +1,126 @@
+// Generated for: spectre
+// Generated on: Sep 11 12:45:38 2024
+// Design library name: Buck_Simple
+// Design cell name: tb_Efficiency
+// Design view name: schematic
+simulator lang=spectre
+global 0
+parameters ILOAD=1
+include "/data/PDK/pdk_installed/tsmc180bcd_g2/pdk/pdk_1p6m/tsmc18/../models/spectre/c018bcd_gen2_v1d6_usage.scs" section=pre_simu
+include "/data/PDK/pdk_installed/tsmc180bcd_g2/pdk/pdk_1p6m/tsmc18/../models/spectre/c018bcd_gen2_v1d6_usage.scs" section=tt_lib
+
+// Library name: Buck_Simple
+// Cell name: driver_s2
+// View name: schematic
+subckt driver_s2 IN OUT VDD VSS
+    M45 (OUT net028 VDD VDD) pch_5_mac_multi l=500n w=50u multi=100 nf=1 sigma=1 \
+        sd=540.0n ad=2.4e-11 as=2.4e-11 pd=100.96u ps=100.96u nrd=0.0054 \
+        nrs=0.0054 sa=480.0n sb=480.0n sca=0 scb=0 scc=0 mismatchflag=1
+    M46 (net028 net026 VDD VDD) pch_5_mac_multi l=500n w=3u multi=100 nf=1 \
+        sigma=1 sd=540.0n ad=1.44e-12 as=1.44e-12 pd=6.96u ps=6.96u \
+        nrd=0.09 nrs=0.09 sa=480.0n sb=480.0n sca=0 scb=0 scc=0 \
+        mismatchflag=1
+    M47 (net026 net024 VDD VDD) pch_5_mac_multi l=500n w=3u multi=10 nf=1 \
+        sigma=1 sd=540.0n ad=1.44e-12 as=1.44e-12 pd=6.96u ps=6.96u \
+        nrd=0.09 nrs=0.09 sa=480.0n sb=480.0n sca=0 scb=0 scc=0 \
+        mismatchflag=1
+    M48 (net024 IN VDD VDD) pch_5_mac_multi l=500n w=1u multi=10 nf=1 sigma=1 \
+        sd=540.0n ad=4.8e-13 as=4.8e-13 pd=2.96u ps=2.96u nrd=0.27 \
+        nrs=0.27 sa=480.0n sb=480.0n sca=0 scb=0 scc=0 mismatchflag=1
+    M41 (OUT net028 VSS VSS) nch_5_mac_multi l=600n w=50u multi=100 nf=1 sigma=1 \
+        sd=540.0n ad=2.4e-11 as=2.4e-11 pd=100.96u ps=100.96u nrd=0.0054 \
+        nrs=0.0054 sa=480.0n sb=480.0n sca=0 scb=0 scc=0 mismatchflag=1
+    M42 (net028 net026 VSS VSS) nch_5_mac_multi l=600n w=3u multi=100 nf=1 \
+        sigma=1 sd=540.0n ad=1.44e-12 as=1.44e-12 pd=6.96u ps=6.96u \
+        nrd=0.09 nrs=0.09 sa=480.0n sb=480.0n sca=0 scb=0 scc=0 \
+        mismatchflag=1
+    M43 (net026 net024 VSS VSS) nch_5_mac_multi l=600n w=3u multi=10 nf=1 \
+        sigma=1 sd=540.0n ad=1.44e-12 as=1.44e-12 pd=6.96u ps=6.96u \
+        nrd=0.09 nrs=0.09 sa=480.0n sb=480.0n sca=0 scb=0 scc=0 \
+        mismatchflag=1
+    M44 (net024 IN VSS VSS) nch_5_mac_multi l=600n w=1u multi=10 nf=1 sigma=1 \
+        sd=540.0n ad=4.8e-13 as=4.8e-13 pd=2.96u ps=2.96u nrd=0.27 \
+        nrs=0.27 sa=480.0n sb=480.0n sca=0 scb=0 scc=0 mismatchflag=1
+ends driver_s2
+// End of subcircuit definition.
+
+// Library name: Buck_Simple
+// Cell name: driver_s1
+// View name: schematic
+subckt driver_s1 IN OUT VDD VSS
+    M31 (OUT net16 VDD VDD) pch_5_mac_multi l=500n w=50u multi=100 nf=1 sigma=1 \
+        sd=540.0n ad=2.4e-11 as=2.4e-11 pd=100.96u ps=100.96u nrd=0.0054 \
+        nrs=0.0054 sa=480.0n sb=480.0n sca=0 scb=0 scc=0 mismatchflag=1
+    M33 (net16 net14 VDD VDD) pch_5_mac_multi l=500n w=3u multi=100 nf=1 sigma=1 \
+        sd=540.0n ad=1.44e-12 as=1.44e-12 pd=6.96u ps=6.96u nrd=0.09 \
+        nrs=0.09 sa=480.0n sb=480.0n sca=0 scb=0 scc=0 mismatchflag=1
+    M37 (net14 net13 VDD VDD) pch_5_mac_multi l=500n w=3u multi=10 nf=1 sigma=1 \
+        sd=540.0n ad=1.44e-12 as=1.44e-12 pd=6.96u ps=6.96u nrd=0.09 \
+        nrs=0.09 sa=480.0n sb=480.0n sca=0 scb=0 scc=0 mismatchflag=1
+    M38 (net13 IN VDD VDD) pch_5_mac_multi l=500n w=1u multi=10 nf=1 sigma=1 \
+        sd=540.0n ad=4.8e-13 as=4.8e-13 pd=2.96u ps=2.96u nrd=0.27 \
+        nrs=0.27 sa=480.0n sb=480.0n sca=0 scb=0 scc=0 mismatchflag=1
+    M32 (OUT net16 VSS VSS) nch_5_mac_multi l=600n w=50u multi=100 nf=1 sigma=1 \
+        sd=540.0n ad=2.4e-11 as=2.4e-11 pd=100.96u ps=100.96u nrd=0.0054 \
+        nrs=0.0054 sa=480.0n sb=480.0n sca=0 scb=0 scc=0 mismatchflag=1
+    M34 (net16 net14 VSS VSS) nch_5_mac_multi l=600n w=3u multi=100 nf=1 sigma=1 \
+        sd=540.0n ad=1.44e-12 as=1.44e-12 pd=6.96u ps=6.96u nrd=0.09 \
+        nrs=0.09 sa=480.0n sb=480.0n sca=0 scb=0 scc=0 mismatchflag=1
+    M35 (net14 net13 VSS VSS) nch_5_mac_multi l=600n w=3u multi=10 nf=1 sigma=1 \
+        sd=540.0n ad=1.44e-12 as=1.44e-12 pd=6.96u ps=6.96u nrd=0.09 \
+        nrs=0.09 sa=480.0n sb=480.0n sca=0 scb=0 scc=0 mismatchflag=1
+    M36 (net13 IN VSS VSS) nch_5_mac_multi l=600n w=1u multi=10 nf=1 sigma=1 \
+        sd=540.0n ad=4.8e-13 as=4.8e-13 pd=2.96u ps=2.96u nrd=0.27 \
+        nrs=0.27 sa=480.0n sb=480.0n sca=0 scb=0 scc=0 mismatchflag=1
+ends driver_s1
+// End of subcircuit definition.
+
+// Library name: Buck_Simple
+// Cell name: Buck_Core
+// View name: schematic
+subckt Buck_Core GND VCH VCL VIN VOUT
+    I1 (VCL VGL VIN GND) driver_s2
+    M2 (SW VGL GND GND) nch_5_mac l=600n w=1.000m multi=100 nf=10 sigma=1 \
+        sd=540.0n ad=2.7e-10 as=3.12e-10 pd=1.0054m ps=1.20624m \
+        nrd=0.00027 nrs=0.00027 sa=480.0n sb=480.0n sca=0 scb=0 scc=0 \
+        mismatchflag=1
+    M1 (VIN VGH SW SW) nch_5_mac l=600n w=1.000m multi=100 nf=10 sigma=1 \
+        sd=540.0n ad=2.7e-10 as=3.12e-10 pd=1.0054m ps=1.20624m \
+        nrd=0.00027 nrs=0.00027 sa=480.0n sb=480.0n sca=0 scb=0 scc=0 \
+        mismatchflag=1
+    I0 (VCH_LS VGH VBST SW) driver_s1
+    C1 (VBST SW) capacitor c=1n
+    L0 (SW VOUT) inductor l=240.00n r=25m
+    E0 (VCH_LS SW VCH GND) vcvs gain=1.0
+    D2 (VIN VBST GND) sbd_dio_ga_12_3t dti=0 multi=20
+ends Buck_Core
+// End of subcircuit definition.
+
+// Library name: Buck_Simple
+// Cell name: tb_Efficiency
+// View name: schematic
+C0 (VOUT net010) capacitor c=22u
+R0 (net010 GND) resistor r=4m
+I11 (GND VCH VCL VIN VOUT) Buck_Core
+V0 (VIN 0) vsource dc=3.3 type=dc
+V1 (GND 0) vsource dc=0 type=dc
+V3 (VCL 0) vsource dc=0 type=pulse val0=3.3 val1=0 period=250.00n rise=1n \
+        fall=1n width=75n
+V2 (VCH 0) vsource dc=0 type=pulse val0=0 val1=3.3 period=250.00n delay=3n \
+        rise=1n fall=1n width=69n
+I6 (VOUT GND) isource dc=ILOAD type=dc
+simulatorOptions options psfversion="1.1.0" reltol=1e-3 vabstol=1e-6 \
+    iabstol=1e-12 temp=27 tnom=27 scalem=1.0 scale=1.0 gmin=1e-12 rforce=1 \
+    maxnotes=5 maxwarns=5 digits=5 cols=80 pivrel=1e-3 \
+    sensfile="../psf/sens.output" checklimitdest=psf 
+tran tran stop=60u errpreset=conservative cmin=10a write="spectre.ic" \
+    writefinal="spectre.fc" annotate=status maxiters=5 
+finalTimeOP info what=oppoint where=rawfile
+modelParameter info what=models where=rawfile
+element info what=inst where=rawfile
+outputParameter info what=output where=rawfile
+designParamVals info what=parameters where=rawfile
+primitives info what=primitives where=rawfile
+subckts info what=subckts where=rawfile
+save V0:p 
+saveOptions options save=allpub

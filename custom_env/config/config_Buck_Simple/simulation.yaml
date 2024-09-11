@@ -1,0 +1,10 @@
+- simulation_name: Efficiency
+  objective: max
+  netlist_name: Efficiency
+  simulation_file: tran.tran.tran
+  script_name: findTrans
+  parse_func: findEff_Buck
+  simulation_item:
+    - efficiency
+    - vo_mean
+    - vo_var
