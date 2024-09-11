@@ -415,22 +415,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
                                         self.dynamic_queue, self.norm_specs, self.norm_ideal_specs, self.agents,
                                         self.ideal_specs, self.cal_reward, None, operation_region_dict))
 
-            if rew_single_tt < 0:
-                working_dir_step = working_dir_step_tt
-                observations = observations_tt
-                sim_result = sim_result_tt
-                rew_single = rew_single_tt
-
-                step_data = {
-                    'param': updated_param,
-                    'sim_result': sim_result,
-                    'reward': rew_single,
-                    'corner': 'tt'
-                }
-                pickle_path = os.path.join(working_dir_step, 'result.pkl')
-                with open(pickle_path, 'wb') as f:
-                    pickle.dump(step_data, f)
-            elif self.corner_sim:
+            if self.corner_sim and rew_single_tt >= 0:
                 corner_simu_result = {
                     'ff': {},
                     'fs': {},
@@ -476,6 +461,22 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
 
                 observations = observations_tt
                 rew_single = rew_single_min
+
+            else:
+                working_dir_step = working_dir_step_tt
+                observations = observations_tt
+                sim_result = sim_result_tt
+                rew_single = rew_single_tt
+
+                step_data = {
+                    'param': updated_param,
+                    'sim_result': sim_result,
+                    'reward': rew_single,
+                    'corner': 'tt'
+                }
+                pickle_path = os.path.join(working_dir_step, 'result.pkl')
+                with open(pickle_path, 'wb') as f:
+                    pickle.dump(step_data, f)
 
         terminated = {a: False for a in self.agents}
         truncated = {a: False for a in self.agents}
