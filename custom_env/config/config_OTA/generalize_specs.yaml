@@ -1,0 +1,13 @@
+Stability:
+  Stability_gainBandWidth:
+    objective: max
+    reward_type: optimal
+    bounds:
+    - 1000000.0
+    - 1000001.0
+  Stability_phaseMargin:
+    objective: max
+    reward_type: satisfactory
+    bounds:
+    - 30.0
+    - 30.1

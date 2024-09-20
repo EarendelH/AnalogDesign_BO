@@ -1,0 +1,90 @@
+// Generated for: spectre
+// Generated on: Sep 20 14:45:11 2024
+// Design library name: OTA
+// Design cell name: tb_stability
+// Design view name: schematic
+simulator lang=spectre
+global 0
+parameters CLOAD IB R1 R2
+include "/pdk/tsmc180bcd_g2/pdk/pdk_1p6m/models/spectre/c018bcd_gen2_v1d6_usage.scs" section=pre_simu
+include "/pdk/tsmc180bcd_g2/pdk/pdk_1p6m/models/spectre/c018bcd_gen2_v1d6_usage.scs" section=tt_lib
+
+// Library name: OTA
+// Cell name: OPP
+// View name: schematic
+subckt OPP INN INP VDD VOUT VSS
+    M22 (net040 net032 VDD VDD) pch_mac l=5u w=1u multi=1 nf=1 sigma=1 \
+        sd=540.0n ad=4.8e-13 as=4.8e-13 pd=2.96u ps=2.96u nrd=0.27 \
+        nrs=0.27 sa=480.0n sb=480.0n sca=0 scb=0 scc=0 mismatchflag=1
+    M23 (net032 net010 net040 VDD) pch_mac l=500n w=5u multi=1 nf=1 \
+        sigma=1 sd=540.0n ad=2.4e-12 as=2.4e-12 pd=10.96u ps=10.96u \
+        nrd=0.054 nrs=0.054 sa=480.0n sb=480.0n sca=0 scb=0 scc=0 \
+        mismatchflag=1
+    M7 (VOUT net010 net26 VDD) pch_mac l=500n w=5u multi=1 nf=1 sigma=1 \
+        sd=540.0n ad=2.4e-12 as=2.4e-12 pd=10.96u ps=10.96u nrd=0.054 \
+        nrs=0.054 sa=480.0n sb=480.0n sca=0 scb=0 scc=0 mismatchflag=1
+    M6 (net018 net010 net28 VDD) pch_mac l=500n w=5u multi=1 nf=1 sigma=1 \
+        sd=540.0n ad=2.4e-12 as=2.4e-12 pd=10.96u ps=10.96u nrd=0.054 \
+        nrs=0.054 sa=480.0n sb=480.0n sca=0 scb=0 scc=0 mismatchflag=1
+    M4 (net28 net032 VDD VDD) pch_mac l=5u w=1u multi=1 nf=1 sigma=1 \
+        sd=540.0n ad=4.8e-13 as=4.8e-13 pd=2.96u ps=2.96u nrd=0.27 \
+        nrs=0.27 sa=480.0n sb=480.0n sca=0 scb=0 scc=0 mismatchflag=1
+    M5 (net26 net032 VDD VDD) pch_mac l=5u w=1u multi=1 nf=1 sigma=1 \
+        sd=540.0n ad=4.8e-13 as=4.8e-13 pd=2.96u ps=2.96u nrd=0.27 \
+        nrs=0.27 sa=480.0n sb=480.0n sca=0 scb=0 scc=0 mismatchflag=1
+    M21 (net039 net05 VSS VSS) nch_mac l=12.0u w=1u multi=1 nf=1 sigma=1 \
+        sd=540.0n ad=4.8e-13 as=4.8e-13 pd=2.96u ps=2.96u nrd=0.27 \
+        nrs=0.27 sa=480.0n sb=480.0n sca=0 scb=0 scc=0 mismatchflag=1
+    M24 (net010 net05 VSS VSS) nch_mac l=12.0u w=1u multi=1 nf=1 sigma=1 \
+        sd=540.0n ad=4.8e-13 as=4.8e-13 pd=2.96u ps=2.96u nrd=0.27 \
+        nrs=0.27 sa=480.0n sb=480.0n sca=0 scb=0 scc=0 mismatchflag=1
+    M3 (net18 net05 VSS VSS) nch_mac l=12.0u w=1u multi=1 nf=1 sigma=1 \
+        sd=540.0n ad=4.8e-13 as=4.8e-13 pd=2.96u ps=2.96u nrd=0.27 \
+        nrs=0.27 sa=480.0n sb=480.0n sca=0 scb=0 scc=0 mismatchflag=1
+    M1 (net28 INP net18 VSS) nch_mac l=1u w=10u multi=1 nf=2 sigma=1 \
+        sd=540.0n ad=2.7e-12 as=4.8e-12 pd=11.08u ps=21.92u nrd=0.027 \
+        nrs=0.027 sa=480.0n sb=480.0n sca=0 scb=0 scc=0 mismatchflag=1
+    M2 (net26 INN net18 VSS) nch_mac l=1u w=10u multi=1 nf=2 sigma=1 \
+        sd=540.0n ad=2.7e-12 as=4.8e-12 pd=11.08u ps=21.92u nrd=0.027 \
+        nrs=0.027 sa=480.0n sb=480.0n sca=0 scb=0 scc=0 mismatchflag=1
+    M11 (net035 net022 VSS VSS) nch_mac l=10u w=1u multi=1 nf=1 sigma=1 \
+        sd=540.0n ad=4.8e-13 as=4.8e-13 pd=2.96u ps=2.96u nrd=0.27 \
+        nrs=0.27 sa=480.0n sb=480.0n sca=0 scb=0 scc=0 mismatchflag=1
+    M10 (net036 net022 VSS VSS) nch_mac l=10u w=1u multi=1 nf=1 sigma=1 \
+        sd=540.0n ad=4.8e-13 as=4.8e-13 pd=2.96u ps=2.96u nrd=0.27 \
+        nrs=0.27 sa=480.0n sb=480.0n sca=0 scb=0 scc=0 mismatchflag=1
+    M8 (net022 net018 net036 VSS) nch_mac l=500n w=5u multi=1 nf=1 sigma=1 \
+        sd=540.0n ad=2.4e-12 as=2.4e-12 pd=10.96u ps=10.96u nrd=0.054 \
+        nrs=0.054 sa=480.0n sb=480.0n sca=0 scb=0 scc=0 mismatchflag=1
+    M9 (VOUT net018 net035 VSS) nch_mac l=500n w=5u multi=1 nf=1 sigma=1 \
+        sd=540.0n ad=2.4e-12 as=2.4e-12 pd=10.96u ps=10.96u nrd=0.054 \
+        nrs=0.054 sa=480.0n sb=480.0n sca=0 scb=0 scc=0 mismatchflag=1
+    IB (VDD net039) isource dc=IB type=dc
+    R1 (net032 net010) resistor r=R1
+    R2 (net018 net022) resistor r=R2
+    CLOAD (VOUT VSS) capacitor c=CLOAD
+ends OPP
+// End of subcircuit definition.
+
+// Library name: OTA
+// Cell name: tb_stability
+// View name: schematic
+C1 (net3 0) capacitor c=1p
+V4 (net4 0) vsource dc=900.0m mag=1 type=sine
+IPRB1 (OUT net3) iprobe
+I9 (net3 net4 net2 OUT 0) OPP
+V1 (net2 0) vsource dc=1.8 type=dc
+simulatorOptions options psfversion="1.1.0" reltol=1e-3 vabstol=1e-6 \
+    iabstol=1e-12 temp=27 tnom=27 scalem=1.0 scale=1.0 gmin=1e-12 rforce=1 \
+    maxnotes=5 maxwarns=5 digits=5 cols=80 pivrel=1e-3 \
+    sensfile="../psf/sens.output" checklimitdest=psf 
+dcOp dc write="spectre.dc" maxiters=150 maxsteps=10000 annotate=status
+dcOpInfo info what=oppoint where=rawfile
+stb stb start=1 stop=1G probe=IPRB1 localgnd=0 annotate=status 
+modelParameter info what=models where=rawfile
+element info what=inst where=rawfile
+outputParameter info what=output where=rawfile
+designParamVals info what=parameters where=rawfile
+primitives info what=primitives where=rawfile
+subckts info what=subckts where=rawfile
+saveOptions options save=allpub

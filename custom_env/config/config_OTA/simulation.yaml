@@ -1,0 +1,9 @@
+- simulation_name: Stability_
+  objective: max
+  netlist_name: Stability
+  simulation_file: stb.margin.stb
+  script_name: findStability
+  parse_func: findPhaseMarginAndGBW
+  simulation_item:
+    - phaseMargin
+    - gainBandWidth
