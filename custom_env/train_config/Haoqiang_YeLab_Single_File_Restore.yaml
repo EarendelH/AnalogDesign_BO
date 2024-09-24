@@ -10,13 +10,13 @@ specs_folder_name: sampled_specs_Haoqiang
 config_folder_name: config_Haoqiang_Single
 run_folder_name: run_test
 sim_output: false
-init_method: random
+init_method: file
 corner_sim: false
 dc_check: false
 region_extract: true
 dynamic_queue: false
-restore_checkpoint: false
-checkpoint_path:
-train_iterations: 400
+restore_checkpoint: true
+checkpoint_path: /home/students/wuhan/Downloads/PPO_AnalogDesignEnv_v0_73e92_00000_0_2024-09-19_20-19-43/checkpoint_000015
+train_iterations: 3000
 reward_func: cal_reward_Haoqiang
 log_level: INFO
