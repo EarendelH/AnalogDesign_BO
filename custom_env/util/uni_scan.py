@@ -81,8 +81,8 @@ def expand_data(data):
             return {}
 
     # Expand Specs
-    data['Valid_Specs'] = data['Specs'].apply(lambda x: flatten_nested_dict(safe_eval(x)))
-    specs_df = data['Valid_Specs'].apply(pd.Series)
+    data['Valid_Specs'] = data['Specs'].apply(safe_eval)
+    specs_df = pd.DataFrame(data['Valid_Specs'].tolist())
 
     # Expand Parameters
     def safe_eval_parameters(x):
@@ -94,10 +94,10 @@ def expand_data(data):
             print(f"Warning: Unable to parse Parameters: {x}")
             return {}
 
-    params_df = data['Parameters'].apply(safe_eval_parameters).apply(pd.Series)
+    params_df = pd.DataFrame(data['Parameters'].apply(safe_eval_parameters).tolist())
 
     # Combine expanded data
-    expanded_data = pd.concat([data.drop(columns=['Specs', 'Valid_Specs', 'Parameters']), specs_df, params_df], axis=1)
+    expanded_data = pd.concat([data.drop(columns=['Specs', 'Parameters']), specs_df, params_df], axis=1)
 
     return expanded_data
 
@@ -236,9 +236,23 @@ def main():
     print("Expanding data...")
     expanded_df = expand_data(df)
 
+    print("Debug: Columns in expanded_df:")
+    print(expanded_df.columns)
+
+    print("Debug: First few rows of expanded_df:")
+    print(expanded_df.head())
+
     print("Calculating valid spec count...")
-    expanded_df['ValidSpecCount'] = expanded_df['Valid_Specs'].apply(
-        lambda x: sum(1 for v in x.values() if v not in [0.0, 100.0]))
+    if 'Valid_Specs' in expanded_df.columns:
+        expanded_df['ValidSpecCount'] = expanded_df['Valid_Specs'].apply(
+            lambda x: sum(1 for v in x.values() if v not in [0.0, 100.0])
+        )
+    else:
+        print("Warning: 'Valid_Specs' column not found. Creating ValidSpecCount based on all non-null values.")
+        expanded_df['ValidSpecCount'] = expanded_df.apply(
+            lambda row: sum(1 for v in row.values() if v not in [0.0, 100.0, None]), axis=1
+        )
+
     valid_df = expanded_df[expanded_df['ValidSpecCount'] > 0]
 
     print("Saving to Parquet files...")
