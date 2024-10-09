@@ -15,14 +15,18 @@ import matplotlib.pyplot as plt
 
 
 def flatten_nested_dict(d):
-    flattened_dict = {}
-    for key, nested_dict in d.items():
-        flattened_dict.update(nested_dict)
-    return flattened_dict
+    flattened = {}
+    for key, value in d.items():
+        if isinstance(value, dict):
+            for subkey, subvalue in value.items():
+                flattened[f"{key}_{subkey}"] = subvalue
+        else:
+            flattened[key] = value
+    return flattened
 
 
-def is_valid_entry(flattened_dict):
-    return all(value not in [0.0, 100.0] for value in flattened_dict.values())
+def is_valid_entry(value):
+    return value not in [0.0, 100.0]
 
 
 def parse_parameters(file_path):
@@ -82,7 +86,7 @@ def expand_data(data):
 
     # Expand Specs
     data['Valid_Specs'] = data['Specs'].apply(safe_eval)
-    specs_df = pd.DataFrame(data['Valid_Specs'].tolist())
+    specs_df = data['Valid_Specs'].apply(flatten_nested_dict).apply(pd.Series)
 
     # Expand Parameters
     def safe_eval_parameters(x):
@@ -94,12 +98,16 @@ def expand_data(data):
             print(f"Warning: Unable to parse Parameters: {x}")
             return {}
 
-    params_df = pd.DataFrame(data['Parameters'].apply(safe_eval_parameters).tolist())
+    params_df = data['Parameters'].apply(safe_eval_parameters).apply(pd.Series)
 
     # Combine expanded data
     expanded_data = pd.concat([data.drop(columns=['Specs', 'Parameters']), specs_df, params_df], axis=1)
 
     return expanded_data
+
+
+def count_valid_specs(specs_dict):
+    return sum(is_valid_entry(v) for v in flatten_nested_dict(specs_dict).values())
 
 
 def plot_label_distribution(labels, group_size=1000, output_path='valid_spec_count_distribution.png'):
@@ -139,6 +147,7 @@ def plot_label_distribution(labels, group_size=1000, output_path='valid_spec_cou
     plt.savefig(output_path)
     print(f"Valid spec count distribution plot saved as '{output_path}'")
 
+
 def plot_data(data, column_name, output_path):
     fig, ax = plt.subplots(figsize=(10, 6))
     ax.scatter(data.index, data[column_name], alpha=0.6, s=1, color='blue', edgecolors='none')
@@ -152,6 +161,7 @@ def plot_data(data, column_name, output_path):
     plt.tight_layout()
     plt.savefig(output_path)
     plt.close(fig)
+
 
 def select_columns(columns):
     while True:
@@ -174,6 +184,7 @@ def select_columns(columns):
         else:
             print("Selection cancelled. Please try again.")
 
+
 def filter_by_tag(data):
     if 'Tag' not in data.columns:
         use_all = input("Tag column not found. Do you want to proceed with all data? (yes/no): ").lower()
@@ -189,6 +200,7 @@ def filter_by_tag(data):
         tags = [tag.strip() for tag in tags]
 
     return data[data['Tag'].isin(tags)]
+
 
 def sort_data_by_path(data):
     print("Sorting data based on file paths...")
@@ -243,15 +255,7 @@ def main():
     print(expanded_df.head())
 
     print("Calculating valid spec count...")
-    if 'Valid_Specs' in expanded_df.columns:
-        expanded_df['ValidSpecCount'] = expanded_df['Valid_Specs'].apply(
-            lambda x: sum(1 for v in x.values() if v not in [0.0, 100.0])
-        )
-    else:
-        print("Warning: 'Valid_Specs' column not found. Creating ValidSpecCount based on all non-null values.")
-        expanded_df['ValidSpecCount'] = expanded_df.apply(
-            lambda row: sum(1 for v in row.values() if v not in [0.0, 100.0, None]), axis=1
-        )
+    expanded_df['ValidSpecCount'] = expanded_df['Valid_Specs'].apply(count_valid_specs)
 
     valid_df = expanded_df[expanded_df['ValidSpecCount'] > 0]
 
@@ -267,7 +271,7 @@ def main():
         f"Processing complete. Results saved to {output_parquet_prefix}_all_data.parquet and {output_parquet_prefix}_valid_data.parquet")
     print(f"Valid spec count distribution plot saved as '{output_parquet_prefix}_valid_spec_count_distribution.png'")
 
-    # New visualization part
+    # Visualization part for valid data
     print("Starting scatter plot generation for valid data...")
     valid_data = pq.read_table(f"{output_parquet_prefix}_valid_data.parquet").to_pandas()
 
@@ -303,6 +307,14 @@ def main():
         plot_data(sorted_data, column_name, plot_file_path)
 
     print(f"All plots have been generated and saved in the '{plot_dir}' directory.")
+
+    # Summary of saved files
+    print("\nSummary of saved files:")
+    print(f"1. All data Parquet file: {output_parquet_prefix}_all_data.parquet")
+    print(f"2. Valid data Parquet file: {output_parquet_prefix}_valid_data.parquet")
+    print(f"3. ValidSpecCount distribution plot: {output_parquet_prefix}_valid_spec_count_distribution.png")
+    print(f"4. Scatter plots: {plot_dir}/")
+    print("\nAll processing and visualization tasks are complete.")
 
 
 if __name__ == "__main__":
