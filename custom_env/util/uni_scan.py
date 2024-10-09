@@ -71,12 +71,30 @@ def process_folder(folder_path, cal_rew_func=None, ideal_specs_dict=None, norm_s
 
 
 def expand_data(data):
+    def safe_eval(x):
+        if isinstance(x, dict):
+            return x
+        try:
+            return ast.literal_eval(x)
+        except (ValueError, SyntaxError):
+            print(f"Warning: Unable to parse: {x}")
+            return {}
+
     # Expand Specs
-    data['Valid_Specs'] = data['Specs'].apply(lambda x: flatten_nested_dict(ast.literal_eval(x)))
+    data['Valid_Specs'] = data['Specs'].apply(lambda x: flatten_nested_dict(safe_eval(x)))
     specs_df = data['Valid_Specs'].apply(pd.Series)
 
     # Expand Parameters
-    params_df = data['Parameters'].apply(ast.literal_eval).apply(pd.Series)
+    def safe_eval_parameters(x):
+        if isinstance(x, dict):
+            return x
+        try:
+            return ast.literal_eval(x)
+        except (ValueError, SyntaxError):
+            print(f"Warning: Unable to parse Parameters: {x}")
+            return {}
+
+    params_df = data['Parameters'].apply(safe_eval_parameters).apply(pd.Series)
 
     # Combine expanded data
     expanded_data = pd.concat([data.drop(columns=['Specs', 'Valid_Specs', 'Parameters']), specs_df, params_df], axis=1)
