@@ -14,6 +14,16 @@ from matplotlib.colors import LinearSegmentedColormap
 import matplotlib.pyplot as plt
 
 
+def save_dataframe_to_parquet(df, output_path, chunk_size=10000):
+    table = pa.Table.from_pandas(df)
+
+    # Open a ParquetWriter
+    with pq.ParquetWriter(output_path, table.schema) as writer:
+        # Write the data in chunks
+        for i in tqdm(range(0, len(df), chunk_size), desc=f"Saving to {output_path}"):
+            chunk = table.slice(i, chunk_size)
+            writer.write_table(chunk)
+
 def flatten_nested_dict(d):
     flattened = {}
     for key, value in d.items():
@@ -260,8 +270,8 @@ def main():
     valid_df = expanded_df[expanded_df['ValidSpecCount'] > 0]
 
     print("Saving to Parquet files...")
-    pq.write_table(pa.Table.from_pandas(expanded_df), f"{output_parquet_prefix}_all_data.parquet")
-    pq.write_table(pa.Table.from_pandas(valid_df), f"{output_parquet_prefix}_valid_data.parquet")
+    save_dataframe_to_parquet(expanded_df, f"{output_parquet_prefix}_all_data.parquet")
+    save_dataframe_to_parquet(valid_df, f"{output_parquet_prefix}_valid_data.parquet")
 
     print("Plotting valid spec count distribution...")
     labels = dict(zip(expanded_df['Folder Name'], expanded_df['ValidSpecCount']))
