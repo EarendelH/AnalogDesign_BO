@@ -197,6 +197,7 @@ subckt LDO_Core IBIAS VBODY VF1 VF2 VFB_FFRC VH VIN VOUT VOUT_MIR VREF \
     C2 (VOUT_MIR VSS) capacitor c=C2
     C3 (VSET VSS) capacitor c=C3
     C0 (net43 VSS) capacitor c=C0
+    C1 (VIN V1_FFRC) capacitor c=C1
     M43 (net068 net069 VSS VSS) nch_mac l=1u w=500n multi=1 nf=1 sigma=1 \
         sd=200n ad=8.75e-14 as=8.75e-14 pd=1.35u ps=1.35u nrd=0.2 nrs=0.2 \
         sa=175.00n sb=175.00n sca=0 scb=0 scc=0 mismatchflag=1
@@ -224,7 +225,6 @@ subckt LDO_Core IBIAS VBODY VF1 VF2 VFB_FFRC VH VIN VOUT VOUT_MIR VREF \
     M45 (net077 net069 VSS VSS) nch_mac l=1u w=500n multi=1 nf=1 sigma=1 \
         sd=200n ad=8.75e-14 as=8.75e-14 pd=1.35u ps=1.35u nrd=0.2 nrs=0.2 \
         sa=175.00n sb=175.00n sca=0 scb=0 scc=0 mismatchflag=1
-    C1 (VIN V1_FFRC) capacitor c=C1
 ends LDO_Core
 // End of subcircuit definition.
 

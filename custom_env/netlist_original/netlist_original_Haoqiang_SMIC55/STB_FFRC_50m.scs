@@ -1,11 +1,11 @@
 // Generated for: spectre
-// Generated on: Oct 15 18:04:33 2024
-// Design library name: LDO_Haoqiang_SMIC
-// Design cell name: tb_DC
+// Generated on: Sep  2 15:47:00 2024
+// Design library name: LDO_Haoqiang
+// Design cell name: tb_STB_FFRC
 // Design view name: schematic
 simulator lang=spectre
 global 0
-parameters cpp=2p ibias C0 C1 C2 C3 C4 C8 R0
+parameters cpp=30p iload=50m ibias C0 C1 C2 C3 C4 C8 R0
 include "/data/PDK/pdk_installed/smic55/smic55ll_ulp_09121825_1P7M_6Ic_1TMc_ALPA1_oa_cds_v1.16_2/smic55ll_121825_1tm/../models/spectre/l0055ll_v1p16_spe.lib" section=tt
 include "/data/PDK/pdk_installed/smic55/smic55ll_ulp_09121825_1P7M_6Ic_1TMc_ALPA1_oa_cds_v1.16_2/smic55ll_121825_1tm/../models/spectre/l0055ll_v1p16_spe.lib" section=ldmos_tt
 include "/data/PDK/pdk_installed/smic55/smic55ll_ulp_09121825_1P7M_6Ic_1TMc_ALPA1_oa_cds_v1.16_2/smic55ll_121825_1tm/../models/spectre/l0055ll_v1p16_spe.lib" section=bjt_tt
@@ -14,7 +14,7 @@ include "/data/PDK/pdk_installed/smic55/smic55ll_ulp_09121825_1P7M_6Ic_1TMc_ALPA
 include "/data/PDK/pdk_installed/smic55/smic55ll_ulp_09121825_1P7M_6Ic_1TMc_ALPA1_oa_cds_v1.16_2/smic55ll_121825_1tm/../models/spectre/l0055ll_v1p16_spe.lib" section=var_tt
 include "/data/PDK/pdk_installed/smic55/smic55ll_ulp_09121825_1P7M_6Ic_1TMc_ALPA1_oa_cds_v1.16_2/smic55ll_121825_1tm/../models/spectre/l0055ll_v1p16_spe.lib" section=mom_tt
 
-// Library name: LDO_Haoqiang_SMIC
+// Library name: LDO_Haoqiang
 // Cell name: LDO_Core
 // View name: schematic
 subckt LDO_Core IBIAS VBODY VF1 VF2 VFB_FFRC VH VIN VOUT VOUT_MIR VREF \
@@ -170,30 +170,33 @@ subckt LDO_Core IBIAS VBODY VF1 VF2 VFB_FFRC VH VIN VOUT VOUT_MIR VREF \
 ends LDO_Core
 // End of subcircuit definition.
 
-// Library name: LDO_Haoqiang_SMIC
-// Cell name: tb_DC
+// Library name: LDO_Haoqiang
+// Cell name: tb_STB_FFRC
 // View name: schematic
-I10 (net6 VBODY VFB_MIAN VFB_MIAN VBODY VH VIN net014 VFB_VSET VREF VSET \
-        VFB_VSET VSS) LDO_Core
+I0 (net6 VBODY net017 net05 net016 VH VIN net014 VOUT_MIR VREF VSET net015 \
+        VSS) LDO_Core
 V4 (VSS 0) vsource dc=0 type=dc
 V3 (VH VSS) vsource dc=2 type=dc
 V1 (VREF VSS) vsource dc=1 type=dc
-V0 (VIN VSS) vsource dc=1.2 type=dc
-I11 (VOUT VSS) isource dc=0 type=dc
+V0 (VIN VSS) vsource dc=1.2 mag=1 type=dc
+I3 (VOUT VSS) isource dc=iload type=dc
 I2 (VIN net6) isource dc=ibias type=dc
+IPRB1 (net015 VOUT_MIR) iprobe
+IPRB0 (net05 net017) iprobe
+IPRB2 (net016 VBODY) iprobe
 R0 (net014 VOUT) resistor r=0
 C0 (VOUT VSS) capacitor c=cpp
 simulatorOptions options psfversion="1.1.0" reltol=1e-3 vabstol=1e-6 \
     iabstol=1e-12 temp=27 tnom=27 scalem=1.0 scale=1.0 gmin=1e-12 rforce=1 \
     maxnotes=5 maxwarns=5 digits=5 cols=80 pivrel=1e-3 \
-    sensfile="../psf/sens.output" checklimitdest=psf
+    sensfile="../psf/sens.output" checklimitdest=psf 
 dcOp dc write="spectre.dc" maxiters=150 maxsteps=10000 annotate=status
 dcOpInfo info what=oppoint where=rawfile
+stb stb start=1 stop=1G probe=IPRB2 annotate=status 
 modelParameter info what=models where=rawfile
 element info what=inst where=rawfile
 outputParameter info what=output where=rawfile
 designParamVals info what=parameters where=rawfile
 primitives info what=primitives where=rawfile
 subckts info what=subckts where=rawfile
-save V0:p I2:sink I2:sink
 saveOptions options save=allpub
