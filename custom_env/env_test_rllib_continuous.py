@@ -15,7 +15,8 @@ if __name__ == "__main__":
                                     'region_extract': True,
                                     'dynamic_queue': False,
                                     'log_level': 'INFO',
-                                    'reward_func': 'cal_reward_Haoqiang'
+                                    'reward_func': 'cal_reward_Haoqiang',
+                                    'continue_steps_enable': False
                                 })
 
     check_env(env)

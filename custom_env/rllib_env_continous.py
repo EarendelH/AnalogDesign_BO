@@ -68,6 +68,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         self.dc_check = self.dc_check
         self.dynamic_queue = self.dynamic_queue
         self.generalize = self.generalize
+        self.continue_steps_enable = self.continue_steps_enable
 
         # Set log level
         numeric_level = getattr(logging, self.log_level.upper(), None)
@@ -485,25 +486,36 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         for agent_name in rew:
             rew[agent_name] = rew_single
 
-        if rew_single > 0 and not self.had_positive_reward:
-            self.had_positive_reward = True
-            self.steps_after_positive_reward = 0
-        elif self.had_positive_reward:
-            self.steps_after_positive_reward += 1
+        if self.continue_steps_enable:
+            if rew_single > 0 and not self.had_positive_reward:
+                self.had_positive_reward = True
+                self.steps_after_positive_reward = 0
+            elif self.had_positive_reward:
+                self.steps_after_positive_reward += 1
 
-        episode_over = False
-        if self.had_positive_reward and (
-                self.steps_after_positive_reward >= self.continue_steps or self.step_num >= self.max_step):
-            episode_over = True
-        elif self.step_num >= self.max_step:
-            episode_over = True
+            episode_over = False
+            if self.had_positive_reward and (
+                    self.steps_after_positive_reward >= self.continue_steps or self.step_num >= self.max_step):
+                episode_over = True
+            elif self.step_num >= self.max_step:
+                episode_over = True
 
-        if episode_over:
-            for agent_name in terminated:
-                if self.had_positive_reward:
+            if episode_over:
+                for agent_name in terminated:
+                    if self.had_positive_reward:
+                        terminated[agent_name] = True
+                        self.terminateds.add(agent_name)
+                    else:
+                        truncated[agent_name] = True
+                        self.truncateds.add(agent_name)
+
+        else:
+            if rew_single > 0:
+                for agent_name in terminated:
                     terminated[agent_name] = True
                     self.terminateds.add(agent_name)
-                else:
+            if self.step_num >= self.max_step:
+                for agent_name in truncated:
                     truncated[agent_name] = True
                     self.truncateds.add(agent_name)
 
