@@ -136,6 +136,7 @@ def main():
             "restore_checkpoint": get_user_input("Restore from checkpoint? (True/False)", "False"),
             "checkpoint_path": None,  # To be conditionally updated
             "train_iterations": get_user_input("Train iterations(Default: 200)", "200"),
+            "continue_steps_enable": get_user_input("Enable continue steps (True/False)", "False"),
         }
 
         if settings["restore_checkpoint"] == "True":
@@ -153,7 +154,7 @@ def main():
         if args.config_mode == 'interactive':
             # Convert string boolean values to Python boolean values
             for key in ["generalize", "sim_output", "corner_sim", "dc_check", "region_extract", "dynamic_queue",
-                        "restore_checkpoint"]:
+                        "restore_checkpoint", "continue_steps_enable"]:
                 settings[key] = settings[key].lower() == "true"
 
         # env_settings = {
@@ -186,7 +187,8 @@ def main():
                 "region_extract": settings["region_extract"],
                 "dynamic_queue": settings["dynamic_queue"],
                 "log_level": settings["log_level"],
-                "reward_func": settings["reward_func"]
+                "reward_func": settings["reward_func"],
+                "continue_steps_enable": settings["continue_steps_enable"]
             })
 
         register_env("AnalogDesignEnv_v0", env_creator)
