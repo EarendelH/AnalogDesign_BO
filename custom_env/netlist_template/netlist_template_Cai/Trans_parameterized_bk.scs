@@ -1,6 +1,6 @@
 // Generated for: spectre
-// Generated on: Oct 27 23:00:29 2024
-// Design library name: LDO_Cai_Real_Load
+// Generated on: Aug  5 15:56:13 2024
+// Design library name: LDO_Cai
 // Design cell name: tb_Trans
 // Design view name: schematic
 simulator lang=spectre
@@ -52,23 +52,7 @@ include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_
 include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_rfmvar_25
 include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_na25
 include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_lvt
-// Library name: LDO_Load
-// Cell name: bonding_wire
-// View name: schematic
-subckt bonding_wire VIN VOUT
-    L100 (VIN net5) inductor l=1n
-    R100 (net5 VOUT) resistor r=50m
-ends bonding_wire
-// End of subcircuit definition.
-// Library name: LDO_Load
-// Cell name: probe
-// View name: schematic
-subckt probe VIN VSS
-    C100 (VIN VSS) capacitor c=10p
-    R100 (VIN VSS) resistor r=1M
-ends probe
-// End of subcircuit definition.
-// Library name: LDO_Cai_Real_Load
+// Library name: LDO_Cai
 // Cell name: LDO_Core
 // View name: schematic
 subckt LDO_Core IBP VB1 VB2 VBN1 VBN2 VBP VBP1 VBP2 VD VFB_IN VFB_OUT VIN \
@@ -128,7 +112,7 @@ subckt LDO_Core IBP VB1 VB2 VBN1 VBN2 VBP VBP1 VBP2 VD VFB_IN VFB_OUT VIN \
     C1 (net40 VSS) capacitor c=C1
 ends LDO_Core
 // End of subcircuit definition.
-// Library name: LDO_Cai_Real_Load
+// Library name: LDO_Cai
 // Cell name: tb_Trans
 // View name: schematic
 V10 (VBP1 0) vsource dc=VBP1 type=dc
@@ -144,17 +128,16 @@ V1 (VREF 0) vsource dc=1 type=dc
 V0 (VSS 0) vsource dc=0 type=dc
 I3 (IBP 0) isource dc=IBP type=dc
 C0 (VOUT VSS) capacitor c=300p
-I13 (VOUT VSS) isource file="/home/wuhan/Downloads/Trace.csv" type=pwl
-I5 (VOUT net6) bonding_wire
-I6 (net6 VSS) probe
 I0 (IBP VB1 VB2 VBN1 VBN2 VBP VBP1 VBP2 VD VFB VFB VIN VOUT VREF VSS) \
         LDO_Core
+I1 (VOUT VSS) isource type=pulse val0=100u val1=20m period=10u delay=5u \
+        rise=800.0p fall=800.0p width=5u
 simulatorOptions options psfversion="1.1.0" reltol=1e-3 vabstol=1e-6 \
     iabstol=1e-12 temp=27 tnom=27 scalem=1.0 scale=1.0 gmin=1e-12 rforce=1 \
     maxnotes=5 maxwarns=5 digits=5 cols=80 pivrel=1e-3 \
-    sensfile="../psf/sens.output" checklimitdest=psf
+    sensfile="../psf/sens.output" checklimitdest=psf 
 tran tran stop=15u errpreset=conservative write="spectre.ic" \
-    writefinal="spectre.fc" annotate=status maxiters=5
+    writefinal="spectre.fc" annotate=status maxiters=5 
 finalTimeOP info what=oppoint where=rawfile
 modelParameter info what=models where=rawfile
 element info what=inst where=rawfile
@@ -162,5 +145,5 @@ outputParameter info what=output where=rawfile
 designParamVals info what=parameters where=rawfile
 primitives info what=primitives where=rawfile
 subckts info what=subckts where=rawfile
-save I13:sink
+save I1:sink 
 saveOptions options save=allpub
