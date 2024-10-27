@@ -4,7 +4,7 @@ from rllib_env_continous import RllibAnalogDesignAutoEnv
 if __name__ == "__main__":
     env = RllibAnalogDesignAutoEnv({'generalize': True,
                                     'max_step': 1,
-                                    'netlist_folder_name': 'netlist_original_Cai',
+                                    'netlist_folder_name': 'netlist_template_Cai',
                                     'specs_folder_name': 'sampled_specs_Cai',
                                     'config_folder_name': 'config_Cai_Multi',
                                     'run_folder_name': 'run_test',
