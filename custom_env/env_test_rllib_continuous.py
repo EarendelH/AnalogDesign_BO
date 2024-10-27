@@ -12,7 +12,7 @@ if __name__ == "__main__":
                                     'init_method': 'random',
                                     'corner_sim': False,
                                     'dc_check': False,
-                                    'region_extract': True,
+                                    'region_extract': False,
                                     'dynamic_queue': False,
                                     'log_level': 'INFO',
                                     'reward_func': 'cal_reward_general',
