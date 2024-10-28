@@ -253,14 +253,14 @@ def findShoot_general(filename, time_ranges, stable_voltage, output_voltage_labe
     # penalty_coeff = max_stable_voltage_diff/stable_voltage
     # print(f"Debug, penalty_coeff: {penalty_coeff}")
 
-    # if stable_high_load_voltage >= stable_voltage * 1.1 or stable_high_load_voltage <= stable_voltage * 0.9:
-    #     print("Warning! This LDO cannot be regulated to VREF under high load.")
-    #     overshoot = 100.0
-    #     undershoot = 100.0
-    # if stable_light_load_voltage >= stable_voltage * 1.1 or stable_light_load_voltage <= stable_voltage * 0.9:
-    #     print("Warning! This LDO cannot be regulated to VREF under light load.")
-    #     overshoot = 100.0
-    #     undershoot = 100.0
+    if stable_high_load_voltage >= stable_voltage * 1.1 or stable_high_load_voltage <= stable_voltage * 0.9:
+        print("Warning! This LDO cannot be regulated to VREF under high load.")
+        overshoot = 100.0
+        undershoot = 100.0
+    if stable_light_load_voltage >= stable_voltage * 1.1 or stable_light_load_voltage <= stable_voltage * 0.9:
+        print("Warning! This LDO cannot be regulated to VREF under light load.")
+        overshoot = 100.0
+        undershoot = 100.0
     if stable_high_load_voltage == 0.0 or stable_light_load_voltage == 0.0:
         print(f"Warning! No shoot be found.")
         overshoot = 100.0
@@ -298,8 +298,8 @@ def findShoot(filename):
 # print(findShoot(file))
 
 
-def findShoot_Jiangping(filename):
-    result = findShoot_general(filename, [(2.5e-6, 7.5e-6), (7.5e-6, 12.5e-6)], 0.5)
+def findShoot_Jianping(filename):
+    result = findShoot_general(filename, [(2.5e-6, 7.5e-6), (7.5e-6, 12.5e-6)], 0.5, "VOUT", 200)
     return result
 
 

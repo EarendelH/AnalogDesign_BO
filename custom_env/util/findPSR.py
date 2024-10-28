@@ -94,7 +94,7 @@ def findPowerSupplyRejectionRatio_Yan(file_path):
 # print(value_dict)
 
 
-def findPowerSupplyRejectionRatio_Jiangping(file_path):
+def findPowerSupplyRejectionRatio_Jianping(file_path):
 
     vout_name = 'VOUT'
 

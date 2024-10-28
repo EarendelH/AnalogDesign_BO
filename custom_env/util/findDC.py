@@ -90,7 +90,7 @@ def findIQ_KNL(filepath):
     return {"IQ": value}
 
 
-def findIQ_Jianping_DC_only(filepath):
+def findIQ_Jianping(filepath):
     search_keyword = "V2:p"
     try:
         value = extract_dcOP_data(filepath, search_keyword)

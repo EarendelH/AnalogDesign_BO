@@ -345,3 +345,100 @@ def cal_reward_Haoqiang(ideal_specs_dict, cur_specs_dict, norm_specs_dict):
             #       f"{constrain_objective}, reward_type: {reward_type}, reward_weight: {reward_weight[spec]}")
 
     return rew
+
+
+def cal_reward_Jianping(ideal_specs_dict, cur_specs_dict, norm_specs_dict):
+    """
+    Calculate the reward based on the ideal specs and current specs.
+    :param ideal_specs_dict: Dict with ideal specs value and property
+    :param cur_specs_dict: Dict with current specs
+    :param norm_specs_dict: Dict with normalized specs
+    :return: reward: float, reward value
+    """
+
+    # Flatten cur_specs_dict
+    cur_specs_flatten = {k: v for d in cur_specs_dict.values() for k, v in d.items()}
+    norm_specs_flatten = {k: v for d in norm_specs_dict.values() for k, v in d.items()}
+    min_rew_range = 5
+    max_rew_range = 10
+
+    reward_weight = {
+        'DC_IQ': 0.156195123,
+        'Line_Reg_1m_lineReg': 0.01479131,
+        'Line_Reg_100m_lineReg': 0.01479131,
+        'Load_Reg_loadReg': 0.01479131,
+        'PSR_100m_psr_100': 0.019973054,
+        'PSR_100m_psr_1k': 0.021153642,
+        'PSR_100m_psr_10k': 0.024854711,
+        'PSR_100m_psr_100k': 0.038199924,
+        'PSR_100m_psr_1M': 0.05220891,
+        'PSR_1m_psr_100': 0.019973054,
+        'PSR_1m_psr_1k': 0.021153642,
+        'PSR_1m_psr_10k': 0.024854711,
+        'PSR_1m_psr_100k': 0.038199924,
+        'PSR_1m_psr_1M': 0.05220891,
+        'Stability_1m_0_75V_gainBandWidth': 0.012809873,
+        'Stability_1m_0_75V_phaseMargin': 0.059289968,
+        'Stability_1m_1_2V_gainBandWidth': 0.012809873,
+        'Stability_1m_1_2V_phaseMargin': 0.059289968,
+        'Stability_100m_0_75V_gainBandWidth': 0.007474999,
+        'Stability_100m_0_75V_phaseMargin': 0.008629036,
+        'Stability_100m_1_2V_gainBandWidth': 0.007474999,
+        'Stability_100m_1_2V_phaseMargin': 0.008629036,
+        'Trans_0_75V_overShoot': 0.0712922,
+        'Trans_0_75V_underShoot': 0.083829156,
+        'Trans_1_2V_overShoot': 0.0712922,
+        'Trans_1_2V_underShoot': 0.083829156
+    }
+
+    rew = 0
+
+    for spec, detail in ideal_specs_dict.items():
+
+        single_reward = 0
+        ideal_spec_value = float(detail['value'])
+        cur_spec_value = float(cur_specs_flatten[spec])
+        constrain_objective = detail['objective']
+
+        if constrain_objective == "max":
+            single_reward = min((cur_spec_value - ideal_spec_value) / (cur_spec_value + ideal_spec_value), 0.0)
+        elif constrain_objective == "min":
+            single_reward = min((ideal_spec_value - cur_spec_value) / (cur_spec_value + ideal_spec_value), 0.0)
+
+        weighted_single_reward = single_reward * reward_weight[spec]
+        rew += float(weighted_single_reward)
+        # print(f"Debug, spec: {spec}, single_reward: {single_reward}, ideal_spec_value: {ideal_spec_value}, "
+        #       f"cur_spec_value: {cur_spec_value}, constrain_objective: {constrain_objective}, "
+        #       f"reward_weight: {reward_weight[spec]}")
+    rew = rew * min_rew_range
+    # print(f"Debug, rew: {rew}, reward_weight_sum: {reward_weight_sum}, min_rew_bound: {min_rew_bound}")
+
+    if rew >= 0:
+        rew_base = 10
+        rew_bonus = 0
+        for spec, detail in ideal_specs_dict.items():
+            single_reward = 0
+            general_ideal_spec_value = float(norm_specs_flatten[spec])
+            cur_spec_value = float(cur_specs_flatten[spec])
+            reward_type = detail['reward_type']
+            constrain_objective = detail['objective']
+
+            if reward_type == "optimal":
+                if constrain_objective == "max":
+                    single_reward = max(
+                        (cur_spec_value - general_ideal_spec_value) / (cur_spec_value + general_ideal_spec_value), 0.0)
+                elif constrain_objective == "min":
+                    single_reward = max(
+                        (general_ideal_spec_value - cur_spec_value) / (cur_spec_value + general_ideal_spec_value), 0.0)
+
+            weighted_single_reward = single_reward * reward_weight[spec]
+            rew_bonus += float(weighted_single_reward)
+
+        rew_bonus = rew_bonus * max_rew_range
+        rew = rew_base + rew_bonus
+
+            # print(f"Debug, spec: {spec}, single_reward: {single_reward}, general_ideal_spec_value: "
+            #       f"{general_ideal_spec_value}, cur_spec_value: {cur_spec_value}, constrain_objective: "
+            #       f"{constrain_objective}, reward_type: {reward_type}, reward_weight: {reward_weight[spec]}")
+
+    return rew
