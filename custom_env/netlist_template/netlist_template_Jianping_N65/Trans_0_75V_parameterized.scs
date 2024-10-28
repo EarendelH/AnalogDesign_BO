@@ -117,12 +117,13 @@ V4 (net010 VSS) vsource type=pulse val0=0 val1=1.8 period=10u delay=5u \
 M100 (net09 net010 VSS VSS) nch_mac l=60n w=500.0000u multi=4 nf=20 \
         sigma=1 sd=200n ad=5e-11 as=5.375e-11 pd=504.000000u ps=554.3u \
         nrd=0.0002 nrs=0.0002 sa=175.00n sb=175.00n sca=0 scb=0 scc=0 \
-        mismatchflag=1simulatorOptions options psfversion="1.1.0" reltol=1e-3 vabstol=1e-6 \
+        mismatchflag=1
+simulatorOptions options psfversion="1.1.0" reltol=1e-3 vabstol=1e-6 \
     iabstol=1e-12 temp=27 tnom=27 scalem=1.0 scale=1.0 gmin=1e-12 rforce=1 \
     maxnotes=5 maxwarns=5 digits=5 cols=80 pivrel=1e-3 \
-    sensfile="../psf/sens.output" checklimitdest=psf 
+    sensfile="../psf/sens.output" checklimitdest=psf
 tran tran stop=15u errpreset=conservative write="spectre.ic" \
-    writefinal="spectre.fc" annotate=status maxiters=5 
+    writefinal="spectre.fc" annotate=status maxiters=5
 finalTimeOP info what=oppoint where=rawfile
 modelParameter info what=models where=rawfile
 element info what=inst where=rawfile
