@@ -1,11 +1,11 @@
 // Generated for: spectre
-// Generated on: May 16 21:02:22 2024
+// Generated on: Oct 28 17:13:58 2024
 // Design library name: LDO_JSSC2010_Jianping_N65
-// Design cell name: tb_Line_Reg_1m
+// Design cell name: tb_Stability_100m_1_2V
 // Design view name: schematic
 simulator lang=spectre
 global 0
-parameters VIN=1.2 C1 C2 CM IB R1
+parameters C1 C2 CM IB R1
 include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_bip
 include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_dio
 include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_dio_33
@@ -56,7 +56,7 @@ include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_
 // Library name: LDO_JSSC2010_Jianping_N65
 // Cell name: LDO_Core
 // View name: schematic
-subckt LDO_Core VFB VIN VOUT VREF VSS
+subckt LDO_Core IB VFB_IN VFB_OUT VIN VOUT VREF VSS
     M16 (net20 net16 VIN VIN) pch_mac l=60n w=200n multi=1 nf=1 sigma=1 \
         sd=200n ad=3.5e-14 as=3.5e-14 pd=750n ps=750n nrd=0.5 nrs=0.5 \
         sa=175n sb=175n sca=0 scb=0 scc=0 mismatchflag=1
@@ -69,7 +69,7 @@ subckt LDO_Core VFB VIN VOUT VREF VSS
     M12 (net32 net32 net35 VDD) pch_mac l=60n w=200n multi=1 nf=1 sigma=1 \
         sd=200n ad=3.5e-14 as=3.5e-14 pd=750n ps=750n nrd=0.5 nrs=0.5 \
         sa=175n sb=175n sca=0 scb=0 scc=0 mismatchflag=1
-    M11 (net45 net32 VFB VDD) pch_mac l=60n w=200n multi=1 nf=1 sigma=1 \
+    M11 (VFB_OUT net32 VOUT VDD) pch_mac l=60n w=200n multi=1 nf=1 sigma=1 \
         sd=200n ad=3.5e-14 as=3.5e-14 pd=750n ps=750n nrd=0.5 nrs=0.5 \
         sa=175n sb=175n sca=0 scb=0 scc=0 mismatchflag=1
     M5 (net35 net37 VIN VIN) pch_mac l=60n w=200n multi=1 nf=1 sigma=1 \
@@ -81,24 +81,23 @@ subckt LDO_Core VFB VIN VOUT VREF VSS
     M3 (net37 net42 VIN VIN) pch_mac l=60n w=200n multi=1 nf=1 sigma=1 \
         sd=200n ad=3.5e-14 as=3.5e-14 pd=750n ps=750n nrd=0.5 nrs=0.5 \
         sa=175n sb=175n sca=0 scb=0 scc=0 mismatchflag=1
-    C1 (VFB net9) capacitor c=C1
-    C3 (net20 VFB) capacitor c=CM
+    C1 (VOUT net9) capacitor c=C1
+    C3 (net20 VOUT) capacitor c=CM
     C2 (net37 VSS) capacitor c=C2
-    R1 (net8 net9) resistor r=R1
-    I0 (VIN net8) isource dc=IB type=dc
+    R1 (IB net9) resistor r=R1
     M33 (net16 net16 VIN VIN) pch_mac l=60n w=200n multi=1 nf=1 sigma=1 \
         sd=200n ad=3.5e-14 as=3.5e-14 pd=750n ps=750n nrd=0.5 nrs=0.5 \
         sa=175n sb=175n sca=0 scb=0 scc=0 mismatchflag=1
     M0 (VOUT net26 VIN VIN) pch_mac l=500n w=50u multi=1 nf=1 sigma=1 \
         sd=540.0n ad=2.4e-11 as=2.4e-11 pd=100.96u ps=100.96u nrd=0.0054 \
         nrs=0.0054 sa=480.0n sb=480.0n sca=0 scb=0 scc=0 mismatchflag=1
-    M31 (net8 net8 VSS VSS) nch_mac l=60n w=200n multi=1 nf=1 sigma=1 \
-        sd=200n ad=3.5e-14 as=3.5e-14 pd=750n ps=750n nrd=0.5 nrs=0.5 \
-        sa=175n sb=175n sca=0 scb=0 scc=0 mismatchflag=1
+    M31 (IB IB VSS VSS) nch_mac l=60n w=200n multi=1 nf=1 sigma=1 sd=200n \
+        ad=3.5e-14 as=3.5e-14 pd=750n ps=750n nrd=0.5 nrs=0.5 sa=175n \
+        sb=175n sca=0 scb=0 scc=0 mismatchflag=1
     M32 (net16 net9 VSS VSS) nch_mac l=60n w=200n multi=1 nf=1 sigma=1 \
         sd=200n ad=3.5e-14 as=3.5e-14 pd=750n ps=750n nrd=0.5 nrs=0.5 \
         sa=175n sb=175n sca=0 scb=0 scc=0 mismatchflag=1
-    M15 (net20 VREF net45 VSS) nch_mac l=60n w=200n multi=1 nf=1 sigma=1 \
+    M15 (net20 VREF VFB_IN VSS) nch_mac l=60n w=200n multi=1 nf=1 sigma=1 \
         sd=200n ad=3.5e-14 as=3.5e-14 pd=750n ps=750n nrd=0.5 nrs=0.5 \
         sa=175n sb=175n sca=0 scb=0 scc=0 mismatchflag=1
     M22 (net22 net22 VSS VSS) nch_mac l=60n w=200n multi=1 nf=1 sigma=1 \
@@ -107,13 +106,13 @@ subckt LDO_Core VFB VIN VOUT VREF VSS
     M23 (net26 net22 VSS VSS) nch_mac l=60n w=200n multi=1 nf=1 sigma=1 \
         sd=200n ad=3.5e-14 as=3.5e-14 pd=750n ps=750n nrd=0.5 nrs=0.5 \
         sa=175n sb=175n sca=0 scb=0 scc=0 mismatchflag=1
-    M14 (net32 net8 VSS VSS) nch_mac l=60n w=200n multi=1 nf=1 sigma=1 \
+    M14 (net32 IB VSS VSS) nch_mac l=60n w=200n multi=1 nf=1 sigma=1 \
         sd=200n ad=3.5e-14 as=3.5e-14 pd=750n ps=750n nrd=0.5 nrs=0.5 \
         sa=175n sb=175n sca=0 scb=0 scc=0 mismatchflag=1
-    M13 (net45 net8 VSS VSS) nch_mac l=60n w=200n multi=1 nf=1 sigma=1 \
+    M13 (VFB_OUT IB VSS VSS) nch_mac l=60n w=200n multi=1 nf=1 sigma=1 \
         sd=200n ad=3.5e-14 as=3.5e-14 pd=750n ps=750n nrd=0.5 nrs=0.5 \
         sa=175n sb=175n sca=0 scb=0 scc=0 mismatchflag=1
-    M6 (net41 net8 VSS VSS) nch_mac l=60n w=200n multi=1 nf=1 sigma=1 \
+    M6 (net41 IB VSS VSS) nch_mac l=60n w=200n multi=1 nf=1 sigma=1 \
         sd=200n ad=3.5e-14 as=3.5e-14 pd=750n ps=750n nrd=0.5 nrs=0.5 \
         sa=175n sb=175n sca=0 scb=0 scc=0 mismatchflag=1
     M2 (net37 VREF net41 VSS) nch_mac l=60n w=200n multi=1 nf=1 sigma=1 \
@@ -126,22 +125,22 @@ ends LDO_Core
 // End of subcircuit definition.
 
 // Library name: LDO_JSSC2010_Jianping_N65
-// Cell name: tb_Line_Reg_1m
+// Cell name: tb_Stability_100m_1_2V
 // View name: schematic
-V2 (VIN 0) vsource dc=VIN type=dc
-V1 (VREF 0) vsource dc=500.0m type=dc
+V3 (net07 0) vsource dc=1.2 type=dc
+V2 (VIN 0) vsource dc=1.2 type=dc
+V1 (VREF 0) vsource dc=1 type=dc
 V0 (VSS 0) vsource dc=0 type=dc
-I1 (VOUT VSS) isource dc=1m type=dc
-C0 (VOUT VSS) capacitor c=1f
-I0 (VOUT VIN VOUT VREF VSS) LDO_Core
+I2 (net07 IBIAS) isource dc=IB type=dc
+I1 (VOUT VSS) isource dc=100m type=dc
+C0 (VOUT VSS) capacitor c=10p
+IPRB0 (VFB net6) iprobe
+I0 (IBIAS VFB net6 VIN VOUT VREF VSS) LDO_Core
 simulatorOptions options psfversion="1.1.0" reltol=1e-3 vabstol=1e-6 \
     iabstol=1e-12 temp=27 tnom=27 scalem=1.0 scale=1.0 gmin=1e-12 rforce=1 \
     maxnotes=5 maxwarns=5 digits=5 cols=80 pivrel=1e-3 \
     sensfile="../psf/sens.output" checklimitdest=psf 
-dcOp dc write="spectre.dc" maxiters=150 maxsteps=10000 annotate=status
-dcOpInfo info what=oppoint where=rawfile
-dc dc param=VIN start=0.75 stop=1.2 oppoint=rawfile maxiters=150 \
-    maxsteps=10000 annotate=status
+stb stb start=1 stop=10M probe=IPRB0 localgnd=VSS annotate=status 
 modelParameter info what=models where=rawfile
 element info what=inst where=rawfile
 outputParameter info what=output where=rawfile

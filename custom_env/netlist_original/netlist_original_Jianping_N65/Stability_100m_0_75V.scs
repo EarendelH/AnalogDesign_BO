@@ -1,12 +1,11 @@
 // Generated for: spectre
-// Generated on: May 17 12:37:12 2024
-// Design library name: LDO_JSSC2010_Jianping
-// Design cell name: test
+// Generated on: Oct 28 17:13:23 2024
+// Design library name: LDO_JSSC2010_Jianping_N65
+// Design cell name: tb_Stability_100m_0_75V
 // Design view name: schematic
 simulator lang=spectre
 global 0
-parameters multi_M0=1 multi_M1=1 nf_M0=1 l_M0=1u l_M1=1u nf_M1=1 \
-    w_M1_per_finger=1u w_M0_per_finger=1u C1=1p C2=1p CM=1p IB=1u R1=10k
+parameters C1 C2 CM IB R1
 include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_bip
 include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_dio
 include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_dio_33
@@ -54,35 +53,94 @@ include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_
 include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_na25
 include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_lvt
 
-// Library name: LDO_JSSC2010_Jianping
-// Cell name: test
+// Library name: LDO_JSSC2010_Jianping_N65
+// Cell name: LDO_Core
 // View name: schematic
-V2 (VIN 0) vsource dc=1 type=dc
+subckt LDO_Core IB VFB_IN VFB_OUT VIN VOUT VREF VSS
+    M16 (net20 net16 VIN VIN) pch_mac l=60n w=200n multi=1 nf=1 sigma=1 \
+        sd=200n ad=3.5e-14 as=3.5e-14 pd=750n ps=750n nrd=0.5 nrs=0.5 \
+        sa=175n sb=175n sca=0 scb=0 scc=0 mismatchflag=1
+    M21 (net22 net20 VIN VIN) pch_mac l=60n w=200n multi=1 nf=1 sigma=1 \
+        sd=200n ad=3.5e-14 as=3.5e-14 pd=750n ps=750n nrd=0.5 nrs=0.5 \
+        sa=175n sb=175n sca=0 scb=0 scc=0 mismatchflag=1
+    M24 (net26 net16 VIN VIN) pch_mac l=60n w=200n multi=1 nf=1 sigma=1 \
+        sd=200n ad=3.5e-14 as=3.5e-14 pd=750n ps=750n nrd=0.5 nrs=0.5 \
+        sa=175n sb=175n sca=0 scb=0 scc=0 mismatchflag=1
+    M12 (net32 net32 net35 VDD) pch_mac l=60n w=200n multi=1 nf=1 sigma=1 \
+        sd=200n ad=3.5e-14 as=3.5e-14 pd=750n ps=750n nrd=0.5 nrs=0.5 \
+        sa=175n sb=175n sca=0 scb=0 scc=0 mismatchflag=1
+    M11 (VFB_OUT net32 VOUT VDD) pch_mac l=60n w=200n multi=1 nf=1 sigma=1 \
+        sd=200n ad=3.5e-14 as=3.5e-14 pd=750n ps=750n nrd=0.5 nrs=0.5 \
+        sa=175n sb=175n sca=0 scb=0 scc=0 mismatchflag=1
+    M5 (net35 net37 VIN VIN) pch_mac l=60n w=200n multi=1 nf=1 sigma=1 \
+        sd=200n ad=3.5e-14 as=3.5e-14 pd=750n ps=750n nrd=0.5 nrs=0.5 \
+        sa=175n sb=175n sca=0 scb=0 scc=0 mismatchflag=1
+    M4 (net42 net42 VIN VIN) pch_mac l=60n w=200n multi=1 nf=1 sigma=1 \
+        sd=200n ad=3.5e-14 as=3.5e-14 pd=750n ps=750n nrd=0.5 nrs=0.5 \
+        sa=175n sb=175n sca=0 scb=0 scc=0 mismatchflag=1
+    M3 (net37 net42 VIN VIN) pch_mac l=60n w=200n multi=1 nf=1 sigma=1 \
+        sd=200n ad=3.5e-14 as=3.5e-14 pd=750n ps=750n nrd=0.5 nrs=0.5 \
+        sa=175n sb=175n sca=0 scb=0 scc=0 mismatchflag=1
+    C1 (VOUT net9) capacitor c=C1
+    C3 (net20 VOUT) capacitor c=CM
+    C2 (net37 VSS) capacitor c=C2
+    R1 (IB net9) resistor r=R1
+    M33 (net16 net16 VIN VIN) pch_mac l=60n w=200n multi=1 nf=1 sigma=1 \
+        sd=200n ad=3.5e-14 as=3.5e-14 pd=750n ps=750n nrd=0.5 nrs=0.5 \
+        sa=175n sb=175n sca=0 scb=0 scc=0 mismatchflag=1
+    M0 (VOUT net26 VIN VIN) pch_mac l=500n w=50u multi=1 nf=1 sigma=1 \
+        sd=540.0n ad=2.4e-11 as=2.4e-11 pd=100.96u ps=100.96u nrd=0.0054 \
+        nrs=0.0054 sa=480.0n sb=480.0n sca=0 scb=0 scc=0 mismatchflag=1
+    M31 (IB IB VSS VSS) nch_mac l=60n w=200n multi=1 nf=1 sigma=1 sd=200n \
+        ad=3.5e-14 as=3.5e-14 pd=750n ps=750n nrd=0.5 nrs=0.5 sa=175n \
+        sb=175n sca=0 scb=0 scc=0 mismatchflag=1
+    M32 (net16 net9 VSS VSS) nch_mac l=60n w=200n multi=1 nf=1 sigma=1 \
+        sd=200n ad=3.5e-14 as=3.5e-14 pd=750n ps=750n nrd=0.5 nrs=0.5 \
+        sa=175n sb=175n sca=0 scb=0 scc=0 mismatchflag=1
+    M15 (net20 VREF VFB_IN VSS) nch_mac l=60n w=200n multi=1 nf=1 sigma=1 \
+        sd=200n ad=3.5e-14 as=3.5e-14 pd=750n ps=750n nrd=0.5 nrs=0.5 \
+        sa=175n sb=175n sca=0 scb=0 scc=0 mismatchflag=1
+    M22 (net22 net22 VSS VSS) nch_mac l=60n w=200n multi=1 nf=1 sigma=1 \
+        sd=200n ad=3.5e-14 as=3.5e-14 pd=750n ps=750n nrd=0.5 nrs=0.5 \
+        sa=175n sb=175n sca=0 scb=0 scc=0 mismatchflag=1
+    M23 (net26 net22 VSS VSS) nch_mac l=60n w=200n multi=1 nf=1 sigma=1 \
+        sd=200n ad=3.5e-14 as=3.5e-14 pd=750n ps=750n nrd=0.5 nrs=0.5 \
+        sa=175n sb=175n sca=0 scb=0 scc=0 mismatchflag=1
+    M14 (net32 IB VSS VSS) nch_mac l=60n w=200n multi=1 nf=1 sigma=1 \
+        sd=200n ad=3.5e-14 as=3.5e-14 pd=750n ps=750n nrd=0.5 nrs=0.5 \
+        sa=175n sb=175n sca=0 scb=0 scc=0 mismatchflag=1
+    M13 (VFB_OUT IB VSS VSS) nch_mac l=60n w=200n multi=1 nf=1 sigma=1 \
+        sd=200n ad=3.5e-14 as=3.5e-14 pd=750n ps=750n nrd=0.5 nrs=0.5 \
+        sa=175n sb=175n sca=0 scb=0 scc=0 mismatchflag=1
+    M6 (net41 IB VSS VSS) nch_mac l=60n w=200n multi=1 nf=1 sigma=1 \
+        sd=200n ad=3.5e-14 as=3.5e-14 pd=750n ps=750n nrd=0.5 nrs=0.5 \
+        sa=175n sb=175n sca=0 scb=0 scc=0 mismatchflag=1
+    M2 (net37 VREF net41 VSS) nch_mac l=60n w=200n multi=1 nf=1 sigma=1 \
+        sd=200n ad=3.5e-14 as=3.5e-14 pd=750n ps=750n nrd=0.5 nrs=0.5 \
+        sa=175n sb=175n sca=0 scb=0 scc=0 mismatchflag=1
+    M1 (net42 net35 net41 VSS) nch_mac l=60n w=200n multi=1 nf=1 sigma=1 \
+        sd=200n ad=3.5e-14 as=3.5e-14 pd=750n ps=750n nrd=0.5 nrs=0.5 \
+        sa=175n sb=175n sca=0 scb=0 scc=0 mismatchflag=1
+ends LDO_Core
+// End of subcircuit definition.
+
+// Library name: LDO_JSSC2010_Jianping_N65
+// Cell name: tb_Stability_100m_0_75V
+// View name: schematic
+V3 (net07 0) vsource dc=750.00m type=dc
+V2 (VIN 0) vsource dc=750.00m type=dc
+V1 (VREF 0) vsource dc=500.0m type=dc
 V0 (VSS 0) vsource dc=0 type=dc
-M1 (net6 net5 VSS VSS) nch_mac l=l_M1 w=w_M1_per_finger*1 multi=nf_M1 nf=1 \
-        sigma=1 sd=200n \
-        ad=((1-int(1/2)*2)*(1.75e-07+((1-1)*2e-07)/2+0)+(1+1-int((1+1)/2)*2)*((1/2)*2e-07))*w_M1_per_finger \
-        as=((1-int(1/2)*2)*(1.75e-07+((1-1)*2e-07)/2+0)+(1+1-int((1+1)/2)*2)*(1.75e-07+1.75e-07+(1/2-1)*2e-07+0+0))*w_M1_per_finger \
-        pd=(1-int(1/2)*2)*((1.75e-07+((1-1)*2e-07)/2+0)*2+(1+1)*w_M1_per_finger)+(1+1-int((1+1)/2)*2)*(((1/2)*2e-07)*2+1*w_M1_per_finger) \
-        ps=(1-int(1/2)*2)*((1.75e-07+((1-1)*2e-07)/2+0)*2+(1+1)*w_M1_per_finger)+(1+1-int((1+1)/2)*2)*((1.75e-07+1.75e-07+(1/2-1)*2e-07+0+0)*2+(1+2)*w_M1_per_finger) \
-        nrd=(1-int(1/2)*2)*(1e-07*1e-07/(1e-07+1e-07*(1-1))/w_M1_per_finger)+(1+1-int((1+1)/2)*2)*(1e-07/1/w_M1_per_finger) \
-        nrs=(1-int(1/2)*2)*(1e-07*1e-07/(1e-07+1e-07*(1-1))/w_M1_per_finger)+(1+1-int((1+1)/2)*2)*(1e-07*1e-07*1e-07/(1e-07*1e-07*(1-2)+1e-07*(1e-07+1e-07))/w_M1_per_finger) \
-        sa=175.00n sb=175.00n sca=0 scb=0 scc=0 mismatchflag=1
-M0 (net6 net5 VIN VIN) pch_mac l=l_M0 w=w_M0_per_finger*1 multi=nf_M0 nf=1 \
-        sigma=1 sd=200n \
-        ad=((1-int(1/2)*2)*(1.75e-07+((1-1)*2e-07)/2+0)+(1+1-int((1+1)/2)*2)*((1/2)*2e-07))*w_M0_per_finger \
-        as=((1-int(1/2)*2)*(1.75e-07+((1-1)*2e-07)/2+0)+(1+1-int((1+1)/2)*2)*(1.75e-07+1.75e-07+(1/2-1)*2e-07+0+0))*w_M0_per_finger \
-        pd=(1-int(1/2)*2)*((1.75e-07+((1-1)*2e-07)/2+0)*2+(1+1)*w_M0_per_finger)+(1+1-int((1+1)/2)*2)*(((1/2)*2e-07)*2+1*w_M0_per_finger) \
-        ps=(1-int(1/2)*2)*((1.75e-07+((1-1)*2e-07)/2+0)*2+(1+1)*w_M0_per_finger)+(1+1-int((1+1)/2)*2)*((1.75e-07+1.75e-07+(1/2-1)*2e-07+0+0)*2+(1+2)*w_M0_per_finger) \
-        nrd=(1-int(1/2)*2)*(1e-07*1e-07/(1e-07+1e-07*(1-1))/w_M0_per_finger)+(1+1-int((1+1)/2)*2)*(1e-07/1/w_M0_per_finger) \
-        nrs=(1-int(1/2)*2)*(1e-07*1e-07/(1e-07+1e-07*(1-1))/w_M0_per_finger)+(1+1-int((1+1)/2)*2)*(1e-07*1e-07*1e-07/(1e-07*1e-07*(1-2)+1e-07*(1e-07+1e-07))/w_M0_per_finger) \
-        sa=175.00n sb=175.00n sca=0 scb=0 scc=0 mismatchflag=1
+I2 (net07 IBIAS) isource dc=IB type=dc
+I1 (VOUT VSS) isource dc=100m type=dc
+C0 (VOUT VSS) capacitor c=10p
+IPRB0 (VFB net6) iprobe
+I0 (IBIAS VFB net6 VIN VOUT VREF VSS) LDO_Core
 simulatorOptions options psfversion="1.1.0" reltol=1e-3 vabstol=1e-6 \
     iabstol=1e-12 temp=27 tnom=27 scalem=1.0 scale=1.0 gmin=1e-12 rforce=1 \
     maxnotes=5 maxwarns=5 digits=5 cols=80 pivrel=1e-3 \
     sensfile="../psf/sens.output" checklimitdest=psf 
-dcOp dc write="spectre.dc" maxiters=150 maxsteps=10000 annotate=status
-dcOpInfo info what=oppoint where=rawfile
+stb stb start=1 stop=10M probe=IPRB0 localgnd=VSS annotate=status 
 modelParameter info what=models where=rawfile
 element info what=inst where=rawfile
 outputParameter info what=output where=rawfile

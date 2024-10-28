@@ -1,11 +1,11 @@
 // Generated for: spectre
-// Generated on: Oct 28 17:15:14 2024
+// Generated on: Oct 28 17:03:51 2024
 // Design library name: LDO_JSSC2010_Jianping_N65
-// Design cell name: tb_Trans_1_2V
+// Design cell name: tb_Line_Reg_100m
 // Design view name: schematic
 simulator lang=spectre
 global 0
-parameters C1 C2 CM IB R1 w_M16_per_finger l_M16 nf_M16 w_M21_per_finger l_M21 nf_M21 w_M24_per_finger l_M24 nf_M24 w_M12_per_finger l_M12 nf_M12 w_M11_per_finger l_M11 nf_M11 w_M5_per_finger l_M5 nf_M5 w_M4_per_finger l_M4 nf_M4 w_M3_per_finger l_M3 nf_M3 w_M33_per_finger l_M33 nf_M33 w_M0_per_finger l_M0 nf_M0 w_M31_per_finger l_M31 nf_M31 w_M32_per_finger l_M32 nf_M32 w_M15_per_finger l_M15 nf_M15 w_M22_per_finger l_M22 nf_M22 w_M23_per_finger l_M23 nf_M23 w_M14_per_finger l_M14 nf_M14 w_M13_per_finger l_M13 nf_M13 w_M6_per_finger l_M6 nf_M6 w_M2_per_finger l_M2 nf_M2 w_M1_per_finger l_M1 nf_M1 w_M100_per_finger l_M100 nf_M100
+parameters C1 C2 CM IB R1 w_M16_per_finger l_M16 nf_M16 w_M21_per_finger l_M21 nf_M21 w_M24_per_finger l_M24 nf_M24 w_M12_per_finger l_M12 nf_M12 w_M11_per_finger l_M11 nf_M11 w_M5_per_finger l_M5 nf_M5 w_M4_per_finger l_M4 nf_M4 w_M3_per_finger l_M3 nf_M3 w_M33_per_finger l_M33 nf_M33 w_M0_per_finger l_M0 nf_M0 w_M31_per_finger l_M31 nf_M31 w_M32_per_finger l_M32 nf_M32 w_M15_per_finger l_M15 nf_M15 w_M22_per_finger l_M22 nf_M22 w_M23_per_finger l_M23 nf_M23 w_M14_per_finger l_M14 nf_M14 w_M13_per_finger l_M13 nf_M13 w_M6_per_finger l_M6 nf_M6 w_M2_per_finger l_M2 nf_M2 w_M1_per_finger l_M1 nf_M1
 include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_bip
 include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_dio
 include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_dio_33
@@ -82,48 +82,25 @@ subckt LDO_Core IB VFB_IN VFB_OUT VIN VOUT VREF VSS
     M1 (net42 net35 net41 VSS) nch_mac l=l_M1 w=w_M1_per_finger*nf_M1 multi=1 nf=nf_M1 sigma=1 sd=200n ad=((nf_M1-int(nf_M1/2)*2)*(1.75e-07+((nf_M1-1)*2e-07)/2+0)+(nf_M1+1-int((nf_M1+1)/2)*2)*((nf_M1/2)*2e-07))*w_M1_per_finger as=((nf_M1-int(nf_M1/2)*2)*(1.75e-07+((nf_M1-1)*2e-07)/2+0)+(nf_M1+1-int((nf_M1+1)/2)*2)*(1.75e-07+1.75e-07+(nf_M1/2-1)*2e-07+0+0))*w_M1_per_finger pd=(nf_M1-int(nf_M1/2)*2)*((1.75e-07+((nf_M1-1)*2e-07)/2+0)*2+(nf_M1+1)*w_M1_per_finger)+(nf_M1+1-int((nf_M1+1)/2)*2)*(((nf_M1/2)*2e-07)*2+nf_M1*w_M1_per_finger) ps=(nf_M1-int(nf_M1/2)*2)*((1.75e-07+((nf_M1-1)*2e-07)/2+0)*2+(nf_M1+1)*w_M1_per_finger)+(nf_M1+1-int((nf_M1+1)/2)*2)*((1.75e-07+1.75e-07+(nf_M1/2-1)*2e-07+0+0)*2+(nf_M1+2)*w_M1_per_finger) nrd=(nf_M1-int(nf_M1/2)*2)*(1e-07*1e-07/(1e-07+1e-07*(nf_M1-1))/w_M1_per_finger)+(nf_M1+1-int((nf_M1+1)/2)*2)*(1e-07/nf_M1/w_M1_per_finger) nrs=(nf_M1-int(nf_M1/2)*2)*(1e-07*1e-07/(1e-07+1e-07*(nf_M1-1))/w_M1_per_finger)+(nf_M1+1-int((nf_M1+1)/2)*2)*(1e-07*1e-07*1e-07/(1e-07*1e-07*(nf_M1-2)+1e-07*(1e-07+1e-07))/w_M1_per_finger) sa=175.00n sb=175.00n sca=0 scb=0 scc=0 mismatchflag=1
 ends LDO_Core
 // End of subcircuit definition.
-// Library name: LDO_Load
-// Cell name: probe
-// View name: schematic
-subckt probe VIN VSS
-    C100 (VIN VSS) capacitor c=10p
-    R100 (VIN VSS) resistor r=1M
-ends probe
-// End of subcircuit definition.
-// Library name: LDO_Load
-// Cell name: bonding_wire
-// View name: schematic
-subckt bonding_wire VIN VOUT
-    L100 (VIN net5) inductor l=1n
-    R100 (net5 VOUT) resistor r=50m
-ends bonding_wire
-// End of subcircuit definition.
 // Library name: LDO_JSSC2010_Jianping_N65
-// Cell name: tb_Trans_1_2V
+// Cell name: tb_Line_Reg_100m
 // View name: schematic
-V3 (net7 0) vsource dc=1.2 type=dc
-V2 (VIN 0) vsource dc=1.2 type=dc
+V3 (net7 0) vsource dc=VIN type=dc
+V2 (VIN 0) vsource dc=VIN type=dc
 V1 (VREF 0) vsource dc=500.0m type=dc
 V0 (VSS 0) vsource dc=0 type=dc
 I2 (net7 IBIAS) isource dc=IB type=dc
-R1 (VOUT VSS) resistor r=500
-R0 (VOUT net09) resistor r=5.05
-C0 (VOUT VSS) capacitor c=10p
+I1 (VOUT VSS) isource dc=100m type=dc
+C0 (VOUT VSS) capacitor c=1f
 I0 (IBIAS net5 net5 VIN VOUT VREF VSS) LDO_Core
-I6 (net08 VSS) probe
-I5 (VOUT net08) bonding_wire
-V4 (net010 VSS) vsource type=pulse val0=0 val1=1.8 period=10u delay=5u \
-        rise=100n fall=100n width=5u
-M100 (net09 net010 VSS VSS) nch_mac l=60n w=500.0000u multi=4 nf=20 \
-        sigma=1 sd=200n ad=5e-11 as=5.375e-11 pd=504.000000u ps=554.3u \
-        nrd=0.0002 nrs=0.0002 sa=175.00n sb=175.00n sca=0 scb=0 scc=0 \
-        mismatchflag=1simulatorOptions options psfversion="1.1.0" reltol=1e-3 vabstol=1e-6 \
+simulatorOptions options psfversion="1.1.0" reltol=1e-3 vabstol=1e-6 \
     iabstol=1e-12 temp=27 tnom=27 scalem=1.0 scale=1.0 gmin=1e-12 rforce=1 \
     maxnotes=5 maxwarns=5 digits=5 cols=80 pivrel=1e-3 \
     sensfile="../psf/sens.output" checklimitdest=psf 
-tran tran stop=15u errpreset=conservative write="spectre.ic" \
-    writefinal="spectre.fc" annotate=status maxiters=5 
-finalTimeOP info what=oppoint where=rawfile
+dcOp dc write="spectre.dc" maxiters=150 maxsteps=10000 annotate=status
+dcOpInfo info what=oppoint where=rawfile
+dc dc param=VIN start=0.75 stop=1.2 oppoint=rawfile maxiters=150 \
+    maxsteps=10000 annotate=status
 modelParameter info what=models where=rawfile
 element info what=inst where=rawfile
 outputParameter info what=output where=rawfile
