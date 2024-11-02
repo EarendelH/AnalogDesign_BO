@@ -76,7 +76,7 @@ def findPhaseMarginAndGBW_Jianping(encoded_file_path):
         # Construct path for stb.stb file in the same directory
         file_to_process = os.path.join(directory_path, "stb.stb")
         if not os.path.exists(file_to_process):
-            print(f"Error: stb.stb not found in {directory_path}")
+            print(f"Warning!!! stb.stb not found in {directory_path}")
             return {"phaseMargin": 0, "gainBandWidth": 0}
 
         # Generate processed file path
@@ -86,12 +86,12 @@ def findPhaseMarginAndGBW_Jianping(encoded_file_path):
         try:
             subprocess.run(f"psf {file_to_process} -o {processed_file}", shell=True, check=True)
         except subprocess.CalledProcessError as e:
-            print(f"Error running psf command: {e}")
+            print(f"Warning!!! Error running psf command: {e}")
             return {"phaseMargin": 0, "gainBandWidth": 0}
 
         # Check if processed file was created
         if not os.path.exists(processed_file):
-            print(f"Error: Processed file not created at {processed_file}")
+            print(f"Warning!!! Processed file not created at {processed_file}")
             return {"phaseMargin": 0, "gainBandWidth": 0}
 
         # Analyze loop gain using extract_bode function
@@ -106,18 +106,18 @@ def findPhaseMarginAndGBW_Jianping(encoded_file_path):
             actual_freq = freq_array[closest_idx]
             phase = df.iloc[closest_idx]['Phase (degrees)']
 
-            print(f"Checking phase at {actual_freq:.2e} Hz (closest to {test_freq:.2e} Hz): {phase:.2f} degrees")
+            print(f"Warning!!! Checking phase at {actual_freq:.2e} Hz (closest to {test_freq:.2e} Hz): {phase:.2f} degrees")
 
             if phase > 120:
-                print(f"Phase requirement not met: {phase:.2f} degrees > 120 degrees at {actual_freq:.2e} Hz")
+                print(f"Warning!!! Phase requirement not met: {phase:.2f} degrees > 120 degrees at {actual_freq:.2e} Hz")
                 return {"phaseMargin": 0, "gainBandWidth": 0}
 
         # If all phase checks pass, use original findPhaseMarginAndGBW function
-        print("\nAll phase requirements met!")
+        # print("\nAll phase requirements met!")
         return findPhaseMarginAndGBW(encoded_file_path)
 
     except Exception as e:
-        print(f"Error in findPhaseMarginAndGBW_Jianping: {e}")
+        print(f"Warning!!! Error in findPhaseMarginAndGBW_Jianping: {e}")
         return {"phaseMargin": 0, "gainBandWidth": 0}
 
 
