@@ -2,8 +2,8 @@ import re
 import os
 import subprocess
 import numpy as np
-from extract_bode import analyze_loop_gain
-# from util.extract_bode import analyze_loop_gain
+# from extract_bode import analyze_loop_gain
+from util.extract_bode import analyze_loop_gain
 
 
 def findLoopGain(filename):
