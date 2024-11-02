@@ -3,7 +3,7 @@ import os
 import subprocess
 import numpy as np
 # from extract_bode import analyze_loop_gain
-from util.extract_bode import analyze_loop_gain
+from util.extract_bode import analyze_loop_gain_only_value
 
 
 def findLoopGain(filename):
@@ -95,7 +95,7 @@ def findPhaseMarginAndGBW_Jianping(encoded_file_path):
             return {"phaseMargin": 0, "gainBandWidth": 0}
 
         # Analyze loop gain using extract_bode function
-        df, _, _, _ = analyze_loop_gain(processed_file)
+        df = analyze_loop_gain_only_value(processed_file)
 
         # Check phase requirements at specific frequencies
         test_freqs = [1e4, 1e5, 1e6]

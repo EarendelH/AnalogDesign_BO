@@ -194,17 +194,29 @@ def analyze_loop_gain(file_path):
 
     return df, stability, fig, axes
 
+def analyze_loop_gain_only_value(file_path):
+    """
+    Main function: Analyze loop gain and generate report
 
-if __name__ == "__main__":
-    file_path = "/Users/hanwu/Desktop/Paper_Material/Stb.raw/stb.stb.encode"  # Replace with actual file path
-    df, stability, fig, axes = analyze_loop_gain(file_path)
-    print(df)
+    Parameters:
+    file_path: Path to the PSF file
 
-    # Print stability analysis results
-    print("\nStability Analysis Results:")
-    print(f"Phase Margin: {stability['Phase Margin']:.2f} degrees")
-    print(f"Gain Margin: {stability['Gain Margin']:.2f} dB")
-    print(f"Gain Crossover Frequency: {stability['Gain Crossover Frequency']:.2e} Hz")
-    print(f"Phase Crossover Frequency: {stability['Phase Crossover Frequency']:.2e} Hz")
+    """
+    # Extract data
+    df = extract_loop_gain_data(file_path)
 
-    plt.show()
+    return df
+
+# if __name__ == "__main__":
+#     file_path = "/Users/hanwu/Desktop/Paper_Material/Stb.raw/stb.stb.encode"  # Replace with actual file path
+#     df, stability, fig, axes = analyze_loop_gain(file_path)
+#     print(df)
+#
+#     # Print stability analysis results
+#     print("\nStability Analysis Results:")
+#     print(f"Phase Margin: {stability['Phase Margin']:.2f} degrees")
+#     print(f"Gain Margin: {stability['Gain Margin']:.2f} dB")
+#     print(f"Gain Crossover Frequency: {stability['Gain Crossover Frequency']:.2e} Hz")
+#     print(f"Phase Crossover Frequency: {stability['Phase Crossover Frequency']:.2e} Hz")
+#
+#     plt.show()
