@@ -122,8 +122,8 @@ def findPhaseMarginAndGBW_Jianping(encoded_file_path):
 
 
 # Test the function with the provided file
-value_dict = findPhaseMarginAndGBW_Jianping("/home/wuhan/AnalogDesignAuto/AnalogDesignAuto_MultiAgent/custom_env/run_test/tmp_2024110408442115938589_tt/Stability_100m_0_75V.raw/stb.margin.stb.encode")
+value_dict = findPhaseMarginAndGBW_Jianping("/home/wuhan/Downloads/Test_Netlist/Good_Stb.raw/stb.margin.stb.encode")
 print(f"New util: {value_dict}")
 
-value_dict = findPhaseMarginAndGBW("/home/wuhan/AnalogDesignAuto/AnalogDesignAuto_MultiAgent/custom_env/run_test/tmp_2024110408442115938589_tt/Stability_100m_0_75V.raw/stb.margin.stb.encode")
+value_dict = findPhaseMarginAndGBW("/home/wuhan/Downloads/Test_Netlist/Good_Stb.raw/stb.margin.stb.encode")
 print(f"Old util: {value_dict}")
