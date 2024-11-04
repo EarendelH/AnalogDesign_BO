@@ -59,7 +59,8 @@ def findPhaseMarginAndGBW(filename):
 
 def findPhaseMarginAndGBW_Jianping(encoded_file_path):
     """
-    Custom function to analyze phase margin and gain bandwidth with specific checks
+    Custom function to analyze phase margin and gain bandwidth with specific checks.
+    Added check for negative phase values before 1MHz.
 
     Parameters:
     encoded_file_path: Absolute path to the stb.margin.stb.encode file
@@ -97,6 +98,13 @@ def findPhaseMarginAndGBW_Jianping(encoded_file_path):
         # Analyze loop gain using extract_bode function
         df = analyze_loop_gain_only_value(processed_file)
 
+        # Check for negative phase values before 1MHz
+        freq_mask = df['Frequency (Hz)'] <= 1e6
+        phase_values = df[freq_mask]['Phase (degrees)']
+        if (phase_values < 0).any():
+            print("Warning!!! Negative phase value detected before 1MHz")
+            return {"phaseMargin": 0, "gainBandWidth": 0}
+
         # Check phase requirements at specific frequencies
         test_freqs = [1e4, 1e5, 1e6]
         for test_freq in test_freqs:
@@ -122,8 +130,8 @@ def findPhaseMarginAndGBW_Jianping(encoded_file_path):
 
 
 # Test the function with the provided file
-value_dict = findPhaseMarginAndGBW_Jianping("/home/wuhan/Downloads/Test_Netlist/Good_Stb.raw/stb.margin.stb.encode")
-print(f"New util: {value_dict}")
-
-value_dict = findPhaseMarginAndGBW("/home/wuhan/Downloads/Test_Netlist/Good_Stb.raw/stb.margin.stb.encode")
-print(f"Old util: {value_dict}")
+# value_dict = findPhaseMarginAndGBW_Jianping("/home/wuhan/Downloads/Test_Netlist/Good_Stb.raw/stb.margin.stb.encode")
+# print(f"New util: {value_dict}")
+#
+# value_dict = findPhaseMarginAndGBW("/home/wuhan/Downloads/Test_Netlist/Good_Stb.raw/stb.margin.stb.encode")
+# print(f"Old util: {value_dict}")
