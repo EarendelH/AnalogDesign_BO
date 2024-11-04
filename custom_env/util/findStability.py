@@ -59,17 +59,15 @@ def findPhaseMarginAndGBW(filename):
 
 def findPhaseMarginAndGBW_Jianping(encoded_file_path):
     """
-    Custom function to analyze phase margin and gain bandwidth with modified phase checks:
-    1. Check phases at specific frequencies (10kHz, 100kHz, 1MHz)
-    2. Find phase at lowest frequency
-    3. Calculate phase differences and check if less than 80 degrees
+    Custom function to analyze phase margin and gain bandwidth with specific checks
 
     Parameters:
     encoded_file_path: Absolute path to the stb.margin.stb.encode file
 
     Returns:
-    dict: {"phaseMargin": float, "gainBandWidth": float}
-        Returns zeros if phase requirements are not met
+    tuple: (phase_margin, gain_bandwidth)
+        Returns the same values as findPhaseMarginAndGBW if phase checks pass
+        Both values will be 0 if phase requirements are not met
     """
     try:
         # Extract directory path from the encoded file path
@@ -99,36 +97,23 @@ def findPhaseMarginAndGBW_Jianping(encoded_file_path):
         # Analyze loop gain using extract_bode function
         df = analyze_loop_gain_only_value(processed_file)
 
-        # Step 1: Get phases at specific frequencies
+        # Check phase requirements at specific frequencies
         test_freqs = [1e4, 1e5, 1e6]
-        specific_phases = []
-
         for test_freq in test_freqs:
+            # Find the closest frequency in the data
             freq_array = df['Frequency (Hz)'].values
             closest_idx = np.argmin(np.abs(freq_array - test_freq))
             actual_freq = freq_array[closest_idx]
             phase = df.iloc[closest_idx]['Phase (degrees)']
-            specific_phases.append(phase)
-            print(f"Phase at {actual_freq:.2e} Hz: {phase:.2f} degrees")
 
-        # Step 2: Get phase at lowest frequency
-        lowest_freq_idx = np.argmin(df['Frequency (Hz)'].values)
-        lowest_freq_phase = df.iloc[lowest_freq_idx]['Phase (degrees)']
-        lowest_freq_phase = abs(lowest_freq_phase)
-        lowest_freq = df.iloc[lowest_freq_idx]['Frequency (Hz)']
-        print(f"Phase at lowest frequency ({lowest_freq:.2e} Hz): {lowest_freq_phase:.2f} degrees")
+            print(f"Warning!!! Checking phase at {actual_freq:.2e} Hz (closest to {test_freq:.2e} Hz): {phase:.2f} degrees")
 
-        # Step 3: Check phase differences
-        for i, specific_phase in enumerate(specific_phases):
-            phase_difference = abs(lowest_freq_phase - specific_phase)
-            print(f"Phase difference with {test_freqs[i]:.2e} Hz: {phase_difference:.2f} degrees")
-
-            if phase_difference < 80:
-                print(f"Warning!!! Phase difference requirement not met: {phase_difference:.2f} degrees < 80 degrees")
+            if phase > 120:
+                print(f"Warning!!! Phase requirement not met: {phase:.2f} degrees > 120 degrees at {actual_freq:.2e} Hz")
                 return {"phaseMargin": 0, "gainBandWidth": 0}
 
         # If all phase checks pass, use original findPhaseMarginAndGBW function
-        print("All phase requirements met!")
+        # print("\nAll phase requirements met!")
         return findPhaseMarginAndGBW(encoded_file_path)
 
     except Exception as e:
