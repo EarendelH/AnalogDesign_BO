@@ -114,6 +114,7 @@ def findPhaseMarginAndGBW_Jianping(encoded_file_path):
         # Step 2: Get phase at lowest frequency
         lowest_freq_idx = np.argmin(df['Frequency (Hz)'].values)
         lowest_freq_phase = df.iloc[lowest_freq_idx]['Phase (degrees)']
+        lowest_freq_phase = abs(lowest_freq_phase)
         lowest_freq = df.iloc[lowest_freq_idx]['Frequency (Hz)']
         print(f"Phase at lowest frequency ({lowest_freq:.2e} Hz): {lowest_freq_phase:.2f} degrees")
 
