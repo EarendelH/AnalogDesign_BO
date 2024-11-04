@@ -16,8 +16,8 @@ dc_check: false
 region_extract: true
 dynamic_queue: false
 continue_steps_enable: false
-restore_checkpoint: false
-checkpoint_path:
+restore_checkpoint: true
+checkpoint_path: /home/wuhan/ray_results/AnalogDesignEnv_v0/PPO/PPO_AnalogDesignEnv_v0_98927_00000_0_2024-11-03_00-00-35/checkpoint_000012
 train_iterations: 1000
 reward_func: cal_reward_Jianping
 log_level: INFO
