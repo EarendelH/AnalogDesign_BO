@@ -299,7 +299,7 @@ def findShoot(filename):
 
 
 def findShoot_Jianping(filename):
-    result = findShoot_general(filename, [(2.5e-6, 7.5e-6), (7.5e-6, 12.5e-6)], 0.5, "VOUT", 200)
+    result = findShoot_general(filename, [(2.5e-6, 7.5e-6), (7.5e-6, 12.5e-6)], 0.5, "VOUT", 100)
     return result
 
 
