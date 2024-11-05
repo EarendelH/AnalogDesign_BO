@@ -240,6 +240,11 @@ if __name__ == "__main__":
     print(f"Phase Margin: {stability['Phase Margin']:.2f} degrees")
     print(f"Gain Margin: {stability['Gain Margin']:.2f} dB")
     print(f"Gain Crossover Frequency: {stability['Gain Crossover Frequency']:.2e} Hz")
-    print(f"Phase Crossover Frequency: {stability['Phase Crossover Frequency']:.2e} Hz")
+
+    phase_cross_freq = stability['Phase Crossover Frequency']
+    if phase_cross_freq is not None:
+        print(f"Phase Crossover Frequency: {phase_cross_freq:.2e} Hz")
+    else:
+        print("Phase Crossover Frequency: None (No phase crossover point found)")
 
     plt.show()
