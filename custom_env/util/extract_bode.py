@@ -208,7 +208,7 @@ def analyze_loop_gain_only_value(file_path):
     return df
 
 if __name__ == "__main__":
-    file_path = "/home/wuhan/Downloads/tmp_20241105061044644042572_tt/Stability_100m_0_75V.raw"  # Replace with actual file path
+    file_path = "/home/wuhan/Downloads/tmp_20241105061044644042572_tt/Stability_100m_0_75V.raw/stb.stb.encode"  # Replace with actual file path
     df, stability, fig, axes = analyze_loop_gain(file_path)
     print(df)
 
