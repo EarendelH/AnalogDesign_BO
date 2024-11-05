@@ -207,16 +207,16 @@ def analyze_loop_gain_only_value(file_path):
 
     return df
 
-if __name__ == "__main__":
-    file_path = "/home/wuhan/Downloads/Test_Netlist/Good_Stb.raw/stb.stb.encode"  # Replace with actual file path
-    df, stability, fig, axes = analyze_loop_gain(file_path)
-    print(df)
-
-    # Print stability analysis results
-    print("\nStability Analysis Results:")
-    print(f"Phase Margin: {stability['Phase Margin']:.2f} degrees")
-    print(f"Gain Margin: {stability['Gain Margin']:.2f} dB")
-    print(f"Gain Crossover Frequency: {stability['Gain Crossover Frequency']:.2e} Hz")
-    print(f"Phase Crossover Frequency: {stability['Phase Crossover Frequency']:.2e} Hz")
-
-    plt.show()
+# if __name__ == "__main__":
+#     file_path = "/home/wuhan/Downloads/Test_Netlist/Good_Stb.raw/stb.stb.encode"  # Replace with actual file path
+#     df, stability, fig, axes = analyze_loop_gain(file_path)
+#     print(df)
+#
+#     # Print stability analysis results
+#     print("\nStability Analysis Results:")
+#     print(f"Phase Margin: {stability['Phase Margin']:.2f} degrees")
+#     print(f"Gain Margin: {stability['Gain Margin']:.2f} dB")
+#     print(f"Gain Crossover Frequency: {stability['Gain Crossover Frequency']:.2e} Hz")
+#     print(f"Phase Crossover Frequency: {stability['Phase Crossover Frequency']:.2e} Hz")
+#
+#     plt.show()
