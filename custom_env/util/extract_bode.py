@@ -51,13 +51,6 @@ def read_psf_file(file_path):
     return np.array(freq_list), np.array(loopgain_list)
 
 
-def unwrap_phase(phase):
-    """
-    Unwrap phase to get continuous phase response
-    """
-    return np.unwrap(phase * np.pi / 180) * 180 / np.pi
-
-
 def extract_loop_gain_data(file_path):
     """
     Extract frequency and loop gain data from PSF file and calculate magnitude(dB) and phase(degrees)
@@ -77,10 +70,7 @@ def extract_loop_gain_data(file_path):
 
     # Calculate magnitude(dB) and phase(degrees)
     magnitude = 20 * np.log10(np.sqrt(real ** 2 + imag ** 2))  # Convert to dB
-
-    # Calculate initial phase and then unwrap it
-    phase_initial = np.degrees(np.arctan2(imag, real))
-    phase = unwrap_phase(phase_initial)
+    phase = np.degrees(np.arctan2(imag, real))  # Convert to degrees
 
     # Create DataFrame
     df = pd.DataFrame({
@@ -149,25 +139,15 @@ def analyze_stability(df):
     Returns:
     dict: Stability metrics including phase margin, gain margin, and crossover frequencies
     """
-    # Find gain crossover point (closest to 0dB)
-    gain_crossover_idx = (df['Magnitude (dB)'].abs()).idxmin()
+    # Find gain and phase crossover points
+    gain_crossover_idx = (df['Magnitude (dB)'].abs()).idxmin()  # Point closest to 0dB
     phase_margin = 180 + df.iloc[gain_crossover_idx]['Phase (degrees)']
     gain_crossover_freq = df.iloc[gain_crossover_idx]['Frequency (Hz)']
 
-    # Find phase crossover point (first point where phase crosses -180°)
-    phase_crossover_mask = df['Phase (degrees)'] < -180
-    if phase_crossover_mask.any():
-        phase_crossings = df[phase_crossover_mask]
-        if not phase_crossings.empty:
-            phase_crossover_idx = phase_crossings.index[0]
-            gain_margin = -df.iloc[phase_crossover_idx]['Magnitude (dB)']
-            phase_crossover_freq = df.iloc[phase_crossover_idx]['Frequency (Hz)']
-        else:
-            gain_margin = float('inf')
-            phase_crossover_freq = None
-    else:
-        gain_margin = float('inf')
-        phase_crossover_freq = None
+    # Find phase crossover point (closest to -180°)
+    phase_crossover_idx = (df['Phase (degrees)'] + 180).abs().idxmin()
+    gain_margin = -df.iloc[phase_crossover_idx]['Magnitude (dB)']
+    phase_crossover_freq = df.iloc[phase_crossover_idx]['Frequency (Hz)']
 
     return {
         'Phase Margin': phase_margin,
@@ -201,11 +181,10 @@ def analyze_loop_gain(file_path):
     phase_crossover_freq = stability['Phase Crossover Frequency']
 
     # Annotate gain margin
-    if phase_crossover_freq is not None:
-        axes[0].annotate(f'Gain Margin: {stability["Gain Margin"]:.1f} dB',
-                         xy=(phase_crossover_freq, 0),
-                         xytext=(phase_crossover_freq, 10),
-                         arrowprops=dict(facecolor='black', shrink=0.05))
+    axes[0].annotate(f'Gain Margin: {stability["Gain Margin"]:.1f} dB',
+                     xy=(phase_crossover_freq, 0),
+                     xytext=(phase_crossover_freq, 10),
+                     arrowprops=dict(facecolor='black', shrink=0.05))
 
     # Annotate phase margin
     axes[1].annotate(f'Phase Margin: {stability["Phase Margin"]:.1f}°',
@@ -214,7 +193,6 @@ def analyze_loop_gain(file_path):
                      arrowprops=dict(facecolor='black', shrink=0.05))
 
     return df, stability, fig, axes
-
 
 def analyze_loop_gain_only_value(file_path):
     """
@@ -229,7 +207,6 @@ def analyze_loop_gain_only_value(file_path):
 
     return df
 
-
 if __name__ == "__main__":
     file_path = "/home/wuhan/Downloads/tmp_20241105061044644042572_tt/Stability_100m_0_75V.raw/stb.stb.encode"  # Replace with actual file path
     df, stability, fig, axes = analyze_loop_gain(file_path)
@@ -240,11 +217,6 @@ if __name__ == "__main__":
     print(f"Phase Margin: {stability['Phase Margin']:.2f} degrees")
     print(f"Gain Margin: {stability['Gain Margin']:.2f} dB")
     print(f"Gain Crossover Frequency: {stability['Gain Crossover Frequency']:.2e} Hz")
-
-    phase_cross_freq = stability['Phase Crossover Frequency']
-    if phase_cross_freq is not None:
-        print(f"Phase Crossover Frequency: {phase_cross_freq:.2e} Hz")
-    else:
-        print("Phase Crossover Frequency: None (No phase crossover point found)")
+    print(f"Phase Crossover Frequency: {stability['Phase Crossover Frequency']:.2e} Hz")
 
     plt.show()
