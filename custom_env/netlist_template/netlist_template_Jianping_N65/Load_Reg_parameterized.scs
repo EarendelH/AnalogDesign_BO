@@ -99,7 +99,7 @@ simulatorOptions options psfversion="1.1.0" reltol=1e-3 vabstol=1e-6 \
     sensfile="../psf/sens.output" checklimitdest=psf 
 dcOp dc write="spectre.dc" maxiters=150 maxsteps=10000 annotate=status
 dcOpInfo info what=oppoint where=rawfile
-dc dc param=ILOAD start=0 stop=100m oppoint=rawfile maxiters=150 \
+dc dc param=ILOAD start=1m stop=100m oppoint=rawfile maxiters=150 \
     maxsteps=10000 annotate=status
 modelParameter info what=models where=rawfile
 element info what=inst where=rawfile
