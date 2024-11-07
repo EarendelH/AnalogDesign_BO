@@ -197,7 +197,7 @@ def findSlewRate(file_path):
 # print(dict)
 
 
-def findShoot_general_original(filename, time_ranges, stable_voltage, output_voltage_label="VOUT", file_size_threshold=500):
+def findShoot_general(filename, time_ranges, stable_voltage, output_voltage_label="VOUT", file_size_threshold=500):
     """
     Extract the overshoot and undershoot value from trans file
 
@@ -236,7 +236,7 @@ def findShoot_general_original(filename, time_ranges, stable_voltage, output_vol
     # print(f"Debug, vout_undershoot_base: {vout_undershoot_base} and vout_overshoot_base: {vout_overshoot_base}")
     # print(f"Debug, vout_undershoot_min: {vout_undershoot_min} and vout_overshoot_max: {vout_overshoot_max}")
 
-    undershoot = vout_undershoot_base - vout_undershoot_min
+    undershoot = stable_voltage - vout_undershoot_min
     overshoot = vout_overshoot_max - vout_overshoot_base
 
     # Determine whether the stable voltage is regulated to 1.2V (pre-defined)
@@ -253,11 +253,11 @@ def findShoot_general_original(filename, time_ranges, stable_voltage, output_vol
     # penalty_coeff = max_stable_voltage_diff/stable_voltage
     # print(f"Debug, penalty_coeff: {penalty_coeff}")
 
-    if stable_high_load_voltage >= stable_voltage * 1.1 or stable_high_load_voltage <= stable_voltage * 0.9:
+    if stable_high_load_voltage >= stable_voltage * 1.04 or stable_high_load_voltage <= stable_voltage * 0.96:
         print("Warning! This LDO cannot be regulated to VREF under high load.")
         overshoot = 100.0
         undershoot = 100.0
-    if stable_light_load_voltage >= stable_voltage * 1.1 or stable_light_load_voltage <= stable_voltage * 0.9:
+    if stable_light_load_voltage >= stable_voltage * 1.04 or stable_light_load_voltage <= stable_voltage * 0.96:
         print("Warning! This LDO cannot be regulated to VREF under light load.")
         overshoot = 100.0
         undershoot = 100.0
@@ -288,85 +288,6 @@ def findShoot_general_original(filename, time_ranges, stable_voltage, output_vol
     return {"overShoot": overshoot, "underShoot": undershoot}
 
 
-def findShoot_general(filename, time_ranges, stable_voltage, output_voltage_label="VOUT", file_size_threshold=500):
-    """
-    Extract the overshoot and undershoot value from trans file with penalty for voltage regulation error
-
-    Args:
-    - filename: Path to the file to be processed.
-    - time_ranges: A list of tuples, each defining a time range.
-    - stable_voltage: The stable voltage value (reference voltage).
-    - output_voltage_label: The label for output voltage in the data (default: "VOUT").
-    - file_size_threshold: File size threshold in KB for stability check.
-
-    Returns:
-    - Dictionary containing overshoot and undershoot values with regulation penalty applied
-    """
-
-    trans_dict = extractTransTrace(filename)
-    time_series = trans_dict["time"]
-    vout_trace = trans_dict[output_voltage_label]
-
-    # Clip time according to time_ranges
-    time_undershoot_index = find_indices_in_range(time_series, time_ranges[0][0], time_ranges[0][1])
-    time_overshoot_index = find_indices_in_range(time_series, time_ranges[1][0], time_ranges[1][1])
-    vout_undershoot = [vout_trace[i] for i in time_undershoot_index]
-    vout_overshoot = [vout_trace[i] for i in time_overshoot_index]
-
-    # Calculate basic overshoot and undershoot
-    vout_undershoot_min = np.min(vout_undershoot)
-    vout_overshoot_max = np.max(vout_overshoot)
-    vout_undershoot_base = vout_undershoot[0]
-    vout_overshoot_base = vout_overshoot[0]
-
-    undershoot = vout_undershoot_base - vout_undershoot_min
-    overshoot = vout_overshoot_max - vout_overshoot_base
-
-    # Get stable voltages at both loads
-    stable_high_load_voltage = vout_undershoot[-1]
-    stable_light_load_voltage = vout_overshoot[-1]
-
-    # Calculate regulation errors
-    high_load_error = abs(stable_high_load_voltage - stable_voltage) / stable_voltage * 100
-    light_load_error = abs(stable_light_load_voltage - stable_voltage) / stable_voltage * 100
-    max_error = max(high_load_error, light_load_error)
-
-    # Calculate penalty coefficient using exponential function
-    penalty_coefficient = math.exp(max_error / 20)
-
-    # Error checking conditions
-    if stable_high_load_voltage >= stable_voltage * 1.05 or stable_high_load_voltage <= stable_voltage * 0.95:
-        print("Warning! This LDO cannot be regulated to VREF under high load.")
-        overshoot = 100.0
-        undershoot = 100.0
-    elif stable_light_load_voltage >= stable_voltage * 1.05 or stable_light_load_voltage <= stable_voltage * 0.95:
-        print("Warning! This LDO cannot be regulated to VREF under light load.")
-        overshoot = 100.0
-        undershoot = 100.0
-    elif stable_high_load_voltage == 0.0 or stable_light_load_voltage == 0.0:
-        print(f"Warning! No shoot be found.")
-        overshoot = 100.0
-        undershoot = 100.0
-    elif overshoot == 0.0 or undershoot == 0.0:
-        print(f"Warning! Shoot is zero. Too good to be true")
-        overshoot = 100.0
-        undershoot = 100.0
-    elif os.path.getsize(filename) > file_size_threshold * 1024:
-        print(f"Warning! {filename} is larger than {file_size_threshold}K, the system is highly like to be unstable")
-        overshoot = 100.0
-        undershoot = 100.0
-    else:
-        # Apply penalty coefficient to overshoot and undershoot
-        overshoot = overshoot * penalty_coefficient
-        undershoot = undershoot * penalty_coefficient
-        print(f"FindTrans!!! max_error is {max_error}, penalty_coefficient is {penalty_coefficient}")
-
-    return {
-        "overShoot": overshoot,
-        "underShoot": undershoot
-    }
-
-
 def findShoot(filename):
     result = findShoot_general(filename, [(2.5e-6, 7.5e-6), (7.5e-6, 12.5e-6)], 1.0)
     return result
@@ -378,7 +299,7 @@ def findShoot(filename):
 
 
 def findShoot_Jianping(filename):
-    result = findShoot_general(filename, [(2.5e-6, 7.5e-6), (7.5e-6, 12.5e-6)], 0.5, "VOUT", 150)
+    result = findShoot_general(filename, [(2.5e-6, 7.5e-6), (7.5e-6, 12.5e-6)], 0.5, "VOUT", 75)
     return result
 
 
