@@ -236,7 +236,7 @@ def findShoot_general(filename, time_ranges, stable_voltage, output_voltage_labe
     # print(f"Debug, vout_undershoot_base: {vout_undershoot_base} and vout_overshoot_base: {vout_overshoot_base}")
     # print(f"Debug, vout_undershoot_min: {vout_undershoot_min} and vout_overshoot_max: {vout_overshoot_max}")
 
-    undershoot = stable_voltage - vout_undershoot_min
+    undershoot = vout_undershoot_base - vout_undershoot_min
     overshoot = vout_overshoot_max - vout_overshoot_base
 
     # Determine whether the stable voltage is regulated to 1.2V (pre-defined)
