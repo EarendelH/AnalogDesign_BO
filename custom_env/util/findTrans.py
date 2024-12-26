@@ -1,6 +1,8 @@
 import os.path
 # from extract_trace import extractTransTrace
+# from extract_trace import extractTransTrace_psf
 from util.extract_trace import extractTransTrace
+from util.extract_trace import extractTransTrace_psf
 import numpy as np
 import bisect
 import math
@@ -454,3 +456,137 @@ def findEff_Buck(filename):
 
 # filename = "/Users/hanwu/Downloads/tran.tran.tran.encode"
 # print(findEff_Buck(filename))
+
+def findEff_DRMOS(filename, debug=False):
+    """
+    Calculate efficiency for DRMOS design. Extract time series data, calculate input and output power,
+    and return the efficiency. Power calculation is based on time-domain average of current and voltage.
+
+    Args:
+        filename (str): Path to the processed spectre simulation result file
+        debug (bool): If True, plot debug info and print intermediate results
+
+    Returns:
+        dict: Dictionary containing input power, output power and efficiency
+    """
+    try:
+        import numpy as np
+
+        # Extract time series data
+        trans_dict = extractTransTrace_psf(filename)
+        time_series = trans_dict["time"]
+
+        # Check if required signals exist
+        required_signals = ['VS_VIN:p', 'VIN', 'OUT_IDEAL', 'IS_LOAD:sink']
+        for signal in required_signals:
+            if signal not in trans_dict:
+                print(f"Warning!!! {signal} not found in trace data")
+                return {"inputPower": 0.0, "outputPower": 0.0, "Efficiency": 0.0}
+
+        # Extract signals
+        vs_vin_current = trans_dict['VS_VIN:p']
+        vin_voltage = trans_dict['VIN']
+        out_voltage = trans_dict['OUT_IDEAL']
+        load_current = trans_dict['IS_LOAD:sink']
+
+        # Get data in specified time range (250us - 300us)
+        time_indices = find_indices_in_range(time_series, 250e-6, 300e-6)
+        extracted_time = [time_series[i] for i in time_indices]
+        extracted_vs_vin = [vs_vin_current[i] for i in time_indices]
+        extracted_vin = [vin_voltage[i] for i in time_indices]
+        extracted_out = [out_voltage[i] for i in time_indices]
+        extracted_load = [load_current[i] for i in time_indices]
+
+        # Calculate time-domain averages using numpy's trapz
+        time_period = extracted_time[-1] - extracted_time[0]
+        avg_vs_vin = abs(np.trapz(extracted_vs_vin, extracted_time) / time_period)
+        avg_vin = abs(np.trapz(extracted_vin, extracted_time) / time_period)
+        avg_out = abs(np.trapz(extracted_out, extracted_time) / time_period)
+        avg_load = abs(np.trapz(extracted_load, extracted_time) / time_period)
+
+        # Calculate power using averaged values
+        input_power = avg_vs_vin * avg_vin
+        output_power = avg_out * avg_load
+
+        # Calculate efficiency
+        efficiency = output_power / input_power if input_power != 0 else 0.0
+
+        # Debug plotting and printing
+        if debug:
+            import matplotlib.pyplot as plt
+
+            # Create figure for each sequence
+            sequences = [
+                (extracted_vs_vin, 'Input Current (VS_VIN:p)', 'Current (A)'),
+                (extracted_vin, 'Input Voltage (VIN)', 'Voltage (V)'),
+                (extracted_out, 'Output Voltage (OUT_IDEAL)', 'Voltage (V)'),
+                (extracted_load, 'Load Current (IS_LOAD:sink)', 'Current (A)')
+            ]
+
+            for idx, (sequence, title, ylabel) in enumerate(sequences, 1):
+                plt.figure(figsize=(10, 6))
+                plt.plot(extracted_time, sequence, 'b-', linewidth=1.5)
+                plt.title(title)
+                plt.xlabel('Time (s)')
+                plt.ylabel(ylabel)
+                plt.grid(True)
+                plt.tight_layout()
+
+            plt.show()
+
+            print("\nTime Domain Analysis Information:")
+            print(f"Time range: {extracted_time[0] * 1e6:.2f}us to {extracted_time[-1] * 1e6:.2f}us")
+            print(f"Total time period: {time_period * 1e6:.2f}us")
+            print(f"Number of sample points: {len(extracted_time)}")
+            print(f"Average time step: {np.mean(np.diff(extracted_time)) * 1e9:.2f}ns")
+
+            print("\nVoltage Analysis:")
+            print(f"Input voltage - Range: {min(extracted_vin):.6f}V to {max(extracted_vin):.6f}V")
+            print(f"Input voltage - Time domain average: {avg_vin:.6f}V")
+            print(f"Output voltage - Range: {min(extracted_out):.6f}V to {max(extracted_out):.6f}V")
+            print(f"Output voltage - Time domain average: {avg_out:.6f}V")
+
+            print("\nCurrent Analysis:")
+            print(f"Input current - Range: {min(extracted_vs_vin):.6f}A to {max(extracted_vs_vin):.6f}A")
+            print(f"Input current - Time domain average: {avg_vs_vin:.6f}A")
+            print(f"Load current - Range: {min(extracted_load):.6f}A to {max(extracted_load):.6f}A")
+            print(f"Load current - Time domain average: {avg_load:.6f}A")
+
+            print("\nPower Analysis:")
+            print(f"Input power (based on time-domain averages): {input_power:.6f}W")
+            print(f"Output power (based on time-domain averages): {output_power:.6f}W")
+            print(f"Overall efficiency: {efficiency * 100:.2f}%")
+
+            print(f"Average input voltage: {avg_vin:.6f}V")
+            print(f"Average input current: {avg_vs_vin:.6f}A")
+            print(f"Average output voltage: {avg_out:.6f}V")
+            print(f"Average output current: {avg_load:.6f}A")
+
+            # Save VS_VIN:p with time series to csv file
+            import csv
+            with open('VS_VIN_p.csv', 'w', newline='') as file:
+                writer = csv.writer(file)
+                writer.writerow(['Time (s)', 'Current (A)'])
+                for i in range(len(extracted_time)):
+                    writer.writerow([extracted_time[i], extracted_vs_vin[i]])
+            # Save OUT_IDEAL with time series to csv file
+            with open('OUT_IDEAL.csv', 'w', newline='') as file:
+                writer = csv.writer(file)
+                writer.writerow(['Time (s)', 'Voltage (V)'])
+                for i in range(len(extracted_time)):
+                    writer.writerow([extracted_time[i], extracted_out[i]])
+
+
+        return {
+            "inputPower": input_power,
+            "outputPower": output_power,
+            "Efficiency": efficiency
+        }
+
+    except Exception as e:
+        print(f"Error in findEff_DRMOS: {str(e)}")
+        return {"inputPower": 0.0, "outputPower": 0.0, "Efficiency": 0.0}
+
+# Test Code
+# demo_file = "/Users/hanwu/Downloads/Compare_Netlist/tb_Efficiency/tb_Efficiency.raw/tran.tran.tran"
+# print(findEff_DRMOS(demo_file, debug=True))
