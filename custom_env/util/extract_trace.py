@@ -132,9 +132,106 @@ def extractTransTrace(file_path):
     return signal_data
 
 # Test Code
-# file = "/Users/hanwu/Downloads/Log_N65/Jianping/select_point/tmp_20240518030545162069028/Trans_Line_Reg.raw/tran.tran.tran.encode"
+# file = "/Users/hanwu/Downloads/tb_Efficiency_1.raw/tran.tran.tran.encode"
 # dict = extractTransTrace(file)
-# print(dict)
+# # Print signal name
+# print(dict.keys())
+# # Print time series data
+# print(dict["time"])
+
+
+def extractTransTrace_psf(file_path):
+    """
+    Extract transient simulation data from PSF format file with improved handling of scientific notation
+    and structured data organization.
+
+    Args:
+        file_path (str): Path to the PSF format file
+
+    Returns:
+        dict: A dictionary containing the time series data for each signal
+            Format: {
+                'time': [t1, t2, t3, ...],
+                'signal1': [v1, v2, v3, ...],
+                'signal2': [v1, v2, v3, ...],
+                ...
+            }
+    """
+    # Initialize storage for signals
+    signals_data = {}
+    current_time = None
+
+    try:
+        with open(file_path, 'r') as file:
+            # Find VALUE and END section
+            content = file.read()
+            value_start = content.find("VALUE")
+            end_pos = content.find("END")
+
+            if value_start == -1 or end_pos == -1:
+                raise ValueError("Invalid file format: VALUE or END section not found")
+
+            # Extract data section
+            data_section = content[value_start:end_pos].split('\n')
+
+            # Process each line
+            for line in data_section:
+                line = line.strip()
+                if not line:
+                    continue
+
+                # Extract signal name and value using regex
+                match = re.match(r'"([^"]+)"\s+([+-]?\d*\.?\d+(?:[eE][+-]?\d+)?)', line)
+                if not match:
+                    continue
+
+                signal_name, value_str = match.groups()
+
+                # Convert value to float
+                try:
+                    value = float(value_str)
+                except ValueError:
+                    print(f"Warning: Could not convert value {value_str} for signal {signal_name}")
+                    continue
+
+                # Handle time points
+                if signal_name == "time":
+                    current_time = value
+                    if 'time' not in signals_data:
+                        signals_data['time'] = []
+                    signals_data['time'].append(value)
+                else:
+                    # Initialize list for new signals
+                    if signal_name not in signals_data:
+                        signals_data[signal_name] = []
+                    signals_data[signal_name].append(value)
+
+        # Validate data consistency
+        expected_length = len(signals_data['time'])
+        for signal_name, values in signals_data.items():
+            if len(values) != expected_length:
+                print(f"Warning: Signal {signal_name} has inconsistent length")
+                # Pad with None or handle inconsistency as needed
+                while len(values) < expected_length:
+                    values.append(None)
+
+        return signals_data
+
+    except FileNotFoundError:
+        print(f"Error: File {file_path} not found")
+        return {}
+    except Exception as e:
+        print(f"Error processing file: {str(e)}")
+        return {}
+
+
+# Test Code
+# file = "/Users/hanwu/Downloads/Compare_Netlist/tb_Efficiency/tb_Efficiency.raw/tran.tran.tran"
+# demo_dict = extractTransTrace_psf(file)
+# Print signal name
+# print(demo_dict.keys())
+# Print time series data
+# print(demo_dict["time"])
 
 
 def extractACTrace(file_path):
