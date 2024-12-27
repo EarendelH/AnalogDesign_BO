@@ -221,7 +221,7 @@ def run_dynamic_simulation_psfascii(work_dir, sim_config, zero_sim_result, show_
         # Convert binary file to text file
         for idx, sim_file in enumerate(sim_result_file):
             file_to_process = os.path.join(raw_dir, sim_file)
-            processed_file = f"{file_to_process}.encode"
+            # processed_file = f"{file_to_process}.encode"
             # subprocess.run(f"psf {file_to_process} -o {processed_file}", shell=True)
             logging.debug(f"Debug!!! Processed file: {sim_file}")
 
@@ -230,9 +230,9 @@ def run_dynamic_simulation_psfascii(work_dir, sim_config, zero_sim_result, show_
             function_name = parse_funcs[idx]
             module = import_module(f"util.{script_name}")
             logging.debug(f"Debug!!!Work Dict: {work_dir}")
-            logging.debug(f"Debug!!!Processing file: {processed_file}")
+            logging.debug(f"Debug!!!Processing file: {file_to_process}")
             # Apply absolute path for avoiding file not found error
-            processed_file_full_path = os.path.join(raw_dir, processed_file)
+            processed_file_full_path = os.path.join(raw_dir, file_to_process)
             function = getattr(module, function_name)
             result = function(processed_file_full_path)
             results[simulation] = result
