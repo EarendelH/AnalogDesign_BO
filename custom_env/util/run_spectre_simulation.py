@@ -222,7 +222,7 @@ def run_dynamic_simulation_psfascii(work_dir, sim_config, zero_sim_result, show_
         for idx, sim_file in enumerate(sim_result_file):
             file_to_process = os.path.join(raw_dir, sim_file)
             processed_file = f"{file_to_process}.encode"
-            subprocess.run(f"psf {file_to_process} -o {processed_file}", shell=True)
+            # subprocess.run(f"psf {file_to_process} -o {processed_file}", shell=True)
             logging.debug(f"Debug!!! Processed file: {sim_file}")
 
             # Load the function to process the results and execute it
