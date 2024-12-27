@@ -200,7 +200,7 @@ def run_dynamic_simulation_psfascii(work_dir, sim_config, zero_sim_result, show_
             raise ValueError(f"Assigned netlist file {assigned_netlist_filename} not found.")
 
         # Run spectre simulation
-        logging.debug(f"Execute command: spectre -64 {os.path.join(work_dir, assigned_netlist_filename)}")
+        logging.debug(f"Execute command: spectre -64 {os.path.join(work_dir, assigned_netlist_filename)} +escchars -format psfascii +aps=conservative +spice +logstatus")
         logging.debug(f"Run spectre simulation for: {simulation}")
         if show_output:
             subprocess.run(f"spectre -64 {os.path.join(work_dir, assigned_netlist_filename)} +escchars -format psfascii +aps=conservative +spice +logstatus", shell=True)
