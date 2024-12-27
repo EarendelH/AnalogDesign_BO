@@ -1,0 +1,40 @@
+- simulation_name: Efficiency_16A
+  objective: max
+  netlist_name: Efficiency_16A.scs
+  simulation_file: tran.tran.tran
+  script_name: findTrans.py
+  parse_func: findEff_DRMOS
+  simulation_item:
+    - inputPower
+    - outputPower
+    - efficiency
+- simulation_name: Efficiency_18A
+  objective: max
+  netlist_name: Efficiency_18A.scs
+  simulation_file: tran.tran.tran
+  script_name: findTrans.py
+  parse_func: findEff_DRMOS
+  simulation_item:
+    - inputPower
+    - outputPower
+    - efficiency
+- simulation_name: Efficiency_20A
+  objective: max
+  netlist_name: Efficiency_20A.scs
+  simulation_file: tran.tran.tran
+  script_name: findTrans.py
+  parse_func: findEff_DRMOS
+  simulation_item:
+    - inputPower
+    - outputPower
+    - efficiency
+- simulation_name: Efficiency_22A
+  objective: max
+  netlist_name: Efficiency_22A.scs
+  simulation_file: tran.tran.tran
+  script_name: findTrans.py
+  parse_func: findEff_DRMOS
+  simulation_item:
+    - inputPower
+    - outputPower
+    - efficiency

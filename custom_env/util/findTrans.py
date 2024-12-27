@@ -585,7 +585,7 @@ def findEff_DRMOS(filename, debug=False):
 
     except Exception as e:
         print(f"Error in findEff_DRMOS: {str(e)}")
-        return {"inputPower": 0.0, "outputPower": 0.0, "Efficiency": 0.0}
+        return {"inputPower": 0.0, "outputPower": 0.0, "efficiency": 0.0}
 
 # Test Code
 # demo_file = "/Users/hanwu/Downloads/Compare_Netlist/tb_Efficiency/tb_Efficiency.raw/tran.tran.tran"
