@@ -190,53 +190,9 @@ def gen_masked_continuous_action_space(device_mask_dict, agent_assign_dict):
     triple_act_space = gymnasium.spaces.Box(low=0, high=1, shape=(3,), dtype=float)
     single_act_space = gymnasium.spaces.Box(low=0, high=1, shape=(1,), dtype=float)
 
-    device_mask_dict_processed = copy.deepcopy(device_mask_dict)
-
-    # Remove 'Other_Constrain' dict from device_mask_dict
-    if 'Other_Constrain' in device_mask_dict_processed:
-        del device_mask_dict_processed['Other_Constrain']
-
-    if device_mask_dict_processed:
-        device_list = []
-        for device_group in agent_assign_dict.values():
-            device_list.extend(device_group)
-        # print(f"Device list is {device_list}")
-
-        for values in device_mask_dict_processed.values():
-            for value in values:
-                device_name = value.replace('_Match', '')  # Remove _Match suffix if exists
-                if device_name not in device_list:
-                    raise ValueError(f"Device {device_name} not found in device list")
-
-        for key, values in device_mask_dict_processed.items():
-            for value in values:
-                if value.endswith('_Match'):
-                    # If the value ends with '_Match', replace the corresponding device in the list with the value
-                    device_list = [device if device != value.replace('_Match', '') else value for device in device_list]
-                else:
-                    # If the value does not end with '_Match', remove the corresponding device from the list
-                    device_list = [device for device in device_list if device != value]
-        # print(f"Device list after mask is {device_list}")
-
-        continuous_action_space_dict = {}
-        for group_name, group_device_list in agent_assign_dict.items():
-            space_dict = {}
-            for device in device_list:
-                if device in group_device_list:
-                    if device.startswith('M') and not device.endswith('_Match'):
-                        # If the device starts with 'M' and does not end with '_Match', create a MultiDiscrete space
-                        # with 3 actions
-                        space_dict[device] = triple_act_space
-                    else:
-                        # Otherwise, create a MultiDiscrete space with 1 action
-                        space_dict[device] = single_act_space
-                if device.replace('_Match', '') in group_device_list and device.endswith('_Match'):
-                    # If the device ends with '_Match', create a MultiDiscrete space with 1 action and
-                    # add '_Match' suffix
-                    space_dict[device] = single_act_space
-            continuous_action_space_dict[group_name] = gymnasium.spaces.Dict(space_dict)
-
-    else:
+    # Early return if device_mask_dict is None or empty
+    if not device_mask_dict:
+        # Generate standard action space without masking
         continuous_action_space_dict = {}
         for group_name, device_list in agent_assign_dict.items():
             space_dict = {}
@@ -247,9 +203,52 @@ def gen_masked_continuous_action_space(device_mask_dict, agent_assign_dict):
                     space = single_act_space
                 space_dict[device] = space
             continuous_action_space_dict[group_name] = gymnasium.spaces.Dict(space_dict)
+        return gymnasium.spaces.Dict(continuous_action_space_dict)
+
+    # Process device mask dictionary
+    device_mask_dict_processed = copy.deepcopy(device_mask_dict)
+
+    # Remove 'Other_Constrain' dict from device_mask_dict if exists
+    if 'Other_Constrain' in device_mask_dict_processed:
+        del device_mask_dict_processed['Other_Constrain']
+
+    # Get list of all devices
+    device_list = []
+    for device_group in agent_assign_dict.values():
+        device_list.extend(device_group)
+
+    # Validate devices in mask dictionary
+    for values in device_mask_dict_processed.values():
+        for value in values:
+            device_name = value.replace('_Match', '')  # Remove _Match suffix if exists
+            if device_name not in device_list:
+                raise ValueError(f"Device {device_name} not found in device list")
+
+    # Process device masking
+    for key, values in device_mask_dict_processed.items():
+        for value in values:
+            if value.endswith('_Match'):
+                # If the value ends with '_Match', replace the corresponding device in the list with the value
+                device_list = [device if device != value.replace('_Match', '') else value for device in device_list]
+            else:
+                # If the value does not end with '_Match', remove the corresponding device from the list
+                device_list = [device for device in device_list if device != value]
+
+    # Generate action space with masking
+    continuous_action_space_dict = {}
+    for group_name, group_device_list in agent_assign_dict.items():
+        space_dict = {}
+        for device in device_list:
+            if device in group_device_list:
+                if device.startswith('M') and not device.endswith('_Match'):
+                    space_dict[device] = triple_act_space
+                else:
+                    space_dict[device] = single_act_space
+            if device.replace('_Match', '') in group_device_list and device.endswith('_Match'):
+                space_dict[device] = single_act_space
+        continuous_action_space_dict[group_name] = gymnasium.spaces.Dict(space_dict)
 
     return gymnasium.spaces.Dict(continuous_action_space_dict)
-
 
 # Test Code
 
