@@ -171,6 +171,98 @@ def run_dynamic_simulation(work_dir, sim_config, zero_sim_result, show_output=Fa
     return results
 
 
+def run_dynamic_simulation_psfascii(work_dir, sim_config, zero_sim_result, show_output=False, dynamic_queue=True):
+    """
+    Run spectre simulation. Once the output result is zero (for pwr, reset value is 1), the simulation will be stopped.
+    Zero simulation result is given.
+    :param work_dir: working directory
+    :param sim_config: config simulation item and corresponding result parse function
+    :param show_output: show the output of the simulation
+    :param zero_sim_result: zero simulation result
+    :param dynamic_queue: if True, use dynamic queue mechanism; if False, run all simulations
+    :return: Arranged simulation results
+    """
+
+    results = copy.deepcopy(zero_sim_result)
+    fail_tag = False
+
+    for simulation_config in sim_config:
+        simulation = simulation_config["simulation_name"]
+        assigned_netlist_name = simulation_config[f"netlist_name"]
+        assigned_netlist_filename = f"{assigned_netlist_name}.scs"
+        objective = simulation_config["objective"]
+        logging.debug(f"Debug!!! Running Simulation: {simulation}")
+
+        # Check if the assigned netlist file exists
+        file_list = os.listdir(work_dir)
+        logging.debug(f"Debug!!! File List: {file_list}")
+        if assigned_netlist_filename not in file_list:
+            raise ValueError(f"Assigned netlist file {assigned_netlist_filename} not found.")
+
+        # Run spectre simulation
+        logging.debug(f"Execute command: spectre -64 {os.path.join(work_dir, assigned_netlist_filename)}")
+        logging.debug(f"Run spectre simulation for: {simulation}")
+        if show_output:
+            subprocess.run(f"spectre -64 {os.path.join(work_dir, assigned_netlist_filename)} +escchars -format psfascii +aps=conservative +spice +logstatus", shell=True)
+        else:
+            subprocess.run(f"spectre -64 {os.path.join(work_dir, assigned_netlist_filename)} +escchars -format psfascii +aps=conservative +spice +logstatus",
+                           shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
+        # Process the simulation files as specified in the config
+        raw_dir = os.path.join(work_dir, f"{assigned_netlist_name}.raw")
+        sim_result_file = simulation_config["simulation_file"]
+        # Convert to list if it is not
+        if not isinstance(sim_result_file, list):
+            sim_result_file = [sim_result_file]
+        parse_funcs = simulation_config["parse_func"]
+        if not isinstance(parse_funcs, list):
+            parse_funcs = [parse_funcs]
+
+        # Convert binary file to text file
+        for idx, sim_file in enumerate(sim_result_file):
+            file_to_process = os.path.join(raw_dir, sim_file)
+            processed_file = f"{file_to_process}.encode"
+            subprocess.run(f"psf {file_to_process} -o {processed_file}", shell=True)
+            logging.debug(f"Debug!!! Processed file: {sim_file}")
+
+            # Load the function to process the results and execute it
+            script_name = simulation_config["script_name"]
+            function_name = parse_funcs[idx]
+            module = import_module(f"util.{script_name}")
+            logging.debug(f"Debug!!!Work Dict: {work_dir}")
+            logging.debug(f"Debug!!!Processing file: {processed_file}")
+            # Apply absolute path for avoiding file not found error
+            processed_file_full_path = os.path.join(raw_dir, processed_file)
+            function = getattr(module, function_name)
+            result = function(processed_file_full_path)
+            results[simulation] = result
+
+            logging.debug(f"Debug in run_dynamic_simulation.py, result in {simulation} is {result}")
+
+            # Add Simulation Name before each keys in the result dictionary. Avoid error in flatten the dictionary
+            modified_result = {f"{simulation}_{key}": value for key, value in result.items()}
+            results[simulation] = modified_result
+
+            if dynamic_queue:
+                if any(value == 100.0 for value in result.values()) and (objective == "min"):
+                    fail_tag = True
+                    logging.warning(f"Simulation {simulation} failed. Return 100.0")
+                    logging.warning(f"Partial result success: {results}")
+                if any(value == 0.0 for value in result.values()) and (objective == "max"):
+                    fail_tag = True
+                    logging.warning(f"Simulation {simulation} failed. Return 0.0")
+                    logging.warning(f"Partial result success: {results}")
+
+        # Break the loop if fail_tag is True
+        if fail_tag and dynamic_queue:
+            logging.warning(f"Debug!!! Simulation {simulation} failed. Break the loop. No more simulation should be run.")
+            break
+
+    logging.debug(f"Debug!!! results: {results} and fail_tag: {fail_tag}")
+
+    return results
+
+
 def run_region_simulation(work_dir, sim_config, show_output=False):
     """
     Run spectre simulation. Once the output result is zero (for pwr, reset value is 1), the simulation will be stopped.
