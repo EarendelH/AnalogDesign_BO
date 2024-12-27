@@ -580,7 +580,7 @@ def findEff_DRMOS(filename, debug=False):
         return {
             "inputPower": input_power,
             "outputPower": output_power,
-            "Efficiency": efficiency
+            "efficiency": efficiency
         }
 
     except Exception as e:
