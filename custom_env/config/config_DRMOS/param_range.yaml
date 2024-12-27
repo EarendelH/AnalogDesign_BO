@@ -4,15 +4,15 @@ other_variable:
   - variable_name: DT_H
     value:
       range: [0.1n,2n]
-      step: "0.1n"
+      step: "0.01n"
   - variable_name: DT_L
     value:
       range: [2n,8n]
-      step: "0.1n"
+      step: "0.01n"
   - variable_name: RG
     value:
       range: [0.2,1.1]
-      step: "0.05"
+      step: "0.01"
   - variable_name: DUTY
     value:
       range: [0.129, 0.148]
@@ -30,7 +30,7 @@ M0:
       step: "1n"
   - variable_name: nf_M0
     value:
-      range: [225,235]
+      range: [215,245]
       step: "1"
 M1:
   instance_type: nld9_lcgd_sw_mac
@@ -45,5 +45,5 @@ M1:
       step: "1n"
   - variable_name: nf_M1
     value:
-      range: [205,215]
+      range: [195,225]
       step: "1"
