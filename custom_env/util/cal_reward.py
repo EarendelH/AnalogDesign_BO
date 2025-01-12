@@ -447,10 +447,17 @@ def cal_reward_Jianping(ideal_specs_dict, cur_specs_dict, norm_specs_dict):
 def cal_reward_DRMOS(ideal_specs_dict, cur_specs_dict, norm_specs_dict):
     """
     Calculate the reward based on the ideal specs and current specs.
-    :param ideal_specs_dict: Dict with ideal specs value and property
-    :param cur_specs_dict: Dict with current specs
-    :param norm_specs_dict: Dict with normalized specs
-    :return: reward: float, reward value
+    Support three types of objectives:
+    - max: maximize the value
+    - min: minimize the value
+    - range: keep value within specified range
+
+    Args:
+        ideal_specs_dict: Dict with ideal specs value and property
+        cur_specs_dict: Dict with current specs
+        norm_specs_dict: Dict with normalized specs
+    Returns:
+        reward: float, reward value
     """
 
     # Flatten cur_specs_dict
@@ -460,18 +467,23 @@ def cal_reward_DRMOS(ideal_specs_dict, cur_specs_dict, norm_specs_dict):
     max_rew_range = 10
 
     reward_weight = {
-        'Efficiency_16A_inputPower': 0.0125,
-        'Efficiency_16A_outputPower': 0.0125,
-        'Efficiency_16A_efficiency': 0.225,
-        'Efficiency_18A_inputPower': 0.0125,
-        'Efficiency_18A_outputPower': 0.0125,
-        'Efficiency_18A_efficiency': 0.225,
-        'Efficiency_20A_inputPower': 0.0125,
-        'Efficiency_20A_outputPower': 0.0125,
-        'Efficiency_20A_efficiency': 0.225,
-        'Efficiency_22A_inputPower': 0.0125,
-        'Efficiency_22A_outputPower': 0.0125,
-        'Efficiency_22A_efficiency': 0.225
+        'Efficiency_16A_inputPower': 0.02,
+        'Efficiency_16A_outputPower': 0.02,
+        'Efficiency_16A_efficiency': 0.16,
+        'Efficiency_18A_inputPower': 0.02,
+        'Efficiency_18A_outputPower': 0.02,
+        'Efficiency_18A_efficiency': 0.16,
+        'Efficiency_20A_inputPower': 0.02,
+        'Efficiency_20A_outputPower': 0.02,
+        'Efficiency_20A_efficiency': 0.16,
+        'Efficiency_22A_inputPower': 0.02,
+        'Efficiency_22A_outputPower': 0.02,
+        'Efficiency_22A_efficiency': 0.16,
+        'Trans_deadTime': 0.025,
+        'Trans_riseTime': 0.025,
+        'Trans_fallTime': 0.025,
+        'Trans_averageVoltage': 0.025,
+        'Area_area': 0.1
     }
 
     rew = 0
@@ -483,10 +495,18 @@ def cal_reward_DRMOS(ideal_specs_dict, cur_specs_dict, norm_specs_dict):
         cur_spec_value = float(cur_specs_flatten[spec])
         constrain_objective = detail['objective']
 
-        if constrain_objective == "max":
-            single_reward = min((cur_spec_value - ideal_spec_value) / (cur_spec_value + ideal_spec_value), 0.0)
-        elif constrain_objective == "min":
-            single_reward = min((ideal_spec_value - cur_spec_value) / (cur_spec_value + ideal_spec_value), 0.0)
+        if constrain_objective == "range":
+            range_min, range_max = detail['range']
+            if range_min <= cur_spec_value <= range_max:
+                single_reward = 0.0
+            else:
+                nearest_bound = range_min if cur_spec_value < range_min else range_max
+                single_reward = (nearest_bound - cur_spec_value) / (nearest_bound + cur_spec_value)
+        else:
+            if constrain_objective == "max":
+                single_reward = min((cur_spec_value - ideal_spec_value) / (cur_spec_value + ideal_spec_value), 0.0)
+            elif constrain_objective == "min":
+                single_reward = min((ideal_spec_value - cur_spec_value) / (cur_spec_value + ideal_spec_value), 0.0)
 
         weighted_single_reward = single_reward * reward_weight[spec]
         rew += float(weighted_single_reward)

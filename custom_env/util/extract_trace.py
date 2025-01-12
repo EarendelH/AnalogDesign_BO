@@ -226,12 +226,22 @@ def extractTransTrace_psf(file_path):
 
 
 # Test Code
-# file = "/Users/hanwu/Downloads/Compare_Netlist/tb_Efficiency/tb_Efficiency.raw/tran.tran.tran"
+# file = "/Users/hanwu/Downloads/tb_Efficiency/tb_Efficiency.raw/tran.tran.tran"
 # demo_dict = extractTransTrace_psf(file)
 # Print signal name
 # print(demo_dict.keys())
 # Print time series data
-# print(demo_dict["time"])
+# print(f"The raw series length is {len(demo_dict['time'])}")
+# Filter time and SW_IDEAL signal within time 298.5u-300us, and write to csv file
+# import csv
+# with open('demo.csv', mode='w') as csv_file:
+#     fieldnames = ['time', 'SW_IDEAL']
+#     writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
+#     writer.writeheader()
+#     for i in range(len(demo_dict["time"])):
+#         if 295e-6 <= demo_dict["time"][i] <= 300e-6:
+#             writer.writerow({'time': demo_dict["time"][i], 'SW_IDEAL': demo_dict["SW_IDEAL"][i]})
+# Print the length of raw series length and filtered series length
 
 
 def extractACTrace(file_path):
