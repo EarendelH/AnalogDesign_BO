@@ -1,48 +1,68 @@
-Efficiency_16A_efficiency:
-  objective: max
-  reward_type: optimal
-  value: 0.9566940236071918
 Efficiency_16A_inputPower:
   objective: max
   reward_type: satisfactory
-  value: 15.493460404321409
+  value: 15.496193923641588
 Efficiency_16A_outputPower:
   objective: max
   reward_type: satisfactory
-  value: 13.959372362201982
-Efficiency_18A_efficiency:
+  value: 13.943284086927617
+Efficiency_16A_efficiency:
   objective: max
   reward_type: optimal
-  value: 0.9406584558041633
+  value: 0.9295674674065031
 Efficiency_18A_inputPower:
   objective: max
   reward_type: satisfactory
-  value: 17.314035874781574
+  value: 17.30972287891771
 Efficiency_18A_outputPower:
   objective: max
   reward_type: satisfactory
-  value: 15.610823363877367
-Efficiency_20A_efficiency:
+  value: 15.633657857875567
+Efficiency_18A_efficiency:
   objective: max
   reward_type: optimal
-  value: 0.9153301989292097
+  value: 0.9061890837217932
 Efficiency_20A_inputPower:
   objective: max
   reward_type: satisfactory
-  value: 19.222458489894834
+  value: 19.29098399229888
 Efficiency_20A_outputPower:
   objective: max
   reward_type: satisfactory
-  value: 17.498609940304373
-Efficiency_22A_efficiency:
+  value: 17.493019566477837
+Efficiency_20A_efficiency:
   objective: max
   reward_type: optimal
-  value: 0.9542106519137158
+  value: 0.9241464790749037
 Efficiency_22A_inputPower:
   objective: max
   reward_type: satisfactory
-  value: 21.27478069566591
+  value: 21.208882213217
 Efficiency_22A_outputPower:
   objective: max
   reward_type: satisfactory
-  value: 19.194491731838376
+  value: 19.19817033094456
+Efficiency_22A_efficiency:
+  objective: max
+  reward_type: optimal
+  value: 0.9259273088378573
+Trans_deadTime:
+  objective: range
+  reward_type: satisfactory
+  value: [9.0e-10, 1.1e-09]
+Trans_riseTime:
+  objective: range
+  reward_type: satisfactory
+  value: [4.5e-10, 5.5e-10]
+Trans_fallTime:
+  objective: range
+  reward_type: satisfactory
+  value: [4.5e-10, 5.5e-10]
+Trans_averageVoltage:
+  objective: range
+  reward_type: satisfactory
+  value: [0.891, 0.909]
+Area_area:
+  objective: min
+  reward_type: optimal
+  value: 3.407155776580187
