@@ -5,8 +5,8 @@ def norm_ideal_spec(input_specs, norm_specs):
     :param norm_specs: dict, current specs for the circuit
     :return: norm_cur_specs: dict, normalized specs for the circuit
     """
-    # print(f"Debug, input_specs = {input_specs}")
-    # print(f"Debug, norm_specs = {norm_specs}")
+    print(f"Debug, input_specs = {input_specs}")
+    print(f"Debug, norm_specs = {norm_specs}")
 
     norm_cur_specs = {}
 
