@@ -1,0 +1,116 @@
+// Generated for: spectre
+// Generated on: Dec 27 15:22:11 2024
+// Design library name: DRMOS
+// Design cell name: tb_Efficiency_param
+// Design view name: schematic
+simulator lang=spectre
+global 0
+parameters fsw=5M VDRV=2.5 ILOAD=20 VIN=6.5 RG DUTY DT_H DT_L l_M0 l_M1 w_M0_per_finger w_M1_per_finger nf_M0 nf_M1
+include "/data/PDK/pdk_installed/unt55bcd/pdk_current/models/spe/unt_55bcd20_v0p5_usage_spe.lib" section=tt
+
+// Library name: DRMOS
+// Cell name: powerstage_ideal_test_hc_param
+// View name: schematic
+subckt powerstage_ideal_test_hc_param HSG LSG SW VIN VSS
+    M0\<1\> (LSD LSG LSS LSS LSS LSS) nld8_lrsp_iso_mac l=100n \
+        w=(w_M0_per_finger)*(nf_M0) nf=nf_M0 mr=17 \
+        as=3e-07*(0.0+((w_M0_per_finger)*(nf_M0))/(nf_M0))*1*(nf_M0)/2 \
+        ad=(4.6e-06+1.34e-06*(int((nf_M0)/2)-1))*(3e-06+((w_M0_per_finger)*(nf_M0))/(nf_M0)) \
+        ps=(3e-07+(0.0+((w_M0_per_finger)*(nf_M0))/(nf_M0)))*1*(nf_M0) \
+        pd=(4.6e-06+1.34e-06*(int((nf_M0)/2)-1))*2+(3e-06+((w_M0_per_finger)*(nf_M0))/(nf_M0))*((nf_M0)+2) \
+        mosdio_on=1 option_trr=0
+    M0\<2\> (LSD LSG LSS LSS LSS LSS) nld8_lrsp_iso_mac l=100n \
+        w=(w_M0_per_finger)*(nf_M0) nf=nf_M0 mr=17 \
+        as=3e-07*(0.0+((w_M0_per_finger)*(nf_M0))/(nf_M0))*1*(nf_M0)/2 \
+        ad=(4.6e-06+1.34e-06*(int((nf_M0)/2)-1))*(3e-06+((w_M0_per_finger)*(nf_M0))/(nf_M0)) \
+        ps=(3e-07+(0.0+((w_M0_per_finger)*(nf_M0))/(nf_M0)))*1*(nf_M0) \
+        pd=(4.6e-06+1.34e-06*(int((nf_M0)/2)-1))*2+(3e-06+((w_M0_per_finger)*(nf_M0))/(nf_M0))*((nf_M0)+2) \
+        mosdio_on=1 option_trr=0
+    M0\<3\> (LSD LSG LSS LSS LSS LSS) nld8_lrsp_iso_mac l=100n \
+        w=(w_M0_per_finger)*(nf_M0) nf=nf_M0 mr=17 \
+        as=3e-07*(0.0+((w_M0_per_finger)*(nf_M0))/(nf_M0))*1*(nf_M0)/2 \
+        ad=(4.6e-06+1.34e-06*(int((nf_M0)/2)-1))*(3e-06+((w_M0_per_finger)*(nf_M0))/(nf_M0)) \
+        ps=(3e-07+(0.0+((w_M0_per_finger)*(nf_M0))/(nf_M0)))*1*(nf_M0) \
+        pd=(4.6e-06+1.34e-06*(int((nf_M0)/2)-1))*2+(3e-06+((w_M0_per_finger)*(nf_M0))/(nf_M0))*((nf_M0)+2) \
+        mosdio_on=1 option_trr=0
+    M0\<4\> (LSD LSG LSS LSS LSS LSS) nld8_lrsp_iso_mac l=100n \
+        w=(w_M0_per_finger)*(nf_M0) nf=nf_M0 mr=17 \
+        as=3e-07*(0.0+((w_M0_per_finger)*(nf_M0))/(nf_M0))*1*(nf_M0)/2 \
+        ad=(4.6e-06+1.34e-06*(int((nf_M0)/2)-1))*(3e-06+((w_M0_per_finger)*(nf_M0))/(nf_M0)) \
+        ps=(3e-07+(0.0+((w_M0_per_finger)*(nf_M0))/(nf_M0)))*1*(nf_M0) \
+        pd=(4.6e-06+1.34e-06*(int((nf_M0)/2)-1))*2+(3e-06+((w_M0_per_finger)*(nf_M0))/(nf_M0))*((nf_M0)+2) \
+        mosdio_on=1 option_trr=0
+    M0\<5\> (LSD LSG LSS LSS LSS LSS) nld8_lrsp_iso_mac l=100n \
+        w=(w_M0_per_finger)*(nf_M0) nf=nf_M0 mr=17 \
+        as=3e-07*(0.0+((w_M0_per_finger)*(nf_M0))/(nf_M0))*1*(nf_M0)/2 \
+        ad=(4.6e-06+1.34e-06*(int((nf_M0)/2)-1))*(3e-06+((w_M0_per_finger)*(nf_M0))/(nf_M0)) \
+        ps=(3e-07+(0.0+((w_M0_per_finger)*(nf_M0))/(nf_M0)))*1*(nf_M0) \
+        pd=(4.6e-06+1.34e-06*(int((nf_M0)/2)-1))*2+(3e-06+((w_M0_per_finger)*(nf_M0))/(nf_M0))*((nf_M0)+2) \
+        mosdio_on=1 option_trr=0
+    M0\<6\> (LSD LSG LSS LSS LSS LSS) nld8_lrsp_iso_mac l=100n \
+        w=(w_M0_per_finger)*(nf_M0) nf=nf_M0 mr=17 \
+        as=3e-07*(0.0+((w_M0_per_finger)*(nf_M0))/(nf_M0))*1*(nf_M0)/2 \
+        ad=(4.6e-06+1.34e-06*(int((nf_M0)/2)-1))*(3e-06+((w_M0_per_finger)*(nf_M0))/(nf_M0)) \
+        ps=(3e-07+(0.0+((w_M0_per_finger)*(nf_M0))/(nf_M0)))*1*(nf_M0) \
+        pd=(4.6e-06+1.34e-06*(int((nf_M0)/2)-1))*2+(3e-06+((w_M0_per_finger)*(nf_M0))/(nf_M0))*((nf_M0)+2) \
+        mosdio_on=1 option_trr=0
+    M1\<1\> (HSD HSG HSS HSS HSD VSS) nld9_lcgd_sw_mac l=100n \
+        w=(w_M1_per_finger)*(nf_M1) nf=nf_M1 mr=17 \
+        as=3e-07*(0.0+((w_M1_per_finger)*(nf_M1))/(nf_M1))*1*(nf_M1)/2 \
+        ad=(4.86e-06+1.6e-06*(int((nf_M1)/2)-1))*(3e-06+((w_M1_per_finger)*(nf_M1))/(nf_M1)) \
+        ps=(3e-07+(0.0+((w_M1_per_finger)*(nf_M1))/(nf_M1)))*1*(nf_M1) \
+        pd=(4.86e-06+1.6e-06*(int((nf_M1)/2)-1))*2+(3e-06+((w_M1_per_finger)*(nf_M1))/(nf_M1))*((nf_M1)+2) \
+        mosdio_on=1
+    M1\<2\> (HSD HSG HSS HSS HSD VSS) nld9_lcgd_sw_mac l=100n \
+        w=(w_M1_per_finger)*(nf_M1) nf=nf_M1 mr=17 \
+        as=3e-07*(0.0+((w_M1_per_finger)*(nf_M1))/(nf_M1))*1*(nf_M1)/2 \
+        ad=(4.86e-06+1.6e-06*(int((nf_M1)/2)-1))*(3e-06+((w_M1_per_finger)*(nf_M1))/(nf_M1)) \
+        ps=(3e-07+(0.0+((w_M1_per_finger)*(nf_M1))/(nf_M1)))*1*(nf_M1) \
+        pd=(4.86e-06+1.6e-06*(int((nf_M1)/2)-1))*2+(3e-06+((w_M1_per_finger)*(nf_M1))/(nf_M1))*((nf_M1)+2) \
+        mosdio_on=1
+    M1\<3\> (HSD HSG HSS HSS HSD VSS) nld9_lcgd_sw_mac l=100n \
+        w=(w_M1_per_finger)*(nf_M1) nf=nf_M1 mr=17 \
+        as=3e-07*(0.0+((w_M1_per_finger)*(nf_M1))/(nf_M1))*1*(nf_M1)/2 \
+        ad=(4.86e-06+1.6e-06*(int((nf_M1)/2)-1))*(3e-06+((w_M1_per_finger)*(nf_M1))/(nf_M1)) \
+        ps=(3e-07+(0.0+((w_M1_per_finger)*(nf_M1))/(nf_M1)))*1*(nf_M1) \
+        pd=(4.86e-06+1.6e-06*(int((nf_M1)/2)-1))*2+(3e-06+((w_M1_per_finger)*(nf_M1))/(nf_M1))*((nf_M1)+2) \
+        mosdio_on=1
+    R3 (LSS VSS) resistor r=0
+    RSHS (HSS SW) resistor r=0
+    RDLS (SW LSD) resistor r=0
+    RDHS (VIN HSD) resistor r=0
+ends powerstage_ideal_test_hc_param
+// End of subcircuit definition.
+
+// Library name: DRMOS
+// Cell name: tb_Efficiency_param
+// View name: schematic
+L_IDEAL (SW_IDEAL OUT_IDEAL) inductor l=24n r=0
+CAP_OUTPUT (OUT_IDEAL VSS) capacitor c=1m ic=0
+PS_IDEAL (HSG LSG_IDEAL SW_IDEAL VIN VSS) powerstage_ideal_test_hc_param
+VS_HSG (HSG_IDEAL SW_IDEAL) vsource type=pulse val0=0 val1=VDRV \
+        period=1/fsw delay=DT_H rise=100p fall=100p width=DUTY/fsw
+VS_LSG (LSG_IDEAL VSS) vsource type=pulse val0=0 val1=VDRV period=1/fsw \
+        delay=DUTY/fsw+DT_H+100p+100p+DT_L rise=100p fall=100p \
+        width=1/fsw-DUTY/fsw-DT_H-DT_L-100p-100p-100p-100p
+R0 (HSG_IDEAL HSG) resistor r=RG
+IS_LOAD (OUT_IDEAL VSS) isource dc=0 type=pwl wave=[ 0 100m 100u ILOAD ]
+VS_VSS (VSS 0) vsource dc=0 type=dc
+VS_VIN (VIN VSS) vsource type=pwl wave=[ 0 0 100u VIN ]
+simulatorOptions options psfversion="1.1.0" reltol=1e-3 vabstol=1e-6 \
+    iabstol=1e-12 temp=25.0 tnom=27 scalem=1.0 scale=1.0 gmin=1e-18 \
+    gmindc=1e-18 rforce=1 redefinedparams=ignore maxnotes=5 maxwarns=5 \
+    digits=5 cols=80 pivrel=1e-3 sensfile="../psf/sens.output" \
+    checklimitdest=psf rclamp=1e-8
+tran tran stop=300u errpreset=conservative cmin=10f write="spectre.ic" \
+    writefinal="spectre.fc" annotate=status maxiters=5
+finalTimeOP info what=oppoint where=rawfile
+modelParameter info what=models where=rawfile
+element info what=inst where=rawfile
+outputParameter info what=output where=rawfile
+designParamVals info what=parameters where=rawfile
+primitives info what=primitives where=rawfile
+subckts info what=subckts where=rawfile
+save L_IDEAL:1 VS_LSG:p VS_HSG:p VS_VIN:p IS_LOAD:sink PS_IDEAL.RDHS:1 \
+    PS_IDEAL.RDLS:1
+saveOptions options save=allpub
