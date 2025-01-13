@@ -1,24 +1,30 @@
 def norm_ideal_spec(input_specs, norm_specs):
     """
     Normalize the current specs by the ideal specs.
-    :param input_specs: dict, ideal specs for the circuit
-    :param norm_specs: dict, current specs for the circuit
-    :return: norm_cur_specs: dict, normalized specs for the circuit
-    """
-    print(f"Debug, input_specs = {input_specs}")
-    print(f"Debug, norm_specs = {norm_specs}")
+    Handle three types of values:
+    - Single value for max/min objectives
+    - List [min, max] for range objectives
+    - Regular numeric values
 
+    Args:
+        input_specs: dict, ideal specs for the circuit
+        norm_specs: dict, current specs for the circuit
+    Returns:
+        norm_cur_specs: dict, normalized specs for the circuit
+    """
     norm_cur_specs = {}
 
     for key, sub_dict in norm_specs.items():
         norm_cur_specs_sub = {}
         for sub_key, value in sub_dict.items():
             ideal_value = value
-            print(f"Debug, cur_value = {ideal_value}")
             input_value = input_specs[sub_key]['value']
-            print(f"Debug, ideal_value = {input_value}")
+
+            # For range type, use the average of min and max
+            if isinstance(input_value, list):
+                input_value = sum(input_value) / len(input_value)
+
             norm_value = (input_value - ideal_value) / (input_value + ideal_value)
-            print(f"Debug, norm_value = {norm_value}")
             norm_cur_specs_sub[sub_key] = norm_value
         norm_cur_specs[key] = norm_cur_specs_sub
 
