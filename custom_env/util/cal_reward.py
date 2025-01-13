@@ -1,3 +1,5 @@
+import logging
+
 def cal_reward_buck(ideal_specs_dict, cur_specs_dict, norm_specs_dict):
     """
     Calculate the reward based on the ideal specs and current specs.
@@ -459,6 +461,10 @@ def cal_reward_DRMOS(ideal_specs_dict, cur_specs_dict, norm_specs_dict):
     Returns:
         reward: float, reward value
     """
+
+    logging.debug("Calculating reward for DRMOS")
+    logging.debug(f"Ideal specs: {ideal_specs_dict}")
+    logging.debug(f"Current specs: {cur_specs_dict}")
 
     # Flatten cur_specs_dict
     cur_specs_flatten = {k: v for d in cur_specs_dict.values() for k, v in d.items()}
