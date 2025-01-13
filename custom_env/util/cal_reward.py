@@ -461,7 +461,6 @@ def cal_reward_DRMOS(ideal_specs_dict, cur_specs_dict, norm_specs_dict):
     Returns:
         reward: float, reward value
     """
-
     logging.debug("Calculating reward for DRMOS")
     logging.debug(f"Ideal specs: {ideal_specs_dict}")
     logging.debug(f"Current specs: {cur_specs_dict}")
