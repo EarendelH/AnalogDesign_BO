@@ -1,7 +1,7 @@
 import os
 import re
-# from util.util_func import unit_conversion
-from util_func import unit_conversion
+from util.util_func import unit_conversion
+# from util_func import unit_conversion
 
 
 def findArea(filepath, tech_factor=51):

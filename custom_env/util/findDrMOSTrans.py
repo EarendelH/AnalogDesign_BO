@@ -5,8 +5,8 @@ from typing import Dict, List, Tuple, Any
 import os
 import json
 
-from extract_trace import extractTransTrace_psf
-# from util.extract_trace import extractTransTrace_psf
+# from extract_trace import extractTransTrace_psf
+from util.extract_trace import extractTransTrace_psf
 
 
 def split_signal(data: pd.DataFrame,
