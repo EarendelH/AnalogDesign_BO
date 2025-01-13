@@ -4,6 +4,7 @@ import pandas as pd
 from typing import Dict, List, Tuple, Any
 import os
 import json
+import logging
 
 # from extract_trace import extractTransTrace_psf
 from util.extract_trace import extractTransTrace_psf
@@ -155,12 +156,10 @@ def drmos_trans_analysis(signal_data, debug=False):
 
         # Calculate rise and fall times
         rise_time = high_voltage_times[0] - low_voltage_times[0]
-        fall_time = low_voltage_times[1] - high_voltage_times[1]
 
         return {
             'dead_time': dead_time,
             'rise_time': rise_time,
-            'fall_time': fall_time
         }
 
     # Thresholds to check
@@ -192,7 +191,6 @@ def drmos_trans_analysis(signal_data, debug=False):
         # Collect times for overall statistics
         all_dead_times.append(signal_times['dead_time'])
         all_rise_times.append(signal_times['rise_time'])
-        all_fall_times.append(signal_times['fall_time'])
 
     trans_property = {
         'deadTime': np.mean(all_dead_times),
@@ -210,10 +208,6 @@ def drmos_trans_analysis(signal_data, debug=False):
             'riseTime': {
                 'mean': np.mean(all_rise_times),
                 'std': np.std(all_rise_times)
-            },
-            'fallTime': {
-                'mean': np.mean(all_fall_times),
-                'std': np.std(all_fall_times)
             }
         }
         print("Individual Signal Results:")
@@ -225,23 +219,52 @@ def drmos_trans_analysis(signal_data, debug=False):
 
 
 def findTransProperty(filename: str) -> Dict[str, Any]:
-    all_trace = extractTransTrace_psf(filename)
-    # Extract time and SW_IDEAL signal, time is limited within 280us to 300us
-    indices = [i for i, x in enumerate(all_trace['time']) if 280e-6 <= x <= 300e-6]
-    extract_trace = {
-        'time': [all_trace['time'][i] for i in indices],
-        'signal': [all_trace['SW_IDEAL'][i] for i in indices]
+    """
+    Extract transient properties from simulation results with error handling.
+    If extraction fails, returns a dictionary with default values (0.0).
+
+    Args:
+        filename (str): Path to the simulation result file
+
+    Returns:
+        Dict[str, Any]: Dictionary containing transient properties or default values if extraction fails
+    """
+    # Define default values dict for error cases
+    default_values = {
+        'deadTime': 0.0,
+        'riseTime': 0.0,
+        'averageVoltage': 0.0
     }
-    output_voltage_values = [all_trace['OUT_IDEAL'][i] for i in indices]
-    average_output_voltage = sum(output_voltage_values) / len(output_voltage_values)
 
-    extract_trace_df = pd.DataFrame(extract_trace)
-    extract_segments = split_signal(extract_trace_df)
-    extract_drmos_trans_result = drmos_trans_analysis(extract_segments)
+    try:
+        all_trace = extractTransTrace_psf(filename)
+        # Extract time and SW_IDEAL signal, time is limited within 280us to 300us
+        indices = [i for i, x in enumerate(all_trace['time']) if 280e-6 <= x <= 300e-6]
 
-    extract_drmos_trans_result['averageVoltage'] = average_output_voltage
+        # Check if we have enough data points
+        if not indices:
+            logging.warning(f"No data points found in specified time range for {filename}")
+            return default_values
 
-    return extract_drmos_trans_result
+        extract_trace = {
+            'time': [all_trace['time'][i] for i in indices],
+            'signal': [all_trace['SW_IDEAL'][i] for i in indices]
+        }
+
+        output_voltage_values = [all_trace['OUT_IDEAL'][i] for i in indices]
+        average_output_voltage = sum(output_voltage_values) / len(output_voltage_values)
+
+        extract_trace_df = pd.DataFrame(extract_trace)
+        extract_segments = split_signal(extract_trace_df)
+        extract_drmos_trans_result = drmos_trans_analysis(extract_segments)
+
+        extract_drmos_trans_result['averageVoltage'] = average_output_voltage
+
+        return extract_drmos_trans_result
+
+    except Exception as e:
+        logging.error(f"Failed to extract transient properties from {filename}: {str(e)}")
+        return default_values
 
 # if __name__ == '__main__':
 #     file = "/Users/hanwu/Downloads/tb_Efficiency/tb_Efficiency.raw/tran.tran.tran"
