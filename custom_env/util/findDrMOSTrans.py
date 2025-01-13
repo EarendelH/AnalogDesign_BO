@@ -197,7 +197,6 @@ def drmos_trans_analysis(signal_data, debug=False):
     trans_property = {
         'deadTime': np.mean(all_dead_times),
         'riseTime': np.mean(all_rise_times),
-        'fallTime': np.mean(all_fall_times)
     }
 
     # Debug mode

@@ -486,8 +486,7 @@ def cal_reward_DRMOS(ideal_specs_dict, cur_specs_dict, norm_specs_dict):
         'Efficiency_22A_efficiency': 0.16,
         'Trans_deadTime': 0.025,
         'Trans_riseTime': 0.025,
-        'Trans_fallTime': 0.025,
-        'Trans_averageVoltage': 0.025,
+        'Trans_averageVoltage': 0.05,
         'Area_area': 0.1
     }
 
