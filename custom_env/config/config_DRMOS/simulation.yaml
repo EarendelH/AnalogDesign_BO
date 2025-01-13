@@ -38,3 +38,22 @@
     - inputPower
     - outputPower
     - efficiency
+- simulation_name: Trans
+  objective: range
+  netlist_name: Efficiency_20A
+  simulation_file: tran.tran.tran
+  script_name: findDrMOSTrans
+  parse_func: findTransProperty
+  simulation_item:
+      - deadTime
+      - riseTime
+      - fallTime
+      - averageVoltage
+- simulation_name: Area
+  objective: min
+  netlist_name: Efficiency_20A
+  simulation_file: tran.tran.tran
+  script_name: findArea
+  parse_func: findArea
+  simulation_item:
+    - area
