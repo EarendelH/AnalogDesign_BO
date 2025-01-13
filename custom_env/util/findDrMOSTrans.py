@@ -119,103 +119,129 @@ def analyze_segments(segments: Dict[int, Dict[str, np.ndarray]]) -> Tuple[float,
 
 
 def drmos_trans_analysis(signal_data, debug=False):
-    # Find indices where signal crosses specific thresholds
-    def find_threshold_crossings(signal, thresholds):
-        crossings = {}
-        for threshold in thresholds:
-            rising_cross_indices = np.where((signal[:-1] < threshold) & (signal[1:] >= threshold))[0]
+    """
+    Analyze DRMOS transient properties with error handling.
+    Returns default values (0.0) if any calculation results in NaN or errors occur.
 
-            falling_cross_indices = np.where((signal[:-1] >= threshold) & (signal[1:] < threshold))[0]
+    Args:
+        signal_data: Dictionary containing segmented signal data
+        debug: Enable debug mode to print detailed information (default: False)
 
-            all_cross_indices = np.sort(np.concatenate([rising_cross_indices, falling_cross_indices]))
-
-            # print(f"Debug: All cross indices for threshold {threshold} are {all_cross_indices}")
-
-            crossings[threshold] = all_cross_indices
-
-        return crossings
-
-    def calculate_times(time, crossings):
-        # Check if we have the expected number of crossings
-        if (crossings.get(-0.05, []) is None or len(crossings.get(-0.05, [])) != 4 or
-                len(crossings.get(0.65, [])) != 2 or
-                len(crossings.get(5.8, [])) != 2):
-            return None
-
-        # Extract crossing times
-        dead_times = time[crossings[-0.05]]
-        # print(f"Debug: Dead times are {dead_times}")
-        low_voltage_times = time[crossings[0.65]]
-        high_voltage_times = time[crossings[5.8]]
-
-        # Calculate dead times
-        dead_time1 = dead_times[1] - dead_times[0]
-        # print(f"Debug: Dead time 1 is {dead_time1}")
-        dead_time2 = dead_times[3] - dead_times[2]
-        dead_time = (dead_time1 + dead_time2) / 2
-
-        # Calculate rise and fall times
-        rise_time = high_voltage_times[0] - low_voltage_times[0]
-
-        return {
-            'dead_time': dead_time,
-            'rise_time': rise_time,
-        }
-
-    # Thresholds to check
-    thresholds = [-0.05, 0.65, 5.8]
-
-    # Store results for each signal
-    results = {}
-    all_dead_times = []
-    all_rise_times = []
-    all_fall_times = []
-
-    # Process each signal
-    for index, signal_dict in signal_data.items():
-        time = signal_dict['time']
-        signal = signal_dict['signal']
-
-        # Find threshold crossings
-        crossings = find_threshold_crossings(signal, thresholds)
-
-        # Calculate times
-        signal_times = calculate_times(time, crossings)
-
-        if signal_times is None:
-            print(f"Warning: Could not process signal {index} - incorrect threshold crossings")
-            continue
-
-        results[index] = signal_times
-
-        # Collect times for overall statistics
-        all_dead_times.append(signal_times['dead_time'])
-        all_rise_times.append(signal_times['rise_time'])
-
-    trans_property = {
-        'deadTime': np.mean(all_dead_times),
-        'riseTime': np.mean(all_rise_times),
+    Returns:
+        Dict containing transient properties or default values if analysis fails
+    """
+    # Define default values for error cases or NaN results
+    default_values = {
+        'deadTime': 0.0,
+        'riseTime': 0.0,
     }
 
-    # Debug mode
-    if debug:
-        # Calculate overall averages
-        overall_stats = {
-            'deadTime': {
-                'mean': np.mean(all_dead_times),
-                'std': np.std(all_dead_times)
-            },
-            'riseTime': {
-                'mean': np.mean(all_rise_times),
-                'std': np.std(all_rise_times)
-            }
-        }
-        print("Individual Signal Results:")
-        print(json.dumps(results, indent=10))
-        print("\nOverall Statistics:")
-        print(json.dumps(overall_stats, indent=10))
+    try:
+        # Find indices where signal crosses specific thresholds
+        def find_threshold_crossings(signal, thresholds):
+            crossings = {}
+            for threshold in thresholds:
+                rising_cross_indices = np.where((signal[:-1] < threshold) & (signal[1:] >= threshold))[0]
+                falling_cross_indices = np.where((signal[:-1] >= threshold) & (signal[1:] < threshold))[0]
+                all_cross_indices = np.sort(np.concatenate([rising_cross_indices, falling_cross_indices]))
+                crossings[threshold] = all_cross_indices
+            return crossings
 
-    return trans_property
+        def calculate_times(time, crossings):
+            # Check if we have the expected number of crossings
+            if (crossings.get(-0.05, []) is None or len(crossings.get(-0.05, [])) != 4 or
+                    len(crossings.get(0.65, [])) != 2 or
+                    len(crossings.get(5.8, [])) != 2):
+                return None
+
+            # Extract crossing times
+            dead_times = time[crossings[-0.05]]
+            low_voltage_times = time[crossings[0.65]]
+            high_voltage_times = time[crossings[5.8]]
+
+            # Calculate dead times
+            dead_time1 = dead_times[1] - dead_times[0]
+            dead_time2 = dead_times[3] - dead_times[2]
+            dead_time = (dead_time1 + dead_time2) / 2
+
+            # Calculate rise time
+            rise_time = high_voltage_times[0] - low_voltage_times[0]
+
+            return {
+                'dead_time': dead_time,
+                'rise_time': rise_time,
+            }
+
+        # Thresholds to check
+        thresholds = [-0.05, 0.65, 5.8]
+
+        # Store results for each signal
+        results = {}
+        all_dead_times = []
+        all_rise_times = []
+
+        # Process each signal
+        for index, signal_dict in signal_data.items():
+            time = signal_dict['time']
+            signal = signal_dict['signal']
+
+            # Find threshold crossings
+            crossings = find_threshold_crossings(signal, thresholds)
+
+            # Calculate times
+            signal_times = calculate_times(time, crossings)
+
+            if signal_times is None:
+                logging.warning(f"Could not process signal {index} - incorrect threshold crossings")
+                continue
+
+            results[index] = signal_times
+
+            # Collect times for overall statistics
+            all_dead_times.append(signal_times['dead_time'])
+            all_rise_times.append(signal_times['rise_time'])
+
+        # Check if we have any valid measurements
+        if not all_dead_times or not all_rise_times:
+            logging.warning("No valid measurements found in signal data")
+            return default_values
+
+        # Calculate mean values and check for NaN
+        dead_time_mean = np.mean(all_dead_times)
+        rise_time_mean = np.mean(all_rise_times)
+
+        # Check for NaN values
+        if np.isnan(dead_time_mean) or np.isnan(rise_time_mean):
+            logging.warning("NaN values detected in calculations")
+            return default_values
+
+        trans_property = {
+            'deadTime': dead_time_mean,
+            'riseTime': rise_time_mean,
+        }
+
+        # Debug mode output
+        if debug:
+            overall_stats = {
+                'deadTime': {
+                    'mean': dead_time_mean,
+                    'std': np.std(all_dead_times)
+                },
+                'riseTime': {
+                    'mean': rise_time_mean,
+                    'std': np.std(all_rise_times)
+                }
+            }
+            print("Individual Signal Results:")
+            print(json.dumps(results, indent=10))
+            print("\nOverall Statistics:")
+            print(json.dumps(overall_stats, indent=10))
+
+        return trans_property
+
+    except Exception as e:
+        logging.error(f"Error in DRMOS transient analysis: {str(e)}")
+        return default_values
 
 
 def findTransProperty(filename: str) -> Dict[str, Any]:
