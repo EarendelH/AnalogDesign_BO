@@ -494,20 +494,22 @@ def cal_reward_DRMOS(ideal_specs_dict, cur_specs_dict, norm_specs_dict):
     rew = 0
 
     for spec, detail in ideal_specs_dict.items():
-
         single_reward = 0
-        ideal_spec_value = float(detail['value'])
         cur_spec_value = float(cur_specs_flatten[spec])
         constrain_objective = detail['objective']
 
         if constrain_objective == "range":
-            range_min, range_max = detail['range']
+            # Get range bounds from value list
+            range_min, range_max = detail['value']
             if range_min <= cur_spec_value <= range_max:
                 single_reward = 0.0
             else:
+                # Calculate distance to nearest bound
                 nearest_bound = range_min if cur_spec_value < range_min else range_max
                 single_reward = (nearest_bound - cur_spec_value) / (nearest_bound + cur_spec_value)
         else:
+            # Handle max/min objectives
+            ideal_spec_value = float(detail['value'])
             if constrain_objective == "max":
                 single_reward = min((cur_spec_value - ideal_spec_value) / (cur_spec_value + ideal_spec_value), 0.0)
             elif constrain_objective == "min":
@@ -515,23 +517,22 @@ def cal_reward_DRMOS(ideal_specs_dict, cur_specs_dict, norm_specs_dict):
 
         weighted_single_reward = single_reward * reward_weight[spec]
         rew += float(weighted_single_reward)
-        # print(f"Debug, spec: {spec}, single_reward: {single_reward}, ideal_spec_value: {ideal_spec_value}, "
-        #       f"cur_spec_value: {cur_spec_value}, constrain_objective: {constrain_objective}, "
-        #       f"reward_weight: {reward_weight[spec]}")
+
     rew = rew * min_rew_range
-    # print(f"Debug, rew: {rew}, reward_weight_sum: {reward_weight_sum}, min_rew_bound: {min_rew_bound}")
 
     if rew >= 0:
         rew_base = 10
         rew_bonus = 0
         for spec, detail in ideal_specs_dict.items():
             single_reward = 0
-            general_ideal_spec_value = float(norm_specs_flatten[spec])
-            cur_spec_value = float(cur_specs_flatten[spec])
             reward_type = detail['reward_type']
-            constrain_objective = detail['objective']
 
-            if reward_type == "optimal":
+            # Only calculate bonus reward for optimal type and non-range objectives
+            if reward_type == "optimal" and detail['objective'] != "range":
+                general_ideal_spec_value = float(norm_specs_flatten[spec])
+                cur_spec_value = float(cur_specs_flatten[spec])
+                constrain_objective = detail['objective']
+
                 if constrain_objective == "max":
                     single_reward = max(
                         (cur_spec_value - general_ideal_spec_value) / (cur_spec_value + general_ideal_spec_value), 0.0)
@@ -539,14 +540,10 @@ def cal_reward_DRMOS(ideal_specs_dict, cur_specs_dict, norm_specs_dict):
                     single_reward = max(
                         (general_ideal_spec_value - cur_spec_value) / (cur_spec_value + general_ideal_spec_value), 0.0)
 
-            weighted_single_reward = single_reward * reward_weight[spec]
-            rew_bonus += float(weighted_single_reward)
+                weighted_single_reward = single_reward * reward_weight[spec]
+                rew_bonus += float(weighted_single_reward)
 
         rew_bonus = rew_bonus * max_rew_range
         rew = rew_base + rew_bonus
-
-            # print(f"Debug, spec: {spec}, single_reward: {single_reward}, general_ideal_spec_value: "
-            #       f"{general_ideal_spec_value}, cur_spec_value: {cur_spec_value}, constrain_objective: "
-            #       f"{constrain_objective}, reward_type: {reward_type}, reward_weight: {reward_weight[spec]}")
 
     return rew
