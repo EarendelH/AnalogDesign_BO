@@ -551,13 +551,13 @@ def cal_reward_DRMOS(ideal_specs_dict, cur_specs_dict, norm_specs_dict):
 
     return rew
 
-if __name__ == '__main__':
-    ideal_specs_file = "/Users/hanwu/ML/AnalogDesignAuto_MultiAgent/custom_env/ideal_specs/sampled_specs_DRMOS/1.yaml"
-    with open(ideal_specs_file, 'r') as f:
-        ideal_specs = yaml.load(f, Loader=yaml.FullLoader)
-    cur_specs = {'Efficiency_16A': {'Efficiency_16A_inputPower': 16.268253515726585, 'Efficiency_16A_outputPower': 15.31881901493132, 'Efficiency_16A_efficiency': 0.9416388182125731}, 'Efficiency_18A': {'Efficiency_18A_inputPower': 18.235744391140706, 'Efficiency_18A_outputPower': 17.158011638379747, 'Efficiency_18A_efficiency': 0.9408999857837148}, 'Efficiency_20A': {'Efficiency_20A_inputPower': 20.202865251368692, 'Efficiency_20A_outputPower': 18.985827651061456, 'Efficiency_20A_efficiency': 0.9397591586557364}, 'Efficiency_22A': {'Efficiency_22A_inputPower': 22.169658697518738, 'Efficiency_22A_outputPower': 20.801569576615567, 'Efficiency_22A_efficiency': 0.9382900233346267}, 'Trans': {'Trans_deadTime': 1.8716115989419086e-09, 'Trans_riseTime': 2.014777758466479e-10, 'Trans_averageVoltage': 0.9492205567854641}, 'Area': {'Area_area': 2.0531325000000002}}
-    norm_specs_file = "/Users/hanwu/ML/AnalogDesignAuto_MultiAgent/custom_env/config/config_DRMOS/norm_specs.yaml"
-    with open(norm_specs_file, 'r') as f:
-        norm_specs = yaml.load(f, Loader=yaml.FullLoader)
-    reward = cal_reward_DRMOS(ideal_specs, cur_specs, norm_specs)
-    print(reward)
+# if __name__ == '__main__':
+#     ideal_specs_file = "/Users/hanwu/ML/AnalogDesignAuto_MultiAgent/custom_env/ideal_specs/sampled_specs_DRMOS/1.yaml"
+#     with open(ideal_specs_file, 'r') as f:
+#         ideal_specs = yaml.load(f, Loader=yaml.FullLoader)
+#     cur_specs = {'Efficiency_16A': {'Efficiency_16A_inputPower': 30, 'Efficiency_16A_outputPower': 30, 'Efficiency_16A_efficiency': 0.98}, 'Efficiency_18A': {'Efficiency_18A_inputPower': 30, 'Efficiency_18A_outputPower': 30, 'Efficiency_18A_efficiency': 0.98}, 'Efficiency_20A': {'Efficiency_20A_inputPower': 30, 'Efficiency_20A_outputPower': 30, 'Efficiency_20A_efficiency': 0.98}, 'Efficiency_22A': {'Efficiency_22A_inputPower': 30, 'Efficiency_22A_outputPower': 30, 'Efficiency_22A_efficiency': 0.98}, 'Trans': {'Trans_deadTime': 1.01e-09, 'Trans_riseTime': 4.4e-10, 'Trans_averageVoltage': 0.904}, 'Area': {'Area_area': 2.0531325000000002}}
+#     norm_specs_file = "/Users/hanwu/ML/AnalogDesignAuto_MultiAgent/custom_env/config/config_DRMOS/norm_specs.yaml"
+#     with open(norm_specs_file, 'r') as f:
+#         norm_specs = yaml.load(f, Loader=yaml.FullLoader)
+#     reward = cal_reward_DRMOS(ideal_specs, cur_specs, norm_specs)
+#     print(reward)
