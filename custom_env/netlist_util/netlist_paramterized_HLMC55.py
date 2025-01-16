@@ -1,7 +1,35 @@
 import re
 import yaml
 import os
+from collections import defaultdict
 
+class DeviceDuplicationError(Exception):
+    """Custom exception for device duplication errors."""
+    pass
+
+def check_device_duplication(netlist_parts):
+    """
+    Check for duplicate device instances in the netlist.
+
+    Args:
+        netlist_parts (list): List of netlist parts to check.
+
+    Raises:
+        DeviceDuplicationError: If duplicate devices are found.
+    """
+    device_locations = defaultdict(list)
+    for i, part in enumerate(netlist_parts, 1):
+        if part[0].lstrip().startswith('M'):
+            instance_name = part[0].split()[0]
+            device_locations[instance_name].append(i)
+
+    duplicates = {device: lines for device, lines in device_locations.items() if len(lines) > 1}
+
+    if duplicates:
+        error_msg = "Duplicate device instances found:\n"
+        for device, lines in duplicates.items():
+            error_msg += f"Device '{device}' appears multiple times at lines: {lines}\n"
+        raise DeviceDuplicationError(error_msg)
 
 def split_transistor_block(lines):
     """Split a block of SPICE lines into sublists, each representing a discrete MOSFET definition.
@@ -79,21 +107,34 @@ def split_transistor_block(lines):
 
 
 def netlist_parameterized(input_scs_path, output_scs_path, output_yaml_path):
+    """
+    Process and parameterize a SPICE netlist.
+
+    Args:
+        input_scs_path (str): Path to input SPICE file
+        output_scs_path (str): Path for output parameterized SPICE file
+        output_yaml_path (str): Path for output YAML configuration file
+
+    Returns:
+        dict: Dictionary containing parameterized device information
+
+    Raises:
+        DeviceDuplicationError: If duplicate devices are found in the netlist
+    """
     param_line = None
 
     with open(input_scs_path, 'r') as f:
         lines = f.readlines()
 
     data_dict = {
-        'other_variable':
-            {
-                'instance_type': 'other_variable',
-                'params': []
-            }
+        'other_variable': {
+            'instance_type': 'other_variable',
+            'params': []
+        }
     }
 
+    # Parse and check parameters
     is_param_line = False
-
     for line in lines:
         if line.strip().startswith("parameters"):
             is_param_line = True
@@ -111,14 +152,20 @@ def netlist_parameterized(input_scs_path, output_scs_path, output_yaml_path):
                         'step': None
                     }
                 }
-
                 data_dict['other_variable']['params'].append(sub_dict)
 
-    # Modify SCS file
+    # Split netlist into parts
     netlist_parts = split_transistor_block(lines)
 
-    device_info = {}
+    # Check for device duplications before processing
+    try:
+        check_device_duplication(netlist_parts)
+    except DeviceDuplicationError as e:
+        print(f"\nError in file: {input_scs_path}")
+        print(e)
+        raise
 
+    device_info = {}
     formulas_summary = {
         "p12": {
             "w": "((w_{0}_per_finger) * (nf_{0}))",
@@ -185,14 +232,42 @@ def netlist_parameterized(input_scs_path, output_scs_path, output_yaml_path):
             "nf": "nf_{0}",
             "multi": "(1)",
             "global_flag": "0"
+        },
+        "n8ud33io": {
+            "w": "((w_{0}_per_finger) * (1))",
+            "l": "l_{0}",
+            "as": "(((w_{0}_per_finger)<(81n + 2*36n)) ? ((((((((w_{0}_per_finger)>1u?500n:500n) - (((w_{0}_per_finger)<(81n + 2*36n))?((210n-36n)>90n?(210n-36n):90n):((210n-36n)>45n?(210n-36n):45n))) > (((153n) - 72n) + 2*36n) ? (((w_{0}_per_finger)>1u?500n:500n) - (((w_{0}_per_finger)<(81n + 2*36n))?((210n-36n)>90n?(210n-36n):90n):((210n-36n)>45n?(210n-36n):45n))) : (((153n) - 72n) + 2*36n)) > (((153n) - 72n)+36n+36n) ? ((((w_{0}_per_finger)>1u?500n:500n) - (((w_{0}_per_finger)<(81n + 2*36n))?((210n-36n)>90n?(210n-36n):90n):((210n-36n)>45n?(210n-36n):45n))) > (((153n) - 72n) + 2*36n) ? (((w_{0}_per_finger)>1u?500n:500n) - (((w_{0}_per_finger)<(81n + 2*36n))?((210n-36n)>90n?(210n-36n):90n):((210n-36n)>45n?(210n-36n):45n))) : (((153n) - 72n) + 2*36n)) : (((153n) - 72n)+36n+36n)) * (81n + 2*36n)) + ((w_{0}_per_finger) * (((w_{0}_per_finger)<(81n + 2*36n))?((210n-36n)>90n?(210n-36n):90n):((210n-36n)>45n?(210n-36n):45n)))) + (int(((1) - 1) / 2.0) * (((((153n) - 72n) + 2*36n) * (81n + 2*36n)) + ((w_{0}_per_finger) * 2 * (((w_{0}_per_finger)<(81n + 2*36n))?((210n-36n)>90n?(210n-36n):90n):((210n-36n)>45n?(210n-36n):45n))))) + ((((1) / 2) - int((1) / 2) == 0) ? (((((((w_{0}_per_finger)>1u?500n:500n) - (((w_{0}_per_finger)<(81n + 2*36n))?((210n-36n)>90n?(210n-36n):90n):((210n-36n)>45n?(210n-36n):45n))) > (((153n) - 72n) + 2*36n) ? (((w_{0}_per_finger)>1u?500n:500n) - (((w_{0}_per_finger)<(81n + 2*36n))?((210n-36n)>90n?(210n-36n):90n):((210n-36n)>45n?(210n-36n):45n))) : (((153n) - 72n) + 2*36n)) > (((153n) - 72n)+36n+36n) ? ((((w_{0}_per_finger)>1u?500n:500n) - (((w_{0}_per_finger)<(81n + 2*36n))?((210n-36n)>90n?(210n-36n):90n):((210n-36n)>45n?(210n-36n):45n))) > (((153n) - 72n) + 2*36n) ? (((w_{0}_per_finger)>1u?500n:500n) - (((w_{0}_per_finger)<(81n + 2*36n))?((210n-36n)>90n?(210n-36n):90n):((210n-36n)>45n?(210n-36n):45n))) : (((153n) - 72n) + 2*36n)) : (((153n) - 72n)+36n+36n)) * (81n + 2*36n)) + ((w_{0}_per_finger) * (((w_{0}_per_finger)<(81n + 2*36n))?((210n-36n)>90n?(210n-36n):90n):((210n-36n)>45n?(210n-36n):45n)))) : 0)) / 1 : (((((w_{0}_per_finger)>1u?500n:500n) > (((153n) - 72n) + 36n + 210n) ? ((w_{0}_per_finger)>1u?500n:500n) : (((153n) - 72n) + 36n + 210n)) * (w_{0}_per_finger)) + (int(((1) - 1) / 2.0) * ((((153n) - 72n) + 2*210n) * (w_{0}_per_finger))) + ((((1) / 2) - int((1) / 2) == 0) ? ((((w_{0}_per_finger)>1u?500n:500n) > (((153n) - 72n) + 36n + 210n) ? ((w_{0}_per_finger)>1u?500n:500n) : (((153n) - 72n) + 36n + 210n)) * (w_{0}_per_finger)) : 0)) / 1)",
+            "ad": "(((w_{0}_per_finger)<(81n + 2*36n)) ? ((int((1) / 2.0) * (((((153n) - 72n) + 2*36n) * (81n + 2*36n)) + ((w_{0}_per_finger) * 2 * (((w_{0}_per_finger)<(81n + 2*36n))?((210n-36n)>90n?(210n-36n):90n):((210n-36n)>45n?(210n-36n):45n))))) + ((((1) / 2) - int((1) / 2) != 0) ? (((((((w_{0}_per_finger)>1u?500n:500n) - (((w_{0}_per_finger)<(81n + 2*36n))?((210n-36n)>90n?(210n-36n):90n):((210n-36n)>45n?(210n-36n):45n))) > (((153n) - 72n) + 2*36n) ? (((w_{0}_per_finger)>1u?500n:500n) - (((w_{0}_per_finger)<(81n + 2*36n))?((210n-36n)>90n?(210n-36n):90n):((210n-36n)>45n?(210n-36n):45n))) : (((153n) - 72n) + 2*36n)) > (((153n) - 72n)+36n+36n) ? ((((w_{0}_per_finger)>1u?500n:500n) - (((w_{0}_per_finger)<(81n + 2*36n))?((210n-36n)>90n?(210n-36n):90n):((210n-36n)>45n?(210n-36n):45n))) > (((153n) - 72n) + 2*36n) ? (((w_{0}_per_finger)>1u?500n:500n) - (((w_{0}_per_finger)<(81n + 2*36n))?((210n-36n)>90n?(210n-36n):90n):((210n-36n)>45n?(210n-36n):45n))) : (((153n) - 72n) + 2*36n)) : (((153n) - 72n)+36n+36n)) * (81n + 2*36n)) + ((w_{0}_per_finger) * (((w_{0}_per_finger)<(81n + 2*36n))?((210n-36n)>90n?(210n-36n):90n):((210n-36n)>45n?(210n-36n):45n)))) : 0)) / 1 : ((int((1) / 2.0) * ((((153n) - 72n) + 2*210n) * (w_{0}_per_finger))) + ((((1) / 2) - int((1) / 2) != 0) ? ((((w_{0}_per_finger)>1u?500n:500n) > (((153n) - 72n) + 36n + 210n) ? ((w_{0}_per_finger)>1u?500n:500n) : (((153n) - 72n) + 36n + 210n)) * (w_{0}_per_finger)) : 0)) / 1)",
+            "ps": "(((w_{0}_per_finger)<(81n + 2*36n)) ? (((2 * (((((w_{0}_per_finger)>1u?500n:500n) - (((w_{0}_per_finger)<(81n + 2*36n))?((210n-36n)>90n?(210n-36n):90n):((210n-36n)>45n?(210n-36n):45n))) > (((153n) - 72n) + 2*36n) ? (((w_{0}_per_finger)>1u?500n:500n) - (((w_{0}_per_finger)<(81n + 2*36n))?((210n-36n)>90n?(210n-36n):90n):((210n-36n)>45n?(210n-36n):45n))) : (((153n) - 72n) + 2*36n)) > (((153n) - 72n)+36n+36n) ? ((((w_{0}_per_finger)>1u?500n:500n) - (((w_{0}_per_finger)<(81n + 2*36n))?((210n-36n)>90n?(210n-36n):90n):((210n-36n)>45n?(210n-36n):45n))) > (((153n) - 72n) + 2*36n) ? (((w_{0}_per_finger)>1u?500n:500n) - (((w_{0}_per_finger)<(81n + 2*36n))?((210n-36n)>90n?(210n-36n):90n):((210n-36n)>45n?(210n-36n):45n))) : (((153n) - 72n) + 2*36n)) : (((153n) - 72n)+36n+36n))) + (2 * (81n + 2*36n)) + 2 * (((w_{0}_per_finger)<(81n + 2*36n))?((210n-36n)>90n?(210n-36n):90n):((210n-36n)>45n?(210n-36n):45n)) - (w_{0}_per_finger)) + (int(((1) - 1) / 2.0) * ((2 * (((153n) - 72n) + 2*36n)) + (2 * (81n + 2*36n)) + (4 * (((w_{0}_per_finger)<(81n + 2*36n))?((210n-36n)>90n?(210n-36n):90n):((210n-36n)>45n?(210n-36n):45n))) - (2 * (w_{0}_per_finger)))) + ((((1) / 2) - int((1) / 2) == 0) ? ((2 * (((((w_{0}_per_finger)>1u?500n:500n) - (((w_{0}_per_finger)<(81n + 2*36n))?((210n-36n)>90n?(210n-36n):90n):((210n-36n)>45n?(210n-36n):45n))) > (((153n) - 72n) + 2*36n) ? (((w_{0}_per_finger)>1u?500n:500n) - (((w_{0}_per_finger)<(81n + 2*36n))?((210n-36n)>90n?(210n-36n):90n):((210n-36n)>45n?(210n-36n):45n))) : (((153n) - 72n) + 2*36n)) > (((153n) - 72n)+36n+36n) ? ((((w_{0}_per_finger)>1u?500n:500n) - (((w_{0}_per_finger)<(81n + 2*36n))?((210n-36n)>90n?(210n-36n):90n):((210n-36n)>45n?(210n-36n):45n))) > (((153n) - 72n) + 2*36n) ? (((w_{0}_per_finger)>1u?500n:500n) - (((w_{0}_per_finger)<(81n + 2*36n))?((210n-36n)>90n?(210n-36n):90n):((210n-36n)>45n?(210n-36n):45n))) : (((153n) - 72n) + 2*36n)) : (((153n) - 72n)+36n+36n))) + (2 * (81n + 2*36n)) + 2 * (((w_{0}_per_finger)<(81n + 2*36n))?((210n-36n)>90n?(210n-36n):90n):((210n-36n)>45n?(210n-36n):45n)) - (w_{0}_per_finger)) : 0)) / 1 : (((2 * (((w_{0}_per_finger)>1u?500n:500n) > (((153n) - 72n) + 36n + 210n) ? ((w_{0}_per_finger)>1u?500n:500n) : (((153n) - 72n) + 36n + 210n))) + (w_{0}_per_finger)) + (int(((1) - 1) / 2.0) * (2 * (((153n) - 72n) + 2*210n))) + ((((1) / 2) - int((1) / 2) == 0) ? ((2 * (((w_{0}_per_finger)>1u?500n:500n) > (((153n) - 72n) + 36n + 210n) ? ((w_{0}_per_finger)>1u?500n:500n) : (((153n) - 72n) + 36n + 210n))) + (w_{0}_per_finger)) : 0)) / 1)",
+            "pd": "(((w_{0}_per_finger)<(81n + 2*36n)) ? ((int((1) / 2.0) * ((2 * (((153n) - 72n) + 2*36n)) + (2 * (81n + 2*36n)) + (4 * (((w_{0}_per_finger)<(81n + 2*36n))?((210n-36n)>90n?(210n-36n):90n):((210n-36n)>45n?(210n-36n):45n))) - (2 * (w_{0}_per_finger)))) + ((((1) / 2) - int((1) / 2) != 0) ? ((2 * (((((w_{0}_per_finger)>1u?500n:500n) - (((w_{0}_per_finger)<(81n + 2*36n))?((210n-36n)>90n?(210n-36n):90n):((210n-36n)>45n?(210n-36n):45n))) > (((153n) - 72n) + 2*36n) ? (((w_{0}_per_finger)>1u?500n:500n) - (((w_{0}_per_finger)<(81n + 2*36n))?((210n-36n)>90n?(210n-36n):90n):((210n-36n)>45n?(210n-36n):45n))) : (((153n) - 72n) + 2*36n)) > (((153n) - 72n)+36n+36n) ? ((((w_{0}_per_finger)>1u?500n:500n) - (((w_{0}_per_finger)<(81n + 2*36n))?((210n-36n)>90n?(210n-36n):90n):((210n-36n)>45n?(210n-36n):45n))) > (((153n) - 72n) + 2*36n) ? (((w_{0}_per_finger)>1u?500n:500n) - (((w_{0}_per_finger)<(81n + 2*36n))?((210n-36n)>90n?(210n-36n):90n):((210n-36n)>45n?(210n-36n):45n))) : (((153n) - 72n) + 2*36n)) : (((153n) - 72n)+36n+36n))) + (2 * (81n + 2*36n)) + 2 * (((w_{0}_per_finger)<(81n + 2*36n))?((210n-36n)>90n?(210n-36n):90n):((210n-36n)>45n?(210n-36n):45n)) - (w_{0}_per_finger)) : 0)) / 1 : ((int((1) / 2.0) * (2 * (((153n) - 72n) + 2*210n))) + ((((1) / 2) - int((1) / 2) != 0) ? ((2 * (((w_{0}_per_finger)>1u?500n:500n) > (((153n) - 72n) + 36n + 210n) ? ((w_{0}_per_finger)>1u?500n:500n) : (((153n) - 72n) + 36n + 210n))) + (w_{0}_per_finger)) : 0)) / 1)",
+            "nrd": "((((w_{0}_per_finger)<(81n + 2*36n)) ? ( 210n + 36n + (((w_{0}_per_finger)<(81n + 2*36n))?((210n-36n)>90n?(210n-36n):90n):((210n-36n)>45n?(210n-36n):45n)) - 210n + (81n / 2.0) ) / (w_{0}_per_finger) :  (210n + (81n / 2.0)) / (w_{0}_per_finger))) / (1)",
+            "nrs": "((((w_{0}_per_finger)<(81n + 2*36n)) ? ( 210n + 36n + (((w_{0}_per_finger)<(81n + 2*36n))?((210n-36n)>90n?(210n-36n):90n):((210n-36n)>45n?(210n-36n):45n)) - 210n + (81n / 2.0) ) / (w_{0}_per_finger) :  (210n + (81n / 2.0)) / (w_{0}_per_finger))) / (1)",
+            "nf": "1",
+            "multi": "(nf_{0})",
+            "mismatch": "1",
+            "global_flag": "1"
+        },
+        "p8ud33io": {
+            "w": "((w_{0}_per_finger) * (1))",
+            "l": "l_{0}",
+            "as": "(((w_{0}_per_finger)<(81n + 2*36n)) ? ((((((((w_{0}_per_finger)>1u?500n:500n) - (((w_{0}_per_finger)<(81n + 2*36n))?((210n-36n)>90n?(210n-36n):90n):((210n-36n)>45n?(210n-36n):45n))) > (((153n) - 72n) + 2*36n) ? (((w_{0}_per_finger)>1u?500n:500n) - (((w_{0}_per_finger)<(81n + 2*36n))?((210n-36n)>90n?(210n-36n):90n):((210n-36n)>45n?(210n-36n):45n))) : (((153n) - 72n) + 2*36n)) > (((153n) - 72n)+36n+36n) ? ((((w_{0}_per_finger)>1u?500n:500n) - (((w_{0}_per_finger)<(81n + 2*36n))?((210n-36n)>90n?(210n-36n):90n):((210n-36n)>45n?(210n-36n):45n))) > (((153n) - 72n) + 2*36n) ? (((w_{0}_per_finger)>1u?500n:500n) - (((w_{0}_per_finger)<(81n + 2*36n))?((210n-36n)>90n?(210n-36n):90n):((210n-36n)>45n?(210n-36n):45n))) : (((153n) - 72n) + 2*36n)) : (((153n) - 72n)+36n+36n)) * (81n + 2*36n)) + ((w_{0}_per_finger) * (((w_{0}_per_finger)<(81n + 2*36n))?((210n-36n)>90n?(210n-36n):90n):((210n-36n)>45n?(210n-36n):45n)))) + (int(((1) - 1) / 2.0) * (((((153n) - 72n) + 2*36n) * (81n + 2*36n)) + ((w_{0}_per_finger) * 2 * (((w_{0}_per_finger)<(81n + 2*36n))?((210n-36n)>90n?(210n-36n):90n):((210n-36n)>45n?(210n-36n):45n))))) + ((((1) / 2) - int((1) / 2) == 0) ? (((((((w_{0}_per_finger)>1u?500n:500n) - (((w_{0}_per_finger)<(81n + 2*36n))?((210n-36n)>90n?(210n-36n):90n):((210n-36n)>45n?(210n-36n):45n))) > (((153n) - 72n) + 2*36n) ? (((w_{0}_per_finger)>1u?500n:500n) - (((w_{0}_per_finger)<(81n + 2*36n))?((210n-36n)>90n?(210n-36n):90n):((210n-36n)>45n?(210n-36n):45n))) : (((153n) - 72n) + 2*36n)) > (((153n) - 72n)+36n+36n) ? ((((w_{0}_per_finger)>1u?500n:500n) - (((w_{0}_per_finger)<(81n + 2*36n))?((210n-36n)>90n?(210n-36n):90n):((210n-36n)>45n?(210n-36n):45n))) > (((153n) - 72n) + 2*36n) ? (((w_{0}_per_finger)>1u?500n:500n) - (((w_{0}_per_finger)<(81n + 2*36n))?((210n-36n)>90n?(210n-36n):90n):((210n-36n)>45n?(210n-36n):45n))) : (((153n) - 72n) + 2*36n)) : (((153n) - 72n)+36n+36n)) * (81n + 2*36n)) + ((w_{0}_per_finger) * (((w_{0}_per_finger)<(81n + 2*36n))?((210n-36n)>90n?(210n-36n):90n):((210n-36n)>45n?(210n-36n):45n)))) : 0)) / 1 : (((((w_{0}_per_finger)>1u?500n:500n) > (((153n) - 72n) + 36n + 210n) ? ((w_{0}_per_finger)>1u?500n:500n) : (((153n) - 72n) + 36n + 210n)) * (w_{0}_per_finger)) + (int(((1) - 1) / 2.0) * ((((153n) - 72n) + 2*210n) * (w_{0}_per_finger))) + ((((1) / 2) - int((1) / 2) == 0) ? ((((w_{0}_per_finger)>1u?500n:500n) > (((153n) - 72n) + 36n + 210n) ? ((w_{0}_per_finger)>1u?500n:500n) : (((153n) - 72n) + 36n + 210n)) * (w_{0}_per_finger)) : 0)) / 1)",
+            "ad": "(((w_{0}_per_finger)<(81n + 2*36n)) ? ((int((1) / 2.0) * (((((153n) - 72n) + 2*36n) * (81n + 2*36n)) + ((w_{0}_per_finger) * 2 * (((w_{0}_per_finger)<(81n + 2*36n))?((210n-36n)>90n?(210n-36n):90n):((210n-36n)>45n?(210n-36n):45n))))) + ((((1) / 2) - int((1) / 2) != 0) ? (((((((w_{0}_per_finger)>1u?500n:500n) - (((w_{0}_per_finger)<(81n + 2*36n))?((210n-36n)>90n?(210n-36n):90n):((210n-36n)>45n?(210n-36n):45n))) > (((153n) - 72n) + 2*36n) ? (((w_{0}_per_finger)>1u?500n:500n) - (((w_{0}_per_finger)<(81n + 2*36n))?((210n-36n)>90n?(210n-36n):90n):((210n-36n)>45n?(210n-36n):45n))) : (((153n) - 72n) + 2*36n)) > (((153n) - 72n)+36n+36n) ? ((((w_{0}_per_finger)>1u?500n:500n) - (((w_{0}_per_finger)<(81n + 2*36n))?((210n-36n)>90n?(210n-36n):90n):((210n-36n)>45n?(210n-36n):45n))) > (((153n) - 72n) + 2*36n) ? (((w_{0}_per_finger)>1u?500n:500n) - (((w_{0}_per_finger)<(81n + 2*36n))?((210n-36n)>90n?(210n-36n):90n):((210n-36n)>45n?(210n-36n):45n))) : (((153n) - 72n) + 2*36n)) : (((153n) - 72n)+36n+36n)) * (81n + 2*36n)) + ((w_{0}_per_finger) * (((w_{0}_per_finger)<(81n + 2*36n))?((210n-36n)>90n?(210n-36n):90n):((210n-36n)>45n?(210n-36n):45n)))) : 0)) / 1 : ((int((1) / 2.0) * ((((153n) - 72n) + 2*210n) * (w_{0}_per_finger))) + ((((1) / 2) - int((1) / 2) != 0) ? ((((w_{0}_per_finger)>1u?500n:500n) > (((153n) - 72n) + 36n + 210n) ? ((w_{0}_per_finger)>1u?500n:500n) : (((153n) - 72n) + 36n + 210n)) * (w_{0}_per_finger)) : 0)) / 1)",
+            "ps": "(((w_{0}_per_finger)<(81n + 2*36n)) ? (((2 * (((((w_{0}_per_finger)>1u?500n:500n) - (((w_{0}_per_finger)<(81n + 2*36n))?((210n-36n)>90n?(210n-36n):90n):((210n-36n)>45n?(210n-36n):45n))) > (((153n) - 72n) + 2*36n) ? (((w_{0}_per_finger)>1u?500n:500n) - (((w_{0}_per_finger)<(81n + 2*36n))?((210n-36n)>90n?(210n-36n):90n):((210n-36n)>45n?(210n-36n):45n))) : (((153n) - 72n) + 2*36n)) > (((153n) - 72n)+36n+36n) ? ((((w_{0}_per_finger)>1u?500n:500n) - (((w_{0}_per_finger)<(81n + 2*36n))?((210n-36n)>90n?(210n-36n):90n):((210n-36n)>45n?(210n-36n):45n))) > (((153n) - 72n) + 2*36n) ? (((w_{0}_per_finger)>1u?500n:500n) - (((w_{0}_per_finger)<(81n + 2*36n))?((210n-36n)>90n?(210n-36n):90n):((210n-36n)>45n?(210n-36n):45n))) : (((153n) - 72n) + 2*36n)) : (((153n) - 72n)+36n+36n))) + (2 * (81n + 2*36n)) + 2 * (((w_{0}_per_finger)<(81n + 2*36n))?((210n-36n)>90n?(210n-36n):90n):((210n-36n)>45n?(210n-36n):45n)) - (w_{0}_per_finger)) + (int(((1) - 1) / 2.0) * ((2 * (((153n) - 72n) + 2*36n)) + (2 * (81n + 2*36n)) + (4 * (((w_{0}_per_finger)<(81n + 2*36n))?((210n-36n)>90n?(210n-36n):90n):((210n-36n)>45n?(210n-36n):45n))) - (2 * (w_{0}_per_finger)))) + ((((1) / 2) - int((1) / 2) == 0) ? ((2 * (((((w_{0}_per_finger)>1u?500n:500n) - (((w_{0}_per_finger)<(81n + 2*36n))?((210n-36n)>90n?(210n-36n):90n):((210n-36n)>45n?(210n-36n):45n))) > (((153n) - 72n) + 2*36n) ? (((w_{0}_per_finger)>1u?500n:500n) - (((w_{0}_per_finger)<(81n + 2*36n))?((210n-36n)>90n?(210n-36n):90n):((210n-36n)>45n?(210n-36n):45n))) : (((153n) - 72n) + 2*36n)) > (((153n) - 72n)+36n+36n) ? ((((w_{0}_per_finger)>1u?500n:500n) - (((w_{0}_per_finger)<(81n + 2*36n))?((210n-36n)>90n?(210n-36n):90n):((210n-36n)>45n?(210n-36n):45n))) > (((153n) - 72n) + 2*36n) ? (((w_{0}_per_finger)>1u?500n:500n) - (((w_{0}_per_finger)<(81n + 2*36n))?((210n-36n)>90n?(210n-36n):90n):((210n-36n)>45n?(210n-36n):45n))) : (((153n) - 72n) + 2*36n)) : (((153n) - 72n)+36n+36n))) + (2 * (81n + 2*36n)) + 2 * (((w_{0}_per_finger)<(81n + 2*36n))?((210n-36n)>90n?(210n-36n):90n):((210n-36n)>45n?(210n-36n):45n)) - (w_{0}_per_finger)) : 0)) / 1 : (((2 * (((w_{0}_per_finger)>1u?500n:500n) > (((153n) - 72n) + 36n + 210n) ? ((w_{0}_per_finger)>1u?500n:500n) : (((153n) - 72n) + 36n + 210n))) + (w_{0}_per_finger)) + (int(((1) - 1) / 2.0) * (2 * (((153n) - 72n) + 2*210n))) + ((((1) / 2) - int((1) / 2) == 0) ? ((2 * (((w_{0}_per_finger)>1u?500n:500n) > (((153n) - 72n) + 36n + 210n) ? ((w_{0}_per_finger)>1u?500n:500n) : (((153n) - 72n) + 36n + 210n))) + (w_{0}_per_finger)) : 0)) / 1)",
+            "pd": "(((w_{0}_per_finger)<(81n + 2*36n)) ? ((int((1) / 2.0) * ((2 * (((153n) - 72n) + 2*36n)) + (2 * (81n + 2*36n)) + (4 * (((w_{0}_per_finger)<(81n + 2*36n))?((210n-36n)>90n?(210n-36n):90n):((210n-36n)>45n?(210n-36n):45n))) - (2 * (w_{0}_per_finger)))) + ((((1) / 2) - int((1) / 2) != 0) ? ((2 * (((((w_{0}_per_finger)>1u?500n:500n) - (((w_{0}_per_finger)<(81n + 2*36n))?((210n-36n)>90n?(210n-36n):90n):((210n-36n)>45n?(210n-36n):45n))) > (((153n) - 72n) + 2*36n) ? (((w_{0}_per_finger)>1u?500n:500n) - (((w_{0}_per_finger)<(81n + 2*36n))?((210n-36n)>90n?(210n-36n):90n):((210n-36n)>45n?(210n-36n):45n))) : (((153n) - 72n) + 2*36n)) > (((153n) - 72n)+36n+36n) ? ((((w_{0}_per_finger)>1u?500n:500n) - (((w_{0}_per_finger)<(81n + 2*36n))?((210n-36n)>90n?(210n-36n):90n):((210n-36n)>45n?(210n-36n):45n))) > (((153n) - 72n) + 2*36n) ? (((w_{0}_per_finger)>1u?500n:500n) - (((w_{0}_per_finger)<(81n + 2*36n))?((210n-36n)>90n?(210n-36n):90n):((210n-36n)>45n?(210n-36n):45n))) : (((153n) - 72n) + 2*36n)) : (((153n) - 72n)+36n+36n))) + (2 * (81n + 2*36n)) + 2 * (((w_{0}_per_finger)<(81n + 2*36n))?((210n-36n)>90n?(210n-36n):90n):((210n-36n)>45n?(210n-36n):45n)) - (w_{0}_per_finger)) : 0)) / 1 : ((int((1) / 2.0) * (2 * (((153n) - 72n) + 2*210n))) + ((((1) / 2) - int((1) / 2) != 0) ? ((2 * (((w_{0}_per_finger)>1u?500n:500n) > (((153n) - 72n) + 36n + 210n) ? ((w_{0}_per_finger)>1u?500n:500n) : (((153n) - 72n) + 36n + 210n))) + (w_{0}_per_finger)) : 0)) / 1)",
+            "nrd": "((((w_{0}_per_finger)<(81n + 2*36n)) ? ( 210n + 36n + (((w_{0}_per_finger)<(81n + 2*36n))?((210n-36n)>90n?(210n-36n):90n):((210n-36n)>45n?(210n-36n):45n)) - 210n + (81n / 2.0) ) / (w_{0}_per_finger) :  (210n + (81n / 2.0)) / (w_{0}_per_finger))) / (1)",
+            "nrs": "((((w_{0}_per_finger)<(81n + 2*36n)) ? ( 210n + 36n + (((w_{0}_per_finger)<(81n + 2*36n))?((210n-36n)>90n?(210n-36n):90n):((210n-36n)>45n?(210n-36n):45n)) - 210n + (81n / 2.0) ) / (w_{0}_per_finger) :  (210n + (81n / 2.0)) / (w_{0}_per_finger))) / (1)",
+            "nf": "1",
+            "multi": "(nf_{0})",
+            "mismatch": "1",
+            "global_flag": "1"
         }
     }
 
+    # Process each part
     for part in netlist_parts:
         if part[0].lstrip().startswith('M'):
             instance_name = part[0].split()[0]
             instance_type = part[0].split(")")[1].split()[0]
-            # print(f"Instance Name: {instance_name}, Instance Type: {instance_type}")
             device_info[instance_name] = instance_type
             data_dict[instance_name] = {
                 "instance_type": instance_type,
@@ -218,6 +293,7 @@ def netlist_parameterized(input_scs_path, output_scs_path, output_yaml_path):
                         }
                     }]
             }
+
             if instance_type in formulas_summary.keys():
                 for param, formula in formulas_summary[instance_type].items():
                     formula_instance = formula.format(instance_name)
@@ -231,17 +307,16 @@ def netlist_parameterized(input_scs_path, output_scs_path, output_yaml_path):
                     else:
                         part[0] = re.sub(f"{param}=[\w\.e\-]+", f"{param}={formula_instance}", part[0])
 
-    # Save file
+    # Save output files
     with open(output_scs_path, 'w') as f:
         for part in netlist_parts:
             # Add l_, w_, nf_ to the parameters line
             if part[0].lstrip().startswith('parameters'):
                 part[0] = part[0].strip() + " " + " ".join(
-                    [f"w_{instance_name}_per_finger l_{instance_name} nf_{instance_name}" for instance_name in
-                     device_info.keys()]) + "\n"
+                    [f"w_{instance_name}_per_finger l_{instance_name} nf_{instance_name}"
+                     for instance_name in device_info.keys()]) + "\n"
             f.write(''.join(part))
 
-    # Save data_dict to a YAML file
     with open(output_yaml_path, 'w') as f:
         f.write(yaml.dump(data_dict, default_flow_style=False, sort_keys=False))
 
@@ -249,8 +324,8 @@ def netlist_parameterized(input_scs_path, output_scs_path, output_yaml_path):
 
 
 if __name__ == "__main__":
-    input_scs_folder = "/Users/hanwu/ML/AnalogDesignAuto_MultiAgent/custom_env/netlist_original/netlist_original_Lab_N65"
-    output_scs_folder = "/Users/hanwu/ML/AnalogDesignAuto_MultiAgent/custom_env/netlist_template/netlist_template_Lab_N65"
+    input_scs_folder = "/Users/hanwu/Downloads/Netlist/Main"
+    output_scs_folder = "/Users/hanwu/Downloads/Netlist/Main"
     for file in os.listdir(input_scs_folder):
         if file.endswith(".scs"):
             input_scs = os.path.join(input_scs_folder, file)
