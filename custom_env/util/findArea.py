@@ -4,7 +4,7 @@ from util.util_func import unit_conversion
 # from util_func import unit_conversion
 
 
-def findArea(filepath, tech_factor=51):
+def findArea(filepath):
     """
     Calculate total transistor area from netlist file.
 
@@ -64,10 +64,7 @@ def findArea(filepath, tech_factor=51):
                 params[param] = unit_conversion(value)
 
         # Calculate total area
-        area = tech_factor * (
-                params['w_M0_per_finger'] * params['nf_M0'] +
-                params['w_M1_per_finger'] * params['nf_M1']
-        )
+        area = params['w_M0_per_finger'] * params['nf_M0'] * 102 + params['w_M1_per_finger'] * params['nf_M1'] * 51
 
         return {"area": area}
 
