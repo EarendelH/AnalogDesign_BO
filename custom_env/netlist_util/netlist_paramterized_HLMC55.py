@@ -297,13 +297,13 @@ def netlist_parameterized(input_scs_path, output_scs_path, output_yaml_path):
             if instance_type in formulas_summary.keys():
                 for param, formula in formulas_summary[instance_type].items():
                     formula_instance = formula.format(instance_name)
-                    if param == 'w':
-                        w_pattern = r'w\s*=\s*(\(?\s*[\w\.e\-]+\s*\)?)'
-                        w_match = re.search(w_pattern, part[0])
-                        if w_match:
-                            original_w = w_match.group(1)
-                            new_w = f"w={formula_instance}"
-                            part[0] = part[0].replace(f"w={original_w}", new_w)
+                    if param in ['w', 'multi']:
+                        pattern = rf'{param}\s*=\s*(\(?\s*[\w\.e\-]+\s*\)?)'
+                        match = re.search(pattern, part[0])
+                        if match:
+                            original_value = match.group(1)
+                            new_value = f"{param}={formula_instance}"
+                            part[0] = part[0].replace(f"{param}={original_value}", new_value)
                     else:
                         part[0] = re.sub(f"{param}=[\w\.e\-]+", f"{param}={formula_instance}", part[0])
 
