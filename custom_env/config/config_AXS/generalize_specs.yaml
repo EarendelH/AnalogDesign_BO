@@ -1,0 +1,47 @@
+DC:
+  DC_IQ:
+    objective: min
+    reward_type: optimal
+    bounds:
+Line_Reg:
+  Line_Reg_lineReg:
+    objective: min
+    reward_type: optimal
+    bounds:
+Line_Reg_Trans:
+  Line_Reg_Trans_lineRegTrans:
+    objective: min
+    reward_type: optimal
+    value:
+Load_Reg:
+  Load_Reg_loadReg:
+    objective: min
+    reward_type: optimal
+    value:
+Load_Reg_Trans:
+  Load_Reg_Trans_startupShoot:
+    objective: min
+    reward_type: optimal
+    value:
+  Load_Reg_Trans_overShoot:
+    objective: min
+    reward_type: optimal
+    value:
+  Load_Reg_Trans_underShoot:
+    objective: min
+    reward_type: optimal
+    value:
+PSR:
+  psr_100k:
+    objective: max
+    reward_type: optimal
+    value:
+Stability:
+  Stability_phaseMargin:
+    objective: max
+    reward_type: optimal
+    value:
+  Stability_gainBandWidth:
+    objective: max
+    reward_type: satisfactory
+    value:
