@@ -113,8 +113,8 @@ def check_param_compliance(init_params, param_ranges):
 
 
 def main():
-    init_params = load_yaml('init_param.yaml')
-    param_ranges = load_yaml('param_range.yaml')
+    init_params = load_yaml('/Users/hanwu/ML/AnalogDesignAuto_MultiAgent/custom_env/config/config_AXS/init_param.yaml')
+    param_ranges = load_yaml('/Users/hanwu/ML/AnalogDesignAuto_MultiAgent/custom_env/config/config_AXS/param_range.yaml')
 
     if check_param_compliance(init_params, param_ranges):
         print("\nAll parameter sets comply with range and step requirements.")
