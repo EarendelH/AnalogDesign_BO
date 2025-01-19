@@ -446,6 +446,87 @@ def cal_reward_Jianping(ideal_specs_dict, cur_specs_dict, norm_specs_dict):
 
     return rew
 
+def cal_reward_AXS(ideal_specs_dict, cur_specs_dict, norm_specs_dict):
+    """
+    Calculate the reward based on the ideal specs and current specs.
+    :param ideal_specs_dict: Dict with ideal specs value and property
+    :param cur_specs_dict: Dict with current specs
+    :param norm_specs_dict: Dict with normalized specs
+    :return: reward: float, reward value
+    """
+
+    # Flatten cur_specs_dict
+    cur_specs_flatten = {k: v for d in cur_specs_dict.values() for k, v in d.items()}
+    norm_specs_flatten = {k: v for d in norm_specs_dict.values() for k, v in d.items()}
+    min_rew_range = 5
+    max_rew_range = 10
+
+    reward_weight = {
+        'DC_IQ': 0.04,
+        'Line_Reg_lineReg': 0.04,
+        'Line_Reg_Trans_deltaVout': 0.04,
+        'Load_Reg_loadReg': 0.04,
+        'Load_Reg_Trans_startupShoot': 0.04,
+        'Load_Reg_Trans_overShoot': 0.04,
+        'Load_Reg_Trans_underShoot': 0.04,
+        'psr_100k': 0.04,
+        'Stability_phaseMargin': 0.1,
+        'Stability_gainBandWidth': 0.5,
+        'Output_Tolerance_1u_outputTolerance': 0.04,
+        'Output_Tolerance_20m_outputTolerance': 0.04,
+    }
+
+    rew = 0
+
+    for spec, detail in ideal_specs_dict.items():
+
+        single_reward = 0
+        ideal_spec_value = float(detail['value'])
+        cur_spec_value = float(cur_specs_flatten[spec])
+        constrain_objective = detail['objective']
+
+        if constrain_objective == "max":
+            single_reward = min((cur_spec_value - ideal_spec_value) / (cur_spec_value + ideal_spec_value), 0.0)
+        elif constrain_objective == "min":
+            single_reward = min((ideal_spec_value - cur_spec_value) / (cur_spec_value + ideal_spec_value), 0.0)
+
+        weighted_single_reward = single_reward * reward_weight[spec]
+        rew += float(weighted_single_reward)
+        # print(f"Debug, spec: {spec}, single_reward: {single_reward}, ideal_spec_value: {ideal_spec_value}, "
+        #       f"cur_spec_value: {cur_spec_value}, constrain_objective: {constrain_objective}, "
+        #       f"reward_weight: {reward_weight[spec]}")
+    rew = rew * min_rew_range
+    # print(f"Debug, rew: {rew}, reward_weight_sum: {reward_weight_sum}, min_rew_bound: {min_rew_bound}")
+
+    if rew >= 0:
+        rew_base = 10
+        rew_bonus = 0
+        for spec, detail in ideal_specs_dict.items():
+            single_reward = 0
+            general_ideal_spec_value = float(norm_specs_flatten[spec])
+            cur_spec_value = float(cur_specs_flatten[spec])
+            reward_type = detail['reward_type']
+            constrain_objective = detail['objective']
+
+            if reward_type == "optimal":
+                if constrain_objective == "max":
+                    single_reward = max(
+                        (cur_spec_value - general_ideal_spec_value) / (cur_spec_value + general_ideal_spec_value), 0.0)
+                elif constrain_objective == "min":
+                    single_reward = max(
+                        (general_ideal_spec_value - cur_spec_value) / (cur_spec_value + general_ideal_spec_value), 0.0)
+
+            weighted_single_reward = single_reward * reward_weight[spec]
+            rew_bonus += float(weighted_single_reward)
+
+        rew_bonus = rew_bonus * max_rew_range
+        rew = rew_base + rew_bonus
+
+            # print(f"Debug, spec: {spec}, single_reward: {single_reward}, general_ideal_spec_value: "
+            #       f"{general_ideal_spec_value}, cur_spec_value: {cur_spec_value}, constrain_objective: "
+            #       f"{constrain_objective}, reward_type: {reward_type}, reward_weight: {reward_weight[spec]}")
+
+    return rew
 
 def cal_reward_DRMOS(ideal_specs_dict, cur_specs_dict, norm_specs_dict):
     """
