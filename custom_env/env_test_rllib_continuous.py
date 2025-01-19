@@ -4,7 +4,7 @@ from rllib_env_continous import RllibAnalogDesignAutoEnv
 if __name__ == "__main__":
     env = RllibAnalogDesignAutoEnv({'generalize': True,
                                     'max_step': 1,
-                                    'netlist_folder_name': 'netlist_template_DRMOS',
+                                    'netlist_folder_name': 'netlist_original_AXS',
                                     'specs_folder_name': 'sampled_specs_DRMOS',
                                     'config_folder_name': 'config_DRMOS',
                                     'run_folder_name': 'run_test',

@@ -16,66 +16,66 @@ Line_Reg_Trans:
   Line_Reg_Trans_deltaVout:
     objective: min
     reward_type: optimal
-    value:
+    bounds:
     - 0.002
     - 0.0022
 Load_Reg:
   Load_Reg_loadReg:
     objective: min
     reward_type: optimal
-    value:
+    bounds:
     - 0.0024
     - 0.0025
 Load_Reg_Trans:
   Load_Reg_Trans_startupShoot:
     objective: min
     reward_type: optimal
-    value:
+    bounds:
     - 0.06
     - 0.08
   Load_Reg_Trans_overShoot:
     objective: min
     reward_type: optimal
-    value:
+    bounds:
     - 0.045
     - 0.05
   Load_Reg_Trans_underShoot:
     objective: min
     reward_type: optimal
-    value:
+    bounds:
     - 0.045
     - 0.05
 PSR:
   psr_100k:
     objective: max
     reward_type: optimal
-    value:
+    bounds:
     - 40.0
     - 45.0
 Stability:
   Stability_phaseMargin:
     objective: max
     reward_type: optimal
-    value:
+    bounds:
     - 30.0
     - 30.1
   Stability_gainBandWidth:
     objective: max
     reward_type: satisfactory
-    value:
+    bounds:
     - 400000
     - 500000
 Output_Tolerance_1u:
   Output_Tolerance_1u_outputTolerance:
     objective: min
     reward_type: optimal
-    value:
+    bounds:
     - 0.02
     - 0.025
 Output_Tolerance_20m:
   Output_Tolerance_20m_outputTolerance:
     objective: min
     reward_type: optimal
-    value:
+    bounds:
     - 0.02
     - 0.025
