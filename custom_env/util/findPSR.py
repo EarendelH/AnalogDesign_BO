@@ -1,9 +1,10 @@
 from util.extract_trace import extractACTrace
 from util.util_func import find_closest_value_index
-import math
-from scipy import interpolate
 # from extract_trace import extractACTrace
 # from util_func import find_closest_value_index
+import math
+from scipy import interpolate
+
 
 def findPowerSupplyRejectionRatio_general(vout_name, file_path, freq_list, freq_labels):
 
@@ -154,6 +155,18 @@ def findPowerSupplyRejectionRatio_Haoqiang(file_path):
 
     return result
 
-# Test the function with the provided file
-# value_dict = findPowerSupplyRejectionRatio_Jianping("/Users/hanwu/Downloads/PSR_1m.raw/ac.ac.encode")
-# print(value_dict)
+def findPowerSupplyRejectionRatio_AXS(file_path):
+
+    vout_name = 'net3'
+
+    freq_list = [100000]
+    freq_labels = ['100k']
+
+    result = findPowerSupplyRejectionRatio_interpolated(vout_name, file_path, freq_list, freq_labels)
+
+    return result
+
+# if __name__ == "__main__":
+#     file_path = "/Users/hanwu/Downloads/Netlist/Netlist/PSRR.raw/ac.ac.encode"
+#     value_dict = findPowerSupplyRejectionRatio_AXS(file_path)
+#     print(value_dict)

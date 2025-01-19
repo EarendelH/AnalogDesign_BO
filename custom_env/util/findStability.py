@@ -129,9 +129,7 @@ def findPhaseMarginAndGBW_Jianping(encoded_file_path):
         return {"phaseMargin": 0, "gainBandWidth": 0}
 
 
-# Test the function with the provided file
-# value_dict = findPhaseMarginAndGBW_Jianping("/home/wuhan/Downloads/Test_Netlist/Good_Stb.raw/stb.margin.stb.encode")
-# print(f"New util: {value_dict}")
-#
-# value_dict = findPhaseMarginAndGBW("/home/wuhan/Downloads/Test_Netlist/Good_Stb.raw/stb.margin.stb.encode")
-# print(f"Old util: {value_dict}")
+# if __name__ == "__main__":
+#     phase_margin_gbw_file = "/Users/hanwu/Downloads/Netlist/Netlist/Stability.raw/stb.margin.stb.encode"
+#     phase_margin_gbw = findPhaseMarginAndGBW(phase_margin_gbw_file)
+#     print(f"Phase Margin and Gain Bandwidth: {phase_margin_gbw}")

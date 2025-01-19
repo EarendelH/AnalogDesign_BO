@@ -32,6 +32,39 @@ def findLineReg(filename):
 
     return {"lineReg": line_reg}
 
-# Test Code
-# file = "/Users/hanwu/ML/AnalogDesignAuto_MultiAgent/custom_env/netlist_assign_test/Line_Reg_500u.raw/dc.dc.encode"
-# print(findLineReg(file))
+
+def findLineReg_AXS(filename):
+    """
+    Extract the trace data from a file and return the trace data.
+
+    Args:
+    - filename: Path to the file to be processed.
+    - trace_name: Name of the trace to be extracted.
+    """
+    vdd_name = '"VDDI"'
+    vout_name = '"net3"'
+
+    trace_dict = extractTrace(filename)
+
+    vdd_trace = trace_dict[vdd_name]
+    vout_trace = trace_dict[vout_name]
+
+    vdd_init = vdd_trace[0]
+    vdd_end = vdd_trace[-1]
+    # vout_init is the min value of vout_trace, vout_end is the max value of vout_trace
+    vout_init = min(vout_trace)
+    vout_end = max(vout_trace)
+    # print(f"vdd_init is {vdd_init}, vdd_end is {vdd_end}, vout_init is {vout_init}, vout_end is {vout_end}")
+
+    try:
+        line_reg = (vout_end - vout_init) / (vdd_end - vdd_init)
+        line_reg = abs(line_reg)
+    except ZeroDivisionError:
+        line_reg = 100.0
+        print("Warning: Division by zero. Setting load regulation to 100.0.")
+
+    return {"lineReg": line_reg}
+
+# if __name__ == "__main__":
+#     file_path = "/Users/hanwu/Downloads/Netlist/Netlist/Line_Regulation.raw/dc.dc.encode"
+#     print(findLineReg_AXS(file_path))

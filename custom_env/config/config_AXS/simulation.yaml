@@ -11,7 +11,7 @@
   netlist_name: Line_Reg
   simulation_file: dc.dc
   script_name: findLineReg
-  parse_func: findLineReg
+  parse_func: findLineReg_AXS
   simulation_item:
     - lineReg
 - simulation_name: Line_Reg_Trans
@@ -21,7 +21,7 @@
   script_name: findTransLineReg
   parse_func: findTransLineReg_AXS
   simulation_item:
-    - lineRegTrans
+    - deltaVout
 - simulation_name: Load_Reg
   objective: min
   netlist_name: Load_Reg

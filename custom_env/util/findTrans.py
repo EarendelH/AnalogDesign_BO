@@ -590,3 +590,54 @@ def findEff_DRMOS(filename, debug=False):
 # Test Code
 # demo_file = "/Users/hanwu/Downloads/Compare_Netlist/tb_Efficiency/tb_Efficiency.raw/tran.tran.tran"
 # print(findEff_DRMOS(demo_file, debug=True))
+
+def findShoot_AXS(filename):
+
+    try:
+        trace_dict = extractTransTrace(filename)
+        vout_name = 'net2'
+        vout_trace = trace_dict[vout_name]
+        time_series = trace_dict["time"]
+        # print(f"vout_trace is {vout_trace} \n with length {len(vout_trace)} \n time_series is {time_series} "
+        #       f"\n with length {len(time_series)}")
+
+        # Extract net2 trace data within 0-75us
+        start_up_ranges = [0, 75e-6]
+        start_up_indices = find_indices_in_range(time_series, start_up_ranges[0], start_up_ranges[1])
+        # print(f"Debug!!! start_up_indices is {start_up_indices}")
+        vout_start_up_trace = [vout_trace[i] for i in start_up_indices]
+        vout_startup_stable = vout_start_up_trace[-1]
+        vout_startup_max = max(vout_start_up_trace)
+        # print(f"Debug!!! vout_startup_stable is {vout_startup_stable} and vout_startup_max is {vout_startup_max}")
+
+        startup_shoot = vout_startup_max - vout_startup_stable
+
+        # Extract net2 trace data within 0.1-1.0ms
+        time_range = [0.1e-3, 1.0e-3]
+        time_indices = find_indices_in_range(time_series, time_range[0], time_range[1])
+        vout_trace_selected = [vout_trace[i] for i in time_indices]
+        vout_max = max(vout_trace_selected)
+        vout_min = min(vout_trace_selected)
+        overshoot = vout_max - vout_startup_stable
+        undershoot = vout_startup_stable - vout_min
+
+        if vout_startup_stable <= 1.1 or vout_startup_stable >= 1.3:
+            print(f"Warning!!! vout_startup_stable is {vout_startup_stable}, set to 1.2")
+            startup_shoot = 100.0
+
+        if overshoot < 0 or undershoot < 0:
+            print(f"Warning!!! overshoot is {overshoot} and undershoot is {undershoot}, set to 100.0")
+            overshoot = 100.0
+            undershoot = 100.0
+
+    except Exception as e:
+        print(f"Error in findShoot_AXS: {str(e)}")
+        startup_shoot = 100.0
+        overshoot = 100.0
+        undershoot = 100.0
+
+    return {"startupShoot": startup_shoot, "overShoot": overshoot, "underShoot": undershoot}
+
+# if __name__ == "__main__":
+#     demo_file = "/Users/hanwu/Downloads/Netlist/Netlist/Load_Regulation_Trans.raw/tran.tran.tran.encode"
+#     print(findShoot_AXS(demo_file))

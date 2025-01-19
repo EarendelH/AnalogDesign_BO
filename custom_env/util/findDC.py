@@ -149,3 +149,23 @@ def findIQ_Haoqiang(filepath):
         print(f"Power is lower than zero, impossible, return to max value")
         power_value = 100.0
     return {"IQ": power_value}
+
+def findIQ_AXS(filepath):
+    power_keyword = "V2:p"
+    try:
+        power_value = extract_dcOP_data(filepath, power_keyword)
+        # print(f"Debug!!! power_value: {power_value}")
+        # print(f"Debug!!! bias_value: {bias_value}")
+        power_value = power_value - 0.000001
+    except Exception as e:
+        print(f"Warning: {e}. return to max value.")
+        power_value = 100.0
+    if power_value <= 0.0:
+        print(f"Power is lower than zero, impossible, return to max value")
+        power_value = 100.0
+    return {"IQ": power_value}
+
+# if __name__ == "__main__":
+#     # Test code
+#     file_path = "/Users/hanwu/Downloads/Netlist/Netlist/DC.raw/dcOp.dc.encode"
+#     print(findIQ_AXS(file_path))
