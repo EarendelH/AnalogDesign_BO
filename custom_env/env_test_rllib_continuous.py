@@ -11,7 +11,7 @@ if __name__ == "__main__":
                                     'sim_output': False,
                                     'init_method': 'file',
                                     'corner_sim': False,
-                                    'dc_check': True,
+                                    'dc_check': False,
                                     'region_extract': True,
                                     'dynamic_queue': False,
                                     'log_level': 'DEBUG',
