@@ -59,7 +59,7 @@ def findLoadReg_AXS(filename):
     vout_init = vout_trace[0]
     vout_end = vout_trace[-1]
 
-    print(f"vout_init is {vout_init}, vout_end is {vout_end}")
+    # print(f"vout_init is {vout_init}, vout_end is {vout_end}")
 
     try:
         load_reg = (vout_end - vout_init) / (iload_end - iload_init)

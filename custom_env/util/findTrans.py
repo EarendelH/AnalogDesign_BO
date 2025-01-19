@@ -622,7 +622,7 @@ def findShoot_AXS(filename):
         undershoot = vout_startup_stable - vout_min
 
         if vout_startup_stable <= 1.1 or vout_startup_stable >= 1.3:
-            print(f"Warning!!! vout_startup_stable is {vout_startup_stable}, set to 1.2")
+            print(f"Warning!!! vout_startup_stable is {vout_startup_stable}, set to 100.0")
             startup_shoot = 100.0
 
         if overshoot < 0 or undershoot < 0:
