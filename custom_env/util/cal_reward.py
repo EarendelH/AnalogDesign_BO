@@ -469,7 +469,7 @@ def cal_reward_AXS(ideal_specs_dict, cur_specs_dict, norm_specs_dict):
         'Load_Reg_Trans_startupShoot': 0.04,
         'Load_Reg_Trans_overShoot': 0.04,
         'Load_Reg_Trans_underShoot': 0.04,
-        'psr_100k': 0.04,
+        'PSR_psr_100k': 0.04,
         'Stability_phaseMargin': 0.1,
         'Stability_gainBandWidth': 0.5,
         'Output_Tolerance_1u_outputTolerance': 0.04,
