@@ -594,7 +594,7 @@ def findEff_DRMOS(filename, debug=False):
 def findShoot_AXS(filename):
 
     try:
-        trace_dict = extractTransTrace(filename)
+        trace_dict = extractTransTrace_psf(filename)
         vout_name = 'net2'
         vout_trace = trace_dict[vout_name]
         time_series = trace_dict["time"]
@@ -639,5 +639,5 @@ def findShoot_AXS(filename):
     return {"startupShoot": startup_shoot, "overShoot": overshoot, "underShoot": undershoot}
 
 # if __name__ == "__main__":
-#     demo_file = "/Users/hanwu/Downloads/Netlist/Netlist/Load_Regulation_Trans.raw/tran.tran.tran.encode"
+#     demo_file = "/Users/hanwu/Downloads/Netlist_AXS/Load_Reg_Trans.raw/tran.tran.tran"
 #     print(findShoot_AXS(demo_file))

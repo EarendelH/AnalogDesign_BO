@@ -130,6 +130,6 @@ def findPhaseMarginAndGBW_Jianping(encoded_file_path):
 
 
 # if __name__ == "__main__":
-#     phase_margin_gbw_file = "/Users/hanwu/Downloads/Netlist/Netlist/Stability.raw/stb.margin.stb.encode"
+#     phase_margin_gbw_file = "/Users/hanwu/Downloads/Netlist_AXS/Stability.raw/stb.margin.stb"
 #     phase_margin_gbw = findPhaseMarginAndGBW(phase_margin_gbw_file)
 #     print(f"Phase Margin and Gain Bandwidth: {phase_margin_gbw}")

@@ -71,5 +71,5 @@ def findLoadReg_AXS(filename):
     return {"loadReg": load_reg}
 
 # if __name__ == "__main__":
-#     filepath = "/Users/hanwu/Downloads/Netlist/Netlist/Load_Regulation.raw/dc.dc.encode"
+#     filepath = "/Users/hanwu/Downloads/Netlist_AXS/Load_Reg.raw/dc.dc"
 #     print(findLoadReg_AXS(filepath))

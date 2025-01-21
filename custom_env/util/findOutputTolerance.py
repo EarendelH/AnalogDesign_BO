@@ -1,6 +1,3 @@
-# from extract_device_param_value import parse_device_values, parse_device_param, find_device_param_value
-from util.extract_device_param_value import parse_device_values, parse_device_param, find_device_param_value
-
 def extract_dcOP_data(file_path, search_keyword):
     """
     Search the first line in a file containing a specific keyword and extract float data.
@@ -43,5 +40,5 @@ def findOutputTolerance_AXS(filepath):
     return {"outputTolerance": tolerance}
 
 # if __name__ == '__main__':
-#     file_path = "/Users/hanwu/Downloads/Netlist/Netlist/Output_Tolerance_20m.raw/dcOp.dc.encode"
+#     file_path = "/Users/hanwu/Downloads/Netlist_AXS/Output_Tolerance_20m.raw/dcOp.dc"
 #     print(findOutputTolerance_AXS(file_path))

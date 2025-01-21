@@ -167,5 +167,5 @@ def findIQ_AXS(filepath):
 
 # if __name__ == "__main__":
 #     # Test code
-#     file_path = "/Users/hanwu/Downloads/Netlist/Netlist/DC.raw/dcOp.dc.encode"
+#     file_path = "/Users/hanwu/Downloads/Netlist_AXS/DC.raw/dcOp.dc"
 #     print(findIQ_AXS(file_path))

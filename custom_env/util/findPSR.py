@@ -167,6 +167,6 @@ def findPowerSupplyRejectionRatio_AXS(file_path):
     return result
 
 # if __name__ == "__main__":
-#     file_path = "/Users/hanwu/Downloads/Netlist/Netlist/PSRR.raw/ac.ac.encode"
+#     file_path = "/Users/hanwu/Downloads/Netlist_AXS/PSR.raw/ac.ac"
 #     value_dict = findPowerSupplyRejectionRatio_AXS(file_path)
 #     print(value_dict)

@@ -1,6 +1,5 @@
-import os.path
-# from extract_trace import extractTransTrace
-from util.extract_trace import extractTransTrace
+# from extract_trace import extractTransTrace_psf
+from util.extract_trace import extractTransTrace_psf
 import numpy as np
 import bisect
 
@@ -14,7 +13,7 @@ def find_indices_in_range(nums, range_start, range_end):
 
 def findTransLineReg_AXS(filename):
     try:
-        trans_dict = extractTransTrace(filename)
+        trans_dict = extractTransTrace_psf(filename)
         time_series = trans_dict["time"]
 
         output_voltage_label = "net3"
@@ -41,5 +40,5 @@ def findTransLineReg_AXS(filename):
     return {"deltaVout": deltaVout}
 
 # if __name__ == "__main__":
-#     filename = "/Users/hanwu/Downloads/Netlist/Netlist/Line_Regulation_Trans.raw/tran.tran.tran.encode"
+#     filename = "/Users/hanwu/Downloads/Netlist_AXS/Line_Reg_Trans.raw/tran.tran.tran"
 #     print(findTransLineReg_AXS(filename))

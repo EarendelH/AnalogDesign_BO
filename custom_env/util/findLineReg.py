@@ -66,5 +66,5 @@ def findLineReg_AXS(filename):
     return {"lineReg": line_reg}
 
 # if __name__ == "__main__":
-#     file_path = "/Users/hanwu/Downloads/Netlist/Netlist/Line_Regulation.raw/dc.dc.encode"
+#     file_path = "/Users/hanwu/Downloads/Netlist_AXS/Line_Reg.raw/dc.dc"
 #     print(findLineReg_AXS(file_path))
