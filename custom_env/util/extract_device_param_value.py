@@ -311,8 +311,8 @@ def extract_operation_region_w_name(dc_result_file_path):
     return operation_region_list
 
 # Test Code
-# filepath = "/Users/hanwu/ML/AnalogDesignAuto_MultiAgent/custom_env/netlist_assign_test/DC.raw/dcOpInfo.info.encode"
-# print(extract_operation_region(filepath))
+# filepath = "/Users/hanwu/Downloads/Netlist_AXS/DC.raw/dcOpInfo.info"
+# print(extract_operation_region_w_name(filepath))
 
 # Output
 # {'I9.M17': 2, 'I9.M18': 2, 'I9.M22': 2, 'I9.M23': 2, 'I9.M24': 1, 'I9.M16': 1, 'I9.M36': 1, 'I9.M19': 2, 'I9.M21': 2,
