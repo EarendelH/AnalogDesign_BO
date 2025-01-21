@@ -297,3 +297,39 @@ def run_region_simulation(work_dir, sim_config, show_output=False):
         reset_operation_region_dict = extract_operation_region_w_name(dc_reset_result_path)
 
     return reset_operation_region_dict
+
+
+def run_region_simulation_psfascii(work_dir, sim_config, show_output=False):
+    """
+    Run spectre simulation. Once the output result is zero (for pwr, reset value is 1), the simulation will be stopped.
+    Zero simulation result is given.
+    :param work_dir: working directory
+    :param sim_config: config simulation item and corresponding result parse function
+    :param show_output: show the output of the simulation
+    :return: Arranged simulation results
+    """
+
+    reset_operation_region_dict = {}
+
+    for simulation_config in sim_config:
+        assigned_netlist_name = simulation_config[f"netlist_name"]
+        assigned_netlist_filename = f"{assigned_netlist_name}.scs"
+
+        # Check if the assigned netlist file exists
+        file_list = os.listdir(work_dir)
+        # print(f"Debug!!! File List: {file_list}")
+        if assigned_netlist_filename not in file_list:
+            raise ValueError(f"Assigned netlist file {assigned_netlist_filename} not found.")
+
+        if show_output:
+            subprocess.run(f"spectre -64 ++aps {os.path.join(work_dir, assigned_netlist_filename)}", shell=True)
+        else:
+            subprocess.run(f"spectre -64 ++aps {os.path.join(work_dir, assigned_netlist_filename)}",
+                           shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
+        dc_reset_raw_result_path = os.path.join(work_dir, "Region.raw/dcOpInfo.info")
+        # dc_reset_result_path = os.path.join(work_dir, "Region.raw/dcOpInfo.info.encode")
+        # subprocess.run(f"psf {dc_reset_raw_result_path} -o {dc_reset_result_path}", shell=True)
+        reset_operation_region_dict = extract_operation_region_w_name(dc_reset_raw_result_path)
+
+    return reset_operation_region_dict

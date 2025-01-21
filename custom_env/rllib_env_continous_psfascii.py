@@ -15,7 +15,7 @@ from util.action2param import action2param
 from util.gen_param_space import gen_param_space
 from util.util_func import create_work_dir
 from util.assign_param2netlist import update_netlist
-from util.run_spectre_simulation import run_dynamic_simulation_psfascii, run_region_simulation
+from util.run_spectre_simulation import run_dynamic_simulation_psfascii, run_region_simulation_psfascii
 from util.generalize_config import generalize_config
 from util.update_obs_space import update_obs_space_w_region, flatten_observation_w_region
 from util.update_obs_space import update_obs_space, flatten_observation
@@ -250,7 +250,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
                 logging.info(f"Initialing!!! DC Check working directory: {working_dir_reset_dc}")
                 update_netlist(working_dir_reset_dc, self.dc_sim_config_dict, init_param, self.unassigned_netlist_dir)
                 reset_operation_region_dict = copy.deepcopy(
-                    run_region_simulation(working_dir_reset_dc, self.dc_sim_config_dict, self.sim_output_enable))
+                    run_region_simulation_psfascii(working_dir_reset_dc, self.dc_sim_config_dict, self.sim_output_enable))
                 logging.debug(f"Initialing!!!Operation region: {reset_operation_region_dict}")
                 # delete_work_dir(working_dir_reset_dc)
             except Exception as e:
@@ -364,9 +364,9 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
                              f"with step number: {self.step_num}")
                 # Update DC Netlist File for checking operation region
                 update_netlist(working_dir_step_dc, self.dc_sim_config_dict, updated_param, self.unassigned_netlist_dir)
-                operation_region_dict = copy.deepcopy(run_region_simulation(working_dir_step_dc,
-                                                                            self.dc_sim_config_dict,
-                                                                            self.sim_output_enable))
+                operation_region_dict = copy.deepcopy(run_region_simulation_psfascii(working_dir_step_dc,
+                                                                                    self.dc_sim_config_dict,
+                                                                                    self.sim_output_enable))
                 operation_region_list = list(operation_region_dict.values())
                 logging.info(f"Step!!!Operation region: {operation_region_list} with step number: {self.step_num}")
                 # 0 cut-off, 1 triode, 2 saturation, 3 sub-th, 4 breakdown
