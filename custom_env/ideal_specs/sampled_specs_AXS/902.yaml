@@ -1,48 +1,60 @@
 DC_IQ:
   objective: min
   reward_type: optimal
-  value: 2.2880859464300257e-05
+  value: 2.2825289261370545e-05
+Mismatch_sigma:
+  objective: min
+  reward_type: optimal
+  value: 0.009945276975735825
 Line_Reg_lineReg:
   objective: min
   reward_type: optimal
-  value: 0.00010207609858560926
+  value: 0.0001051753840092033
 Line_Reg_Trans_deltaVout:
   objective: min
   reward_type: optimal
-  value: 0.0020274769930991986
+  value: 0.002052888103703327
 Load_Reg_loadReg:
   objective: min
   reward_type: optimal
-  value: 0.0024100832168200276
+  value: 0.002415271297778288
 Load_Reg_Trans_startupShoot:
   objective: min
   reward_type: optimal
-  value: 0.06016374446678251
+  value: 0.07896033656760773
 Load_Reg_Trans_overShoot:
   objective: min
   reward_type: optimal
-  value: 0.0477396832048082
+  value: 0.046648041997885255
 Load_Reg_Trans_underShoot:
   objective: min
   reward_type: optimal
-  value: 0.04517861190188138
+  value: 0.04528639164590725
 PSR_psr_100k:
   objective: max
   reward_type: optimal
-  value: 42.83454368183081
-Stability_phaseMargin:
+  value: 42.613524558239035
+Stability_dcGain:
   objective: max
   reward_type: optimal
-  value: 30.07020003585718
-Stability_gainBandWidth:
+  value: 50.60429287789663
+Stability_gainMargin:
   objective: max
   reward_type: satisfactory
-  value: 424574.68019826256
+  value: 8.776195453789608
+Stability_phaseMargin:
+  objective: max
+  reward_type: satisfactory
+  value: 30.082029438396496
+Stability_gainBandWidth:
+  objective: max
+  reward_type: optimal
+  value: 477255.07726742135
 Output_Tolerance_1u_outputTolerance:
   objective: min
   reward_type: optimal
-  value: 0.023672371786667513
+  value: 0.02102452865155418
 Output_Tolerance_20m_outputTolerance:
   objective: min
   reward_type: optimal
-  value: 0.020068274051972076
+  value: 0.020347476075381243
