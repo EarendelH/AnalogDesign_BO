@@ -2,6 +2,10 @@ DC_IQ:
   objective: min
   reward_type: optimal
   value: 0.00002
+Mismatch_sigma:
+  objective: min
+  reward_type: optimal
+  value: 0.01
 Line_Reg_lineReg:
   objective: min
   reward_type: optimal
@@ -32,12 +36,20 @@ PSR_psr_100k:
   value: 40.0
 Stability_phaseMargin:
   objective: max
-  reward_type: optimal
+  reward_type: satisfactory
   value: 30.0
 Stability_gainBandWidth:
   objective: max
-  reward_type: satisfactory
+  reward_type: optimal
   value: 400000
+Stability_dcGain:
+  objective: max
+  reward_type: optimal
+  value: 50.0
+Stability_gainMargin:
+  objective: max
+  reward_type: satisfactory
+  value: 8.0
 Output_Tolerance_1u_outputTolerance:
   objective: min
   reward_type: optimal

@@ -5,6 +5,13 @@ DC:
     bounds:
     - 0.00002
     - 0.000025
+Mismatch:
+  Mismatch_sigma:
+    objective: min
+    reward_type: optimal
+    bounds:
+    - 0.009
+    - 0.01
 Line_Reg:
   Line_Reg_lineReg:
     objective: min
@@ -53,15 +60,27 @@ PSR:
     - 40.0
     - 45.0
 Stability:
-  Stability_phaseMargin:
+  Stability_dcGain:
     objective: max
     reward_type: optimal
+    bounds:
+    - 50.0
+    - 60.0
+  Stability_gainMargin:
+    objective: max
+    reward_type: satisfactory
+    bounds:
+    - 8.0
+    - 10.0
+  Stability_phaseMargin:
+    objective: max
+    reward_type: satisfactory
     bounds:
     - 30.0
     - 30.1
   Stability_gainBandWidth:
     objective: max
-    reward_type: satisfactory
+    reward_type: optimal
     bounds:
     - 400000
     - 500000

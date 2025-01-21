@@ -1,5 +1,7 @@
 DC:
   DC_IQ: 0.00002
+Mismatch:
+  Mismatch_sigma: 0.01
 Line_Reg:
   Line_Reg_lineReg: 0.0001
 Line_Reg_Trans:
@@ -15,6 +17,8 @@ PSR:
 Stability:
   Stability_phaseMargin: 30.0
   Stability_gainBandWidth: 400000
+  Stability_dcGain: 50.0
+  Stability_gainMargin: 8.0
 Output_Tolerance_1u:
   Output_Tolerance_1u_outputTolerance: 0.02
 Output_Tolerance_20m:

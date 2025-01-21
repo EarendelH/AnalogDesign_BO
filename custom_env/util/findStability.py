@@ -2,8 +2,8 @@ import re
 import os
 import subprocess
 import numpy as np
-# from extract_bode import analyze_loop_gain_only_value
-from util.extract_bode import analyze_loop_gain_only_value
+# from extract_bode import analyze_loop_gain_only_value, extract_dc_gain
+from util.extract_bode import analyze_loop_gain_only_value, extract_dc_gain
 
 
 def findLoopGain(filename):
@@ -129,7 +129,44 @@ def findPhaseMarginAndGBW_Jianping(encoded_file_path):
         return {"phaseMargin": 0, "gainBandWidth": 0}
 
 
+def findStability_AXS(filename):
+    with open(filename, 'r') as file:
+        file_content = file.read()
+
+    header_type_content = re.search(r'HEADER(.*?)TYPE', file_content, re.DOTALL)
+    if header_type_content:
+        header_type_content = header_type_content.group(1)
+    else:
+        print("Warning from findPhaseMarginAndGBW: HEADER or TYPE section not found in the file.")
+        return {"phaseMargin": 0.0, "gainBandWidth": 0.0}
+
+    required_keywords = ["gainMargin", "phaseMargin", "phaseMarginFrequency"]
+    has_keywords = all(keyword in header_type_content for keyword in required_keywords)
+
+    gain_margin = phase_margin = phase_margin_frequency = 0.0
+
+    if has_keywords:
+        gain_margin_match = re.search(r'"gainMargin"\s+"([\d.+e]+)\s+dB"', header_type_content)
+        phase_margin_match = re.search(r'"phaseMargin"\s+"([\d.+e]+)\s+Deg"', header_type_content)
+        phase_margin_frequency_match = re.search(r'"phaseMarginFrequency"\s+"([\d.+e]+)\s+Hz"', header_type_content)
+
+        if phase_margin_match and phase_margin_frequency_match:
+            gain_margin = float(gain_margin_match.group(1))
+            phase_margin = float(phase_margin_match.group(1))
+            phase_margin_frequency = float(phase_margin_frequency_match.group(1))
+        else:
+            print("Warning: gainMargin or phaseMargin or phaseMarginFrequency not properly formatted, set to 0.0")
+    else:
+        print("Warning: gainMargin or phaseMargin or phaseMarginFrequency not existing, set to 0.0")
+
+    gain_bandwidth = phase_margin_frequency
+    # Change filename to stb.stb under same directory
+    stb_file = filename.replace("stb.margin.stb", "stb.stb")
+    dc_gain = extract_dc_gain(stb_file)
+
+    return {"dcGain": dc_gain, "gainMargin": gain_margin, "phaseMargin": phase_margin, "gainBandWidth": gain_bandwidth}
+
 # if __name__ == "__main__":
 #     phase_margin_gbw_file = "/Users/hanwu/Downloads/Netlist_AXS/Stability.raw/stb.margin.stb"
-#     phase_margin_gbw = findPhaseMarginAndGBW(phase_margin_gbw_file)
+#     phase_margin_gbw = findStability_AXS(phase_margin_gbw_file)
 #     print(f"Phase Margin and Gain Bandwidth: {phase_margin_gbw}")

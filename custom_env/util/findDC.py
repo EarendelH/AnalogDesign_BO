@@ -1,6 +1,8 @@
 # from extract_device_param_value import parse_device_values, parse_device_param, find_device_param_value
 from util.extract_device_param_value import parse_device_values, parse_device_param, find_device_param_value
-
+import os
+import numpy as np
+from typing import List, Dict, Union
 
 def findDCValue(filepath):
     # Extract the properties using the previously defined function
@@ -169,3 +171,109 @@ def findIQ_AXS(filepath):
 #     # Test code
 #     file_path = "/Users/hanwu/Downloads/Netlist_AXS/DC.raw/dcOp.dc"
 #     print(findIQ_AXS(file_path))
+
+def findVOS_AXS_MC(filepath):
+    power_keyword = "net1"
+    try:
+        power_value = extract_dcOP_data(filepath, power_keyword)
+        # print(f"Debug!!! power_value: {power_value}")
+        # print(f"Debug!!! bias_value: {bias_value}")
+        vos = power_value - 1.2
+    except Exception as e:
+        print(f"Warning: {e}. return to max value.")
+        vos = 100.0
+    return vos
+
+# if __name__ == "__main__":
+#     # Test code
+#     file_path = "/Users/hanwu/Downloads/Netlist_AXS/Mismatch.raw/mc1_separate/1101/dcOp.dc"
+#     print(findIQ_AXS_MC(file_path))
+
+def findMismatch_AXS(root_dir: str) -> Dict[str, float]:
+    """
+    Scan all dcOp.dc files in the directory and calculate sigma value
+
+    Args:
+        root_dir (str): Root directory path
+
+    Returns:
+        Dict[str, float]: Returns a dictionary with sigma value
+    """
+    try:
+        # Store all found dcOp.dc file paths
+        dc_files = []
+
+        # Traverse directory
+        for dirpath, dirnames, filenames in os.walk(root_dir):
+            for filename in filenames:
+                if filename == "dcOp.dc":
+                    full_path = os.path.join(dirpath, filename)
+                    dc_files.append(full_path)
+
+        # Store all calculation results
+        results = []
+
+        # Process each file with findIQ_AXS_MC function and collect results
+        for dc_file in dc_files:
+            try:
+                result = findVOS_AXS_MC(dc_file)  # Assumes this function exists
+                results.append(result)
+            except Exception as e:
+                print(f"Error processing file {dc_file}: {str(e)}")
+                continue
+
+        if not results:
+            print("No valid calculation results found")
+            return {'sigma': 100.0}
+
+        # Calculate statistics
+        results_array = np.array(results)
+        sigma = np.std(results_array)
+
+        # Plot distribution
+        plot_distribution(results, sigma)
+
+        return {'sigma': sigma}
+
+    except Exception as e:
+        print(f"Error in findMismatch_AXS: {str(e)}")
+        return {'sigma': 100.0}
+
+
+def plot_distribution(results: List[float], sigma: float):
+    """
+    Plot distribution of results
+
+    Args:
+        results (List[float]): List of calculation results
+        sigma (float): Sigma value
+    """
+    try:
+        import matplotlib.pyplot as plt
+
+        plt.figure(figsize=(10, 6))
+
+        # Plot histogram
+        plt.hist(results, bins=30, density=True, alpha=0.7, color='b')
+
+        # Add normal distribution curve
+        x = np.linspace(min(results), max(results), 100)
+        mean = np.mean(results)
+        gaussian = (1 / (sigma * np.sqrt(2 * np.pi))) * np.exp(-(x - mean) ** 2 / (2 * sigma ** 2))
+        plt.plot(x, gaussian, 'r-', lw=2, label='Normal Distribution')
+
+        plt.title('Distribution of Results')
+        plt.xlabel('Value')
+        plt.ylabel('Density')
+        plt.grid(True)
+        plt.legend()
+
+        plt.show()
+    except Exception as e:
+        print(f"Error in plot_distribution: {str(e)}")
+
+# if __name__ == "__main__":
+#
+#     root_directory = "/Users/hanwu/Downloads/Netlist_AXS/Mismatch.raw/mc1_separate"  # Replace with actual directory path
+#     result_dict = findMismatch_AXS(root_directory)
+#     print(result_dict)
