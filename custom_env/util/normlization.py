@@ -1,3 +1,5 @@
+import logging
+
 def norm_ideal_spec(input_specs, norm_specs):
     """
     Normalize the current specs by the ideal specs.
@@ -13,6 +15,8 @@ def norm_ideal_spec(input_specs, norm_specs):
         norm_cur_specs: dict, normalized specs for the circuit
     """
     norm_cur_specs = {}
+    logging.debug(f'input_specs: {input_specs}')
+    logging.debug(f'norm_specs: {norm_specs}')
 
     for key, sub_dict in norm_specs.items():
         norm_cur_specs_sub = {}
