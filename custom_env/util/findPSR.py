@@ -65,6 +65,9 @@ def findPowerSupplyRejectionRatio_interpolated(vout_name, file_path, freq_list, 
 
             if spike_idx != -1:
                 spike_psr = psr_trace[spike_idx]
+                if spike_psr < 0:
+                    spike_psr = 0.0
+                    print(f"Warning!!! PSR spike is negative: {spike_psr}, set to 0.0")
                 psr_values["psr_spike"] = spike_psr
             else:
                 psr_values["psr_spike"] = 0.0
