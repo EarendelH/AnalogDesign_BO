@@ -462,20 +462,22 @@ def cal_reward_AXS(ideal_specs_dict, cur_specs_dict, norm_specs_dict):
     max_rew_range = 10
 
     reward_weight = {
-        'DC_IQ': 0.04,
-        'Line_Reg_lineReg': 0.04,
-        'Line_Reg_Trans_deltaVout': 0.04,
-        'Load_Reg_loadReg': 0.04,
-        'Load_Reg_Trans_startupShoot': 0.04,
-        'Load_Reg_Trans_overShoot': 0.04,
-        'Load_Reg_Trans_underShoot': 0.04,
-        'PSR_psr_100k': 0.04,
-        'Stability_phaseMargin': 0.1,
-        'Stability_gainBandWidth': 0.5,
-        'Output_Tolerance_1u_outputTolerance': 0.04,
-        'Output_Tolerance_20m_outputTolerance': 0.04,
-        'Line_Reg_lineReg': 0.04,
-
+        'DC_IQ': 0.055555556,
+        'Mismatch_sigma': 0.055555556,
+        'Line_Reg_lineReg': 0.055555556,
+        'Line_Reg_Trans_deltaVout': 0.055555556,
+        'Load_Reg_loadReg': 0.055555556,
+        'Load_Reg_Trans_startupShoot': 0.055555556,
+        'Load_Reg_Trans_overShoot': 0.055555556,
+        'Load_Reg_Trans_underShoot': 0.055555556,
+        'PSR_psr_100k': 0.055555556,
+        'PSR_psr_spike': 0.055555556,
+        'Stability_phaseMargin': 0.055555556,
+        'Stability_gainBandWidth': 0.111111111,
+        'Stability_dcGain': 0.111111111,
+        'Stability_gainMargin': 0.055555556,
+        'Output_Tolerance_1u_outputTolerance': 0.055555556,
+        'Output_Tolerance_20m_outputTolerance': 0.055555556,
     }
 
     rew = 0
