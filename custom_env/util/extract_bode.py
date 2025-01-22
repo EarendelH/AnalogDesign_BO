@@ -209,9 +209,13 @@ def analyze_loop_gain_only_value(file_path):
 
 def extract_dc_gain(file_path):
 
-    df = analyze_loop_gain_only_value(file_path)
-    # Extract first line of the Magnitude value
-    dc_gain = df.iloc[0]['Magnitude (dB)']
+    try:
+        df = analyze_loop_gain_only_value(file_path)
+        # Extract first line of the Magnitude value
+        dc_gain = df.iloc[0]['Magnitude (dB)']
+    except Exception as e:
+        print(f"Warning: {e}. Setting DC Gain to default (0.0).")
+        dc_gain = 0.0
 
     return dc_gain
 
