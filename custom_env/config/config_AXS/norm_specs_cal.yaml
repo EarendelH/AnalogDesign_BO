@@ -38,6 +38,14 @@ PSR_psr_spike:
   objective: max
   reward_type: satisfactory
   value: 10.0
+Stability_gain:
+  objective: max
+  reward_type: optimal
+  value: 50.0
+Stability_marginGain:
+  objective: max
+  reward_type: satisfactory
+  value: 8.0
 Stability_phaseMargin:
   objective: max
   reward_type: satisfactory
@@ -46,14 +54,6 @@ Stability_gainBandWidth:
   objective: max
   reward_type: optimal
   value: 400000
-Stability_dcGain:
-  objective: max
-  reward_type: optimal
-  value: 50.0
-Stability_gainMargin:
-  objective: max
-  reward_type: satisfactory
-  value: 8.0
 Output_Tolerance_1u_outputTolerance:
   objective: min
   reward_type: optimal

@@ -173,14 +173,14 @@ def findStability_AXS(filename):
     stb_file = filename.replace("stb.margin.stb", "stb.stb")
     try:
         dc_gain = extract_dc_gain(stb_file)
-        dc_gain = max(0.0, dc_gain)  # 确保DC增益不为负
+        dc_gain = max(0.0, dc_gain)
     except Exception as e:
         print(f"Warning: Error extracting DC gain: {str(e)}, setting to 0.0")
         dc_gain = 0.0
 
     return {
-        "dcGain": dc_gain,
-        "gainMargin": gain_margin,
+        "gain": dc_gain,
+        "marginGain": gain_margin,
         "phaseMargin": phase_margin,
         "gainBandWidth": gain_bandwidth
     }
