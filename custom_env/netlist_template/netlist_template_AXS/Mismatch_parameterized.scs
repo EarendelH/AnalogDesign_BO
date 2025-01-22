@@ -1,6 +1,6 @@
-// Point Netlist Generated on: Jan 20 08:56:26 2025
+// Point Netlist Generated on: Jan 22 00:22:00 2025
 // Generated for: spectre
-// Design Netlist Generated on: Jan 20 08:56:25 2025
+// Design Netlist Generated on: Jan 22 00:21:59 2025
 // Design library name: LDO_AXS
 // Design cell name: tb_Mismatch
 // Design view name: schematic
@@ -651,9 +651,6 @@ C0 (net7 AVSS) capacitor c=2.2u
 R0 (net6 net7) resistor r=80m
 R1 (net1 net6) resistor r=ESR
 R2 (net1 AVSS) resistor r=r_load
-I0 (AVSS AVSS DVDD DVSS IBP_1uA EN RES_ADJ\<3\> RES_ADJ\<2\> RES_ADJ\<1\> \
-        RES_ADJ\<0\> net2 net2 LPBGR_0P5V POC_VDDI VDDI net1) \
-        LDO_DVDD_20mA_B20240809
 M1 (net3 net4 VDDI VDDI) p8ud33io w=(5u) l=2u as=2.5p ad=2.5p ps=6u pd=6u \
         nrd=50.1m nrs=50.1m nf=1 multi=(2) global_flag=0
 M11 (net5 net5 net4 VDDI) p8ud33io w=(5u) l=2u as=2.5p ad=2.5p ps=6u pd=6u \
@@ -662,17 +659,19 @@ M2 (net4 net4 VDDI VDDI) p8ud33io w=(5u) l=2u as=2.5p ad=2.5p ps=6u pd=6u \
         nrd=50.1m nrs=50.1m nf=1 multi=(2) global_flag=0
 M0 (IBP_1uA net5 net3 VDDI) p8ud33io w=(5u) l=2u as=2.5p ad=2.5p ps=6u \
         pd=6u nrd=50.1m nrs=50.1m nf=1 multi=(1) global_flag=0
+I0 (AVSS AVSS DVDD DVSS IBP_1uA EN RES_ADJ\<3\> RES_ADJ\<2\> RES_ADJ\<1\> \
+        RES_ADJ\<0\> net2 net2 LPBGR_0P5V POC_VDDI VDDI net1) LDO_Core
 simulatorOptions options psfversion="1.4.0" reltol=1e-3 vabstol=1e-6 \
     iabstol=1e-12 temp=27 tnom=27 scalem=1.0 scale=1.0 gmin=1e-12 rforce=1 \
     maxnotes=5 maxwarns=5 digits=5 cols=80 pivrel=1e-3 \
-    sensfile="../psf/sens.output" checklimitdest=psf 
+    sensfile="../psf/sens.output" checklimitdest=psf
 mc1 montecarlo numruns=100 seed=12345 variations=all sampling=lds \
     donominal=no scalarfile="../monteCarlo/mcdata" \
     paramfile="../monteCarlo/mcparam" saveprocessparams=yes \
     processparamfile="../monteCarlo/processParam" \
     processscalarfile="../monteCarlo/processData" savemismatchparams=no  \
     paramdumpmode=yes savefamilyplots=yes savedatainseparatedir=yes \
-    wfseparation=yes firstrun=1101 {
+    wfseparation=yes {
 dcOp dc write="spectre.dc" maxiters=150 maxsteps=10000 annotate=status
 dcOpInfo info what=oppoint where=rawfile
 modelParameter info what=models where=rawfile
