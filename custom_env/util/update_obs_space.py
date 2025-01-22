@@ -44,6 +44,7 @@ def update_obs_space(ideal_specs_dict, cur_specs_dict, cur_param_input):
     dict_sum = OrderedDict(dict_sum)
 
     logging.debug(f"updated_obs_space: {dict_sum}")
+    logging.debug(f"Debug!!!!!! Stability_marginGain is {dict_sum['cur_specs']['Stability_marginGain']}")
 
     return dict_sum
 
@@ -75,6 +76,9 @@ def flatten_observation(observation):
     )
 
     logging.debug(f"The size of combined_values: {len(combined_values)}")
+    logging.debug(f"combined_values: {combined_values}")
+    # Print #12 item in combined_values
+    logging.debug(f"Debug!!!!!! combined_values[12]: {combined_values[12]}")
 
     return combined_values
 
