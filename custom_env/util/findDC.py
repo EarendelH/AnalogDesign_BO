@@ -231,7 +231,7 @@ def findMismatch_AXS(root_dir: str) -> Dict[str, float]:
         sigma = np.std(results_array)
 
         # Plot distribution
-        plot_distribution(results, sigma)
+        # plot_distribution(results, sigma)
 
         return {'sigma': sigma}
 
