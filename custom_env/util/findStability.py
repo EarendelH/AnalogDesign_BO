@@ -129,42 +129,83 @@ def findPhaseMarginAndGBW_Jianping(encoded_file_path):
         return {"phaseMargin": 0, "gainBandWidth": 0}
 
 
+def extract_stability_parameters(header_content):
+
+    patterns = {
+        'gain_margin': r'"gainMargin"\s+"([-\d.+e]+)\s+dB"',
+        'phase_margin': r'"phaseMargin"\s+"([-\d.+e]+)\s+Deg"',
+        'phase_margin_freq': r'"phaseMarginFrequency"\s+"([-\d.+e]+)\s+Hz"'
+    }
+
+    matches = {
+        key: re.search(pattern, header_content)
+        for key, pattern in patterns.items()
+    }
+
+    if not all(matches.values()):
+        return None
+
+    try:
+        parameters = {
+            key: max(0.0, float(match.group(1)))
+            for key, match in matches.items()
+        }
+        return (
+            parameters['gain_margin'],
+            parameters['phase_margin'],
+            parameters['phase_margin_freq']
+        )
+    except (ValueError, TypeError):
+        return None
+
+
 def findStability_AXS(filename):
-    with open(filename, 'r') as file:
-        file_content = file.read()
 
-    header_type_content = re.search(r'HEADER(.*?)TYPE', file_content, re.DOTALL)
-    if header_type_content:
-        header_type_content = header_type_content.group(1)
-    else:
-        print("Warning from findPhaseMarginAndGBW: HEADER or TYPE section not found in the file.")
-        return {"phaseMargin": 0.0, "gainBandWidth": 0.0}
+    default_return = {
+        "dcGain": 0.0,
+        "gainMargin": 0.0,
+        "phaseMargin": 0.0,
+        "gainBandWidth": 0.0
+    }
 
+    try:
+        with open(filename, 'r') as file:
+            file_content = file.read()
+    except Exception as e:
+        print(f"Error reading file {filename}: {str(e)}")
+        return default_return
+
+    header_match = re.search(r'HEADER(.*?)TYPE', file_content, re.DOTALL)
+    if not header_match:
+        print("Warning: HEADER or TYPE section not found in the file.")
+        return default_return
+
+    header_content = header_match.group(1)
     required_keywords = ["gainMargin", "phaseMargin", "phaseMarginFrequency"]
-    has_keywords = all(keyword in header_type_content for keyword in required_keywords)
+    if not all(keyword in header_content for keyword in required_keywords):
+        print("Warning: Required parameters missing in header.")
+        return default_return
 
-    gain_margin = phase_margin = phase_margin_frequency = 0.0
+    stability_params = extract_stability_parameters(header_content)
+    if stability_params is None:
+        print("Warning: Failed to extract stability parameters.")
+        return default_return
 
-    if has_keywords:
-        gain_margin_match = re.search(r'"gainMargin"\s+"([\d.+e]+)\s+dB"', header_type_content)
-        phase_margin_match = re.search(r'"phaseMargin"\s+"([\d.+e]+)\s+Deg"', header_type_content)
-        phase_margin_frequency_match = re.search(r'"phaseMarginFrequency"\s+"([\d.+e]+)\s+Hz"', header_type_content)
+    gain_margin, phase_margin, gain_bandwidth = stability_params
 
-        if phase_margin_match and phase_margin_frequency_match:
-            gain_margin = float(gain_margin_match.group(1))
-            phase_margin = float(phase_margin_match.group(1))
-            phase_margin_frequency = float(phase_margin_frequency_match.group(1))
-        else:
-            print("Warning: gainMargin or phaseMargin or phaseMarginFrequency not properly formatted, set to 0.0")
-    else:
-        print("Warning: gainMargin or phaseMargin or phaseMarginFrequency not existing, set to 0.0")
+    try:
+        stb_file = filename.replace("stb.margin.stb", "stb.stb")
+        dc_gain = max(0.0, extract_dc_gain(stb_file))
+    except Exception as e:
+        print(f"Error extracting DC gain: {str(e)}")
+        return default_return
 
-    gain_bandwidth = phase_margin_frequency
-    # Change filename to stb.stb under same directory
-    stb_file = filename.replace("stb.margin.stb", "stb.stb")
-    dc_gain = extract_dc_gain(stb_file)
-
-    return {"dcGain": dc_gain, "gainMargin": gain_margin, "phaseMargin": phase_margin, "gainBandWidth": gain_bandwidth}
+    return {
+        "dcGain": dc_gain,
+        "gainMargin": gain_margin,
+        "phaseMargin": phase_margin,
+        "gainBandWidth": gain_bandwidth
+    }
 
 # if __name__ == "__main__":
 #     phase_margin_gbw_file = "/Users/hanwu/Downloads/Netlist_AXS/Stability.raw/stb.margin.stb"
