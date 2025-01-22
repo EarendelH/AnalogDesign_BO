@@ -231,6 +231,8 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
                     specs_tmp_dict[specs_item] = 0.0
                 if self.generalize_specs_config_dict[sim][specs_item]['objective'] == 'min':
                     specs_tmp_dict[specs_item] = 100.0
+                if self.generalize_specs_config_dict[sim][specs_item]['objective'] == 'range':
+                    specs_tmp_dict[specs_item] = 100.0
             self.zero_sim_result[sim] = specs_tmp_dict
         logging.info(f"Initialing!!!Zero sim result: {self.zero_sim_result}")
 
