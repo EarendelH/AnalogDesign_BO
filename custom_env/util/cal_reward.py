@@ -474,6 +474,8 @@ def cal_reward_AXS(ideal_specs_dict, cur_specs_dict, norm_specs_dict):
         'Stability_gainBandWidth': 0.5,
         'Output_Tolerance_1u_outputTolerance': 0.04,
         'Output_Tolerance_20m_outputTolerance': 0.04,
+        'Line_Reg_lineReg': 0.04,
+
     }
 
     rew = 0

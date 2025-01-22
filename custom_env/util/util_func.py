@@ -98,3 +98,34 @@ def delete_work_dir(work_dir):
     except OSError as e:
         print(f"Warning!!!: {e.strerror}. Directory {work_dir} does not exist or cannot be removed.")
         pass
+
+
+def find_psr_turning_point(values, window_size=3, threshold=0.1):
+    """
+    Find the first turning point from decreasing to increasing in PSR trace.
+
+    Args:
+        values: List of PSR values
+        window_size: Size of sliding window to determine trend
+        threshold: Minimum change threshold to filter noise
+
+    Returns:
+        index: Index of turning point, or -1 if not found
+    """
+    if len(values) < window_size * 2:
+        return -1
+
+    # Calculate trends using sliding window
+    for i in range(window_size, len(values) - window_size):
+        # Check if previous window is decreasing
+        prev_decreasing = all(values[j - 1] - values[j] >= threshold
+                              for j in range(i - window_size + 1, i))
+
+        # Check if next window is increasing
+        next_increasing = all(values[j + 1] - values[j] >= threshold
+                              for j in range(i, i + window_size - 1))
+
+        if prev_decreasing and next_increasing:
+            return i
+
+    return -1

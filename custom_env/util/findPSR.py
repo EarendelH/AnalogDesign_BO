@@ -1,7 +1,7 @@
-from util.extract_trace import extractACTrace
-from util.util_func import find_closest_value_index
-# from extract_trace import extractACTrace
-# from util_func import find_closest_value_index
+# from util.extract_trace import extractACTrace
+# from util.util_func import find_closest_value_index, find_psr_turning_point
+from extract_trace import extractACTrace
+from util_func import find_closest_value_index, find_psr_turning_point
 import math
 from scipy import interpolate
 
@@ -36,21 +36,45 @@ def findPowerSupplyRejectionRatio_general(vout_name, file_path, freq_list, freq_
     return psr_values
 
 
-def findPowerSupplyRejectionRatio_interpolated(vout_name, file_path, freq_list, freq_labels):
+def findPowerSupplyRejectionRatio_interpolated(vout_name, file_path, freq_list, freq_labels, find_spike=False):
+    """
+    Calculate Power Supply Rejection Ratio with interpolation and optional spike detection.
+
+    Args:
+        vout_name: Name of voltage output signal
+        file_path: Path to simulation result file
+        freq_list: List of frequencies to analyze
+        freq_labels: Labels for each frequency
+        find_spike: Whether to find PSR spike point
+
+    Returns:
+        Dict containing PSR values at specified frequencies and spike point if requested
+    """
     freq_name = 'freq'
     psr_values = {}
 
     try:
         trace_dict = extractACTrace(file_path)
-
         freq_trace = trace_dict[freq_name]
         vout_trace = trace_dict[vout_name]
 
-        # Create interpolation function
+        # Calculate PSR trace and find spike if requested
+        if find_spike:
+            psr_trace = [-20 * math.log10(abs(v)) for v in vout_trace]
+            spike_idx = find_psr_turning_point(psr_trace)
+
+            if spike_idx != -1:
+                spike_psr = psr_trace[spike_idx]
+                psr_values["psr_spike"] = spike_psr
+            else:
+                psr_values["psr_spike"] = 0.0
+                print("Warning: PSR spike not found")
+
+        # Create interpolation function for regular PSR values
         f = interpolate.interp1d(freq_trace, vout_trace, kind='linear', fill_value='extrapolate')
 
+        # Calculate PSR at specified frequencies
         for freq, label in zip(freq_list, freq_labels):
-            # Use interpolation to get the vout value at the exact frequency
             vout_interpolated = f(freq)
             psr = -20 * math.log10(abs(vout_interpolated))
 
@@ -64,6 +88,8 @@ def findPowerSupplyRejectionRatio_interpolated(vout_name, file_path, freq_list, 
         print("Warning: Extract PSR error", e)
         for label in freq_labels:
             psr_values[f"psr_{label}"] = 0.0
+        if find_spike:
+            psr_values["psr_spike"] = 0.0
 
     return psr_values
 
@@ -162,7 +188,7 @@ def findPowerSupplyRejectionRatio_AXS(file_path):
     freq_list = [100000]
     freq_labels = ['100k']
 
-    result = findPowerSupplyRejectionRatio_interpolated(vout_name, file_path, freq_list, freq_labels)
+    result = findPowerSupplyRejectionRatio_interpolated(vout_name, file_path, freq_list, freq_labels, find_spike=True)
 
     return result
 
