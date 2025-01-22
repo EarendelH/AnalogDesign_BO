@@ -16,9 +16,9 @@ def update_obs_space(ideal_specs_dict, cur_specs_dict, cur_param_input):
     :return: gym.spaces.Dict, the observation space for the environment
     """
 
-    # print("Debug, in update_obs_space, ideal_specs = ", ideal_specs)
-    # print("Debug, in update_obs_space, cur_specs = ", cur_specs)
-    # print("Debug, in update_obs_space, cur_param = ", cur_param)
+    logging.debug(f"ideal_specs_dict: {ideal_specs_dict}")
+    logging.debug(f"cur_specs_dict: {cur_specs_dict}")
+    logging.debug(f"cur_param_input: {cur_param_input}")
 
     # Convert cur_param to Dict, and convert unit to float
     cur_param_dict = {}
@@ -43,6 +43,8 @@ def update_obs_space(ideal_specs_dict, cur_specs_dict, cur_param_input):
     dict_sum = {"cur_specs": cur_specs_flatten, "ideal_specs": ideal_specs_flatten, "cur_param": cur_param_dict}
     dict_sum = OrderedDict(dict_sum)
 
+    logging.debug(f"updated_obs_space: {dict_sum}")
+
     return dict_sum
 
 
@@ -56,6 +58,10 @@ def flatten_observation(observation):
     # print("Sorted cur_specs:", sorted_cur_specs)
     # print("Sorted ideal_specs:", sorted_ideal_specs)
     # print("Sorted cur_param:", sorted_cur_param)
+
+    logging.debug(f"sorted_cur_specs: {sorted_cur_specs}")
+    logging.debug(f"sorted_ideal_specs: {sorted_ideal_specs}")
+    logging.debug(f"sorted_cur_param: {sorted_cur_param}")
 
     logging.debug(f"The size of sorted_cur_specs: {len(sorted_cur_specs)}")
     logging.debug(f"The size of sorted_ideal_specs: {len(sorted_ideal_specs)}")
@@ -265,9 +271,10 @@ def update_obs_space_w_region(ideal_specs_dict, cur_specs_dict, cur_param_input,
     :return: gym.spaces.Dict, the observation space for the environment
     """
 
-    # print("Debug, in update_obs_space, ideal_specs = ", ideal_specs)
-    # print("Debug, in update_obs_space, cur_specs = ", cur_specs)
-    # print("Debug, in update_obs_space, cur_param = ", cur_param)
+    logging.debug(f"ideal_specs_dict: {ideal_specs_dict}")
+    logging.debug(f"cur_specs_dict: {cur_specs_dict}")
+    logging.debug(f"cur_param_input: {cur_param_input}")
+    logging.debug(f"region_dict: {region_dict}")
 
     # Convert cur_param to Dict, and convert unit to float
     cur_param_dict = {}
@@ -293,12 +300,15 @@ def update_obs_space_w_region(ideal_specs_dict, cur_specs_dict, cur_param_input,
     dict_sum = {"cur_specs": cur_specs_flatten, "ideal_specs": ideal_specs_flatten, "cur_param": cur_param_dict,
                 "region_dict": region_dict}
     dict_sum = OrderedDict(dict_sum)
-    # print(f"Debug in update_obs_space, \n updated_obs_space: {dict_sum}")
+    logging.debug(f"updated_obs_space: {dict_sum}")
 
     return dict_sum
 
 
 def flatten_observation_w_region(observation):
+
+
+
     # Sort and prepare the data for cur_specs, ideal_specs, and cur_param
     sorted_cur_specs = OrderedDict(sorted(observation['cur_specs'].items()))
     sorted_ideal_specs = OrderedDict(sorted(observation['ideal_specs'].items()))
@@ -309,11 +319,6 @@ def flatten_observation_w_region(observation):
     logging.debug(f"The size of sorted_ideal_specs: {len(sorted_ideal_specs)}")
     logging.debug(f"The size of sorted_cur_param: {len(sorted_cur_param)}")
     logging.debug(f"The size of sorted_transistor_region: {len(sorted_transistor_region)}")
-
-    # Print the sorted dicts for debugging
-    # print("Sorted cur_specs:", sorted_cur_specs)
-    # print("Sorted ideal_specs:", sorted_ideal_specs)
-    # print("Sorted cur_param:", sorted_cur_param)
 
     # Combine all values from sorted dicts into a single tuple
     combined_values = tuple(
