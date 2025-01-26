@@ -4,7 +4,7 @@ gpu_usage: 0
 generalize: true
 algorithm: PPO
 max_step: 1
-num_agents: 1
+num_agents: 2
 netlist_folder_name: netlist_template_DRMOS
 specs_folder_name: sampled_specs_DRMOS
 config_folder_name: config_DRMOS
@@ -16,7 +16,7 @@ dc_check: false
 region_extract: false
 dynamic_queue: false
 restore_checkpoint: true
-checkpoint_path: /home/wuhan/ray_results/AnalogDesignEnv_v0/PPO/PPO_AnalogDesignEnv_v0_561bb_00000_0_2025-01-14_11-40-45/checkpoint_000000
+checkpoint_path: /home/wuhan/ray_results/AnalogDesignEnv_v0/restore_h1Mw7P/checkpoints/checkpoint_1
 train_iterations: 1000
 reward_func: cal_reward_DRMOS
 log_level: INFO
