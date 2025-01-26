@@ -121,7 +121,7 @@ def analyze_segments(segments: Dict[int, Dict[str, np.ndarray]]) -> Tuple[float,
 def drmos_trans_analysis(signal_data, debug=False):
     """
     Analyze DRMOS transient properties with error handling.
-    Returns default values (0.0) if any calculation results in NaN or errors occur.
+    Returns the most deviated dead time value and average rise time.
 
     Args:
         signal_data: Dictionary containing segmented signal data
@@ -206,17 +206,27 @@ def drmos_trans_analysis(signal_data, debug=False):
             logging.warning("No valid measurements found in signal data")
             return default_values
 
-        # Calculate mean values and check for NaN
+        # Calculate mean values
         dead_time_mean = np.mean(all_dead_times)
         rise_time_mean = np.mean(all_rise_times)
 
+        # Find the most deviated dead time
+        max_deviation = 0
+        most_deviated_dead_time = all_dead_times[0]  # Default to first value
+
+        for dead_time in all_dead_times:
+            deviation = abs(dead_time - dead_time_mean)
+            if deviation > max_deviation:
+                max_deviation = deviation
+                most_deviated_dead_time = dead_time
+
         # Check for NaN values
-        if np.isnan(dead_time_mean) or np.isnan(rise_time_mean):
+        if np.isnan(most_deviated_dead_time) or np.isnan(rise_time_mean):
             logging.warning("NaN values detected in calculations")
             return default_values
 
         trans_property = {
-            'deadTime': dead_time_mean,
+            'deadTime': most_deviated_dead_time,  # Return the most deviated dead time
             'riseTime': rise_time_mean,
         }
 
@@ -225,7 +235,9 @@ def drmos_trans_analysis(signal_data, debug=False):
             overall_stats = {
                 'deadTime': {
                     'mean': dead_time_mean,
-                    'std': np.std(all_dead_times)
+                    'most_deviated': most_deviated_dead_time,
+                    'deviation': max_deviation,
+                    'all_values': all_dead_times
                 },
                 'riseTime': {
                     'mean': rise_time_mean,
