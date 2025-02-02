@@ -209,12 +209,6 @@ def flatten_obs_space_w_region(obs_space: gymnasium.spaces.Dict):
         logging.debug(f"The size of sorted_cur_param is {len(sorted_cur_param)}")
         logging.debug(f"The size of sorted_transistor_region is {len(sorted_transistor_region)}")
 
-        # Print the sorted dicts for debugging
-        # print(f"Agent: {agent}")
-        # print("Sorted cur_specs:", sorted_cur_specs)
-        # print("Sorted ideal_specs:", sorted_ideal_specs)
-        # print("Sorted cur_param:", sorted_cur_param)
-
         # Combine all boxes from sorted dicts
         combined_boxes = []
         combined_boxes.extend(sorted_cur_specs.values())

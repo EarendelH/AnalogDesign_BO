@@ -1,5 +1,5 @@
 max_process_limit: false
-cpu_usage: 36
+cpu_usage: 60
 gpu_usage: 0
 generalize: true
 algorithm: PPO
@@ -15,8 +15,8 @@ corner_sim: false
 dc_check: false
 region_extract: false
 dynamic_queue: false
-restore_checkpoint: false
-checkpoint_path:
+restore_checkpoint: true
+checkpoint_path: /home/wuhan/ray_results/AnalogDesignEnv_v0/PPO/PPO_AnalogDesignEnv_v0_966fb_00000_0_2025-01-23_20-50-13/checkpoint_000010
 train_iterations: 1000
 reward_func: cal_reward_AXS
 log_level: INFO
