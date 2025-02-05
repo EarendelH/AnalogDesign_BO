@@ -6,7 +6,7 @@ if __name__ == "__main__":
                                     'max_step': 1,
                                     'netlist_folder_name': 'netlist_template_AXS',
                                     'specs_folder_name': 'sampled_specs_AXS',
-                                    'config_folder_name': 'config_AXS',
+                                    'config_folder_name': 'config_AXS_Simple',
                                     'run_folder_name': 'run_test',
                                     'sim_output': False,
                                     'init_method': 'random',
