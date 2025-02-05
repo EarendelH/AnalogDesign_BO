@@ -8,10 +8,10 @@
     - IQ
 - simulation_name: Mismatch
   objective: min
-  netlist_name: Mismatch
+  netlist_name: DC
   simulation_file: mc1_separate
   script_name: findDC
-  parse_func: findMismatch_AXS
+  parse_func: findMismatch_AXS_Simple
   simulation_item:
     - sigma
 - simulation_name: Line_Reg

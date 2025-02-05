@@ -280,3 +280,7 @@ def plot_distribution(results: List[float], sigma: float):
 #     root_directory = "/Users/hanwu/Downloads/Netlist_AXS/Mismatch.raw/mc1_separate"  # Replace with actual directory path
 #     result_dict = findMismatch_AXS(root_directory)
 #     print(result_dict)
+
+def findMismatch_AXS_Simple(root_dir: str) -> Dict[str, float]:
+
+        return {'sigma': 0.01}
