@@ -1,0 +1,86 @@
+- simulation_name: DC
+  objective: min
+  netlist_name: DC
+  simulation_file: dcOp.dc
+  script_name: findDC
+  parse_func: findIQ_AXS
+  simulation_item:
+    - IQ
+- simulation_name: Mismatch
+  objective: min
+  netlist_name: Mismatch
+  simulation_file: mc1_separate
+  script_name: findDC
+  parse_func: findMismatch_AXS
+  simulation_item:
+    - sigma
+- simulation_name: Line_Reg
+  objective: min
+  netlist_name: Line_Reg
+  simulation_file: dc.dc
+  script_name: findLineReg
+  parse_func: findLineReg_AXS
+  simulation_item:
+    - lineReg
+- simulation_name: Line_Reg_Trans
+  objective: min
+  netlist_name: Line_Reg_Trans
+  simulation_file: tran.tran.tran
+  script_name: findTransLineReg
+  parse_func: findTransLineReg_AXS
+  simulation_item:
+    - deltaVout
+- simulation_name: Load_Reg
+  objective: min
+  netlist_name: Load_Reg
+  simulation_file: dc.dc
+  script_name: findLoadReg
+  parse_func: findLoadReg_AXS
+  simulation_item:
+    - loadReg
+- simulation_name: Load_Reg_Trans
+  objective: min
+  netlist_name: Load_Reg_Trans
+  simulation_file: tran.tran.tran
+  script_name: findTrans
+  parse_func: findShoot_AXS
+  simulation_item:
+    - startupShoot
+    - overShoot
+    - underShoot
+- simulation_name: PSR
+  objective: max
+  netlist_name: PSR
+  simulation_file: ac.ac
+  script_name: findPSR
+  parse_func: findPowerSupplyRejectionRatio_AXS
+  simulation_item:
+    - psr_100k
+    - psr_spike
+- simulation_name: Stability
+  objective: max
+  netlist_name: Stability
+  simulation_file: stb.margin.stb
+  script_name: findStability
+  parse_func: findStability_AXS
+  simulation_item:
+    - gain
+    - marginGain
+    - phaseMargin
+    - gainBandWidth
+- simulation_name: Output_Tolerance_1u
+  objective: min
+  netlist_name: Output_Tolerance_1u
+  simulation_file: dcOp.dc
+  script_name: findOutputTolerance
+  parse_func: findOutputTolerance_AXS
+  simulation_item:
+    - outputTolerance
+- simulation_name: Output_Tolerance_20m
+  objective: min
+  netlist_name: Output_Tolerance_20m
+  simulation_file: dcOp.dc
+  script_name: findOutputTolerance
+  parse_func: findOutputTolerance_AXS
+  simulation_item:
+    - outputTolerance
