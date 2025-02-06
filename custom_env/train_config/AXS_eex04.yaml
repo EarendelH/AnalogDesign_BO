@@ -1,5 +1,5 @@
 max_process_limit: false
-cpu_usage: 100
+cpu_usage: 250
 gpu_usage: 0
 generalize: true
 algorithm: PPO
@@ -7,7 +7,7 @@ max_step: 1
 num_agents: 7
 netlist_folder_name: netlist_template_AXS
 specs_folder_name: sampled_specs_AXS
-config_folder_name: config_AXS
+config_folder_name: config_AXS_Simple
 run_folder_name: run_test
 sim_output: false
 init_method: random
@@ -15,8 +15,8 @@ corner_sim: false
 dc_check: false
 region_extract: false
 dynamic_queue: false
-restore_checkpoint: true
-checkpoint_path: /home/wuhan/ray_results/AnalogDesignEnv_v0/PPO/PPO_AnalogDesignEnv_v0_5236b_00000_0_2025-01-23_00-02-46/checkpoint_000000
+restore_checkpoint: false
+checkpoint_path:
 train_iterations: 1000
 reward_func: cal_reward_AXS
 log_level: INFO
