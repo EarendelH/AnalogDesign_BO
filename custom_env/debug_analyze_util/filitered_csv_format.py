@@ -2,6 +2,8 @@ import pandas as pd
 import ast
 import math
 from tqdm import tqdm
+from collections import Counter
+
 
 def flatten_nested_dict(d):
     flattened_dict = {}
@@ -9,11 +11,32 @@ def flatten_nested_dict(d):
         flattened_dict.update(nested_dict)
     return flattened_dict
 
-def is_valid_entry(flattened_dict):
+
+def get_invalid_reasons(flattened_dict):
+    invalid_keys = []
     for key, value in flattened_dict.items():
         if value == 100.0 or value == 0.0:
-            return False
-    return True
+            invalid_keys.append(key)
+    return invalid_keys
+
+def is_valid_entry(flattened_dict):
+    return len(get_invalid_reasons(flattened_dict)) == 0
+
+def generate_invalid_stats(data):
+    invalid_combinations = []
+
+    for specs_dict in tqdm(data['Valid_Specs'], desc="Analyzing invalid entries"):
+        invalid_keys = get_invalid_reasons(specs_dict)
+        if invalid_keys:
+            invalid_combinations.append(', '.join(sorted(invalid_keys)))
+
+    stats_counter = Counter(invalid_combinations)
+
+    stats_df = pd.DataFrame(list(stats_counter.items()),
+                            columns=['Invalid_Parameters', 'Frequency'])
+    stats_df = stats_df.sort_values('Frequency', ascending=False)
+
+    return stats_df
 
 def split_dataframe_to_excel(df, max_rows=1000000, output_prefix='output'):
     num_files = math.ceil(len(df) / max_rows)
@@ -28,44 +51,51 @@ def split_dataframe_to_excel(df, max_rows=1000000, output_prefix='output'):
         df_subset.to_excel(output_file, index=False)
         print(f"Saved {output_file}")
 
+
 # Main process
 file_path = input('Enter the file path: ')
-data = pd.read_csv(file_path)
+need_filter = input('Do you need to filter invalid entries? (y/n): ').lower() == 'y'
 
-# Display the original data length
+data = pd.read_csv(file_path)
 original_length = len(data)
 print(f'Original data length: {original_length}')
 
-# Flatten the nested dictionary and filter invalid entries for 'Specs'
 print("Processing 'Specs' column...")
 tqdm.pandas(desc="Flattening Specs")
 data['Valid_Specs'] = data['Specs'].progress_apply(lambda x: flatten_nested_dict(ast.literal_eval(x)))
 
-print("Filtering invalid entries...")
-data = data[data['Valid_Specs'].apply(is_valid_entry)]
+print("Generating invalid entries statistics...")
+stats_df = generate_invalid_stats(data)
+stats_file = file_path.replace('.csv', '_invalid_stats.xlsx')
+stats_df.to_excel(stats_file, index=False)
+print(f"Invalid entry statistics saved to: {stats_file}")
 
-# Convert the valid flattened dictionaries into DataFrame columns for 'Specs'
-print("Expanding Specs into columns...")
-specs_df = data['Valid_Specs'].apply(pd.Series)
+if need_filter:
+    print("Filtering invalid entries...")
+    data = data[data['Valid_Specs'].apply(is_valid_entry)]
+    output_suffix = '_format'
+else:
+    print("Keeping all entries...")
+    output_suffix = '_unfiltered'
 
-# Expand 'Parameters' column directly into DataFrame columns with progress bar
 print("Processing 'Parameters' column...")
 tqdm.pandas(desc="Expanding Parameters")
 params_df = data['Parameters'].progress_apply(ast.literal_eval).apply(pd.Series)
 
-# Combine the new columns with the original DataFrame (excluding the original 'Specs' and 'Valid_Specs' columns)
+print("Expanding Specs into columns...")
+specs_df = data['Valid_Specs'].apply(pd.Series)
+
 print("Combining data...")
-expanded_data = pd.concat([data.drop(columns=['Specs', 'Valid_Specs', 'Parameters']), specs_df, params_df], axis=1)
+expanded_data = pd.concat([data.drop(columns=['Specs', 'Valid_Specs', 'Parameters']),
+                           specs_df, params_df], axis=1)
 
-# Generate new file path prefix
-new_file_prefix = file_path.replace('.csv', '_format')
+new_file_prefix = file_path.replace('.csv', output_suffix)
 
-# Split and save to multiple Excel files
 split_dataframe_to_excel(expanded_data, max_rows=1000000, output_prefix=new_file_prefix)
 
 valid_length = len(expanded_data)
-print(f'Total valid entries: {valid_length}')
+print(f'Total entries in output: {valid_length}')
 
-# Optionally, to show how many entries were dropped
-dropped_entries = original_length - valid_length
-print(f'Entries dropped: {dropped_entries}')
+if need_filter:
+    dropped_entries = original_length - valid_length
+    print(f'Entries dropped: {dropped_entries}')
