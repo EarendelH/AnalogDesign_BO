@@ -217,7 +217,7 @@ def main():
                     grad_clip=None,
                     entropy_coeff=0.01,
                     vf_loss_coeff=0.25,
-                    mini_batch_size=64,
+                    minibatch_size=64,
                     num_sgd_iter=24,
                     model={
                         "fcnet_hiddens": [256, 256, 256, 256, 256],
@@ -308,7 +308,7 @@ def main():
                         grad_clip=None,
                         entropy_coeff=0.01,
                         vf_loss_coeff=0.25,
-                        mini_batch_size=64,
+                        minibatch_size=64,
                         num_sgd_iter=24,
                         model={
                             "fcnet_hiddens": [256, 256, 256, 256, 256],
