@@ -23,7 +23,7 @@ from ray.rllib.algorithms.callbacks import DefaultCallbacks
 from ray.rllib.utils.typing import PolicyID
 from typing import Dict
 from ray.tune.logger import UnifiedLogger
-from ray.tune.result import DEFAULT_RESULTS_DIR
+DEFAULT_RESULTS_DIR = os.path.expanduser("~/ray_results")
 
 from rllib_env_continous_psfascii import RllibAnalogDesignAutoEnv
 
