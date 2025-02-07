@@ -343,7 +343,7 @@ def main():
                 stop={"training_iteration": train_iterations},
                 checkpoint_freq=10,
                 checkpoint_at_end=True,
-                local_dir=f"{user_home_dir}/ray_results/{env_name}",
+                storage_path=f"{user_home_dir}/ray_results/{env_name}",
                 config=config.to_dict() if isinstance(config, PPOConfig) else config,
             )
     else:
