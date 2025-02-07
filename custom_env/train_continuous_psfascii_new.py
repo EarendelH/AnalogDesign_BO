@@ -198,12 +198,24 @@ def main():
             policies = {f"policy_{i + 1}" for i in range(int(settings["num_agents"]))}
             policies_to_train = list(policies)
             def policy_mapping_fn(agent_id: str, episode, worker, **kwargs):
-                return f"policy_{int(agent_id[-1])}"
+                """Map agent ids to policy names
+
+                Args:
+                    agent_id: The agent identifier like 'Agent_1'
+                    episode: The current episode object
+                    worker: The current worker instance
+                    **kwargs: Additional arguments
+
+                Returns:
+                    str: The policy id
+                """
+                policy_id = int(agent_id[-1])
+                return f"policy_{policy_id}"
 
             config = (
                 PPOConfig()
                 .environment(env="AnalogDesignEnv_v0", clip_actions=True)
-                .env_runners(num_rollout_workers=int(settings["cpu_usage"]))
+                .env_runners(num_env_runners=int(settings["cpu_usage"]))
                 .training(
                     train_batch_size=512,
                     lr=2e-4,
@@ -286,8 +298,21 @@ def main():
 
             policies = {f"policy_{i + 1}" for i in range(settings["num_agents"])}
             policies_to_train = list(policies)
+
             def policy_mapping_fn(agent_id: str, episode, worker, **kwargs):
-                return f"policy_{int(agent_id[-1])}"
+                """Map agent ids to policy names
+
+                Args:
+                    agent_id: The agent identifier like 'Agent_1'
+                    episode: The current episode object
+                    worker: The current worker instance
+                    **kwargs: Additional arguments
+
+                Returns:
+                    str: The policy id
+                """
+                policy_id = int(agent_id[-1])
+                return f"policy_{policy_id}"
 
             logging.info("Starting new training session without checkpoint")
             # If not restoring, use the original configuration
