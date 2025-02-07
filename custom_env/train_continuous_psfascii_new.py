@@ -13,10 +13,6 @@ import random
 import ray
 from ray import tune
 from ray.rllib.algorithms.ppo import PPOConfig
-from ray.rllib.algorithms.appo import APPOConfig
-from ray.rllib.algorithms.impala import ImpalaConfig
-from ray.rllib.algorithms.sac import SACConfig
-from ray.rllib.algorithms.algorithm import Algorithm
 from ray.tune.registry import register_env
 from ray.rllib.policy import Policy
 from ray.rllib.algorithms.callbacks import DefaultCallbacks
@@ -201,7 +197,8 @@ def main():
         if settings["restore_checkpoint"]:
             policies = {f"policy_{i + 1}" for i in range(int(settings["num_agents"]))}
             policies_to_train = list(policies)
-            policy_mapping_fn = lambda aid, episode, worker, **kwargs: f"policy_{int(aid[-1])}"
+            def policy_mapping_fn(agent_id: str, episode, worker, **kwargs):
+                return f"policy_{int(agent_id[-1])}"
 
             config = (
                 PPOConfig()
@@ -289,7 +286,8 @@ def main():
 
             policies = {f"policy_{i + 1}" for i in range(settings["num_agents"])}
             policies_to_train = list(policies)
-            policy_mapping_fn = lambda aid, episode, worker, **kwargs: f"policy_{int(aid[-1])}"
+            def policy_mapping_fn(agent_id: str, episode, worker, **kwargs):
+                return f"policy_{int(agent_id[-1])}"
 
             logging.info("Starting new training session without checkpoint")
             # If not restoring, use the original configuration
