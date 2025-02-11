@@ -3,6 +3,7 @@ import os
 import random
 import shutil
 import time
+import logging
 import functools
 
 
@@ -56,28 +57,57 @@ def create_work_dir(base_path):
     return work_dir
 
 
-def retry_decorator(retry_count=2, delay_seconds=1, default_value=None):
+def retry_decorator(retry_count=2, delay_seconds=1, default_value=None, timeout_minutes=5):
     """
-    A decorator for retrying a function up to `retry_count` times with `delay_seconds` delay between retries if it raises an exception.
-    If all retries fail, returns `default_value` and prints a warning message.
+    A decorator for retrying a function with timeout mechanism.
+    Args:
+        retry_count: Maximum number of retry attempts
+        delay_seconds: Delay between retries in seconds
+        default_value: Default value to return if all retries fail
+        timeout_minutes: Maximum execution time in minutes before returning default value
+    Returns:
+        Wrapped function that implements retry logic with timeout
     """
+
     def decorator_retry(func):
         @functools.wraps(func)
         def wrapper_retry(*args, **kwargs):
             nonlocal retry_count, delay_seconds
             attempts = 0
+            start_time = time.time()
+            timeout_seconds = timeout_minutes * 60
+
             while attempts <= retry_count:
                 try:
                     return func(*args, **kwargs)
                 except Exception as e:
-                    print(f"Attempt {attempts + 1} failed for {func.__name__} due to {e},"
-                          f" retrying after {delay_seconds} seconds...")
-                    time.sleep(delay_seconds)
-                    if attempts == retry_count:
-                        print(f"Warning: Function {func.__name__} failed after {retry_count + 1} attempts.")
+                    current_time = time.time()
+                    elapsed_time = current_time - start_time
+
+                    # Check for timeout
+                    if elapsed_time > timeout_seconds:
+                        logging.debug(f"Function {func.__name__} exceeded timeout of {timeout_minutes} minutes.")
+                        logging.debug(f"Elapsed time: {elapsed_time / 60:.2f} minutes")
+                        logging.debug(f"Returning default value: {default_value}")
                         return default_value
+
+                    logging.debug(f"Attempt {attempts + 1} failed for {func.__name__}")
+                    logging.debug(f"Error message: {str(e)}")
+                    logging.debug(f"Elapsed time: {elapsed_time / 60:.2f} minutes")
+
+                    if attempts == retry_count:
+                        logging.debug(f"All {retry_count + 1} attempts failed for {func.__name__}")
+                        logging.debug(f"Total execution time: {elapsed_time / 60:.2f} minutes")
+                        logging.debug(f"Returning default value: {default_value}")
+                        return default_value
+
+                    print(f"Attempt {attempts + 1} failed for {func.__name__} due to {e}, "
+                          f"retrying after {delay_seconds} seconds...")
+                    time.sleep(delay_seconds)
                     attempts += 1
+
         return wrapper_retry
+
     return decorator_retry
 
 # Example of usage:
