@@ -1,5 +1,5 @@
 max_process_limit: false
-cpu_usage: 54
+cpu_usage: 60
 gpu_usage: 0
 generalize: true
 algorithm: PPO
@@ -10,13 +10,13 @@ specs_folder_name: sampled_specs_AXS
 config_folder_name: config_AXS_Simple
 run_folder_name: run_test
 sim_output: false
-init_method: random
+init_method: file
 corner_sim: false
 dc_check: false
 region_extract: false
 dynamic_queue: false
 restore_checkpoint: true
-checkpoint_path: /data/share/train_data/AXS/checkpoint/PPO_AnalogDesignEnv_v0_fe418_00000_0_2025-02-07_20-35-20/checkpoint_000001
+checkpoint_path: /home/wuhan/ray_results/AnalogDesignEnv_v0/restore_ZaVAOD/checkpoints/checkpoint_6
 train_iterations: 2000
 reward_func: cal_reward_AXS
 log_level: INFO
