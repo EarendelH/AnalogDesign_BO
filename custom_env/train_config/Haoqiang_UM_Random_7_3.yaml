@@ -1,16 +1,16 @@
 max_process_limit: false
-cpu_usage: 30
+cpu_usage: 25
 gpu_usage: 1
 generalize: true
 algorithm: PPO
-max_step: 10
-num_agents: 5
+max_step: 1
+num_agents: 7
 netlist_folder_name: netlist_template_Haoqiang_UM
 specs_folder_name: sampled_specs_Haoqiang
-config_folder_name: config_Haoqiang
+config_folder_name: config_Haoqiang_Random_7_3
 run_folder_name: run_test
 sim_output: false
-init_method: file
+init_method: random
 corner_sim: false
 dc_check: false
 region_extract: false
@@ -20,3 +20,4 @@ checkpoint_path:
 train_iterations: 400
 reward_func: cal_reward_Haoqiang
 log_level: INFO
+continue_steps_enable: false
