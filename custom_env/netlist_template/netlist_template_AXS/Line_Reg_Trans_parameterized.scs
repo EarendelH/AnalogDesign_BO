@@ -664,7 +664,7 @@ V4 (VDDI net4) vsource type=pulse val0=-150m val1=150.00m period=50u \
 I0 (AVSS AVSS DVDD DVSS IBP_1uA EN RES_ADJ\<3\> RES_ADJ\<2\> RES_ADJ\<1\> \
         RES_ADJ\<0\> net8 net8 LPBGR_0P5V POC_VDDI VDDI net1) LDO_Core
 simulatorOptions options psfversion="1.4.0" reltol=1e-3 vabstol=1e-6 \
-    iabstol=1e-12 temp=27 tnom=27 scalem=1.0 scale=1.0 gmin=1e-12 rforce=1 \
+    iabstol=1e-12 temp=27.0 tnom=27 scalem=1.0 scale=1.0 gmin=1e-12 rforce=1 \
     maxnotes=5 maxwarns=5 digits=5 cols=80 pivrel=1e-3 \
     sensfile="../psf/sens.output" checklimitdest=psf 
 tran tran stop=1m errpreset=conservative write="spectre.ic" \

@@ -681,7 +681,7 @@ I4 (AVSS AVSS DVDD DVSS IBP1_1uA EN RES_ADJ\<3\> RES_ADJ\<2\> RES_ADJ\<1\> \
 I0 (AVSS AVSS DVDD DVSS IBP_1uA EN RES_ADJ\<3\> RES_ADJ\<2\> RES_ADJ\<1\> \
         RES_ADJ\<0\> net5 net13 LPBGR_0P5V POC_VDDI VDDI net3) LDO_Core
 simulatorOptions options psfversion="1.4.0" reltol=1e-3 vabstol=1e-6 \
-    iabstol=1e-12 temp=125.0 tnom=27 scalem=1.0 scale=1.0 gmin=1e-12 \
+    iabstol=1e-12 temp=27.0 tnom=27 scalem=1.0 scale=1.0 gmin=1e-12 \
     rforce=1 maxnotes=5 maxwarns=5 digits=5 cols=80 pivrel=1e-3 \
     sensfile="../psf/sens.output" checklimitdest=psf 
 dcOp dc write="spectre.dc" maxiters=150 maxsteps=10000 annotate=status
