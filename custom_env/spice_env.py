@@ -93,6 +93,8 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
             setattr(self, attr, os.path.join(config_folder, filename))
 
         self.ideal_specs_path = os.path.join(self.current_path, 'ideal_specs', self.specs_folder_name)
+        self.unassigned_netlist_dir = self.netlist_folder_name
+        self.unassigned_netlist_dir = os.path.join(self.current_path, 'netlist_template', self.unassigned_netlist_dir)
 
     def _load_all_configs(self):
         """加载所有YAML配置"""
@@ -170,6 +172,14 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         # 初始化环境空间和参数
         self._initialize_spaces()
         self._initialize_state_variables()
+
+        # Import Reward Func
+        try:
+            reward_module = importlib.import_module('util.cal_reward')
+            self.cal_reward = getattr(reward_module, self.reward_func)
+        except (ImportError, AttributeError) as e:
+            logging.error(f"Error importing reward function '{self.reward_func}': {e}")
+            raise
 
         super().__init__()
 
