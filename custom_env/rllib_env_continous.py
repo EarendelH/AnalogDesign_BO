@@ -62,7 +62,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         self.specs_folder_name = self.specs_folder_name
 
         # Pass flag
-        self.sim_output_enable = self.sim_output
+        self.sim_output = self.sim_output
         self.corner_sim = self.corner_sim
         self.region_extract = self.region_extract
         self.dc_check = self.dc_check
@@ -252,7 +252,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
                 logging.info(f"Initialing!!! DC Check working directory: {working_dir_reset_dc}")
                 update_netlist(working_dir_reset_dc, self.dc_sim_config_dict, init_param, self.unassigned_netlist_dir)
                 reset_operation_region_dict = copy.deepcopy(
-                    run_region_simulation(working_dir_reset_dc, self.dc_sim_config_dict, self.sim_output_enable))
+                    run_region_simulation(working_dir_reset_dc, self.dc_sim_config_dict, self.sim_output))
                 logging.debug(f"Initialing!!!Operation region: {reset_operation_region_dict}")
                 # delete_work_dir(working_dir_reset_dc)
             except Exception as e:
@@ -268,7 +268,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         try:
             sim_result = copy.deepcopy(
                 run_dynamic_simulation(working_dir_reset, self.sim_config_dict, self.zero_sim_result,
-                                       self.sim_output_enable, self.dynamic_queue))
+                                       self.sim_output, self.dynamic_queue))
         # For avoid simulation error in init, use zero result instead.
         except Exception as e:
             logging.warning(f"Warning!!!: {e}. Simulation failed, use zero result instead.")
@@ -368,7 +368,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
                 update_netlist(working_dir_step_dc, self.dc_sim_config_dict, updated_param, self.unassigned_netlist_dir)
                 operation_region_dict = copy.deepcopy(run_region_simulation(working_dir_step_dc,
                                                                             self.dc_sim_config_dict,
-                                                                            self.sim_output_enable))
+                                                                            self.sim_output))
                 operation_region_list = list(operation_region_dict.values())
                 logging.info(f"Step!!!Operation region: {operation_region_list} with step number: {self.step_num}")
                 # 0 cut-off, 1 triode, 2 saturation, 3 sub-th, 4 breakdown
@@ -414,7 +414,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
             observations_tt, sim_result_tt, rew_single_tt = (
                 step_simulation_process(working_dir_step_tt, self.region_extract, valid_param, self.step_num,
                                         self.dc_check, self.sim_config_dict, updated_param,
-                                        self.unassigned_netlist_dir, self.zero_sim_result, self.sim_output_enable,
+                                        self.unassigned_netlist_dir, self.zero_sim_result, self.sim_output,
                                         self.dynamic_queue, self.norm_specs, self.norm_ideal_specs, self.agents,
                                         self.ideal_specs, self.cal_reward, None, operation_region_dict))
 
@@ -431,7 +431,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
                         step_simulation_process(working_dir_step_corner, self.region_extract,
                                                 valid_param, self.step_num, self.dc_check, self.sim_config_dict,
                                                 updated_param, self.unassigned_netlist_dir, self.zero_sim_result,
-                                                self.sim_output_enable, self.dynamic_queue, self.norm_specs,
+                                                self.sim_output, self.dynamic_queue, self.norm_specs,
                                                 self.norm_ideal_specs, self.agents, self.ideal_specs,
                                                 self.cal_reward, corner, operation_region_dict))
                     logging.info(f"Step!!!Positive reward: {rew_single_tt} in TT corner with step number: "
@@ -570,7 +570,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
 
 
 def step_simulation_process(working_dir_step, region_extract_tag, valid_param, step_num, dc_check_tag, sim_config_dict,
-                            updated_param, unassigned_netlist_dir, zero_sim_result, sim_output_enable_tag,
+                            updated_param, unassigned_netlist_dir, zero_sim_result, sim_output_tag,
                             dynamic_queue_tag, norm_specs, norm_ideal_specs, agents, ideal_specs, cal_reward,
                             corner_tag, operation_region_dict=None):
     sim_result = None
@@ -598,7 +598,7 @@ def step_simulation_process(working_dir_step, region_extract_tag, valid_param, s
     @retry_decorator(retry_count=2, delay_seconds=0.5, default_value=zero_sim_result)
     def _run_simulation_with_retry():
         return run_dynamic_simulation(working_dir_step, sim_config_dict, zero_sim_result,
-                                      sim_output_enable_tag, dynamic_queue_tag)
+                                      sim_output_tag, dynamic_queue_tag)
 
     try:
         sim_result = copy.deepcopy(_run_simulation_with_retry())
