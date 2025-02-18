@@ -1,14 +1,54 @@
-from util.assign_param2netlist import update_netlist
-from util.util_func import retry_decorator
-from util.run_spectre_simulation import run_dynamic_simulation_psfascii
-import copy
-import os
-import pandas as pd
+from multiprocessing import Pool
+from tqdm import tqdm
+import time
+from typing import Dict, List, Any, Tuple
 from collections import OrderedDict
-import logging
-from typing import Dict, List, Any
-from util.util_func import create_work_dir
+import pandas as pd
+import os
 import yaml
+import logging
+import copy
+
+from util.assign_param2netlist import update_netlist
+from util.util_func import retry_decorator, create_work_dir
+from util.run_spectre_simulation import run_dynamic_simulation_psfascii
+
+
+def _parallel_evaluation_task(task_input: Tuple[str, str, Dict, Dict, Dict, str]) -> Tuple[str, Dict]:
+    """
+    Wrapper function for parallel evaluation tasks.
+
+    Args:
+        task_input: Tuple containing:
+            - base_folder: Base directory for results
+            - unassigned_netlist_dir: Directory for netlist templates
+            - param_dict: Circuit parameters
+            - sim_config: Simulation configuration
+            - zero_result: Default zero result dictionary
+            - corner: Corner for evaluation
+
+    Returns:
+        Tuple containing corner tag and simulation results
+    """
+    base_folder, unassigned_netlist_dir, param_dict, sim_config, zero_result, corner = task_input
+
+    # Create unique working directory for this task
+    working_dir = create_work_dir(base_folder)
+    working_dir = f"{working_dir}_{corner}"
+
+    try:
+        sim_result = single_evaluation(
+            working_dir=working_dir,
+            unassigned_netlist_dir=unassigned_netlist_dir,
+            updated_param=param_dict,
+            sim_config_dict=sim_config,
+            zero_sim_result=zero_result,
+            corner_tag=corner
+        )
+        return corner, sim_result
+    except Exception as e:
+        logging.error(f"Evaluation failed for corner {corner}: {str(e)}")
+        return corner, zero_result
 
 def single_evaluation(working_dir, unassigned_netlist_dir, updated_param, sim_config_dict, zero_sim_result, corner_tag):
 
@@ -40,15 +80,16 @@ def single_evaluation(working_dir, unassigned_netlist_dir, updated_param, sim_co
     return sim_result
 
 
-
-def batch_evaluation(base_folder: str,
-                     unassigned_netlist_dir: str,
-                     generalize_specs_config_dict: Dict[str, Dict[str, Any]],
-                     init_param_dict: List[Dict[str, Any]],
-                     sim_config_dict: Dict[str, Any],
-                     corner_list: List[str]) -> None:
+def batch_evaluation_parallel(
+        base_folder: str,
+        unassigned_netlist_dir: str,
+        generalize_specs_config_dict: Dict[str, Dict[str, Any]],
+        init_param_dict: List[Dict[str, Any]],
+        sim_config_dict: Dict[str, Any],
+        corner_list: List[str],
+        num_workers: int = 4) -> None:
     """
-    Batch evaluation function for multiple parameter sets across different corners.
+    Parallel batch evaluation function for multiple parameter sets across different corners.
 
     Args:
         base_folder: Base directory for simulation results
@@ -57,15 +98,16 @@ def batch_evaluation(base_folder: str,
         init_param_dict: List of parameter dictionaries to evaluate
         sim_config_dict: Simulation configuration dictionary
         corner_list: List of corners to evaluate
+        num_workers: Number of parallel workers (default: 4)
 
     Returns:
         None (Creates an Excel file with evaluation results)
     """
-    # Initialize evaluation dictionary
+    # Initialize results dictionary
     evaluation_dict = OrderedDict()
 
+    # Generate zero result dictionary
     zero_sim_result = {}
-
     for sim in generalize_specs_config_dict:
         specs_tmp_dict = {}
         for specs_item in generalize_specs_config_dict[sim]:
@@ -76,43 +118,37 @@ def batch_evaluation(base_folder: str,
             if generalize_specs_config_dict[sim][specs_item]['objective'] == 'range':
                 specs_tmp_dict[specs_item] = 100.0
         zero_sim_result[sim] = specs_tmp_dict
-    print(f"Initialing!!!Zero sim result: {zero_sim_result}")
 
-    # Iterate through parameter sets
-    for param_idx, updated_param in enumerate(init_param_dict, 1):
-        param_key = f"param_set_{param_idx}"
-        evaluation_dict[param_key] = {}
+    print(f"Starting parallel evaluation with {num_workers} workers")
 
-        # Iterate through corners
-        for corner_tag in corner_list:
-            # Create working directory
-            working_dir = create_work_dir(base_folder)
+    # Create process pool
+    with Pool(processes=num_workers) as pool:
+        # Process each parameter set
+        for param_idx, param_dict in enumerate(init_param_dict, 1):
+            param_key = f"param_set_{param_idx}"
+            evaluation_dict[param_key] = {}
 
-            try:
-                # Run simulation for current parameter set and corner
-                sim_result = single_evaluation(
-                    working_dir=working_dir,
-                    unassigned_netlist_dir=unassigned_netlist_dir,
-                    updated_param=updated_param,
-                    sim_config_dict=sim_config_dict,
-                    zero_sim_result=zero_sim_result,
-                    corner_tag=corner_tag
-                )
+            # Prepare tasks for all corners
+            tasks = [
+                (base_folder, unassigned_netlist_dir, param_dict, sim_config_dict,
+                 zero_sim_result, corner) for corner in corner_list
+            ]
 
-                # Store results
-                evaluation_dict[param_key][corner_tag] = {
-                    "param": updated_param,
+            # Run parallel evaluation with progress bar
+            results = []
+            with tqdm(total=len(tasks), desc=f"Evaluating {param_key}") as pbar:
+                for result in pool.imap_unordered(_parallel_evaluation_task, tasks):
+                    results.append(result)
+                    pbar.update()
+
+            # Store results
+            for corner, sim_result in results:
+                evaluation_dict[param_key][corner] = {
+                    "param": param_dict,
                     "result": sim_result
                 }
 
-            except Exception as e:
-                logging.error(f"Simulation failed for {param_key}, corner {corner_tag}: {str(e)}")
-                evaluation_dict[param_key][corner_tag] = {
-                    "param": updated_param,
-                    "result": zero_sim_result
-                }
-
-    # Convert evaluation_dict to DataFrame
+    # Create Excel report
     _create_excel_report(evaluation_dict, base_folder)
 
 
@@ -163,29 +199,109 @@ def _create_excel_report(evaluation_dict: Dict[str, Any], base_folder: str) -> N
     df.to_excel(output_file, index=False)
     print(f"Evaluation results saved to {output_file}")
 
+def validate_configurations(base_folder: str,
+                            unassigned_netlist_dir: str,
+                            generalize_specs_config_dict: Dict,
+                            init_param_dict: List[Dict],
+                            sim_config_dict: Dict) -> bool:
+    """
+    Validate all input configurations before starting evaluation.
+
+    Args:
+        base_folder: Base directory for results
+        unassigned_netlist_dir: Directory for netlist templates
+        generalize_specs_config_dict: Specs configuration
+        init_param_dict: List of parameter sets
+        sim_config_dict: Simulation configuration
+
+    Returns:
+        bool: True if all validations pass
+
+    Raises:
+        ValueError: If any validation fails
+    """
+    # Check directories exist
+    if not os.path.exists(base_folder):
+        try:
+            os.makedirs(base_folder)
+        except Exception as e:
+            raise ValueError(f"Cannot create base folder: {str(e)}")
+
+    if not os.path.exists(unassigned_netlist_dir):
+        raise ValueError(f"Netlist template directory does not exist: {unassigned_netlist_dir}")
+
+    # Validate configurations
+    if not generalize_specs_config_dict:
+        raise ValueError("Empty generalize specs configuration")
+
+    if not init_param_dict:
+        raise ValueError("Empty parameter sets")
+
+    if not sim_config_dict:
+        raise ValueError("Empty simulation configuration")
+
+    # Check parameter sets format
+    for idx, param_set in enumerate(init_param_dict):
+        if not isinstance(param_set, dict):
+            raise ValueError(f"Invalid parameter set format at index {idx}")
+
+    return True
+
+
 if __name__ == "__main__":
-    base_folder = '/home/wuhan/AnalogDesignAuto/AnalogDesignAuto_MultiAgent/custom_env/run_test/'
-    unassigned_netlist_dir = '/home/wuhan/AnalogDesignAuto/AnalogDesignAuto_MultiAgent/custom_env/netlist_template/netlist_template_AXS_Corner/'
+    # Configuration paths
+    config_base = '/home/wuhan/AnalogDesignAuto/AnalogDesignAuto_MultiAgent/custom_env/config/config_AXS_Simple/'
+    paths = {
+        'base_folder': '/home/wuhan/AnalogDesignAuto/AnalogDesignAuto_MultiAgent/custom_env/run_test/',
+        'unassigned_netlist_dir': '/home/wuhan/AnalogDesignAuto/AnalogDesignAuto_MultiAgent/custom_env/netlist_template/netlist_template_AXS_Corner/',
+        'generalize_specs_config': os.path.join(config_base, 'generalize_specs.yaml'),
+        'init_param': os.path.join(config_base, 'init_batch.yaml'),
+        'sim_config': os.path.join(config_base, 'simulation.yaml')
+    }
 
-    generalize_specs_config_path = '/home/wuhan/AnalogDesignAuto/AnalogDesignAuto_MultiAgent/custom_env/config/config_AXS_Simple/generalize_specs.yaml'
-    with open(generalize_specs_config_path, 'r') as file:
-        generalize_specs_config_dict = yaml.safe_load(file)
+    # Load configurations
+    try:
+        with open(paths['generalize_specs_config'], 'r') as f:
+            generalize_specs_config_dict = yaml.safe_load(f)
+        with open(paths['init_param'], 'r') as f:
+            init_param_dict = yaml.safe_load(f)
+        with open(paths['sim_config'], 'r') as f:
+            sim_config_dict = yaml.safe_load(f)
 
-    init_param_dict_path = '/home/wuhan/AnalogDesignAuto/AnalogDesignAuto_MultiAgent/custom_env/config/config_AXS_Simple/init_batch.yaml'
-    with open(init_param_dict_path, 'r') as file:
-        init_param_dict = yaml.safe_load(file)
+        # Validate configurations
+        validate_configurations(
+            paths['base_folder'],
+            paths['unassigned_netlist_dir'],
+            generalize_specs_config_dict,
+            init_param_dict,
+            sim_config_dict
+        )
 
-    sim_config_dict_path = '/home/wuhan/AnalogDesignAuto/AnalogDesignAuto_MultiAgent/custom_env/config/config_AXS_Simple/simulation.yaml'
-    with open(sim_config_dict_path, 'r') as file:
-        sim_config_dict = yaml.safe_load(file)
+        # Start with tt corner
+        corner_list = ['tt']
+        corner_pattern_1 = ['fs', 'sf', 'ff', 'ss']
+        cornet_pattern_2 = ['ss', 'ff']
+        temp_pattern = ['b40', '125']
+        # Generate a corner summary list: {corner_pattern_1}_{cornet_pattern_2}_{cornet_pattern_2}_{temp_pattern}
+        corner_summary = [f"{corner1}_{corner2}_{corner3}_{temp}" for corner1 in corner_pattern_1 for corner2 in
+                          cornet_pattern_2 for corner3 in cornet_pattern_2 for temp in temp_pattern]
+        corner_list.extend(corner_summary)
+        print(f"Evaluation Corner List: {corner_list}")
 
-    corner_list = ['tt']
-    corner_pattern_1 = ['fs','sf','ff','ss']
-    cornet_pattern_2 = ['ss','ff']
-    temp_pattern = ['b40','125']
-    # Generate a corner summary list: {corner_pattern_1}_{cornet_pattern_2}_{cornet_pattern_2}_{temp_pattern}
-    corner_summary = [f"{corner1}_{corner2}_{corner3}_{temp}" for corner1 in corner_pattern_1 for corner2 in cornet_pattern_2 for corner3 in cornet_pattern_2 for temp in temp_pattern]
-    corner_list.extend(corner_summary)
-    print(f"Evaluation Corner List: {corner_list}")
+        # Set number of parallel workers
+        num_workers = 60  # Adjust based on system capabilities
 
-    batch_evaluation(base_folder, unassigned_netlist_dir, generalize_specs_config_dict, init_param_dict, sim_config_dict, corner_list)
+        # Run parallel evaluation
+        batch_evaluation_parallel(
+            paths['base_folder'],
+            paths['unassigned_netlist_dir'],
+            generalize_specs_config_dict,
+            init_param_dict,
+            sim_config_dict,
+            corner_list,
+            num_workers
+        )
+
+    except Exception as e:
+        logging.error(f"Evaluation failed: {str(e)}")
+        raise
