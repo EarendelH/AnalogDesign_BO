@@ -104,7 +104,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         self.agent_assign_dict = self._load_yaml_config(self.agent_assign_config)
         self.device_mask_dict = self._load_yaml_config(self.device_mask_config)
         self.dc_sim_config_dict = self._load_yaml_config(self.dc_sim_config)
-        self.generalize_specs_dict = self._load_yaml_config(self.generalize_specs_config)
+        self.generalize_specs_config_dict = self._load_yaml_config(self.generalize_specs_config)
 
     def _load_yaml_config(self, file_path: str) -> dict:
         """通用YAML加载方法"""
