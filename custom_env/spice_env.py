@@ -145,6 +145,23 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
 
     def _initialize_state_variables(self):
         """初始化状态变量"""
+
+        self.resetted = None
+        self.trajectory_data = None
+        self.log_file_path = None
+        self.log_file_name = None
+        self.zero_sim_result = None
+        self.step_num = None
+        self.norm_ideal_specs = None
+        self.ideal_specs = None
+        self.cur_param = None
+        self.max_step = int(self.max_step)
+        self.action_mask = True
+
+        self.continue_steps = 4  # Number of steps to continue after positive reward
+        self.steps_after_positive_reward = 0
+        self.had_positive_reward = False
+
         self.operation_region_dict_zero = {
             comp: 0 for comp in self.param_range_dict
             if comp != 'other_variable'
