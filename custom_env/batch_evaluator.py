@@ -17,14 +17,14 @@ def single_evaluation(working_dir, unassigned_netlist_dir, updated_param, sim_co
     dynamic_queue_tag = False
 
     os.makedirs(working_dir, exist_ok=True)
-    logging.info(f"Working_dir: {working_dir}")
+    print(f"Working_dir: {working_dir}")
 
     update_netlist(working_dir, sim_config_dict, updated_param, unassigned_netlist_dir, corner_tag)
-    logging.info(f"Netlist updated for corner: {corner_tag}")
+    print(f"Netlist updated for corner: {corner_tag}")
 
     @retry_decorator(retry_count=2, delay_seconds=0.5, default_value=zero_sim_result)
     def _run_simulation_with_retry():
-        logging.info(f"Running simulation for corner: {corner_tag}")
+        print(f"Running simulation for corner: {corner_tag}")
         return run_dynamic_simulation_psfascii(working_dir, sim_config_dict, zero_sim_result,
                                                sim_output_enable_tag, dynamic_queue_tag)
 
@@ -35,7 +35,7 @@ def single_evaluation(working_dir, unassigned_netlist_dir, updated_param, sim_co
                         f" Simulation failed, use zero result instead.")
         sim_result = copy.deepcopy(zero_sim_result)
 
-    logging.info(f"Step!!!Simulation result: {sim_result} in corner: {corner_tag}")
+    print(f"Step!!!Simulation result: {sim_result} in corner: {corner_tag}")
 
     return sim_result
 
@@ -76,7 +76,7 @@ def batch_evaluation(base_folder: str,
             if generalize_specs_config_dict[sim][specs_item]['objective'] == 'range':
                 specs_tmp_dict[specs_item] = 100.0
         zero_sim_result[sim] = specs_tmp_dict
-    logging.info(f"Initialing!!!Zero sim result: {zero_sim_result}")
+    print(f"Initialing!!!Zero sim result: {zero_sim_result}")
 
     # Iterate through parameter sets
     for param_idx, updated_param in enumerate(init_param_dict, 1):
@@ -161,7 +161,7 @@ def _create_excel_report(evaluation_dict: Dict[str, Any], base_folder: str) -> N
     # Save to Excel
     output_file = os.path.join(base_folder, 'evaluation_results.xlsx')
     df.to_excel(output_file, index=False)
-    logging.info(f"Evaluation results saved to {output_file}")
+    print(f"Evaluation results saved to {output_file}")
 
 if __name__ == "__main__":
     base_folder = '/home/wuhan/AnalogDesignAuto/AnalogDesignAuto_MultiAgent/custom_env/run_test/'
