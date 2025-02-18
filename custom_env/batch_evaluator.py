@@ -17,12 +17,14 @@ def single_evaluation(working_dir, unassigned_netlist_dir, updated_param, sim_co
     dynamic_queue_tag = False
 
     os.makedirs(working_dir, exist_ok=True)
-    logging.debug(f"Working_dir: {working_dir}")
+    logging.info(f"Working_dir: {working_dir}")
 
     update_netlist(working_dir, sim_config_dict, updated_param, unassigned_netlist_dir, corner_tag)
+    logging.info(f"Netlist updated for corner: {corner_tag}")
 
     @retry_decorator(retry_count=2, delay_seconds=0.5, default_value=zero_sim_result)
     def _run_simulation_with_retry():
+        logging.info(f"Running simulation for corner: {corner_tag}")
         return run_dynamic_simulation_psfascii(working_dir, sim_config_dict, zero_sim_result,
                                                sim_output_enable_tag, dynamic_queue_tag)
 
