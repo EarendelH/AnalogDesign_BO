@@ -92,6 +92,8 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         for attr, filename in self.config_files.items():
             setattr(self, attr, os.path.join(config_folder, filename))
 
+        self.ideal_specs_path = os.path.join(self.current_path, 'ideal_specs', self.specs_folder_name)
+
     def _load_all_configs(self):
         """加载所有YAML配置"""
         self.sim_config_dict = self._load_yaml_config(self.sim_config)
