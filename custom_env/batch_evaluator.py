@@ -177,4 +177,11 @@ if __name__ == "__main__":
     with open(sim_config_dict_path, 'r') as file:
         sim_config_dict = yaml.safe_load(file)
 
-    corner_list = ['tt','ff_ss_ff','ff_ss_ss','ff_ff_ff','ff_ff_ss','fs_ss_ff','fs_ss_ss','fs_ff_ff','fs_ff_ss','sf_ss_ff','sf_ss_ss','sf_ff_ff','sf_ff_ss','ss_ss_ff','ss_ss_ss','ss_ff_ff','ss_ff_ss']
+    corner_list = ['tt']
+    corner_pattern_1 = ['fs','sf','ff','ss']
+    cornet_pattern_2 = ['ss','ff']
+    temp_pattern = ['b40','125']
+    # Generate a corner summary list: {corner_pattern_1}_{cornet_pattern_2}_{cornet_pattern_2}_{temp_pattern}
+    corner_summary = [f"{corner1}_{corner2}_{corner3}_{temp}" for corner1 in corner_pattern_1 for corner2 in cornet_pattern_2 for corner3 in cornet_pattern_2 for temp in temp_pattern]
+    corner_list.extend(corner_summary)
+    print(corner_list)
