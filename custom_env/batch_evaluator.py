@@ -184,4 +184,6 @@ if __name__ == "__main__":
     # Generate a corner summary list: {corner_pattern_1}_{cornet_pattern_2}_{cornet_pattern_2}_{temp_pattern}
     corner_summary = [f"{corner1}_{corner2}_{corner3}_{temp}" for corner1 in corner_pattern_1 for corner2 in cornet_pattern_2 for corner3 in cornet_pattern_2 for temp in temp_pattern]
     corner_list.extend(corner_summary)
-    print(corner_list)
+    print(f"Evaluation Corner List: {corner_list}")
+
+    batch_evaluation(base_folder, unassigned_netlist_dir, generalize_specs_config_dict, init_param_dict, sim_config_dict, corner_list)
