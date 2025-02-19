@@ -227,7 +227,6 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         self.ideal_specs = generalize_config(self.generalize, self.ideal_specs_path)
 
     def _run_region_simulation_check(self, dir_suffix: str, param: dict) -> dict:
-        """统一处理区域模拟检查的公共方法"""
         try:
             working_dir = create_work_dir(self.run_root_dir, dir_suffix)
             update_netlist(working_dir, self.dc_sim_config_dict, param, self.unassigned_netlist_dir)
@@ -244,6 +243,74 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         except Exception as e:
             logging.warning(f"Region simulation failed: {str(e)}")
             return copy.deepcopy(self.operation_region_dict_zero)
+
+    def _process_simulation_result(self, sim_result: dict, param: dict,
+                                   operation_region_dict: dict = None) -> tuple:
+        """统一处理模拟结果的后处理流程"""
+        # 结果规范化
+        norm_sim_result = norm_sim_spec(sim_result, self.norm_specs)
+        logging.debug(f"Normalized simulation result: {norm_sim_result}")
+
+        # 生成观测空间
+        obs_generator = update_obs_space_w_region if self.region_extract else update_obs_space
+        flatten_func = flatten_observation_w_region if self.region_extract else flatten_observation
+
+        observation_detail = copy.deepcopy(obs_generator(
+            self.norm_ideal_specs,
+            norm_sim_result,
+            param,
+            operation_region_dict
+        ))
+        observation = copy.deepcopy(flatten_func(observation_detail))
+
+        # 构建多智能体观测
+        observations = {agent: observation for agent in self.agents}
+
+        # 计算奖励
+        rew = self.cal_reward(self.ideal_specs, sim_result, self.norm_specs)
+
+        return observations, sim_result, rew
+
+    def _run_simulation(self, working_dir: str, param: dict,
+                        operation_region_dict: dict = None) -> tuple:
+        """统一执行模拟流程"""
+
+        # 带重试机制的模拟运行
+        @retry_decorator(retry_count=2, delay_seconds=0.5, default_value=self.zero_sim_result)
+        def _run_with_retry():
+            return run_dynamic_simulation(
+                working_dir,
+                self.sim_config_dict,
+                self.zero_sim_result,
+                self.sim_output,
+                self.dynamic_queue
+            )
+
+        try:
+            sim_result = copy.deepcopy(_run_with_retry())
+        except Exception as e:
+            logging.warning(f"Simulation failed: {e}, using zero result")
+            sim_result = copy.deepcopy(self.zero_sim_result)
+
+        return self._process_simulation_result(sim_result, param, operation_region_dict)
+
+    def _handle_corner_simulations(self, main_dir: str, param: dict,
+                                   operation_region_dict: dict) -> dict:
+        """统一处理多角落模拟"""
+        corner_results = {}
+        for corner in ['ff', 'fs', 'sf', 'ss']:
+            corner_dir = create_corner_work_dir(main_dir, corner)
+            obs, sim_result, rew = self._run_simulation(
+                corner_dir,
+                param,
+                operation_region_dict
+            )
+            corner_results[corner] = {
+                'working_dir': corner_dir,
+                'sim_result': sim_result,
+                'reward': rew
+            }
+        return corner_results
 
     def reset(self, *, seed=None, options=None):
 
@@ -273,14 +340,11 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
             reset_operation_region_dict = self._run_region_simulation_check('init_dc', init_param)
             logging.debug(f"Initial!!! operation regions: {reset_operation_region_dict}")
 
-        try:
-            sim_result = copy.deepcopy(
-                run_dynamic_simulation(working_dir_reset, self.sim_config_dict, self.zero_sim_result,
-                                       self.sim_output, self.dynamic_queue))
-        # For avoid simulation error in init, use zero result instead.
-        except Exception as e:
-            logging.warning(f"Warning!!!: {e}. Simulation failed, use zero result instead.")
-            sim_result = copy.deepcopy(self.zero_sim_result)
+        observations, sim_result, rew = self._run_simulation(
+            working_dir_reset,
+            init_param,
+            reset_operation_region_dict if self.region_extract else None
+        )
 
         # Normalize the current simulation specs
         logging.info(f"Initialing!!!Simulation result: {sim_result}")
@@ -397,55 +461,33 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         # DC Check pass or not enabled. Run all simulations
         else:
             working_dir_step_tt = create_work_dir(self.run_root_dir, 'tt')
-
-            observations_tt, sim_result_tt, rew_single_tt = (
-                step_simulation_process(working_dir_step_tt, self.region_extract, valid_param, self.step_num,
-                                        self.dc_check, self.sim_config_dict, updated_param,
-                                        self.unassigned_netlist_dir, self.zero_sim_result, self.sim_output,
-                                        self.dynamic_queue, self.norm_specs, self.norm_ideal_specs, self.agents,
-                                        self.ideal_specs, self.cal_reward, None, operation_region_dict))
+            observations_tt, sim_result_tt, rew_single_tt = self._run_simulation(
+                working_dir_step_tt,
+                updated_param,
+                operation_region_dict if self.region_extract else None
+            )
 
             if self.corner_sim and rew_single_tt >= 0:
-                corner_simu_result = {
-                    'ff': {},
-                    'fs': {},
-                    'sf': {},
-                    'ss': {}
+                corner_results = self._handle_corner_simulations(working_dir_step_tt, updated_param, operation_region_dict)
+                corner_results['tt'] = {
+                    'working_dir': working_dir_step_tt,
+                    'sim_result': sim_result_tt,
+                    'reward': rew_single_tt
                 }
-                for corner in corner_simu_result:
-                    working_dir_step_corner = create_corner_work_dir(working_dir_step_tt, corner)
-                    _, sim_result, rew_single = (
-                        step_simulation_process(working_dir_step_corner, self.region_extract,
-                                                valid_param, self.step_num, self.dc_check, self.sim_config_dict,
-                                                updated_param, self.unassigned_netlist_dir, self.zero_sim_result,
-                                                self.sim_output, self.dynamic_queue, self.norm_specs,
-                                                self.norm_ideal_specs, self.agents, self.ideal_specs,
-                                                self.cal_reward, corner, operation_region_dict))
-                    logging.info(f"Step!!!Positive reward: {rew_single_tt} in TT corner with step number: "
-                                 f"{self.step_num} archived running simulation with corner: {corner}")
-                    corner_simu_result[corner] = {
-                        'working_dir_step': working_dir_step_corner,
-                        'sim_result': sim_result,
-                        'rew_single': rew_single
-                    }
-                corner_simu_result['tt'] = {}
-                corner_simu_result['tt']['working_dir_step'] = working_dir_step_tt
-                corner_simu_result['tt']['sim_result'] = sim_result_tt
-                corner_simu_result['tt']['rew_single'] = rew_single_tt
 
                 # Extract the min reward from all corners and replace the reward
-                rew_single_min = min([corner_simu_result[corner]['rew_single'] for corner in corner_simu_result])
+                rew_single_min = min([corner_results[corner]['rew_single'] for corner in corner_results])
                 if rew_single_min < 0:
                     rew_single_min = 10
-                for corner in corner_simu_result:
-                    corner_simu_result[corner]['rew_single'] = rew_single_min
+                for corner in corner_results:
+                    corner_results[corner]['rew_single'] = rew_single_min
                     step_data = {
                         'param': updated_param,
-                        'sim_result': corner_simu_result[corner]['sim_result'],
-                        'reward': corner_simu_result[corner]['rew_single'],
+                        'sim_result': corner_results[corner]['sim_result'],
+                        'reward': corner_results[corner]['rew_single'],
                         'corner': corner
                     }
-                    pickle_path = os.path.join(corner_simu_result[corner]['working_dir_step'], 'result.pkl')
+                    pickle_path = os.path.join(corner_results[corner]['working_dir_step'], 'result.pkl')
                     with open(pickle_path, 'wb') as f:
                         pickle.dump(step_data, f)
 
