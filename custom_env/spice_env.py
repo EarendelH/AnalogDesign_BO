@@ -203,17 +203,35 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
 
         super().__init__()
 
-    def reset(self, *, seed=None, options=None):
-
+    def _initialize_reset_variables(self):
         self.steps_after_positive_reward = 0
         self.had_positive_reward = False
-        reset_operation_region_dict = None
 
-        # Reset step number
         self.step_num = 0
+
+        # For avoid simulation error in step, generate a default result with zero value but correct key in step method
+        self.zero_sim_result = {}
+        for sim in self.generalize_specs_config_dict:
+            specs_tmp_dict = {}
+            for specs_item in self.generalize_specs_config_dict[sim]:
+                if self.generalize_specs_config_dict[sim][specs_item]['objective'] == 'max':
+                    specs_tmp_dict[specs_item] = 0.0
+                if self.generalize_specs_config_dict[sim][specs_item]['objective'] == 'min':
+                    specs_tmp_dict[specs_item] = 100.0
+                if self.generalize_specs_config_dict[sim][specs_item]['objective'] == 'range':
+                    specs_tmp_dict[specs_item] = 100.0
+            self.zero_sim_result[sim] = specs_tmp_dict
+        logging.info(f"Initialing!!!Zero sim result: {self.zero_sim_result}")
 
         # Set the ideal specs based on the generalize flag
         self.ideal_specs = generalize_config(self.generalize, self.ideal_specs_path)
+
+    def reset(self, *, seed=None, options=None):
+
+        self._initialize_reset_variables()
+
+        reset_operation_region_dict = None
+
         logging.info(f"Initialing!!!Generalize flag: {self.generalize}")
         logging.info(f"Initialing!!!Ideal specs: {self.ideal_specs}")
 
@@ -229,21 +247,6 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
 
         # Update Netlist File
         update_netlist(working_dir_reset, self.sim_config_dict, init_param, self.unassigned_netlist_dir)
-
-        # For avoid simulation error in step, generate a default result with zero value but correct key in step method
-        self.zero_sim_result = {}
-
-        for sim in self.generalize_specs_config_dict:
-            specs_tmp_dict = {}
-            for specs_item in self.generalize_specs_config_dict[sim]:
-                if self.generalize_specs_config_dict[sim][specs_item]['objective'] == 'max':
-                    specs_tmp_dict[specs_item] = 0.0
-                if self.generalize_specs_config_dict[sim][specs_item]['objective'] == 'min':
-                    specs_tmp_dict[specs_item] = 100.0
-                if self.generalize_specs_config_dict[sim][specs_item]['objective'] == 'range':
-                    specs_tmp_dict[specs_item] = 100.0
-            self.zero_sim_result[sim] = specs_tmp_dict
-        logging.info(f"Initialing!!!Zero sim result: {self.zero_sim_result}")
 
         # Normalize the current ideal specs
         logging.info(f"Initialing!!!Ideal specs: {self.ideal_specs}")
