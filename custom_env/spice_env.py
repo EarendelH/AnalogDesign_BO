@@ -172,6 +172,14 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         self.terminateds = set()
         self.truncateds = set()
 
+    def _import_reward_function(self):
+        try:
+            reward_module = importlib.import_module('util.cal_reward')
+            self.cal_reward = getattr(reward_module, self.reward_func)
+        except (ImportError, AttributeError) as e:
+            logging.error(f"Error importing reward function '{self.reward_func}': {e}")
+            raise
+
     def __init__(self, config: Dict[str, Any]):
         # 配置验证和基础设置
         self._validate_config(config)
@@ -191,12 +199,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         self._initialize_state_variables()
 
         # Import Reward Func
-        try:
-            reward_module = importlib.import_module('util.cal_reward')
-            self.cal_reward = getattr(reward_module, self.reward_func)
-        except (ImportError, AttributeError) as e:
-            logging.error(f"Error importing reward function '{self.reward_func}': {e}")
-            raise
+        self._import_reward_function()
 
         super().__init__()
 
