@@ -226,6 +226,25 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         # Set the ideal specs based on the generalize flag
         self.ideal_specs = generalize_config(self.generalize, self.ideal_specs_path)
 
+    def _run_region_simulation_check(self, dir_suffix: str, param: dict) -> dict:
+        """统一处理区域模拟检查的公共方法"""
+        try:
+            working_dir = create_work_dir(self.run_root_dir, dir_suffix)
+            update_netlist(working_dir, self.dc_sim_config_dict, param, self.unassigned_netlist_dir)
+            operation_region_dict = copy.deepcopy(
+                run_region_simulation(working_dir, self.dc_sim_config_dict, self.sim_output))
+
+            # 检查结果长度一致性
+            if len(operation_region_dict) != len(self.operation_region_dict_zero):
+                logging.warning(
+                    f"Operation region dict length mismatch. Expected {len(self.operation_region_dict_zero)}, Got {len(operation_region_dict)}")
+                return copy.deepcopy(self.operation_region_dict_zero)
+
+            return operation_region_dict
+        except Exception as e:
+            logging.warning(f"Region simulation failed: {str(e)}")
+            return copy.deepcopy(self.operation_region_dict_zero)
+
     def reset(self, *, seed=None, options=None):
 
         self._initialize_reset_variables()
@@ -251,25 +270,8 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         logging.debug(f"Initialing!!!Normalized ideal specs: {self.norm_ideal_specs}")
 
         if self.region_extract:
-            # Generate region observation
-            try:
-                # Run psf for converting binary file to text file
-                working_dir_reset_dc = create_work_dir(self.run_root_dir, 'init_dc')
-                update_netlist(working_dir_reset_dc, self.dc_sim_config_dict, init_param,
-                               self.unassigned_netlist_dir)
-                reset_operation_region_dict = copy.deepcopy(
-                    run_region_simulation(working_dir_reset_dc, self.dc_sim_config_dict, self.sim_output))
-                logging.debug(f"Initialing!!!Operation region: {reset_operation_region_dict}")
-                # delete_work_dir(working_dir_reset_dc)
-            except Exception as e:
-                logging.warning(f"Resting!!!: {e}. No DC sim file.")
-                reset_operation_region_dict = copy.deepcopy(self.operation_region_dict_zero)
-
-            # Check operation_region_dict length vs self.operation_region_dict_zero length
-            if len(reset_operation_region_dict) != len(self.operation_region_dict_zero):
-                logging.warning(f"Resting!!!: Operation region dict length {len(reset_operation_region_dict)} "
-                                f"does not match with operation_region_dict_zero length {len(self.norm_ideal_specs)}.")
-                reset_operation_region_dict = copy.deepcopy(self.operation_region_dict_zero)
+            reset_operation_region_dict = self._run_region_simulation_check('init_dc', init_param)
+            logging.debug(f"Initial!!! operation regions: {reset_operation_region_dict}")
 
         try:
             sim_result = copy.deepcopy(
@@ -364,33 +366,12 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         # reward. End the episode.
 
         if self.region_extract:
-            try:
-                working_dir_step_dc = create_work_dir(self.run_root_dir, 'dc')
-
-                # Update DC Netlist File for checking operation region
-                update_netlist(working_dir_step_dc, self.dc_sim_config_dict, updated_param,
-                               self.unassigned_netlist_dir)
-                operation_region_dict = copy.deepcopy(run_region_simulation(working_dir_step_dc,
-                                                                            self.dc_sim_config_dict,
-                                                                            self.sim_output))
-                operation_region_list = list(operation_region_dict.values())
-                logging.info(f"Step!!!Operation region: {operation_region_list} with step number: {self.step_num}")
-                # 0 cut-off, 1 triode, 2 saturation, 3 sub-th, 4 breakdown
-                # Check whether all transistors are in saturation/sub-threshold/triode region
-                valid_param = all(item in [1, 2, 3] for item in operation_region_list)
-                # Check operation_region_dict length vs self.operation_region_dict_zero length
-                if len(operation_region_dict) != len(self.operation_region_dict_zero):
-                    logging.warning(
-                        f"Warning!!!: Operation region dict length {len(operation_region_dict)} does not "
-                        f"match with operation_region_dict_zero length {len(self.norm_ideal_specs)}.")
-                    operation_region_dict = copy.deepcopy(self.operation_region_dict_zero)
-                    valid_param = False
-                # Delete working temp directory, if it exists
-                # delete_work_dir(working_dir_step_dc)
-            except Exception as e:
-                logging.warning(f"Warning!!!: {e}. Failed to run DC check with step number: {self.step_num}")
-                operation_region_dict = copy.deepcopy(self.operation_region_dict_zero)
-                valid_param = False
+            operation_region_dict = self._run_region_simulation_check('dc', updated_param)
+            operation_region_list = list(operation_region_dict.values())
+            # 0 cut-off, 1 triode, 2 saturation, 3 sub-th, 4 breakdown
+            # Check whether all transistors are in saturation/sub-threshold/triode region
+            valid_param = all(item in [1, 2, 3] for item in operation_region_list)
+            logging.info(f"Step operation regions: {operation_region_list}")
 
         # DC check fail condition
         if self.region_extract and self.dc_check and not valid_param:
