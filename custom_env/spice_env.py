@@ -13,7 +13,7 @@ from util.gen_obs_space import gen_obs_space_w_region, flatten_obs_space_w_regio
 from util.gen_obs_space import gen_obs_space, flatten_obs_space
 from util.action2param import action2param
 from util.gen_param_space import gen_param_space
-from util.util_func import create_work_dir
+from util.util_func import create_work_dir, create_corner_work_dir
 from util.assign_param2netlist import update_netlist
 from util.run_spectre_simulation import run_dynamic_simulation, run_region_simulation
 from util.generalize_config import generalize_config
@@ -240,28 +240,21 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         logging.debug(f"Initialing!!!Init param: {init_param}")
 
         # Add _init in the path
-        working_dir_reset_path = create_work_dir(self.run_root_dir)
-        working_dir_reset = working_dir_reset_path + "_init"
-        os.makedirs(working_dir_reset, exist_ok=True)
-        logging.info(f"Initialing!!!Working directory: {working_dir_reset}")
+        working_dir_reset = create_work_dir(self.run_root_dir, 'init')
 
         # Update Netlist File
         update_netlist(working_dir_reset, self.sim_config_dict, init_param, self.unassigned_netlist_dir)
 
         # Normalize the current ideal specs
-        logging.info(f"Initialing!!!Ideal specs: {self.ideal_specs}")
         self.norm_ideal_specs = norm_ideal_spec(self.ideal_specs, self.norm_specs)
+        logging.info(f"Initialing!!!Ideal specs: {self.ideal_specs}")
         logging.debug(f"Initialing!!!Normalized ideal specs: {self.norm_ideal_specs}")
-        logging.debug(f"Initialing!!!Ideal specs: {self.ideal_specs}")
 
         if self.region_extract:
             # Generate region observation
             try:
                 # Run psf for converting binary file to text file
-                working_dir_reset_dc_path = create_work_dir(self.run_root_dir)
-                working_dir_reset_dc = working_dir_reset_dc_path + "_init_dc"
-                os.makedirs(working_dir_reset_dc, exist_ok=True)
-                logging.info(f"Initialing!!! DC Check working directory: {working_dir_reset_dc}")
+                working_dir_reset_dc = create_work_dir(self.run_root_dir, 'init_dc')
                 update_netlist(working_dir_reset_dc, self.dc_sim_config_dict, init_param,
                                self.unassigned_netlist_dir)
                 reset_operation_region_dict = copy.deepcopy(
@@ -372,11 +365,8 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
 
         if self.region_extract:
             try:
-                working_dir_step_dc_path = create_work_dir(self.run_root_dir)
-                working_dir_step_dc = working_dir_step_dc_path + "_dc"
-                os.makedirs(working_dir_step_dc, exist_ok=True)
-                logging.info(f"Step!!!DC Check Working directory: {working_dir_step_dc} "
-                             f"with step number: {self.step_num}")
+                working_dir_step_dc = create_work_dir(self.run_root_dir, 'dc')
+
                 # Update DC Netlist File for checking operation region
                 update_netlist(working_dir_step_dc, self.dc_sim_config_dict, updated_param,
                                self.unassigned_netlist_dir)
@@ -425,8 +415,8 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
 
         # DC Check pass or not enabled. Run all simulations
         else:
-            step_dir_base_path = create_work_dir(self.run_root_dir)
-            working_dir_step_tt = step_dir_base_path + "_tt"
+            working_dir_step_tt = create_work_dir(self.run_root_dir, 'tt')
+
             observations_tt, sim_result_tt, rew_single_tt = (
                 step_simulation_process(working_dir_step_tt, self.region_extract, valid_param, self.step_num,
                                         self.dc_check, self.sim_config_dict, updated_param,
@@ -442,7 +432,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
                     'ss': {}
                 }
                 for corner in corner_simu_result:
-                    working_dir_step_corner = step_dir_base_path + f"_{corner}"
+                    working_dir_step_corner = create_corner_work_dir(working_dir_step_tt, corner)
                     _, sim_result, rew_single = (
                         step_simulation_process(working_dir_step_corner, self.region_extract,
                                                 valid_param, self.step_num, self.dc_check, self.sim_config_dict,

@@ -40,22 +40,35 @@ def find_closest_value_index(target_list, target_value):
 # Output
 # [5e-07, 10000000.0, 1000000000.0, 100.0, 2000.0]
 
-def create_work_dir(base_path):
+def create_work_dir(base_path, suffix=None):
     """
     Create a new directory for the work.
     :param base_path: base path of the work directory
+    :param suffix: suffix to be added to the directory name
     :return: work_dir: path of the work directory
     """
     cur_time = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
     random_num = str(random.randint(1000, 9999))
     # Get the thread id
     thread_id = str(os.getpid())
-    dir_name = f"tmp_{cur_time}{thread_id}{random_num}"
+    dir_name = f"tmp_{cur_time}{thread_id}{random_num}_{suffix}" if suffix else f"tmp_{cur_time}{thread_id}{random_num}"
     work_dir = os.path.join(base_path, dir_name)
-    # os.makedirs(work_dir, exist_ok=True)
-    # print(f"Created working directory: {work_dir}")
+    os.makedirs(work_dir, exist_ok=True)
+    logging.info(f"Created working directory for {suffix}: {work_dir}")
     return work_dir
 
+def create_corner_work_dir(tt_folder_path, suffix=None):
+    """
+    Create a new directory for the corner work.
+    :param tt_folder_path: full path of the work directory
+    :param suffix: suffix to be added to the directory name
+    :return: work_dir: path of the work directory
+    """
+    # Replace '_tt' in the folder name with '_suffix'
+    corner_folder_path = tt_folder_path.replace('_tt', f'_{suffix}')
+    os.makedirs(corner_folder_path, exist_ok=True)
+    logging.info(f"Created corner working directory for corner {suffix}: {corner_folder_path}")
+    return corner_folder_path
 
 def retry_decorator(retry_count=2, delay_seconds=1, default_value=None, timeout_minutes=5):
     """
