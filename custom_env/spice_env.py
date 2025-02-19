@@ -252,16 +252,25 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         logging.debug(f"Normalized simulation result: {norm_sim_result}")
 
         # 生成观测空间
-        obs_generator = update_obs_space_w_region if self.region_extract else update_obs_space
-        flatten_func = flatten_observation_w_region if self.region_extract else flatten_observation
-
-        observation_detail = copy.deepcopy(obs_generator(
-            self.norm_ideal_specs,
-            norm_sim_result,
-            param,
-            operation_region_dict
-        ))
-        observation = copy.deepcopy(flatten_func(observation_detail))
+        if self.region_extract:
+            observation_detail = copy.deepcopy(
+                update_obs_space_w_region(
+                    self.norm_ideal_specs,
+                    norm_sim_result,
+                    param,
+                    operation_region_dict  # 仅在region_extract时传递第四个参数
+                )
+            )
+            observation = copy.deepcopy(flatten_observation_w_region(observation_detail))
+        else:
+            observation_detail = copy.deepcopy(
+                update_obs_space(  # 非region_extract时使用三参数版本
+                    self.norm_ideal_specs,
+                    norm_sim_result,
+                    param
+                )
+            )
+            observation = copy.deepcopy(flatten_observation(observation_detail))
 
         # 构建多智能体观测
         observations = {agent: observation for agent in self.agents}
@@ -300,6 +309,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         corner_results = {}
         for corner in ['ff', 'fs', 'sf', 'ss']:
             corner_dir = create_corner_work_dir(main_dir, corner)
+            update_netlist(corner_dir, self.sim_config_dict, param, self.unassigned_netlist_dir, corner)
             obs, sim_result, rew = self._run_simulation(
                 corner_dir,
                 param,
@@ -353,18 +363,11 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         logging.debug(f"Initialing!!!Normalized simulation result: {norm_sim_result}")
 
         # Generate observation
-        if self.region_extract:
-            observation_detail = copy.deepcopy(update_obs_space_w_region(self.norm_ideal_specs, norm_sim_result,
-                                                                         init_param, reset_operation_region_dict))
-            observation = copy.deepcopy(flatten_observation_w_region(observation_detail))
-        else:
-            observation_detail = copy.deepcopy(update_obs_space(self.norm_ideal_specs, norm_sim_result, init_param))
-            observation = copy.deepcopy(flatten_observation(observation_detail))
-        logging.debug(f"Initialing!!!Observation detail: {observation_detail}")
-        logging.debug(f"Initialing!!!Flatten Observation: {observation}")
-
-        # Share all observations among agents
-        observations = {agent: observation for agent in self.agents}
+        observations, sim_result, rew = self._run_simulation(
+            working_dir_reset,
+            init_param,
+            reset_operation_region_dict if self.region_extract else None
+        )
 
         # Test Rew func
         rew = self.cal_reward(self.ideal_specs, sim_result, self.norm_specs)
