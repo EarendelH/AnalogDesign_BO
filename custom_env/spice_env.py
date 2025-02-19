@@ -205,359 +205,359 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
 
     def reset(self, *, seed=None, options=None):
 
-            self.steps_after_positive_reward = 0
-            self.had_positive_reward = False
-            reset_operation_region_dict = None
+        self.steps_after_positive_reward = 0
+        self.had_positive_reward = False
+        reset_operation_region_dict = None
 
-            # Reset step number
-            self.step_num = 0
+        # Reset step number
+        self.step_num = 0
 
-            # Set the ideal specs based on the generalize flag
-            self.ideal_specs = generalize_config(self.generalize, self.ideal_specs_path)
-            logging.info(f"Initialing!!!Generalize flag: {self.generalize}")
-            logging.info(f"Initialing!!!Ideal specs: {self.ideal_specs}")
+        # Set the ideal specs based on the generalize flag
+        self.ideal_specs = generalize_config(self.generalize, self.ideal_specs_path)
+        logging.info(f"Initialing!!!Generalize flag: {self.generalize}")
+        logging.info(f"Initialing!!!Ideal specs: {self.ideal_specs}")
 
-            init_param = gen_init_param(self.init_method, self.predefined_init_param, True,
-                                        self.device_mask_dict, self.param_space)
-            logging.debug(f"Initialing!!!Init param: {init_param}")
+        init_param = gen_init_param(self.init_method, self.predefined_init_param, True,
+                                    self.device_mask_dict, self.param_space)
+        logging.debug(f"Initialing!!!Init param: {init_param}")
 
-            # Add _init in the path
-            working_dir_reset_path = create_work_dir(self.run_root_dir)
-            working_dir_reset = working_dir_reset_path + "_init"
-            os.makedirs(working_dir_reset, exist_ok=True)
-            logging.info(f"Initialing!!!Working directory: {working_dir_reset}")
+        # Add _init in the path
+        working_dir_reset_path = create_work_dir(self.run_root_dir)
+        working_dir_reset = working_dir_reset_path + "_init"
+        os.makedirs(working_dir_reset, exist_ok=True)
+        logging.info(f"Initialing!!!Working directory: {working_dir_reset}")
 
-            # Update Netlist File
-            update_netlist(working_dir_reset, self.sim_config_dict, init_param, self.unassigned_netlist_dir)
+        # Update Netlist File
+        update_netlist(working_dir_reset, self.sim_config_dict, init_param, self.unassigned_netlist_dir)
 
-            # For avoid simulation error in step, generate a default result with zero value but correct key in step method
-            self.zero_sim_result = {}
+        # For avoid simulation error in step, generate a default result with zero value but correct key in step method
+        self.zero_sim_result = {}
 
-            for sim in self.generalize_specs_config_dict:
-                specs_tmp_dict = {}
-                for specs_item in self.generalize_specs_config_dict[sim]:
-                    if self.generalize_specs_config_dict[sim][specs_item]['objective'] == 'max':
-                        specs_tmp_dict[specs_item] = 0.0
-                    if self.generalize_specs_config_dict[sim][specs_item]['objective'] == 'min':
-                        specs_tmp_dict[specs_item] = 100.0
-                    if self.generalize_specs_config_dict[sim][specs_item]['objective'] == 'range':
-                        specs_tmp_dict[specs_item] = 100.0
-                self.zero_sim_result[sim] = specs_tmp_dict
-            logging.info(f"Initialing!!!Zero sim result: {self.zero_sim_result}")
+        for sim in self.generalize_specs_config_dict:
+            specs_tmp_dict = {}
+            for specs_item in self.generalize_specs_config_dict[sim]:
+                if self.generalize_specs_config_dict[sim][specs_item]['objective'] == 'max':
+                    specs_tmp_dict[specs_item] = 0.0
+                if self.generalize_specs_config_dict[sim][specs_item]['objective'] == 'min':
+                    specs_tmp_dict[specs_item] = 100.0
+                if self.generalize_specs_config_dict[sim][specs_item]['objective'] == 'range':
+                    specs_tmp_dict[specs_item] = 100.0
+            self.zero_sim_result[sim] = specs_tmp_dict
+        logging.info(f"Initialing!!!Zero sim result: {self.zero_sim_result}")
 
-            # Normalize the current ideal specs
-            logging.info(f"Initialing!!!Ideal specs: {self.ideal_specs}")
-            self.norm_ideal_specs = norm_ideal_spec(self.ideal_specs, self.norm_specs)
-            logging.debug(f"Initialing!!!Normalized ideal specs: {self.norm_ideal_specs}")
-            logging.debug(f"Initialing!!!Ideal specs: {self.ideal_specs}")
+        # Normalize the current ideal specs
+        logging.info(f"Initialing!!!Ideal specs: {self.ideal_specs}")
+        self.norm_ideal_specs = norm_ideal_spec(self.ideal_specs, self.norm_specs)
+        logging.debug(f"Initialing!!!Normalized ideal specs: {self.norm_ideal_specs}")
+        logging.debug(f"Initialing!!!Ideal specs: {self.ideal_specs}")
 
-            if self.region_extract:
-                # Generate region observation
-                try:
-                    # Run psf for converting binary file to text file
-                    working_dir_reset_dc_path = create_work_dir(self.run_root_dir)
-                    working_dir_reset_dc = working_dir_reset_dc_path + "_init_dc"
-                    os.makedirs(working_dir_reset_dc, exist_ok=True)
-                    logging.info(f"Initialing!!! DC Check working directory: {working_dir_reset_dc}")
-                    update_netlist(working_dir_reset_dc, self.dc_sim_config_dict, init_param,
-                                   self.unassigned_netlist_dir)
-                    reset_operation_region_dict = copy.deepcopy(
-                        run_region_simulation(working_dir_reset_dc, self.dc_sim_config_dict, self.sim_output))
-                    logging.debug(f"Initialing!!!Operation region: {reset_operation_region_dict}")
-                    # delete_work_dir(working_dir_reset_dc)
-                except Exception as e:
-                    logging.warning(f"Resting!!!: {e}. No DC sim file.")
-                    reset_operation_region_dict = copy.deepcopy(self.operation_region_dict_zero)
-
-                # Check operation_region_dict length vs self.operation_region_dict_zero length
-                if len(reset_operation_region_dict) != len(self.operation_region_dict_zero):
-                    logging.warning(f"Resting!!!: Operation region dict length {len(reset_operation_region_dict)} "
-                                    f"does not match with operation_region_dict_zero length {len(self.norm_ideal_specs)}.")
-                    reset_operation_region_dict = copy.deepcopy(self.operation_region_dict_zero)
-
+        if self.region_extract:
+            # Generate region observation
             try:
-                sim_result = copy.deepcopy(
-                    run_dynamic_simulation(working_dir_reset, self.sim_config_dict, self.zero_sim_result,
-                                           self.sim_output, self.dynamic_queue))
-            # For avoid simulation error in init, use zero result instead.
+                # Run psf for converting binary file to text file
+                working_dir_reset_dc_path = create_work_dir(self.run_root_dir)
+                working_dir_reset_dc = working_dir_reset_dc_path + "_init_dc"
+                os.makedirs(working_dir_reset_dc, exist_ok=True)
+                logging.info(f"Initialing!!! DC Check working directory: {working_dir_reset_dc}")
+                update_netlist(working_dir_reset_dc, self.dc_sim_config_dict, init_param,
+                               self.unassigned_netlist_dir)
+                reset_operation_region_dict = copy.deepcopy(
+                    run_region_simulation(working_dir_reset_dc, self.dc_sim_config_dict, self.sim_output))
+                logging.debug(f"Initialing!!!Operation region: {reset_operation_region_dict}")
+                # delete_work_dir(working_dir_reset_dc)
             except Exception as e:
-                logging.warning(f"Warning!!!: {e}. Simulation failed, use zero result instead.")
-                sim_result = copy.deepcopy(self.zero_sim_result)
+                logging.warning(f"Resting!!!: {e}. No DC sim file.")
+                reset_operation_region_dict = copy.deepcopy(self.operation_region_dict_zero)
 
-            # Normalize the current simulation specs
-            logging.info(f"Initialing!!!Simulation result: {sim_result}")
-            logging.debug(f"Initialing!!!Ideal specs: {self.ideal_specs}")
-            norm_sim_result = norm_sim_spec(sim_result, self.norm_specs)
-            logging.debug(f"Initialing!!!Normalized simulation result: {norm_sim_result}")
+            # Check operation_region_dict length vs self.operation_region_dict_zero length
+            if len(reset_operation_region_dict) != len(self.operation_region_dict_zero):
+                logging.warning(f"Resting!!!: Operation region dict length {len(reset_operation_region_dict)} "
+                                f"does not match with operation_region_dict_zero length {len(self.norm_ideal_specs)}.")
+                reset_operation_region_dict = copy.deepcopy(self.operation_region_dict_zero)
 
-            # Generate observation
-            if self.region_extract:
-                observation_detail = copy.deepcopy(update_obs_space_w_region(self.norm_ideal_specs, norm_sim_result,
-                                                                             init_param, reset_operation_region_dict))
-                observation = copy.deepcopy(flatten_observation_w_region(observation_detail))
-            else:
-                observation_detail = copy.deepcopy(update_obs_space(self.norm_ideal_specs, norm_sim_result, init_param))
-                observation = copy.deepcopy(flatten_observation(observation_detail))
-            logging.debug(f"Initialing!!!Observation detail: {observation_detail}")
-            logging.debug(f"Initialing!!!Flatten Observation: {observation}")
+        try:
+            sim_result = copy.deepcopy(
+                run_dynamic_simulation(working_dir_reset, self.sim_config_dict, self.zero_sim_result,
+                                       self.sim_output, self.dynamic_queue))
+        # For avoid simulation error in init, use zero result instead.
+        except Exception as e:
+            logging.warning(f"Warning!!!: {e}. Simulation failed, use zero result instead.")
+            sim_result = copy.deepcopy(self.zero_sim_result)
 
-            # Share all observations among agents
-            observations = {agent: observation for agent in self.agents}
+        # Normalize the current simulation specs
+        logging.info(f"Initialing!!!Simulation result: {sim_result}")
+        logging.debug(f"Initialing!!!Ideal specs: {self.ideal_specs}")
+        norm_sim_result = norm_sim_spec(sim_result, self.norm_specs)
+        logging.debug(f"Initialing!!!Normalized simulation result: {norm_sim_result}")
 
-            # Test Rew func
-            rew = self.cal_reward(self.ideal_specs, sim_result, self.norm_specs)
-            logging.info(f"Debug!!!Resetting!!!Reward result: {rew}")
+        # Generate observation
+        if self.region_extract:
+            observation_detail = copy.deepcopy(update_obs_space_w_region(self.norm_ideal_specs, norm_sim_result,
+                                                                         init_param, reset_operation_region_dict))
+            observation = copy.deepcopy(flatten_observation_w_region(observation_detail))
+        else:
+            observation_detail = copy.deepcopy(update_obs_space(self.norm_ideal_specs, norm_sim_result, init_param))
+            observation = copy.deepcopy(flatten_observation(observation_detail))
+        logging.debug(f"Initialing!!!Observation detail: {observation_detail}")
+        logging.debug(f"Initialing!!!Flatten Observation: {observation}")
 
-            self.cur_param = copy.deepcopy(init_param)
+        # Share all observations among agents
+        observations = {agent: observation for agent in self.agents}
 
-            self.resetted = True
-            self.terminateds = set()
-            self.truncateds = set()
+        # Test Rew func
+        rew = self.cal_reward(self.ideal_specs, sim_result, self.norm_specs)
+        logging.info(f"Debug!!!Resetting!!!Reward result: {rew}")
 
-            info = {agent: {} for agent in self.agents}
+        self.cur_param = copy.deepcopy(init_param)
 
-            # Save init step to pickle file
-            step_data = {
-                'param': init_param,
-                'sim_result': sim_result,
-                'reward': rew,
-                'corner': 'tt'
-            }
-            pickle_path = os.path.join(working_dir_reset, 'result.pkl')
-            with open(pickle_path, 'wb') as f:
-                pickle.dump(step_data, f)
+        self.resetted = True
+        self.terminateds = set()
+        self.truncateds = set()
 
-            return observations, info
+        info = {agent: {} for agent in self.agents}
+
+        # Save init step to pickle file
+        step_data = {
+            'param': init_param,
+            'sim_result': sim_result,
+            'reward': rew,
+            'corner': 'tt'
+        }
+        pickle_path = os.path.join(working_dir_reset, 'result.pkl')
+        with open(pickle_path, 'wb') as f:
+            pickle.dump(step_data, f)
+
+        return observations, info
 
     def step(self, action_dict):
-            logging.debug(f"Step!!!Action dict: {action_dict}")
-            # Update step number
-            self.step_num += 1
-            rew_single = -10
+        logging.debug(f"Step!!!Action dict: {action_dict}")
+        # Update step number
+        self.step_num += 1
+        rew_single = -10
 
-            operation_region_dict = None
-            valid_param = None
+        operation_region_dict = None
+        valid_param = None
 
-            step_action_dict = copy.deepcopy(action_dict)
-            if self.device_mask_dict:
-                all_action_flatten = copy.deepcopy(masked_action_dict_mapping(self.device_mask_dict, step_action_dict))
-                logging.debug(f"Step!!!Action dict w/ device mask: {all_action_flatten}")
-            else:
-                mapped_step_action_dict = copy.deepcopy(step_action_dict)
-                logging.debug(f"Step!!!Action dict w/o device mask: {mapped_step_action_dict}")
-                # Flatten all actions
-                all_action_flatten = OrderedDict()
-                for group in mapped_step_action_dict.values():
-                    for key, value in group.items():
-                        all_action_flatten[key] = value
+        step_action_dict = copy.deepcopy(action_dict)
+        if self.device_mask_dict:
+            all_action_flatten = copy.deepcopy(masked_action_dict_mapping(self.device_mask_dict, step_action_dict))
+            logging.debug(f"Step!!!Action dict w/ device mask: {all_action_flatten}")
+        else:
+            mapped_step_action_dict = copy.deepcopy(step_action_dict)
+            logging.debug(f"Step!!!Action dict w/o device mask: {mapped_step_action_dict}")
+            # Flatten all actions
+            all_action_flatten = OrderedDict()
+            for group in mapped_step_action_dict.values():
+                for key, value in group.items():
+                    all_action_flatten[key] = value
 
-            # Update param with new action
-            logging.debug(f"Step!!!Action Mask: {self.action_mask}")
-            logging.debug(f"Step!!!Device Mask: {self.device_mask_dict}")
-            logging.debug(f"Step!!!All action flatten: {all_action_flatten}")
-            logging.debug(f"Step!!!Current param: {self.cur_param}")
-            logging.debug(f"Step!!!Param range: {self.param_range_dict}")
-            updated_param = copy.deepcopy(action2param(self.action_mask, self.device_mask_dict, all_action_flatten,
-                                                       self.param_range_dict))
-            logging.info(f"Step!!!Updated param: {updated_param} with step number: {self.step_num}")
+        # Update param with new action
+        logging.debug(f"Step!!!Action Mask: {self.action_mask}")
+        logging.debug(f"Step!!!Device Mask: {self.device_mask_dict}")
+        logging.debug(f"Step!!!All action flatten: {all_action_flatten}")
+        logging.debug(f"Step!!!Current param: {self.cur_param}")
+        logging.debug(f"Step!!!Param range: {self.param_range_dict}")
+        updated_param = copy.deepcopy(action2param(self.action_mask, self.device_mask_dict, all_action_flatten,
+                                                   self.param_range_dict))
+        logging.info(f"Step!!!Updated param: {updated_param} with step number: {self.step_num}")
 
-            # Update current param
-            self.cur_param = copy.deepcopy(updated_param)
+        # Update current param
+        self.cur_param = copy.deepcopy(updated_param)
 
-            # Run DC check firstly and only once. If dc_check is True. If DC check failed, return zero sim result and -10
-            # reward. End the episode.
+        # Run DC check firstly and only once. If dc_check is True. If DC check failed, return zero sim result and -10
+        # reward. End the episode.
 
-            if self.region_extract:
-                try:
-                    working_dir_step_dc_path = create_work_dir(self.run_root_dir)
-                    working_dir_step_dc = working_dir_step_dc_path + "_dc"
-                    os.makedirs(working_dir_step_dc, exist_ok=True)
-                    logging.info(f"Step!!!DC Check Working directory: {working_dir_step_dc} "
-                                 f"with step number: {self.step_num}")
-                    # Update DC Netlist File for checking operation region
-                    update_netlist(working_dir_step_dc, self.dc_sim_config_dict, updated_param,
-                                   self.unassigned_netlist_dir)
-                    operation_region_dict = copy.deepcopy(run_region_simulation(working_dir_step_dc,
-                                                                                self.dc_sim_config_dict,
-                                                                                self.sim_output))
-                    operation_region_list = list(operation_region_dict.values())
-                    logging.info(f"Step!!!Operation region: {operation_region_list} with step number: {self.step_num}")
-                    # 0 cut-off, 1 triode, 2 saturation, 3 sub-th, 4 breakdown
-                    # Check whether all transistors are in saturation/sub-threshold/triode region
-                    valid_param = all(item in [1, 2, 3] for item in operation_region_list)
-                    # Check operation_region_dict length vs self.operation_region_dict_zero length
-                    if len(operation_region_dict) != len(self.operation_region_dict_zero):
-                        logging.warning(
-                            f"Warning!!!: Operation region dict length {len(operation_region_dict)} does not "
-                            f"match with operation_region_dict_zero length {len(self.norm_ideal_specs)}.")
-                        operation_region_dict = copy.deepcopy(self.operation_region_dict_zero)
-                        valid_param = False
-                    # Delete working temp directory, if it exists
-                    # delete_work_dir(working_dir_step_dc)
-                except Exception as e:
-                    logging.warning(f"Warning!!!: {e}. Failed to run DC check with step number: {self.step_num}")
+        if self.region_extract:
+            try:
+                working_dir_step_dc_path = create_work_dir(self.run_root_dir)
+                working_dir_step_dc = working_dir_step_dc_path + "_dc"
+                os.makedirs(working_dir_step_dc, exist_ok=True)
+                logging.info(f"Step!!!DC Check Working directory: {working_dir_step_dc} "
+                             f"with step number: {self.step_num}")
+                # Update DC Netlist File for checking operation region
+                update_netlist(working_dir_step_dc, self.dc_sim_config_dict, updated_param,
+                               self.unassigned_netlist_dir)
+                operation_region_dict = copy.deepcopy(run_region_simulation(working_dir_step_dc,
+                                                                            self.dc_sim_config_dict,
+                                                                            self.sim_output))
+                operation_region_list = list(operation_region_dict.values())
+                logging.info(f"Step!!!Operation region: {operation_region_list} with step number: {self.step_num}")
+                # 0 cut-off, 1 triode, 2 saturation, 3 sub-th, 4 breakdown
+                # Check whether all transistors are in saturation/sub-threshold/triode region
+                valid_param = all(item in [1, 2, 3] for item in operation_region_list)
+                # Check operation_region_dict length vs self.operation_region_dict_zero length
+                if len(operation_region_dict) != len(self.operation_region_dict_zero):
+                    logging.warning(
+                        f"Warning!!!: Operation region dict length {len(operation_region_dict)} does not "
+                        f"match with operation_region_dict_zero length {len(self.norm_ideal_specs)}.")
                     operation_region_dict = copy.deepcopy(self.operation_region_dict_zero)
                     valid_param = False
+                # Delete working temp directory, if it exists
+                # delete_work_dir(working_dir_step_dc)
+            except Exception as e:
+                logging.warning(f"Warning!!!: {e}. Failed to run DC check with step number: {self.step_num}")
+                operation_region_dict = copy.deepcopy(self.operation_region_dict_zero)
+                valid_param = False
 
-            # DC check fail condition
-            if self.region_extract and self.dc_check and not valid_param:
-                logging.info(f"Step!!! Region_extract & DC_Check is enable and the param is not passed with dc_check"
-                             f" with step number: {self.step_num}")
-                sim_result = copy.deepcopy(self.zero_sim_result)
-                logging.debug(f"Debug, sim_result is {sim_result}")
-                logging.debug(f"Debug, self.norm_specs is {self.norm_specs}")
-                norm_sim_result = copy.deepcopy(norm_sim_spec(sim_result, self.norm_specs))
-                observation_detail = copy.deepcopy(update_obs_space_w_region(self.norm_ideal_specs, norm_sim_result,
-                                                                             updated_param, operation_region_dict))
-                logging.debug(f"Step!!!DC Check fail. Observation detail: {observation_detail} "
-                              f"with step number: {self.step_num}")
-                observation = copy.deepcopy(flatten_observation_w_region(observation_detail))
-                logging.debug(
-                    f"Step!!!DC Check fail. Flatten Observation: {observation} with step number: {self.step_num}")
-                observations = {agent: observation for agent in self.agents}
-                single_rew = -10
+        # DC check fail condition
+        if self.region_extract and self.dc_check and not valid_param:
+            logging.info(f"Step!!! Region_extract & DC_Check is enable and the param is not passed with dc_check"
+                         f" with step number: {self.step_num}")
+            sim_result = copy.deepcopy(self.zero_sim_result)
+            logging.debug(f"Debug, sim_result is {sim_result}")
+            logging.debug(f"Debug, self.norm_specs is {self.norm_specs}")
+            norm_sim_result = copy.deepcopy(norm_sim_spec(sim_result, self.norm_specs))
+            observation_detail = copy.deepcopy(update_obs_space_w_region(self.norm_ideal_specs, norm_sim_result,
+                                                                         updated_param, operation_region_dict))
+            logging.debug(f"Step!!!DC Check fail. Observation detail: {observation_detail} "
+                          f"with step number: {self.step_num}")
+            observation = copy.deepcopy(flatten_observation_w_region(observation_detail))
+            logging.debug(
+                f"Step!!!DC Check fail. Flatten Observation: {observation} with step number: {self.step_num}")
+            observations = {agent: observation for agent in self.agents}
+            single_rew = -10
 
-                logging.info(f"Step!!!Region_extract & DC_Check is enable and the param is not passed with dc_check."
-                             f" Reward result: {single_rew} with step number: {self.step_num}")
+            logging.info(f"Step!!!Region_extract & DC_Check is enable and the param is not passed with dc_check."
+                         f" Reward result: {single_rew} with step number: {self.step_num}")
 
-            # DC Check pass or not enabled. Run all simulations
-            else:
-                step_dir_base_path = create_work_dir(self.run_root_dir)
-                working_dir_step_tt = step_dir_base_path + "_tt"
-                observations_tt, sim_result_tt, rew_single_tt = (
-                    step_simulation_process(working_dir_step_tt, self.region_extract, valid_param, self.step_num,
-                                            self.dc_check, self.sim_config_dict, updated_param,
-                                            self.unassigned_netlist_dir, self.zero_sim_result, self.sim_output,
-                                            self.dynamic_queue, self.norm_specs, self.norm_ideal_specs, self.agents,
-                                            self.ideal_specs, self.cal_reward, None, operation_region_dict))
+        # DC Check pass or not enabled. Run all simulations
+        else:
+            step_dir_base_path = create_work_dir(self.run_root_dir)
+            working_dir_step_tt = step_dir_base_path + "_tt"
+            observations_tt, sim_result_tt, rew_single_tt = (
+                step_simulation_process(working_dir_step_tt, self.region_extract, valid_param, self.step_num,
+                                        self.dc_check, self.sim_config_dict, updated_param,
+                                        self.unassigned_netlist_dir, self.zero_sim_result, self.sim_output,
+                                        self.dynamic_queue, self.norm_specs, self.norm_ideal_specs, self.agents,
+                                        self.ideal_specs, self.cal_reward, None, operation_region_dict))
 
-                if self.corner_sim and rew_single_tt >= 0:
-                    corner_simu_result = {
-                        'ff': {},
-                        'fs': {},
-                        'sf': {},
-                        'ss': {}
+            if self.corner_sim and rew_single_tt >= 0:
+                corner_simu_result = {
+                    'ff': {},
+                    'fs': {},
+                    'sf': {},
+                    'ss': {}
+                }
+                for corner in corner_simu_result:
+                    working_dir_step_corner = step_dir_base_path + f"_{corner}"
+                    _, sim_result, rew_single = (
+                        step_simulation_process(working_dir_step_corner, self.region_extract,
+                                                valid_param, self.step_num, self.dc_check, self.sim_config_dict,
+                                                updated_param, self.unassigned_netlist_dir, self.zero_sim_result,
+                                                self.sim_output, self.dynamic_queue, self.norm_specs,
+                                                self.norm_ideal_specs, self.agents, self.ideal_specs,
+                                                self.cal_reward, corner, operation_region_dict))
+                    logging.info(f"Step!!!Positive reward: {rew_single_tt} in TT corner with step number: "
+                                 f"{self.step_num} archived running simulation with corner: {corner}")
+                    corner_simu_result[corner] = {
+                        'working_dir_step': working_dir_step_corner,
+                        'sim_result': sim_result,
+                        'rew_single': rew_single
                     }
-                    for corner in corner_simu_result:
-                        working_dir_step_corner = step_dir_base_path + f"_{corner}"
-                        _, sim_result, rew_single = (
-                            step_simulation_process(working_dir_step_corner, self.region_extract,
-                                                    valid_param, self.step_num, self.dc_check, self.sim_config_dict,
-                                                    updated_param, self.unassigned_netlist_dir, self.zero_sim_result,
-                                                    self.sim_output, self.dynamic_queue, self.norm_specs,
-                                                    self.norm_ideal_specs, self.agents, self.ideal_specs,
-                                                    self.cal_reward, corner, operation_region_dict))
-                        logging.info(f"Step!!!Positive reward: {rew_single_tt} in TT corner with step number: "
-                                     f"{self.step_num} archived running simulation with corner: {corner}")
-                        corner_simu_result[corner] = {
-                            'working_dir_step': working_dir_step_corner,
-                            'sim_result': sim_result,
-                            'rew_single': rew_single
-                        }
-                    corner_simu_result['tt'] = {}
-                    corner_simu_result['tt']['working_dir_step'] = working_dir_step_tt
-                    corner_simu_result['tt']['sim_result'] = sim_result_tt
-                    corner_simu_result['tt']['rew_single'] = rew_single_tt
+                corner_simu_result['tt'] = {}
+                corner_simu_result['tt']['working_dir_step'] = working_dir_step_tt
+                corner_simu_result['tt']['sim_result'] = sim_result_tt
+                corner_simu_result['tt']['rew_single'] = rew_single_tt
 
-                    # Extract the min reward from all corners and replace the reward
-                    rew_single_min = min([corner_simu_result[corner]['rew_single'] for corner in corner_simu_result])
-                    if rew_single_min < 0:
-                        rew_single_min = 10
-                    for corner in corner_simu_result:
-                        corner_simu_result[corner]['rew_single'] = rew_single_min
-                        step_data = {
-                            'param': updated_param,
-                            'sim_result': corner_simu_result[corner]['sim_result'],
-                            'reward': corner_simu_result[corner]['rew_single'],
-                            'corner': corner
-                        }
-                        pickle_path = os.path.join(corner_simu_result[corner]['working_dir_step'], 'result.pkl')
-                        with open(pickle_path, 'wb') as f:
-                            pickle.dump(step_data, f)
-
-                    observations = observations_tt
-                    rew_single = rew_single_min
-
-                else:
-                    working_dir_step = working_dir_step_tt
-                    observations = observations_tt
-                    sim_result = sim_result_tt
-                    rew_single = rew_single_tt
-
+                # Extract the min reward from all corners and replace the reward
+                rew_single_min = min([corner_simu_result[corner]['rew_single'] for corner in corner_simu_result])
+                if rew_single_min < 0:
+                    rew_single_min = 10
+                for corner in corner_simu_result:
+                    corner_simu_result[corner]['rew_single'] = rew_single_min
                     step_data = {
                         'param': updated_param,
-                        'sim_result': sim_result,
-                        'reward': rew_single,
-                        'corner': 'tt'
+                        'sim_result': corner_simu_result[corner]['sim_result'],
+                        'reward': corner_simu_result[corner]['rew_single'],
+                        'corner': corner
                     }
-                    pickle_path = os.path.join(working_dir_step, 'result.pkl')
+                    pickle_path = os.path.join(corner_simu_result[corner]['working_dir_step'], 'result.pkl')
                     with open(pickle_path, 'wb') as f:
                         pickle.dump(step_data, f)
 
-            terminated = {a: False for a in self.agents}
-            truncated = {a: False for a in self.agents}
-
-            rew = {a: -10 for a in self.agents}
-            for agent_name in rew:
-                rew[agent_name] = rew_single
-
-            if self.continue_steps_enable:
-                if rew_single > 0 and not self.had_positive_reward:
-                    self.had_positive_reward = True
-                    self.steps_after_positive_reward = 0
-                elif self.had_positive_reward:
-                    self.steps_after_positive_reward += 1
-
-                episode_over = False
-                if self.had_positive_reward and (
-                        self.steps_after_positive_reward >= self.continue_steps or self.step_num >= self.max_step):
-                    episode_over = True
-                elif self.step_num >= self.max_step:
-                    episode_over = True
-
-                if episode_over:
-                    for agent_name in terminated:
-                        if self.had_positive_reward:
-                            terminated[agent_name] = True
-                            self.terminateds.add(agent_name)
-                        else:
-                            truncated[agent_name] = True
-                            self.truncateds.add(agent_name)
+                observations = observations_tt
+                rew_single = rew_single_min
 
             else:
-                if rew_single > 0:
-                    for agent_name in terminated:
+                working_dir_step = working_dir_step_tt
+                observations = observations_tt
+                sim_result = sim_result_tt
+                rew_single = rew_single_tt
+
+                step_data = {
+                    'param': updated_param,
+                    'sim_result': sim_result,
+                    'reward': rew_single,
+                    'corner': 'tt'
+                }
+                pickle_path = os.path.join(working_dir_step, 'result.pkl')
+                with open(pickle_path, 'wb') as f:
+                    pickle.dump(step_data, f)
+
+        terminated = {a: False for a in self.agents}
+        truncated = {a: False for a in self.agents}
+
+        rew = {a: -10 for a in self.agents}
+        for agent_name in rew:
+            rew[agent_name] = rew_single
+
+        if self.continue_steps_enable:
+            if rew_single > 0 and not self.had_positive_reward:
+                self.had_positive_reward = True
+                self.steps_after_positive_reward = 0
+            elif self.had_positive_reward:
+                self.steps_after_positive_reward += 1
+
+            episode_over = False
+            if self.had_positive_reward and (
+                    self.steps_after_positive_reward >= self.continue_steps or self.step_num >= self.max_step):
+                episode_over = True
+            elif self.step_num >= self.max_step:
+                episode_over = True
+
+            if episode_over:
+                for agent_name in terminated:
+                    if self.had_positive_reward:
                         terminated[agent_name] = True
                         self.terminateds.add(agent_name)
-                if self.step_num >= self.max_step:
-                    for agent_name in truncated:
+                    else:
                         truncated[agent_name] = True
                         self.truncateds.add(agent_name)
 
-                # Delete working temp directory, if it exists
-                # delete_work_dir(working_dir_step)
+        else:
+            if rew_single > 0:
+                for agent_name in terminated:
+                    terminated[agent_name] = True
+                    self.terminateds.add(agent_name)
+            if self.step_num >= self.max_step:
+                for agent_name in truncated:
+                    truncated[agent_name] = True
+                    self.truncateds.add(agent_name)
 
-            info = {agent: {} for agent in self.agents}
+            # Delete working temp directory, if it exists
+            # delete_work_dir(working_dir_step)
 
-            terminated["__all__"] = len(self.terminateds) == len(self.agents)
-            truncated["__all__"] = len(self.truncateds) == len(self.agents)
+        info = {agent: {} for agent in self.agents}
 
-            logging.info(f"Step!!!terminated: {terminated} with step number: {self.step_num}")
-            logging.info(f"Step!!!truncated: {truncated} with step number: {self.step_num}")
+        terminated["__all__"] = len(self.terminateds) == len(self.agents)
+        truncated["__all__"] = len(self.truncateds) == len(self.agents)
 
-            # step_data = {
-            #     'step_num': self.step_num,
-            #     'sim_result': sim_result,
-            #     'updated_param': updated_param,
-            #     'rew': rew
-            # }
-            #
-            # self.trajectory_data['steps_data'].append(step_data)
-            #
-            # with open(self.log_file_path, 'wb') as f:
-            #     pickle.dump(self.trajectory_data, f)
+        logging.info(f"Step!!!terminated: {terminated} with step number: {self.step_num}")
+        logging.info(f"Step!!!truncated: {truncated} with step number: {self.step_num}")
 
-            return observations, rew, terminated, truncated, info
+        # step_data = {
+        #     'step_num': self.step_num,
+        #     'sim_result': sim_result,
+        #     'updated_param': updated_param,
+        #     'rew': rew
+        # }
+        #
+        # self.trajectory_data['steps_data'].append(step_data)
+        #
+        # with open(self.log_file_path, 'wb') as f:
+        #     pickle.dump(self.trajectory_data, f)
+
+        return observations, rew, terminated, truncated, info
 
     def validate_input(self, config: Dict[str, Any]) -> None:
             for param, expected_type in self.expected_params.items():
