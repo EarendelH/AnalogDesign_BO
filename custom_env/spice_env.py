@@ -464,6 +464,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         # DC Check pass or not enabled. Run all simulations
         else:
             working_dir_step_tt = create_work_dir(self.run_root_dir, 'tt')
+            update_netlist(working_dir_step_tt, self.sim_config_dict, updated_param, self.unassigned_netlist_dir)
             observations_tt, sim_result_tt, rew_single_tt = self._run_simulation(
                 working_dir_step_tt,
                 updated_param,
