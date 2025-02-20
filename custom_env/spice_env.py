@@ -237,44 +237,59 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
             raise
 
     def _setup_logging(self):
-        """配置分层日志系统（仅控制台输出）"""
-        self.logger = logging.getLogger("SpiceEnv")
-        self.logger.propagate = False  # 防止传播到根logger
-
+        """配置全局日志系统（包含外部函数）"""
         # 转换日志级别为logging常量
         log_level = getattr(logging, self.log_level.upper(), logging.INFO)
 
-        # 确保日志级别有效性
-        if not isinstance(log_level, int):
-            self.logger.warning(f"Invalid log level: {self.log_level}, defaulting to INFO")
-            log_level = logging.INFO
+        # 配置根logger（影响所有模块）
+        root_logger = logging.getLogger()
+        root_logger.setLevel(log_level)
 
-        # 清除已有handler避免重复
-        if self.logger.handlers:
-            for handler in self.logger.handlers:
-                self.logger.removeHandler(handler)
+        # 清除所有现有handler避免重复
+        for handler in root_logger.handlers[:]:
+            root_logger.removeHandler(handler)
 
-        # 配置控制台输出
-        console_handler = logging.StreamHandler()
-        console_handler.setLevel(log_level)
-
-        # 优化日志格式
+        # 配置统一格式
         formatter = logging.Formatter(
             '[%(asctime)s] [%(name)s/%(levelname)s] %(message)s',
             datefmt='%Y-%m-%d %H:%M:%S'
         )
+
+        # 配置控制台handler（全局生效）
+        console_handler = logging.StreamHandler()
+        console_handler.setLevel(log_level)  # 重要：设置handler级别
         console_handler.setFormatter(formatter)
 
-        # 设置logger级别为最低（由handler控制实际输出级别）
-        self.logger.setLevel(logging.DEBUG)
-        self.logger.addHandler(console_handler)
+        # 同时配置根logger和当前模块logger
+        root_logger.addHandler(console_handler)
 
-        # 验证日志级别设置
-        self.logger.debug("Debug logging enabled")
-        self.logger.info("Info logging enabled")
-        self.logger.warning("Warning logging enabled")
-        self.logger.error("Error logging enabled")
-        self.logger.critical("Critical logging enabled")
+        # 配置当前模块专用logger（可选）
+        self.logger = logging.getLogger("SpiceEnv")
+        self.logger.setLevel(log_level)  # 明确设置级别（继承自根logger）
+        self.logger.propagate = True  # 允许传播到根logger
+
+        # 验证配置
+        self._validate_log_config(root_logger)
+
+    def _validate_log_config(self, root_logger):
+        """验证日志配置有效性"""
+        test_messages = {
+            logging.DEBUG: "Debug test message (should show if level <= DEBUG)",
+            logging.INFO: "Info test message (should show if level <= INFO)",
+            logging.WARNING: "Warning test message (should show if level <= WARNING)",
+            logging.ERROR: "Error test message (should show if level <= ERROR)",
+        }
+
+        current_level = logging.getLevelName(root_logger.getEffectiveLevel())
+        print(f"\nCurrent effective log level: {current_level}")
+
+        for level, msg in test_messages.items():
+            root_logger.log(level, msg)
+
+        # 外部模块日志测试
+        external_logger = logging.getLogger("ExternalModule")
+        external_logger.debug("External debug test")
+        external_logger.info("External info test")
 
     def _initialize_spaces(self):
         """初始化观察和动作空间"""
