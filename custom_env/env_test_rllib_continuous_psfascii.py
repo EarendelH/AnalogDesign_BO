@@ -6,7 +6,7 @@ if __name__ == "__main__":
                                     'max_step': 1,
                                     'netlist_folder_name': 'netlist_template_Haoqiang',
                                     'specs_folder_name': 'sampled_specs_Haoqiang',
-                                    'config_folder_name': 'config_Haoqiang_Random_5_1',
+                                    'config_folder_name': 'config_Haoqiang_Regroup',
                                     'run_folder_name': 'run_test',
                                     'sim_output': False,
                                     'init_method': 'random',
@@ -15,7 +15,7 @@ if __name__ == "__main__":
                                     'region_extract': False,
                                     'dynamic_queue': False,
                                     'log_level': 'DEBUG',
-                                    'reward_func': 'cal_reward_Haoqiang',
+                                    'reward_func': 'cal_reward_Haoqiang_Equal',
                                     'continue_steps_enable': False
                                 })
 
