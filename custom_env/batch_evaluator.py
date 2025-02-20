@@ -290,7 +290,7 @@ if __name__ == "__main__":
         ESR_pattern = ['p2', '1']
         VDDI_pattern = ['1p65', '1p95']
         # Generate a corner summary list: {corner_pattern_1}_{cornet_pattern_2}_{cornet_pattern_2}_{temp_pattern}
-        corner_summary = [f"{corner1}_{corner2}_{corner3}_{temp}_{ESR_pattern}_{VDDI_pattern}" for corner1 in corner_pattern_1 for corner2 in
+        corner_summary = [f"{corner1}_{corner2}_{corner3}_{temp}_{ESR}_{VDDI}" for corner1 in corner_pattern_1 for corner2 in
                           cornet_pattern_2 for corner3 in cornet_pattern_2 for temp in temp_pattern for ESR in ESR_pattern for VDDI in VDDI_pattern]
         corner_list.extend(corner_summary)
         print(f"Evaluation Corner List: {corner_list}")
