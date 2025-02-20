@@ -347,6 +347,155 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
 
         return self._process_simulation_result(sim_result, param, operation_region_dict)
 
+    def _convert_actions_to_params(self, action_dict: dict) -> tuple:
+        """将动作字典转换为参数字典"""
+        # 处理设备掩码
+        if self.device_mask_dict:
+            all_action_flatten = masked_action_dict_mapping(self.device_mask_dict, action_dict)
+        else:
+            all_action_flatten = OrderedDict()
+            for group in action_dict.values():
+                all_action_flatten.update(group)
+
+        # 转换为参数
+        updated_param = action2param(
+            self.action_mask,
+            self.device_mask_dict,
+            all_action_flatten,
+            self.param_range_dict
+        )
+
+        logging.info(f"Updated parameters: {updated_param} (Step: {self.step_num})")
+        return updated_param, all_action_flatten
+
+    def _perform_step_dc_check(self, param: dict) -> tuple:
+        """执行DC检查并返回区域信息"""
+        if not self.region_extract:
+            return None, True
+
+        operation_region_dict = self._run_region_simulation_check('dc', param)
+        valid_regions = [1, 2, 3]  # triode/saturation/sub-threshold
+        valid_param = all(v in valid_regions for v in operation_region_dict.values())
+
+        logging.debug(f"Operation regions: {list(operation_region_dict.values())}")
+        return operation_region_dict, valid_param
+
+    def _handle_dc_check_failure(self, param: dict, region_info: dict) -> tuple:
+        """处理DC检查失败的情况"""
+        sim_result = copy.deepcopy(self.zero_sim_result)
+        norm_result = norm_sim_spec(sim_result, self.norm_specs)
+
+        # 生成观测值
+        if self.region_extract:
+            obs_detail = update_obs_space_w_region(
+                self.norm_ideal_specs,
+                norm_result,
+                param,
+                region_info
+            )
+            observation = flatten_observation_w_region(obs_detail)
+        else:
+            obs_detail = update_obs_space(
+                self.norm_ideal_specs,
+                norm_result,
+                param
+            )
+            observation = flatten_observation(obs_detail)
+
+        return {agent: observation for agent in self.agents}, -10
+
+    def _run_main_simulation(self, param: dict, region_info: dict) -> tuple:
+        """运行主仿真流程"""
+        main_dir = create_work_dir(self.run_root_dir, 'tt')
+        update_netlist(main_dir, self.sim_config_dict, param, self.unassigned_netlist_dir)
+        return self._run_simulation(main_dir, param, region_info)
+
+    def _save_step_data(self, working_dir: str, param: dict,
+                        sim_result: dict, reward: float, corner: str = 'tt'):
+        """保存步骤数据"""
+        step_data = {
+            'param': param,
+            'sim_result': sim_result,
+            'reward': reward,
+            'corner': corner
+        }
+        with open(os.path.join(working_dir, 'result.pkl'), 'wb') as f:
+            pickle.dump(step_data, f)
+
+    def _process_corner_results(self, main_dir: str, param: dict,
+                                region_info: dict, initial_reward: float) -> float:
+        """处理多角落仿真结果"""
+        corner_results = self._handle_corner_simulations(main_dir, param, region_info)
+        corner_results['tt'] = {
+            'working_dir': main_dir,
+            'sim_result': None,  # 实际数据在后续处理中填充
+            'reward': initial_reward
+        }
+
+        # 计算最小奖励
+        min_reward = min(v['reward'] for v in corner_results.values())
+        min_reward = max(min_reward, 10) if min_reward < 0 else min_reward
+
+        # 保存所有角落数据
+        for corner, data in corner_results.items():
+            self._save_step_data(
+                data['working_dir'],
+                param,
+                data['sim_result'],
+                min_reward,
+                corner
+            )
+
+        return min_reward
+
+    def _calculate_rewards(self, base_reward: float) -> dict:
+        """计算多智能体奖励字典"""
+        return {agent: base_reward for agent in self.agents}
+
+    def _determine_termination(self, reward: float) -> tuple:
+        """判断终止条件"""
+        terminated = {a: False for a in self.agents}
+        truncated = {a: False for a in self.agents}
+
+        # 连续步数逻辑
+        if self.continue_steps_enable:
+            if reward > 0 and not self.had_positive_reward:
+                self.had_positive_reward = True
+                self.steps_after_positive_reward = 0
+            elif self.had_positive_reward:
+                self.steps_after_positive_reward += 1
+
+            episode_over = (
+                    (self.had_positive_reward and
+                     (self.steps_after_positive_reward >= self.continue_steps or
+                      self.step_num >= self.max_step)) or
+                    (self.step_num >= self.max_step)
+            )
+
+            if episode_over:
+                for agent in self.agents:
+                    if self.had_positive_reward:
+                        terminated[agent] = True
+                        self.terminateds.add(agent)
+                    else:
+                        truncated[agent] = True
+                        self.truncateds.add(agent)
+        else:
+            # 基础终止逻辑
+            if reward > 0:
+                for agent in self.agents:
+                    terminated[agent] = True
+                    self.terminateds.add(agent)
+            if self.step_num >= self.max_step:
+                for agent in self.agents:
+                    truncated[agent] = True
+                    self.truncateds.add(agent)
+
+        terminated["__all__"] = len(self.terminateds) == len(self.agents)
+        truncated["__all__"] = len(self.truncateds) == len(self.agents)
+
+        return terminated, truncated
+
     def _handle_corner_simulations(self, main_dir: str, param: dict,
                                    operation_region_dict: dict) -> dict:
         """统一处理多角落模拟"""
@@ -394,10 +543,6 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         # 保存参数和结果
         self._save_reset_data(working_dir, init_param, sim_result, rew)
 
-        # Test Rew func
-        rew = self.cal_reward(self.ideal_specs, sim_result, self.norm_specs)
-        logging.info(f"Debug!!!Resetting!!!Reward result: {rew}")
-
         # 重置环境状态
         self.resetted = True
         self.terminateds = set()
@@ -406,174 +551,49 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         return observations, {agent: {} for agent in self.agents}
 
     def step(self, action_dict):
-        logging.debug(f"Step!!!Action dict: {action_dict}")
-        # Update step number
+        # 步骤计数器更新
         self.step_num += 1
-        rew_single = -10
+        logging.debug(f"Processing step {self.step_num} with actions: {action_dict}")
 
-        operation_region_dict = None
-        valid_param = None
-
-        step_action_dict = copy.deepcopy(action_dict)
-        if self.device_mask_dict:
-            all_action_flatten = copy.deepcopy(masked_action_dict_mapping(self.device_mask_dict, step_action_dict))
-            logging.debug(f"Step!!!Action dict w/ device mask: {all_action_flatten}")
-        else:
-            mapped_step_action_dict = copy.deepcopy(step_action_dict)
-            logging.debug(f"Step!!!Action dict w/o device mask: {mapped_step_action_dict}")
-            # Flatten all actions
-            all_action_flatten = OrderedDict()
-            for group in mapped_step_action_dict.values():
-                for key, value in group.items():
-                    all_action_flatten[key] = value
-
-        # Update param with new action
-        logging.debug(f"Step!!!Action Mask: {self.action_mask}")
-        logging.debug(f"Step!!!Device Mask: {self.device_mask_dict}")
-        logging.debug(f"Step!!!All action flatten: {all_action_flatten}")
-        logging.debug(f"Step!!!Current param: {self.cur_param}")
-        logging.debug(f"Step!!!Param range: {self.param_range_dict}")
-        updated_param = copy.deepcopy(action2param(self.action_mask, self.device_mask_dict, all_action_flatten,
-                                                   self.param_range_dict))
-        logging.info(f"Step!!!Updated param: {updated_param} with step number: {self.step_num}")
-
-        # Update current param
+        # 1. 转换动作为参数
+        updated_param, all_actions = self._convert_actions_to_params(copy.deepcopy(action_dict))
         self.cur_param = copy.deepcopy(updated_param)
 
-        # Run DC check firstly and only once. If dc_check is True. If DC check failed, return zero sim result and -10
-        # reward. End the episode.
+        # 2. 执行DC检查
+        region_info, dc_valid = self._perform_dc_check(updated_param)
 
-        if self.region_extract:
-            operation_region_dict = self._run_region_simulation_check('dc', updated_param)
-            operation_region_list = list(operation_region_dict.values())
-            # 0 cut-off, 1 triode, 2 saturation, 3 sub-th, 4 breakdown
-            # Check whether all transistors are in saturation/sub-threshold/triode region
-            valid_param = all(item in [1, 2, 3] for item in operation_region_list)
-            logging.info(f"Step operation regions: {operation_region_list}")
-
-        # DC check fail condition
-        if self.region_extract and self.dc_check and not valid_param:
-            logging.info(f"Step!!! Region_extract & DC_Check is enable and the param is not passed with dc_check"
-                         f" with step number: {self.step_num}")
-            sim_result = copy.deepcopy(self.zero_sim_result)
-            logging.debug(f"Debug, sim_result is {sim_result}")
-            logging.debug(f"Debug, self.norm_specs is {self.norm_specs}")
-            norm_sim_result = copy.deepcopy(norm_sim_spec(sim_result, self.norm_specs))
-            observation_detail = copy.deepcopy(update_obs_space_w_region(self.norm_ideal_specs, norm_sim_result,
-                                                                         updated_param, operation_region_dict))
-            logging.debug(f"Step!!!DC Check fail. Observation detail: {observation_detail} "
-                          f"with step number: {self.step_num}")
-            observation = copy.deepcopy(flatten_observation_w_region(observation_detail))
-            logging.debug(
-                f"Step!!!DC Check fail. Flatten Observation: {observation} with step number: {self.step_num}")
-            observations = {agent: observation for agent in self.agents}
-            single_rew = -10
-
-            logging.info(f"Step!!!Region_extract & DC_Check is enable and the param is not passed with dc_check."
-                         f" Reward result: {single_rew} with step number: {self.step_num}")
-
-        # DC Check pass or not enabled. Run all simulations
+        # 3. 处理DC检查失败情况
+        if self.region_extract and self.dc_check and not dc_valid:
+            observations, rew_single = self._handle_dc_check_failure(updated_param, region_info)
         else:
-            working_dir_step_tt = create_work_dir(self.run_root_dir, 'tt')
-            update_netlist(working_dir_step_tt, self.sim_config_dict, updated_param, self.unassigned_netlist_dir)
-            observations_tt, sim_result_tt, rew_single_tt = self._run_simulation(
-                working_dir_step_tt,
+            # 4. 运行主仿真
+            observations, sim_result, rew_single = self._run_main_simulation(updated_param, region_info)
+
+            # 5. 处理角落仿真
+            if self.corner_sim and rew_single >= 0:
+                rew_single = self._process_corner_results(
+                    observations['working_dir'],  # 从仿真结果获取主目录
+                    updated_param,
+                    region_info,
+                    rew_single
+                )
+
+            # 6. 保存主仿真数据
+            self._save_step_data(
+                observations['working_dir'],
                 updated_param,
-                operation_region_dict if self.region_extract else None
+                sim_result,
+                rew_single
             )
 
-            if self.corner_sim and rew_single_tt >= 0:
-                corner_results = self._handle_corner_simulations(working_dir_step_tt, updated_param, operation_region_dict)
-                corner_results['tt'] = {
-                    'working_dir': working_dir_step_tt,
-                    'sim_result': sim_result_tt,
-                    'reward': rew_single_tt
-                }
+        # 7. 计算最终奖励
+        rewards = self._calculate_rewards(rew_single)
 
-                # Extract the min reward from all corners and replace the reward
-                rew_single_min = min([corner_results[corner]['rew_single'] for corner in corner_results])
-                if rew_single_min < 0:
-                    rew_single_min = 10
-                for corner in corner_results:
-                    corner_results[corner]['rew_single'] = rew_single_min
-                    step_data = {
-                        'param': updated_param,
-                        'sim_result': corner_results[corner]['sim_result'],
-                        'reward': corner_results[corner]['rew_single'],
-                        'corner': corner
-                    }
-                    pickle_path = os.path.join(corner_results[corner]['working_dir_step'], 'result.pkl')
-                    with open(pickle_path, 'wb') as f:
-                        pickle.dump(step_data, f)
+        # 8. 判断终止条件
+        terminated, truncated = self._determine_termination(rew_single)
 
-                observations = observations_tt
-                rew_single = rew_single_min
+        # 9. 记录最终状态
+        logging.info(f"Step {self.step_num} terminated: {terminated}")
+        logging.info(f"Step {self.step_num} truncated: {truncated}")
 
-            else:
-                working_dir_step = working_dir_step_tt
-                observations = observations_tt
-                sim_result = sim_result_tt
-                rew_single = rew_single_tt
-
-                step_data = {
-                    'param': updated_param,
-                    'sim_result': sim_result,
-                    'reward': rew_single,
-                    'corner': 'tt'
-                }
-                pickle_path = os.path.join(working_dir_step, 'result.pkl')
-                with open(pickle_path, 'wb') as f:
-                    pickle.dump(step_data, f)
-
-        terminated = {a: False for a in self.agents}
-        truncated = {a: False for a in self.agents}
-
-        rew = {a: -10 for a in self.agents}
-        for agent_name in rew:
-            rew[agent_name] = rew_single
-
-        if self.continue_steps_enable:
-            if rew_single > 0 and not self.had_positive_reward:
-                self.had_positive_reward = True
-                self.steps_after_positive_reward = 0
-            elif self.had_positive_reward:
-                self.steps_after_positive_reward += 1
-
-            episode_over = False
-            if self.had_positive_reward and (
-                    self.steps_after_positive_reward >= self.continue_steps or self.step_num >= self.max_step):
-                episode_over = True
-            elif self.step_num >= self.max_step:
-                episode_over = True
-
-            if episode_over:
-                for agent_name in terminated:
-                    if self.had_positive_reward:
-                        terminated[agent_name] = True
-                        self.terminateds.add(agent_name)
-                    else:
-                        truncated[agent_name] = True
-                        self.truncateds.add(agent_name)
-
-        else:
-            if rew_single > 0:
-                for agent_name in terminated:
-                    terminated[agent_name] = True
-                    self.terminateds.add(agent_name)
-            if self.step_num >= self.max_step:
-                for agent_name in truncated:
-                    truncated[agent_name] = True
-                    self.truncateds.add(agent_name)
-
-            # Delete working temp directory, if it exists
-            # delete_work_dir(working_dir_step)
-
-        info = {agent: {} for agent in self.agents}
-
-        terminated["__all__"] = len(self.terminateds) == len(self.agents)
-        truncated["__all__"] = len(self.truncateds) == len(self.agents)
-
-        logging.info(f"Step!!!terminated: {terminated} with step number: {self.step_num}")
-        logging.info(f"Step!!!truncated: {truncated} with step number: {self.step_num}")
-
-        return observations, rew, terminated, truncated, info
+        return observations, rewards, terminated, truncated, {agent: {} for agent in self.agents}
