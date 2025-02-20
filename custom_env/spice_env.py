@@ -204,27 +204,60 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         super().__init__()
 
     def _initialize_reset_variables(self):
+        """初始化所有reset相关的变量"""
+        # 状态控制变量
         self.steps_after_positive_reward = 0
         self.had_positive_reward = False
-
         self.step_num = 0
+        self.resetted = False
 
-        # For avoid simulation error in step, generate a default result with zero value but correct key in step method
+        # 仿真结果缓存
         self.zero_sim_result = {}
         for sim in self.generalize_specs_config_dict:
             specs_tmp_dict = {}
             for specs_item in self.generalize_specs_config_dict[sim]:
-                if self.generalize_specs_config_dict[sim][specs_item]['objective'] == 'max':
-                    specs_tmp_dict[specs_item] = 0.0
-                if self.generalize_specs_config_dict[sim][specs_item]['objective'] == 'min':
-                    specs_tmp_dict[specs_item] = 100.0
-                if self.generalize_specs_config_dict[sim][specs_item]['objective'] == 'range':
-                    specs_tmp_dict[specs_item] = 100.0
+                obj_type = self.generalize_specs_config_dict[sim][specs_item]['objective']
+                specs_tmp_dict[specs_item] = 0.0 if obj_type == 'max' else 100.0
             self.zero_sim_result[sim] = specs_tmp_dict
-        logging.info(f"Initialing!!!Zero sim result: {self.zero_sim_result}")
 
-        # Set the ideal specs based on the generalize flag
+        # 初始化参数和规格
+        self.cur_param = None
+        self.ideal_specs = None
+        self.norm_ideal_specs = None
+
+    def _load_ideal_specs(self):
+        """加载并规范化理想规格"""
         self.ideal_specs = generalize_config(self.generalize, self.ideal_specs_path)
+        self.norm_ideal_specs = norm_ideal_spec(self.ideal_specs, self.norm_specs)
+        logging.info(f"Initialing!!!Ideal specs: {self.ideal_specs}")
+        logging.debug(f"Normalized ideal specs: {self.norm_ideal_specs}")
+
+    def _generate_initial_parameters(self) -> dict:
+        """生成初始参数"""
+        init_param = gen_init_param(
+            self.init_method,
+            self.predefined_init_param,
+            True,
+            self.device_mask_dict,
+            self.param_space
+        )
+        logging.debug(f"Initial parameters: {init_param}")
+        return init_param
+
+    def _setup_reset_environment(self, init_param: dict) -> str:
+        """设置重置环境并返回工作目录"""
+        working_dir = create_work_dir(self.run_root_dir, 'init')
+        update_netlist(working_dir, self.sim_config_dict, init_param, self.unassigned_netlist_dir)
+        return working_dir
+
+    def _run_initial_dc_simulation(self, init_param: dict) -> Union[dict, None]:
+        """运行初始DC仿真并返回区域信息"""
+        if not self.region_extract:
+            return None
+
+        operation_region_dict = self._run_region_simulation_check('init_dc', init_param)
+        logging.debug(f"Initial operation regions: {operation_region_dict}")
+        return operation_region_dict
 
     def _run_region_simulation_check(self, dir_suffix: str, param: dict) -> dict:
         try:
@@ -243,6 +276,17 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         except Exception as e:
             logging.warning(f"Region simulation failed: {str(e)}")
             return copy.deepcopy(self.operation_region_dict_zero)
+
+    def _save_reset_data(self, working_dir: str, param: dict, sim_result: dict, reward: float):
+        """保存重置步骤数据"""
+        step_data = {
+            'param': param,
+            'sim_result': sim_result,
+            'reward': reward,
+            'corner': 'tt'
+        }
+        with open(os.path.join(working_dir, 'result.pkl'), 'wb') as f:
+            pickle.dump(step_data, f)
 
     def _process_simulation_result(self, sim_result: dict, param: dict,
                                    operation_region_dict: dict = None) -> tuple:
@@ -324,75 +368,42 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
 
     def reset(self, *, seed=None, options=None):
 
+        # 初始化基础变量
         self._initialize_reset_variables()
 
-        reset_operation_region_dict = None
+        # 加载规格配置
+        self._load_ideal_specs()
 
-        logging.info(f"Initialing!!!Generalize flag: {self.generalize}")
-        logging.info(f"Initialing!!!Ideal specs: {self.ideal_specs}")
+        # 生成初始参数
+        init_param = self._generate_initial_parameters()
+        self.cur_param = copy.deepcopy(init_param)
 
-        init_param = gen_init_param(self.init_method, self.predefined_init_param, True,
-                                    self.device_mask_dict, self.param_space)
-        logging.debug(f"Initialing!!!Init param: {init_param}")
+        # 设置仿真环境
+        working_dir = self._setup_reset_environment(init_param)
 
-        # Add _init in the path
-        working_dir_reset = create_work_dir(self.run_root_dir, 'init')
+        # 运行DC区域检测
+        operation_region = self._run_initial_dc_simulation(init_param)
 
-        # Update Netlist File
-        update_netlist(working_dir_reset, self.sim_config_dict, init_param, self.unassigned_netlist_dir)
-
-        # Normalize the current ideal specs
-        self.norm_ideal_specs = norm_ideal_spec(self.ideal_specs, self.norm_specs)
-        logging.info(f"Initialing!!!Ideal specs: {self.ideal_specs}")
-        logging.debug(f"Initialing!!!Normalized ideal specs: {self.norm_ideal_specs}")
-
-        if self.region_extract:
-            reset_operation_region_dict = self._run_region_simulation_check('init_dc', init_param)
-            logging.debug(f"Initial!!! operation regions: {reset_operation_region_dict}")
-
+        # 执行初始仿真
         observations, sim_result, rew = self._run_simulation(
-            working_dir_reset,
+            working_dir,
             init_param,
-            reset_operation_region_dict if self.region_extract else None
+            operation_region if self.region_extract else None
         )
 
-        # Normalize the current simulation specs
-        logging.info(f"Initialing!!!Simulation result: {sim_result}")
-        logging.debug(f"Initialing!!!Ideal specs: {self.ideal_specs}")
-        norm_sim_result = norm_sim_spec(sim_result, self.norm_specs)
-        logging.debug(f"Initialing!!!Normalized simulation result: {norm_sim_result}")
-
-        # Generate observation
-        observations, sim_result, rew = self._run_simulation(
-            working_dir_reset,
-            init_param,
-            reset_operation_region_dict if self.region_extract else None
-        )
+        # 保存参数和结果
+        self._save_reset_data(working_dir, init_param, sim_result, rew)
 
         # Test Rew func
         rew = self.cal_reward(self.ideal_specs, sim_result, self.norm_specs)
         logging.info(f"Debug!!!Resetting!!!Reward result: {rew}")
 
-        self.cur_param = copy.deepcopy(init_param)
-
+        # 重置环境状态
         self.resetted = True
         self.terminateds = set()
         self.truncateds = set()
 
-        info = {agent: {} for agent in self.agents}
-
-        # Save init step to pickle file
-        step_data = {
-            'param': init_param,
-            'sim_result': sim_result,
-            'reward': rew,
-            'corner': 'tt'
-        }
-        pickle_path = os.path.join(working_dir_reset, 'result.pkl')
-        with open(pickle_path, 'wb') as f:
-            pickle.dump(step_data, f)
-
-        return observations, info
+        return observations, {agent: {} for agent in self.agents}
 
     def step(self, action_dict):
         logging.debug(f"Step!!!Action dict: {action_dict}")
@@ -566,25 +577,3 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         logging.info(f"Step!!!truncated: {truncated} with step number: {self.step_num}")
 
         return observations, rew, terminated, truncated, info
-
-    # def validate_input(self, config: Dict[str, Any]) -> None:
-    #         for param, expected_type in self.expected_params.items():
-    #             if param not in config:
-    #                 raise ValueError(f"Missing required parameter: {param}")
-    #
-    #             value = config[param]
-    #             if not isinstance(value, expected_type):
-    #                 raise ValueError(f"Invalid type for {param}. Expected {expected_type}, got {type(value)}")
-    #
-    #             if param == 'init_method' and value not in ['file', 'half', 'random', 'mixed']:
-    #                 raise ValueError(
-    #                     f"Invalid value for init_method. Expected one of ['file', 'half', 'random', 'mixed'], got {value}")
-    #
-    #             if param == 'log_level' and value not in ['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL']:
-    #                 raise ValueError(
-    #                     f"Invalid value for log_level. Expected one of ['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'], "
-    #                     f"got {value}")
-    #
-    #         for key in config:
-    #             if key not in self.expected_params:
-    #                 raise ValueError(f"Unexpected parameter: {key}")
