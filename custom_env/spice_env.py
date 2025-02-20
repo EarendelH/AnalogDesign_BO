@@ -237,30 +237,44 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
             raise
 
     def _setup_logging(self):
-        """配置分层日志系统"""
+        """配置分层日志系统（仅控制台输出）"""
         self.logger = logging.getLogger("SpiceEnv")
         self.logger.propagate = False  # 防止传播到根logger
 
+        # 转换日志级别为logging常量
         log_level = getattr(logging, self.log_level.upper(), logging.INFO)
-        formatter = logging.Formatter(
-            '%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-            datefmt='%Y-%m-%d %H:%M:%S'
-        )
 
-        # 控制台输出
+        # 确保日志级别有效性
+        if not isinstance(log_level, int):
+            self.logger.warning(f"Invalid log level: {self.log_level}, defaulting to INFO")
+            log_level = logging.INFO
+
+        # 清除已有handler避免重复
+        if self.logger.handlers:
+            for handler in self.logger.handlers:
+                self.logger.removeHandler(handler)
+
+        # 配置控制台输出
         console_handler = logging.StreamHandler()
         console_handler.setLevel(log_level)
+
+        # 优化日志格式
+        formatter = logging.Formatter(
+            '[%(asctime)s] [%(name)s/%(levelname)s] %(message)s',
+            datefmt='%Y-%m-%d %H:%M:%S'
+        )
         console_handler.setFormatter(formatter)
 
-        # 文件输出（可选）
-        # log_file = os.path.join(self.run_root_dir, 'training.log')
-        # file_handler = logging.FileHandler(log_file)
-        # file_handler.setLevel(logging.DEBUG)  # 文件记录更详细日志
-        # file_handler.setFormatter(formatter)
+        # 设置logger级别为最低（由handler控制实际输出级别）
+        self.logger.setLevel(logging.DEBUG)
+        self.logger.addHandler(console_handler)
 
-        # self.logger.addHandler(console_handler)
-        # self.logger.addHandler(file_handler)
-        # self.logger.setLevel(logging.DEBUG)  # 设置最低级别
+        # 验证日志级别设置
+        self.logger.debug("Debug logging enabled")
+        self.logger.info("Info logging enabled")
+        self.logger.warning("Warning logging enabled")
+        self.logger.error("Error logging enabled")
+        self.logger.critical("Critical logging enabled")
 
     def _initialize_spaces(self):
         """初始化观察和动作空间"""
