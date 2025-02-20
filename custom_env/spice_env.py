@@ -27,6 +27,110 @@ from util.device_mask import masked_action_dict_mapping
 
 class RllibAnalogDesignAutoEnv(MultiAgentEnv):
 
+    def __init__(self, config: Dict[str, Any]):
+        # 配置验证和基础设置
+        self._validate_config(config)
+        self._set_basic_attributes(config)
+
+        # 路径配置
+        self._setup_paths()
+
+        # 日志配置
+        self._setup_logging()
+
+        # 加载所有YAML配置
+        self._load_all_configs()
+
+        # 初始化环境空间和参数
+        self._initialize_spaces()
+        self._initialize_state_variables()
+
+        # Import Reward Func
+        self._import_reward_function()
+
+        super().__init__()
+
+    def reset(self, *, seed=None, options=None):
+
+        # 初始化基础变量
+        self._initialize_reset_variables()
+
+        # 加载规格配置
+        self._load_ideal_specs()
+
+        # 生成初始参数
+        init_param = self._generate_initial_parameters()
+        self.cur_param = copy.deepcopy(init_param)
+
+        # 设置仿真环境
+        working_dir = self._setup_reset_environment(init_param)
+
+        # 运行DC区域检测
+        operation_region = self._run_initial_dc_simulation(init_param)
+
+        # 执行初始仿真
+        observations, sim_result, rew = self._run_simulation(
+            working_dir,
+            init_param,
+            operation_region if self.region_extract else None
+        )
+
+        # 保存参数和结果
+        self._save_reset_data(working_dir, init_param, sim_result, rew)
+
+        # 重置环境状态
+        self.resetted = True
+        self.terminateds = set()
+        self.truncateds = set()
+
+        return observations, {agent: {} for agent in self.agents}
+
+    def step(self, action_dict):
+        # 步骤计数器更新
+        self.step_num += 1
+
+        # 1. 转换动作为参数
+        updated_param, all_actions = self._convert_actions_to_params(copy.deepcopy(action_dict))
+        self.cur_param = copy.deepcopy(updated_param)
+
+        # 2. 执行DC检查
+        region_info, dc_valid = self._perform_step_dc_check(updated_param)
+
+        # 3. 处理DC检查失败情况
+        if self.region_extract and self.dc_check and not dc_valid:
+            observations, rew_single = self._handle_dc_check_failure(updated_param, region_info)
+        else:
+            # 4. 运行主仿真
+            observations, sim_result, rew_single, main_dir = self._run_main_simulation(updated_param, region_info)
+
+            # 5. 处理角落仿真
+            if self.corner_sim and rew_single >= 0:
+                tt_result = {
+                    'sim_result': sim_result,
+                    'reward': rew_single
+                }
+                rew_single = self._process_corner_results(
+                    main_dir,  # 传递主目录
+                    updated_param,
+                    region_info,
+                    tt_result  # 传递tt仿真结果
+                )
+            # 6. 保存主仿真数据（非corner情况）
+            else:
+                self._save_step_data(main_dir, updated_param, sim_result, rew_single)
+
+        # 7. 计算最终奖励
+        rewards = self._assign_rewards(rew_single)
+
+        # 8. 判断终止条件
+        terminated, truncated = self._determine_termination(rew_single)
+
+        # 9. 记录最终状态
+        logging.info(f"Step {self.step_num} terminated: {terminated}")
+        logging.info(f"Step {self.step_num} truncated: {truncated}")
+
+        return observations, rewards, terminated, truncated, {agent: {} for agent in self.agents}
+
     def _validate_config(self, config):
         """验证输入配置"""
         expected_params = {
@@ -179,29 +283,6 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         except (ImportError, AttributeError) as e:
             logging.error(f"Error importing reward function '{self.reward_func}': {e}")
             raise
-
-    def __init__(self, config: Dict[str, Any]):
-        # 配置验证和基础设置
-        self._validate_config(config)
-        self._set_basic_attributes(config)
-
-        # 路径配置
-        self._setup_paths()
-
-        # 日志配置
-        self._setup_logging()
-
-        # 加载所有YAML配置
-        self._load_all_configs()
-
-        # 初始化环境空间和参数
-        self._initialize_spaces()
-        self._initialize_state_variables()
-
-        # Import Reward Func
-        self._import_reward_function()
-
-        super().__init__()
 
     def _initialize_reset_variables(self):
         """初始化所有reset相关的变量"""
@@ -424,34 +505,29 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
     def _process_corner_results(self, main_dir: str, param: dict,
                                 region_info: dict, tt_result: dict) -> float:
         """处理多角落仿真结果（修正版）"""
-        # 保存tt结果
-        self._save_step_data(main_dir, param, tt_result['sim_result'], tt_result['reward'], 'tt')
-
-        # 运行其他corner仿真
+        # 1. 合并所有仿真结果
         corner_results = self._handle_corner_simulations(main_dir, param, region_info)
-
-        # 合并tt结果
-        corner_results['tt'] = {
+        corner_results['tt'] = {  # 添加tt结果到集合
             'working_dir': main_dir,
             'sim_result': tt_result['sim_result'],
             'reward': tt_result['reward']
         }
 
-        # 计算最小奖励（保持原有逻辑）
+        # 2. 计算统一奖励值
         min_reward = min(v['reward'] for v in corner_results.values())
-        min_reward = max(min_reward, 10) if min_reward < 0 else min_reward
+        final_reward = max(min_reward, 10) if min_reward < 0 else min_reward
 
-        # 统一保存所有结果
+        # 3. 统一保存所有结果
         for corner, data in corner_results.items():
             self._save_step_data(
                 data['working_dir'],
                 param,
                 data['sim_result'],
-                min_reward,  # 统一使用最小奖励
+                final_reward,  # 统一使用最终奖励
                 corner
             )
 
-        return min_reward
+        return final_reward
 
     def _assign_rewards(self, base_reward: float) -> dict:
         """计算多智能体奖励字典"""
@@ -519,84 +595,3 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
                 'reward': rew
             }
         return corner_results
-
-    def reset(self, *, seed=None, options=None):
-
-        # 初始化基础变量
-        self._initialize_reset_variables()
-
-        # 加载规格配置
-        self._load_ideal_specs()
-
-        # 生成初始参数
-        init_param = self._generate_initial_parameters()
-        self.cur_param = copy.deepcopy(init_param)
-
-        # 设置仿真环境
-        working_dir = self._setup_reset_environment(init_param)
-
-        # 运行DC区域检测
-        operation_region = self._run_initial_dc_simulation(init_param)
-
-        # 执行初始仿真
-        observations, sim_result, rew = self._run_simulation(
-            working_dir,
-            init_param,
-            operation_region if self.region_extract else None
-        )
-
-        # 保存参数和结果
-        self._save_reset_data(working_dir, init_param, sim_result, rew)
-
-        # 重置环境状态
-        self.resetted = True
-        self.terminateds = set()
-        self.truncateds = set()
-
-        return observations, {agent: {} for agent in self.agents}
-
-    def step(self, action_dict):
-        # 步骤计数器更新
-        self.step_num += 1
-
-        # 1. 转换动作为参数
-        updated_param, all_actions = self._convert_actions_to_params(copy.deepcopy(action_dict))
-        self.cur_param = copy.deepcopy(updated_param)
-
-        # 2. 执行DC检查
-        region_info, dc_valid = self._perform_step_dc_check(updated_param)
-
-        # 3. 处理DC检查失败情况
-        if self.region_extract and self.dc_check and not dc_valid:
-            observations, rew_single = self._handle_dc_check_failure(updated_param, region_info)
-        else:
-            # 4. 运行主仿真
-            observations, sim_result, rew_single, main_dir = self._run_main_simulation(updated_param, region_info)
-
-            # 5. 处理角落仿真
-            if self.corner_sim and rew_single >= 0:
-                tt_result = {
-                    'sim_result': sim_result,
-                    'reward': rew_single
-                }
-                rew_single = self._process_corner_results(
-                    main_dir,  # 传递主目录
-                    updated_param,
-                    region_info,
-                    tt_result  # 传递tt仿真结果
-                )
-            # 6. 保存主仿真数据（非corner情况）
-            else:
-                self._save_step_data(main_dir, updated_param, sim_result, rew_single)
-
-        # 7. 计算最终奖励
-        rewards = self._assign_rewards(rew_single)
-
-        # 8. 判断终止条件
-        terminated, truncated = self._determine_termination(rew_single)
-
-        # 9. 记录最终状态
-        logging.info(f"Step {self.step_num} terminated: {terminated}")
-        logging.info(f"Step {self.step_num} truncated: {truncated}")
-
-        return observations, rewards, terminated, truncated, {agent: {} for agent in self.agents}
