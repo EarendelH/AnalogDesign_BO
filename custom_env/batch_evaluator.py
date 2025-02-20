@@ -154,7 +154,7 @@ def batch_evaluation_parallel(
 
 def _create_excel_report(evaluation_dict: Dict[str, Any], base_folder: str) -> None:
     """
-    Create Excel report from evaluation dictionary.
+    Create Excel report from evaluation dictionary with separate sheets for each parameter set.
 
     Args:
         evaluation_dict: Dictionary containing evaluation results
@@ -163,41 +163,46 @@ def _create_excel_report(evaluation_dict: Dict[str, Any], base_folder: str) -> N
     Returns:
         None
     """
-    rows = []
+    # Group data by param_set
+    param_set_data = {}
 
     # Process each parameter set and corner
     for param_set, corner_data in evaluation_dict.items():
+        param_rows = []
         for corner, data in corner_data.items():
             row = {
                 'param_set': param_set,
                 'corner': corner
             }
 
-            # Add parameters
-            for param_key, param_value in data['param'].items():
-                row[f"param_{param_key}"] = param_value
-
-            # Add results (skip first level of sim results)
+            # Add results
             for sim_type, sim_metrics in data['result'].items():
                 for metric_name, metric_value in sim_metrics.items():
                     row[f"result_{metric_name}"] = metric_value
 
-            rows.append(row)
+            # Add parameters
+            for param_key, param_value in data['param'].items():
+                row[f"param_{param_key}"] = param_value
 
-    # Create DataFrame and save to Excel
-    df = pd.DataFrame(rows)
+            param_rows.append(row)
 
-    # Reorder columns to ensure param_set is first
-    cols = df.columns.tolist()
-    cols.remove('param_set')
-    cols = ['param_set'] + cols
+        param_set_data[param_set] = param_rows
 
-    df = df[cols]
-
-    # Save to Excel
+    # Create Excel file with separate sheets
     output_file = os.path.join(base_folder, 'evaluation_results.xlsx')
-    df.to_excel(output_file, index=False)
-    print(f"Evaluation results saved to {output_file}")
+    with pd.ExcelWriter(output_file, engine='openpyxl') as writer:
+        # Create individual sheets for each param_set
+        for param_set, rows in param_set_data.items():
+            df = pd.DataFrame(rows)
+            # Reorder columns
+            cols = df.columns.tolist()
+            cols.remove('param_set')
+            cols = ['param_set'] + cols
+            df = df[cols]
+            # Write to sheet
+            df.to_excel(writer, sheet_name=param_set, index=False)
+
+    print(f"Evaluation results saved to {output_file} with separate sheets for each parameter set")
 
 def validate_configurations(base_folder: str,
                             unassigned_netlist_dir: str,
@@ -282,9 +287,11 @@ if __name__ == "__main__":
         corner_pattern_1 = ['fs', 'sf', 'ff', 'ss']
         cornet_pattern_2 = ['ss', 'ff']
         temp_pattern = ['b40', '125']
+        ESR_pattern = ['p2', '1']
+        VDDI_pattern = ['1p65', '1p95']
         # Generate a corner summary list: {corner_pattern_1}_{cornet_pattern_2}_{cornet_pattern_2}_{temp_pattern}
-        corner_summary = [f"{corner1}_{corner2}_{corner3}_{temp}" for corner1 in corner_pattern_1 for corner2 in
-                          cornet_pattern_2 for corner3 in cornet_pattern_2 for temp in temp_pattern]
+        corner_summary = [f"{corner1}_{corner2}_{corner3}_{temp}_{ESR_pattern}_{VDDI_pattern}" for corner1 in corner_pattern_1 for corner2 in
+                          cornet_pattern_2 for corner3 in cornet_pattern_2 for temp in temp_pattern for ESR in ESR_pattern for VDDI in VDDI_pattern]
         corner_list.extend(corner_summary)
         print(f"Evaluation Corner List: {corner_list}")
 
