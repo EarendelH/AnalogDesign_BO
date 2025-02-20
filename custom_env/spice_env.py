@@ -28,54 +28,64 @@ from util.device_mask import masked_action_dict_mapping
 class RllibAnalogDesignAutoEnv(MultiAgentEnv):
 
     def __init__(self, config: Dict[str, Any]):
-        # 配置验证和基础设置
+        """Initialize the analog design automation environment.
+
+        Args:
+            config: Configuration dictionary containing environment parameters
+        """
+        # Configuration validation and basic setup
         self._validate_config(config)
         self._set_basic_attributes(config)
 
-        # 路径配置
+        # Path configuration
         self._setup_paths()
 
-        # 日志配置
+        # Logging configuration
         self._setup_logging()
 
-        # 加载所有YAML配置
+        # Load all YAML configurations
         self._load_all_configs()
 
-        # 初始化环境空间和参数
+        # Initialize environment spaces and parameters
         self._initialize_spaces()
         self._initialize_state_variables()
 
-        # Import Reward Func
+        # Import reward function dynamically
         self._import_reward_function()
 
         super().__init__()
 
     def reset(self, *, seed=None, options=None):
+        """Reset the environment to initial state.
 
-        # 初始化基础变量
+        Returns:
+            tuple: (observations, info) containing initial observations
+                   and empty info dict
+        """
+        # Initialize reset-related variables
         self._initialize_reset_variables()
 
         self.logger.info("Initializing reset process...")
         self.logger.debug(f"Generalize flag: {self.generalize}")
         self.logger.debug(f"Ideal specs config: {self.ideal_specs_path}")
 
-        # 加载规格配置
+        # Load specifications
         self._load_ideal_specs()
 
-        # 生成初始参数
+        # Generate initial parameters
         init_param = self._generate_initial_parameters()
         self.cur_param = copy.deepcopy(init_param)
 
         self.logger.info(f"Generated initial parameters: {init_param}")
         self.logger.debug(f"Parameter space: {self.param_space}")
 
-        # 设置仿真环境
+        # Setup simulation environment
         working_dir = self._setup_reset_environment(init_param)
 
-        # 运行DC区域检测
+        # Run initial DC simulation for region check
         operation_region = self._run_initial_dc_simulation(init_param)
 
-        # 执行初始仿真
+        # Execute initial simulation
         observations, sim_result, rew = self._run_simulation(
             working_dir,
             init_param,
@@ -84,10 +94,10 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         self.logger.info(f"Initial simulation result: {sim_result}")
         self.logger.info(f"Initial reward: {rew}")
 
-        # 保存参数和结果
+        # Save reset data
         self._save_reset_data(working_dir, init_param, sim_result, rew)
 
-        # 重置环境状态
+        # Reset environment state
         self.resetted = True
         self.terminateds = set()
         self.truncateds = set()
@@ -95,31 +105,39 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         return observations, {agent: {} for agent in self.agents}
 
     def step(self, action_dict):
-        # 步骤计数器更新
+        """Execute one environment step using provided actions.
+
+        Args:
+            action_dict: Dictionary of actions from all agents
+
+        Returns:
+            tuple: (observations, rewards, terminateds, truncateds, infos)
+        """
+        # Increment step counter
         self.step_num += 1
 
         self.logger.info(f"Starting step {self.step_num}")
         self.logger.debug(f"Raw action dict: {action_dict}")
 
-        # 1. 转换动作为参数
+        # 1. Convert actions to parameters
         updated_param, all_actions = self._convert_actions_to_params(copy.deepcopy(action_dict))
         self.logger.debug(f"Converted actions: {all_actions}")
         self.logger.info(f"Updated parameter: {updated_param}")
         self.cur_param = copy.deepcopy(updated_param)
 
-        # 2. 执行DC检查
+        # 2. Perform DC check
         region_info, dc_valid = self._perform_step_dc_check(updated_param)
 
-        # 3. 处理DC检查失败情况
+        # 3. Handle DC check failure
         if self.region_extract and self.dc_check and not dc_valid:
             observations, rew_single = self._handle_dc_check_failure(updated_param, region_info)
         else:
-            # 4. 运行主仿真
+            # 4. Run main simulation
             observations, sim_result, rew_single, main_dir = self._run_main_simulation(updated_param, region_info)
             self.logger.info(f"Running main simulation in {main_dir}")
             self.logger.debug(f"Simulation config: {self.sim_config_dict}")
 
-            # 5. 处理角落仿真
+            # 5. Process corner simulations
             if self.corner_sim and rew_single >= 0:
                 self.logger.info(f"Positive reward {rew_single} in step {self.step_num}, running corner simulations...")
                 tt_result = {
@@ -127,29 +145,36 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
                     'reward': rew_single
                 }
                 rew_single = self._process_corner_results(
-                    main_dir,  # 传递主目录
+                    main_dir,  # Pass main directory
                     updated_param,
                     region_info,
-                    tt_result  # 传递tt仿真结果
+                    tt_result  # Pass TT simulation result
                 )
-            # 6. 保存主仿真数据（非corner情况）
+            # 6. Save main simulation data (non-corner case)
             else:
                 self._save_step_data(main_dir, updated_param, sim_result, rew_single)
 
-        # 7. 计算最终奖励
+        # 7. Calculate final rewards
         rewards = self._assign_rewards(rew_single)
 
-        # 8. 判断终止条件
+        # 8. Determine termination conditions
         terminated, truncated = self._determine_termination(rew_single)
 
-        # 9. 记录最终状态
+        # 9. Log final state
         logging.info(f"Step {self.step_num} terminated: {terminated}")
         logging.info(f"Step {self.step_num} truncated: {truncated}")
 
         return observations, rewards, terminated, truncated, {agent: {} for agent in self.agents}
 
     def _validate_config(self, config):
-        """验证输入配置"""
+        """Validate input configuration.
+
+        Args:
+            config: Configuration dictionary to validate
+
+        Raises:
+            ValueError: If required parameters are missing or have invalid types
+        """
         expected_params = {
             'generalize': bool,
             'max_step': int,
@@ -173,11 +198,15 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
                 raise ValueError(f"Invalid type for {param}. Expected {expected_type}, got {type(config[param])}")
 
     def _set_basic_attributes(self, config):
-        """批量设置基础属性"""
+        """Set basic attributes from configuration.
+
+        Args:
+            config: Configuration dictionary containing environment parameters
+        """
         for key in config:
             setattr(self, key, config[key])
 
-        # 设置标志属性
+        # Set flag attributes
         flag_mappings = {
             'continue_steps_enable': 'continue_steps_enable'
         }
@@ -185,11 +214,11 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
             setattr(self, dest, getattr(self, src, False))
 
     def _setup_paths(self):
-        """配置所有路径"""
+        """Configure all environment paths."""
         self.current_path = os.getcwd()
         self.home_dir = os.path.expanduser("~")
 
-        # 主运行目录
+        # Main working directory
         self.run_root_dir = os.path.join(
             self.home_dir,
             "AnalogDesignAuto/AnalogDesignAuto_MultiAgent/custom_env",
@@ -197,7 +226,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         )
         os.makedirs(self.run_root_dir, exist_ok=True)
 
-        # 配置文件路径
+        # Configuration file paths
         self.config_files = {
             'agent_assign_config': "agent_assign.yaml",
             'param_range_config': "param_range.yaml",
@@ -218,7 +247,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         self.unassigned_netlist_dir = os.path.join(self.current_path, 'netlist_template', self.unassigned_netlist_dir)
 
     def _load_all_configs(self):
-        """加载所有YAML配置"""
+        """Load all YAML configuration files."""
         self.sim_config_dict = self._load_yaml_config(self.sim_config)
         self.norm_specs = self._load_yaml_config(self.norm_specs_file)
         self.param_range_dict = self._load_yaml_config(self.param_range_config)
@@ -228,7 +257,17 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         self.generalize_specs_config_dict = self._load_yaml_config(self.generalize_specs_config)
 
     def _load_yaml_config(self, file_path: str) -> dict:
-        """通用YAML加载方法"""
+        """Load YAML configuration file.
+
+        Args:
+            file_path: Path to YAML file
+
+        Returns:
+            dict: Loaded configuration
+
+        Raises:
+            Exception: If file loading fails
+        """
         try:
             with open(file_path, 'r') as f:
                 return yaml.safe_load(f)
@@ -237,42 +276,45 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
             raise
 
     def _setup_logging(self):
-        """配置全局日志系统（包含外部函数）"""
-        # 转换日志级别为logging常量
+        """Configure logging system with specified level."""
+        # Convert log level to logging constant
         log_level = getattr(logging, self.log_level.upper(), logging.INFO)
 
-        # 配置根logger（影响所有模块）
+        # Configure root logger
         root_logger = logging.getLogger()
         root_logger.setLevel(log_level)
 
-        # 清除所有现有handler避免重复
+        # Clear existing handlers
         for handler in root_logger.handlers[:]:
             root_logger.removeHandler(handler)
 
-        # 配置统一格式
+        # Configure formatter
         formatter = logging.Formatter(
             '[%(asctime)s] [%(name)s/%(levelname)s] %(message)s',
             datefmt='%Y-%m-%d %H:%M:%S'
         )
 
-        # 配置控制台handler（全局生效）
+        # Configure console handler
         console_handler = logging.StreamHandler()
-        console_handler.setLevel(log_level)  # 重要：设置handler级别
+        console_handler.setLevel(log_level)
         console_handler.setFormatter(formatter)
 
-        # 同时配置根logger和当前模块logger
         root_logger.addHandler(console_handler)
 
-        # 配置当前模块专用logger（可选）
+        # Configure module-specific logger
         self.logger = logging.getLogger("SpiceEnv")
-        self.logger.setLevel(log_level)  # 明确设置级别（继承自根logger）
-        self.logger.propagate = True  # 允许传播到根logger
+        self.logger.setLevel(log_level)
+        self.logger.propagate = True
 
-        # 验证配置
+        # Validate logging configuration
         self._validate_log_config(root_logger)
 
     def _validate_log_config(self, root_logger):
-        """验证日志配置有效性"""
+        """Validate logging configuration by sending test messages.
+
+        Args:
+            root_logger: Configured root logger instance
+        """
         test_messages = {
             logging.DEBUG: "Debug test message (should show if level <= DEBUG)",
             logging.INFO: "Info test message (should show if level <= INFO)",
@@ -286,17 +328,17 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         for level, msg in test_messages.items():
             root_logger.log(level, msg)
 
-        # 外部模块日志测试
+        # Test external module logging
         external_logger = logging.getLogger("ExternalModule")
         external_logger.debug("External debug test")
         external_logger.info("External info test")
 
     def _initialize_spaces(self):
-        """初始化观察和动作空间"""
-        # 生成参数空间
+        """Initialize observation and action spaces."""
+        # Generate parameter space
         self.param_space = copy.deepcopy(gen_param_space(self.param_range_dict))
 
-        # 生成观察空间
+        # Generate observation space
         obs_generator = gen_obs_space_w_region if self.region_extract else gen_obs_space
         flatten_obs = flatten_obs_space_w_region if self.region_extract else flatten_obs_space
         self.observation_space = flatten_obs(obs_generator(
@@ -305,15 +347,14 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
             self.agent_assign_dict
         ))
 
-        # 生成动作空间
+        # Generate masked action space
         self.action_space = gen_masked_continuous_action_space(
             self.device_mask_dict,
             self.agent_assign_dict
         )
 
     def _initialize_state_variables(self):
-        """初始化状态变量"""
-
+        """Initialize environment state variables."""
         self.resetted = None
         self.trajectory_data = None
         self.log_file_path = None
@@ -326,14 +367,18 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         self.max_step = int(self.max_step)
         self.action_mask = True
 
+        # Reward continuation tracking
         self.continue_steps = 4  # Number of steps to continue after positive reward
         self.steps_after_positive_reward = 0
         self.had_positive_reward = False
 
+        # Operation region tracking
         self.operation_region_dict_zero = {
             comp: 0 for comp in self.param_range_dict
             if comp != 'other_variable'
         }
+
+        # Agent management
         self.possible_agents = list(self.agent_assign_dict.keys())
         self.agents = self.possible_agents
         self._agent_ids = set(self.agents)
@@ -341,6 +386,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         self.truncateds = set()
 
     def _import_reward_function(self):
+        """Dynamically import reward calculation function."""
         try:
             reward_module = importlib.import_module('util.cal_reward')
             self.cal_reward = getattr(reward_module, self.reward_func)
@@ -349,14 +395,14 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
             raise
 
     def _initialize_reset_variables(self):
-        """初始化所有reset相关的变量"""
-        # 状态控制变量
+        """Initialize all reset-related variables."""
+        # State control variables
         self.steps_after_positive_reward = 0
         self.had_positive_reward = False
         self.step_num = 0
         self.resetted = False
 
-        # 仿真结果缓存
+        # Simulation result cache
         self.zero_sim_result = {}
         for sim in self.generalize_specs_config_dict:
             specs_tmp_dict = {}
@@ -367,13 +413,13 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
 
         self.logger.info(f"Zero sim result: {self.zero_sim_result}")
 
-        # 初始化参数和规格
+        # Initialize parameters and specs
         self.cur_param = None
         self.ideal_specs = None
         self.norm_ideal_specs = None
 
     def _load_ideal_specs(self):
-        """加载并规范化理想规格"""
+        """Load and normalize ideal specifications."""
         self.ideal_specs = generalize_config(self.generalize, self.ideal_specs_path)
         self.norm_ideal_specs = norm_ideal_spec(self.ideal_specs, self.norm_specs)
 
@@ -381,7 +427,11 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         self.logger.info(f"Normalized ideal specs: {self.norm_ideal_specs}")
 
     def _generate_initial_parameters(self) -> dict:
-        """生成初始参数"""
+        """Generate initial design parameters.
+
+        Returns:
+            dict: Initial parameter values
+        """
         init_param = gen_init_param(
             self.init_method,
             self.predefined_init_param,
@@ -392,13 +442,27 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         return init_param
 
     def _setup_reset_environment(self, init_param: dict) -> str:
-        """设置重置环境并返回工作目录"""
+        """Set up reset environment and return working directory.
+
+        Args:
+            init_param: Initial parameter values
+
+        Returns:
+            str: Path to created working directory
+        """
         working_dir = create_work_dir(self.run_root_dir, 'init')
         update_netlist(working_dir, self.sim_config_dict, init_param, self.unassigned_netlist_dir)
         return working_dir
 
     def _run_initial_dc_simulation(self, init_param: dict) -> Union[dict, None]:
-        """运行初始DC仿真并返回区域信息"""
+        """Run initial DC simulation for operation region check.
+
+        Args:
+            init_param: Initial parameter values
+
+        Returns:
+            dict: Operation region information or None if disabled
+        """
         if not self.region_extract:
             return None
 
@@ -407,6 +471,15 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         return operation_region_dict
 
     def _run_region_simulation_check(self, dir_suffix: str, param: dict) -> dict:
+        """Run region simulation with error handling.
+
+        Args:
+            dir_suffix: Directory suffix for simulation
+            param: Current parameter values
+
+        Returns:
+            dict: Operation region results or zero values on failure
+        """
         try:
             working_dir = create_work_dir(self.run_root_dir, dir_suffix)
             update_netlist(working_dir, self.dc_sim_config_dict, param, self.unassigned_netlist_dir)
@@ -414,7 +487,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
                 run_region_simulation(working_dir, self.dc_sim_config_dict, self.sim_output))
             self.logger.debug(f"Operation region dict: {operation_region_dict}")
 
-            # 检查结果长度一致性
+            # Validate result length
             if len(operation_region_dict) != len(self.operation_region_dict_zero):
                 logging.warning(
                     f"Operation region dict length mismatch. Expected {len(self.operation_region_dict_zero)}, Got {len(operation_region_dict)}")
@@ -426,7 +499,14 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
             return copy.deepcopy(self.operation_region_dict_zero)
 
     def _save_reset_data(self, working_dir: str, param: dict, sim_result: dict, reward: float):
-        """保存重置步骤数据"""
+        """Save reset step data to file.
+
+        Args:
+            working_dir: Simulation working directory
+            param: Parameter values used
+            sim_result: Simulation results
+            reward: Calculated reward
+        """
         step_data = {
             'param': param,
             'sim_result': sim_result,
@@ -438,28 +518,36 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
 
     def _process_simulation_result(self, sim_result: dict, param: dict,
                                    operation_region_dict: dict = None) -> tuple:
-        """统一处理模拟结果的后处理流程"""
-        # 结果规范化
+        """Process simulation results into observations and reward.
+
+        Args:
+            sim_result: Raw simulation results
+            param: Current parameter values
+            operation_region_dict: Operation region information
+
+        Returns:
+            tuple: (observations, sim_result, reward)
+        """
+        # Result normalization
         norm_sim_result = norm_sim_spec(sim_result, self.norm_specs)
 
         self.logger.info(f"Simulation result: {sim_result}")
         self.logger.debug(f"Normalized result: {norm_sim_result}")
 
-        # 生成观测空间
+        # Generate observation space
         if self.region_extract:
             observation_detail = copy.deepcopy(
                 update_obs_space_w_region(
                     self.norm_ideal_specs,
                     norm_sim_result,
                     param,
-                    operation_region_dict  # 仅在region_extract时传递第四个参数
+                    operation_region_dict
                 )
             )
-
             observation = copy.deepcopy(flatten_observation_w_region(observation_detail))
         else:
             observation_detail = copy.deepcopy(
-                update_obs_space(  # 非region_extract时使用三参数版本
+                update_obs_space(
                     self.norm_ideal_specs,
                     norm_sim_result,
                     param
@@ -470,19 +558,27 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         self.logger.debug(f"Observation detail: {observation_detail}")
         self.logger.debug(f"Flattened observation: {observation}")
 
-        # 构建多智能体观测
+        # Build multi-agent observations
         observations = {agent: observation for agent in self.agents}
 
-        # 计算奖励
+        # Calculate reward
         rew = self.cal_reward(self.ideal_specs, sim_result, self.norm_specs)
 
         return observations, sim_result, rew
 
     def _run_simulation(self, working_dir: str, param: dict,
                         operation_region_dict: dict = None) -> tuple:
-        """统一执行模拟流程"""
+        """Execute simulation with retry mechanism.
 
-        # 带重试机制的模拟运行
+        Args:
+            working_dir: Simulation working directory
+            param: Current parameter values
+            operation_region_dict: Operation region information
+
+        Returns:
+            tuple: Processed simulation results
+        """
+
         @retry_decorator(retry_count=2, delay_seconds=0.5, default_value=self.zero_sim_result)
         def _run_with_retry():
             return run_dynamic_simulation(
@@ -502,8 +598,15 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         return self._process_simulation_result(sim_result, param, operation_region_dict)
 
     def _convert_actions_to_params(self, action_dict: dict) -> tuple:
-        """将动作字典转换为参数字典"""
-        # 处理设备掩码
+        """Convert agent actions to design parameters.
+
+        Args:
+            action_dict: Dictionary of agent actions
+
+        Returns:
+            tuple: (updated_param, all_action_flatten)
+        """
+        # Apply device masking
         if self.device_mask_dict:
             all_action_flatten = masked_action_dict_mapping(self.device_mask_dict, action_dict)
             self.logger.debug(f"Action dict w/ device mask: {all_action_flatten}")
@@ -513,7 +616,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
                 all_action_flatten.update(group)
             self.logger.debug(f"Action dict w/o device mask: {all_action_flatten}")
 
-        # 转换为参数
+        # Convert to parameters
         updated_param = action2param(
             self.action_mask,
             self.device_mask_dict,
@@ -524,7 +627,14 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         return updated_param, all_action_flatten
 
     def _perform_step_dc_check(self, param: dict) -> tuple:
-        """执行DC检查并返回区域信息"""
+        """Perform DC operating region check.
+
+        Args:
+            param: Current parameter values
+
+        Returns:
+            tuple: (region_info, validity_flag)
+        """
         if not self.region_extract:
             return None, True
 
@@ -539,18 +649,21 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         return operation_region_dict, valid_param
 
     def _handle_dc_check_failure(self, param: dict, region_info: dict) -> tuple:
-        """处理DC检查失败的情况"""
+        """Handle DC check failure scenario.
 
-        self.logger.info(f"Step!!! Region_extract & DC_Check is enable and the param is not passed with dc_check"
-                         f" with step number: {self.step_num}")
+        Args:
+            param: Current parameter values
+            region_info: Operation region information
+
+        Returns:
+            tuple: (observations, reward)
+        """
+        self.logger.info(f"Step {self.step_num}: DC check failed with region extraction enabled")
 
         sim_result = copy.deepcopy(self.zero_sim_result)
         norm_result = norm_sim_spec(sim_result, self.norm_specs)
 
-        self.logger.debug(f"Simulation result: {sim_result}")
-        self.logger.debug(f"Normalized result: {norm_result}")
-
-        # 生成观测值
+        # Generate observations
         if self.region_extract:
             obs_detail = update_obs_space_w_region(
                 self.norm_ideal_specs,
@@ -567,24 +680,36 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
             )
             observation = flatten_observation(obs_detail)
 
-        self.logger.debug(f"Observation detail: {obs_detail}")
-        self.logger.debug(f"Flattened observation: {observation}")
-        self.logger.info(f"Region_extract & DC_Check is enable and the param is not passed with dc_check."
-                         f" Reward result: -10 with step number: {self.step_num}")
-
+        self.logger.info(f"DC check failed. Assigning penalty reward: -10")
         return {agent: observation for agent in self.agents}, -10
 
     def _run_main_simulation(self, param: dict, region_info: dict) -> tuple:
-        """运行主仿真流程并返回完整结果"""
+        """Execute main simulation process.
+
+        Args:
+            param: Current parameter values
+            region_info: Operation region information
+
+        Returns:
+            tuple: (observations, sim_result, reward, working_dir)
+        """
         main_dir = create_work_dir(self.run_root_dir, 'tt')
         update_netlist(main_dir, self.sim_config_dict, param, self.unassigned_netlist_dir)
         observations, sim_result, reward = self._run_simulation(main_dir, param, region_info)
         self.logger.info(f"TT simulation result: {sim_result} with reward: {reward}")
-        return observations, sim_result, reward, main_dir  # 新增返回main_dir
+        return observations, sim_result, reward, main_dir
 
     def _save_step_data(self, working_dir: str, param: dict,
                         sim_result: dict, reward: float, corner: str = 'tt'):
-        """保存步骤数据"""
+        """Save step simulation data to file.
+
+        Args:
+            working_dir: Simulation working directory
+            param: Parameter values used
+            sim_result: Simulation results
+            reward: Calculated reward
+            corner: Process corner identifier
+        """
         step_data = {
             'param': param,
             'sim_result': sim_result,
@@ -596,43 +721,67 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
 
     def _process_corner_results(self, main_dir: str, param: dict,
                                 region_info: dict, tt_result: dict) -> float:
-        """处理多角落仿真结果（修正版）"""
-        # 1. 合并所有仿真结果
+        """Process corner simulation results and calculate unified reward.
+
+        Args:
+            main_dir: Main simulation directory
+            param: Current parameter values
+            region_info: Operation region information
+            tt_result: TT corner simulation results
+
+        Returns:
+            float: Unified reward value across all corners
+        """
+        # 1. Aggregate all corner results
         corner_results = self._handle_corner_simulations(main_dir, param, region_info)
-        corner_results['tt'] = {  # 添加tt结果到集合
+        corner_results['tt'] = {
             'working_dir': main_dir,
             'sim_result': tt_result['sim_result'],
             'reward': tt_result['reward']
         }
 
-        # 2. 计算统一奖励值
+        # 2. Calculate unified reward
         min_reward = min(v['reward'] for v in corner_results.values())
         final_reward = max(min_reward, 10) if min_reward < 0 else min_reward
 
-        # 3. 统一保存所有结果
+        # 3. Save all results
         for corner, data in corner_results.items():
             self._save_step_data(
                 data['working_dir'],
                 param,
                 data['sim_result'],
-                final_reward,  # 统一使用最终奖励
+                final_reward,
                 corner
             )
-        self.logger.info("Processing corner simulations...")
+        self.logger.info("Processed corner simulations")
         self.logger.debug(f"Corner results: {corner_results}")
 
         return final_reward
 
     def _assign_rewards(self, base_reward: float) -> dict:
-        """计算多智能体奖励字典"""
+        """Distribute base reward to all agents.
+
+        Args:
+            base_reward: Calculated base reward value
+
+        Returns:
+            dict: Agent-specific reward dictionary
+        """
         return {agent: base_reward for agent in self.agents}
 
     def _determine_termination(self, reward: float) -> tuple:
-        """判断终止条件"""
+        """Determine termination conditions for all agents.
+
+        Args:
+            reward: Current step reward value
+
+        Returns:
+            tuple: (terminated_dict, truncated_dict)
+        """
         terminated = {a: False for a in self.agents}
         truncated = {a: False for a in self.agents}
 
-        # 连续步数逻辑
+        # Continuation step logic
         if self.continue_steps_enable:
             if reward > 0 and not self.had_positive_reward:
                 self.had_positive_reward = True
@@ -656,7 +805,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
                         truncated[agent] = True
                         self.truncateds.add(agent)
         else:
-            # 基础终止逻辑
+            # Basic termination logic
             if reward > 0:
                 for agent in self.agents:
                     terminated[agent] = True
@@ -673,20 +822,38 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
 
     def _handle_corner_simulations(self, main_dir: str, param: dict,
                                    operation_region_dict: dict) -> dict:
-        """统一处理多角落模拟"""
+        """Handle multi-corner simulation execution and results collection.
+
+        Args:
+            main_dir: Main simulation directory path
+            param: Current design parameters
+            operation_region_dict: Device operation region information
+
+        Returns:
+            dict: Aggregated corner simulation results
+        """
         corner_results = {}
         for corner in ['ff', 'fs', 'sf', 'ss']:
+            # Create corner-specific directory
             corner_dir = create_corner_work_dir(main_dir, corner)
-            update_netlist(corner_dir, self.sim_config_dict, param, self.unassigned_netlist_dir, corner)
+
+            # Update netlist with corner parameters
+            update_netlist(corner_dir, self.sim_config_dict, param,
+                           self.unassigned_netlist_dir, corner)
+
+            # Execute simulation
             obs, sim_result, rew = self._run_simulation(
                 corner_dir,
                 param,
                 operation_region_dict
             )
+
+            # Store results
             corner_results[corner] = {
                 'working_dir': corner_dir,
                 'sim_result': sim_result,
                 'reward': rew
             }
             self.logger.info(f"Corner {corner} simulation result: {sim_result} with reward: {rew}")
+
         return corner_results
