@@ -567,24 +567,24 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
 
         return observations, rew, terminated, truncated, info
 
-    def validate_input(self, config: Dict[str, Any]) -> None:
-            for param, expected_type in self.expected_params.items():
-                if param not in config:
-                    raise ValueError(f"Missing required parameter: {param}")
-
-                value = config[param]
-                if not isinstance(value, expected_type):
-                    raise ValueError(f"Invalid type for {param}. Expected {expected_type}, got {type(value)}")
-
-                if param == 'init_method' and value not in ['file', 'half', 'random', 'mixed']:
-                    raise ValueError(
-                        f"Invalid value for init_method. Expected one of ['file', 'half', 'random', 'mixed'], got {value}")
-
-                if param == 'log_level' and value not in ['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL']:
-                    raise ValueError(
-                        f"Invalid value for log_level. Expected one of ['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'], "
-                        f"got {value}")
-
-            for key in config:
-                if key not in self.expected_params:
-                    raise ValueError(f"Unexpected parameter: {key}")
+    # def validate_input(self, config: Dict[str, Any]) -> None:
+    #         for param, expected_type in self.expected_params.items():
+    #             if param not in config:
+    #                 raise ValueError(f"Missing required parameter: {param}")
+    #
+    #             value = config[param]
+    #             if not isinstance(value, expected_type):
+    #                 raise ValueError(f"Invalid type for {param}. Expected {expected_type}, got {type(value)}")
+    #
+    #             if param == 'init_method' and value not in ['file', 'half', 'random', 'mixed']:
+    #                 raise ValueError(
+    #                     f"Invalid value for init_method. Expected one of ['file', 'half', 'random', 'mixed'], got {value}")
+    #
+    #             if param == 'log_level' and value not in ['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL']:
+    #                 raise ValueError(
+    #                     f"Invalid value for log_level. Expected one of ['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'], "
+    #                     f"got {value}")
+    #
+    #         for key in config:
+    #             if key not in self.expected_params:
+    #                 raise ValueError(f"Unexpected parameter: {key}")
