@@ -34,6 +34,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
             config: Configuration dictionary containing environment parameters
         """
         # Configuration validation and basic setup
+
         self._validate_config(config)
         self._set_basic_attributes(config)
 
@@ -203,6 +204,34 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         Args:
             config: Configuration dictionary containing environment parameters
         """
+        self.generalize = None
+        self.truncateds = None
+        self.terminateds = None
+        self.resetted = None
+        self.cur_param = None
+        self.continue_steps_enable = None
+        self.dynamic_queue = None
+        self.sim_output = None
+        self.init_method = None
+        self.predefined_init_param = None
+        self.reward_func = None
+        self.max_step = None
+        self.log_level = None
+        self.device_mask_config = None
+        self.generalize_specs_config = None
+        self.dc_sim_config = None
+        self.agent_assign_config = None
+        self.param_range_config = None
+        self.norm_specs_file = None
+        self.sim_config = None
+        self.netlist_folder_name = None
+        self.specs_folder_name = None
+        self.config_folder_name = None
+        self.run_folder_name = None
+        self.corner_sim = None
+        self.dc_check = None
+        self.region_extract = None
+
         for key in config:
             setattr(self, key, config[key])
 
