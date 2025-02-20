@@ -365,7 +365,6 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
             self.param_range_dict
         )
 
-        logging.info(f"Updated parameters: {updated_param} (Step: {self.step_num})")
         return updated_param, all_action_flatten
 
     def _perform_step_dc_check(self, param: dict) -> tuple:
@@ -377,7 +376,6 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         valid_regions = [1, 2, 3]  # triode/saturation/sub-threshold
         valid_param = all(v in valid_regions for v in operation_region_dict.values())
 
-        logging.debug(f"Operation regions: {list(operation_region_dict.values())}")
         return operation_region_dict, valid_param
 
     def _handle_dc_check_failure(self, param: dict, region_info: dict) -> tuple:
@@ -405,10 +403,11 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         return {agent: observation for agent in self.agents}, -10
 
     def _run_main_simulation(self, param: dict, region_info: dict) -> tuple:
-        """运行主仿真流程"""
+        """运行主仿真流程并返回完整结果"""
         main_dir = create_work_dir(self.run_root_dir, 'tt')
         update_netlist(main_dir, self.sim_config_dict, param, self.unassigned_netlist_dir)
-        return self._run_simulation(main_dir, param, region_info)
+        observations, sim_result, reward = self._run_simulation(main_dir, param, region_info)
+        return observations, sim_result, reward, main_dir  # 新增返回main_dir
 
     def _save_step_data(self, working_dir: str, param: dict,
                         sim_result: dict, reward: float, corner: str = 'tt'):
@@ -423,32 +422,38 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
             pickle.dump(step_data, f)
 
     def _process_corner_results(self, main_dir: str, param: dict,
-                                region_info: dict, initial_reward: float) -> float:
-        """处理多角落仿真结果"""
+                                region_info: dict, tt_result: dict) -> float:
+        """处理多角落仿真结果（修正版）"""
+        # 保存tt结果
+        self._save_step_data(main_dir, param, tt_result['sim_result'], tt_result['reward'], 'tt')
+
+        # 运行其他corner仿真
         corner_results = self._handle_corner_simulations(main_dir, param, region_info)
+
+        # 合并tt结果
         corner_results['tt'] = {
             'working_dir': main_dir,
-            'sim_result': None,  # 实际数据在后续处理中填充
-            'reward': initial_reward
+            'sim_result': tt_result['sim_result'],
+            'reward': tt_result['reward']
         }
 
-        # 计算最小奖励
+        # 计算最小奖励（保持原有逻辑）
         min_reward = min(v['reward'] for v in corner_results.values())
         min_reward = max(min_reward, 10) if min_reward < 0 else min_reward
 
-        # 保存所有角落数据
+        # 统一保存所有结果
         for corner, data in corner_results.items():
             self._save_step_data(
                 data['working_dir'],
                 param,
                 data['sim_result'],
-                min_reward,
+                min_reward,  # 统一使用最小奖励
                 corner
             )
 
         return min_reward
 
-    def _calculate_rewards(self, base_reward: float) -> dict:
+    def _assign_rewards(self, base_reward: float) -> dict:
         """计算多智能体奖励字典"""
         return {agent: base_reward for agent in self.agents}
 
@@ -553,41 +558,39 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
     def step(self, action_dict):
         # 步骤计数器更新
         self.step_num += 1
-        logging.debug(f"Processing step {self.step_num} with actions: {action_dict}")
 
         # 1. 转换动作为参数
         updated_param, all_actions = self._convert_actions_to_params(copy.deepcopy(action_dict))
         self.cur_param = copy.deepcopy(updated_param)
 
         # 2. 执行DC检查
-        region_info, dc_valid = self._perform_dc_check(updated_param)
+        region_info, dc_valid = self._perform_step_dc_check(updated_param)
 
         # 3. 处理DC检查失败情况
         if self.region_extract and self.dc_check and not dc_valid:
             observations, rew_single = self._handle_dc_check_failure(updated_param, region_info)
         else:
             # 4. 运行主仿真
-            observations, sim_result, rew_single = self._run_main_simulation(updated_param, region_info)
+            observations, sim_result, rew_single, main_dir = self._run_main_simulation(updated_param, region_info)
 
             # 5. 处理角落仿真
             if self.corner_sim and rew_single >= 0:
+                tt_result = {
+                    'sim_result': sim_result,
+                    'reward': rew_single
+                }
                 rew_single = self._process_corner_results(
-                    observations['working_dir'],  # 从仿真结果获取主目录
+                    main_dir,  # 传递主目录
                     updated_param,
                     region_info,
-                    rew_single
+                    tt_result  # 传递tt仿真结果
                 )
-
-            # 6. 保存主仿真数据
-            self._save_step_data(
-                observations['working_dir'],
-                updated_param,
-                sim_result,
-                rew_single
-            )
+            # 6. 保存主仿真数据（非corner情况）
+            else:
+                self._save_step_data(main_dir, updated_param, sim_result, rew_single)
 
         # 7. 计算最终奖励
-        rewards = self._calculate_rewards(rew_single)
+        rewards = self._assign_rewards(rew_single)
 
         # 8. 判断终止条件
         terminated, truncated = self._determine_termination(rew_single)
