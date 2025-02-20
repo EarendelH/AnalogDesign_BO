@@ -565,18 +565,6 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         logging.info(f"Step!!!terminated: {terminated} with step number: {self.step_num}")
         logging.info(f"Step!!!truncated: {truncated} with step number: {self.step_num}")
 
-        # step_data = {
-        #     'step_num': self.step_num,
-        #     'sim_result': sim_result,
-        #     'updated_param': updated_param,
-        #     'rew': rew
-        # }
-        #
-        # self.trajectory_data['steps_data'].append(step_data)
-        #
-        # with open(self.log_file_path, 'wb') as f:
-        #     pickle.dump(self.trajectory_data, f)
-
         return observations, rew, terminated, truncated, info
 
     def validate_input(self, config: Dict[str, Any]) -> None:
