@@ -310,8 +310,6 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         """加载并规范化理想规格"""
         self.ideal_specs = generalize_config(self.generalize, self.ideal_specs_path)
         self.norm_ideal_specs = norm_ideal_spec(self.ideal_specs, self.norm_specs)
-        logging.info(f"Initialing!!!Ideal specs: {self.ideal_specs}")
-        logging.debug(f"Normalized ideal specs: {self.norm_ideal_specs}")
 
     def _generate_initial_parameters(self) -> dict:
         """生成初始参数"""
@@ -322,7 +320,6 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
             self.device_mask_dict,
             self.param_space
         )
-        logging.debug(f"Initial parameters: {init_param}")
         return init_param
 
     def _setup_reset_environment(self, init_param: dict) -> str:
@@ -337,7 +334,6 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
             return None
 
         operation_region_dict = self._run_region_simulation_check('init_dc', init_param)
-        logging.debug(f"Initial operation regions: {operation_region_dict}")
         return operation_region_dict
 
     def _run_region_simulation_check(self, dir_suffix: str, param: dict) -> dict:
@@ -374,7 +370,6 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         """统一处理模拟结果的后处理流程"""
         # 结果规范化
         norm_sim_result = norm_sim_spec(sim_result, self.norm_specs)
-        logging.debug(f"Normalized simulation result: {norm_sim_result}")
 
         # 生成观测空间
         if self.region_extract:

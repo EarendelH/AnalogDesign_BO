@@ -1,5 +1,5 @@
 from ray.rllib.utils import check_env
-from rllib_env_continous import RllibAnalogDesignAutoEnv
+from spice_env import RllibAnalogDesignAutoEnv
 
 if __name__ == "__main__":
     env = RllibAnalogDesignAutoEnv({'generalize': True,
