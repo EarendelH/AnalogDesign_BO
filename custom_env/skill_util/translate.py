@@ -41,14 +41,13 @@ def determine_param_mapping(instance_name, config_folder):
         line_end = content.find('\n', line_start)
         line = content[line_start:line_end]
 
-        if f'multi=nf_{instance_name}' in line:
+        if f'multi=nf_{instance_name}' in line or f'multi=(nf_{instance_name})' in line:
             return {"w": "w", "l": "l", "nf": "simM"}
-        elif f'nf=multi_({instance_name})' in line:
-            return {"w": "w", "l": "l", "nf": "simM"}
-        elif f'nf=nf_{instance_name}' in line:
+        elif f'nf=nf_{instance_name}' in line or f'nf=(nf_{instance_name})' in line:
             return {"w": "w", "l": "l", "nf": "fingers"}
         else:
             print(f"Error: Unable to determine parameter mapping for instance {instance_name}.")
+            print(f"Found line: {line}")
             sys.exit(1)
     else:
         print(f"Error: Instance {instance_name} not found in the .scs file.")
