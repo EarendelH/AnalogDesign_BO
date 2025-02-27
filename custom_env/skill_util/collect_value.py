@@ -47,6 +47,10 @@ def extract_data(excel_df, yaml_data):
             'Core_Param': {}
         }
 
+        # 保留Core_Cellviews字段（如果存在）
+        if 'Core_Cellviews' in yaml_data:
+            data['Core_Cellviews'] = yaml_data['Core_Cellviews']
+
         # Extract Core_Param from Excel
         for param in yaml_data['Core_Param']:
             if param in row:
@@ -89,11 +93,3 @@ def collect_value(input_dir):
 
     # Save YAML Files
     save_yaml_files(input_dir, extracted_data)
-
-
-# if __name__ == "__main__":
-#     parser = argparse.ArgumentParser(description="Extract data from Excel and YAML files")
-#     parser.add_argument("input_dir", help="Path to the input directory")
-#     args = parser.parse_args()
-#
-#     main(args.input_dir)

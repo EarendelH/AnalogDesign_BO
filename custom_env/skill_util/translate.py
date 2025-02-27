@@ -55,15 +55,16 @@ def determine_param_mapping(instance_name, config_folder):
 
 def parse_listLibraryCellviews_output(output):
     """
-    Parse the output of listLibraryCellviews and return core_cell_list and tb_cell_list.
+    Parse the output of listLibraryCellviews and return all_core_cell_list and tb_cell_list.
+    Now returns all core cells for verification against specified cells.
 
     Args:
     output (str): Output string from listLibraryCellviews command
 
     Returns:
-    tuple: (core_cell_list, tb_cell_list)
+    tuple: (all_core_cell_list, tb_cell_list) - all detected core cells and testbench cells
     """
-    core_cell_list = []
+    all_core_cell_list = []
     tb_cell_list = []
     current_cell = None
 
@@ -75,9 +76,9 @@ def parse_listLibraryCellviews_output(output):
                 if current_cell.startswith("tb_"):
                     tb_cell_list.append(current_cell)
                 else:
-                    core_cell_list.append(current_cell)
+                    all_core_cell_list.append(current_cell)
 
-    return core_cell_list, tb_cell_list
+    return all_core_cell_list, tb_cell_list
 
 
 def get_instances_for_cellview(master, lib_name, cell_name):
@@ -492,25 +493,7 @@ def check_instance_parameters(yaml_data, skill_output, instance_name, config_fol
 
 
 def translate(source_lib, yaml_data, config_folder, master):
-
     yaml_instances = extract_instances_from_yaml(yaml_data)
-
-    # virtuoso_process, master = start_virtuoso_session()
-    #
-    # if virtuoso_process is None or master is None:
-    #     print("Failed to start Virtuoso session. Exiting.")
-    #     return
-    #
-    # try:
-    #     if not wait_for_virtuoso_ready(master):
-    #         print("Failed to detect Virtuoso ready state. Exiting.")
-    #         return
-    #
-    #     print("Virtuoso is ready to accept commands.")
-    #
-    #     if not load_skill_functions(master):
-    #         print("Failed to load Skill functions. Exiting.")
-    #         return
 
     try:
         # Copy new lib
@@ -519,18 +502,34 @@ def translate(source_lib, yaml_data, config_folder, master):
         output = send_skill_command(master, copy_command)
         print(f"Library copy output: {output}")
 
-        # Run listLibraryCellviews
+        # 获取所有Core和Testbench cellviews
         list_command = f'listLibraryCellviews("{target_lib}")'
         output = send_skill_command(master, list_command)
-        core_cell_list, tb_cell_list = parse_listLibraryCellviews_output(output)
-        print("Core cells:", core_cell_list)
+        all_core_cells, tb_cell_list = parse_listLibraryCellviews_output(output)
+
+        # 如果在YAML中指定了Core_Cellviews，就只处理这些cellview
+        if 'Core_Cellviews' in yaml_data and yaml_data['Core_Cellviews']:
+            print(f"Using specified core cellviews from YAML: {yaml_data['Core_Cellviews']}")
+            # 验证指定的cellview是否都存在
+            for cell in yaml_data['Core_Cellviews']:
+                if cell not in all_core_cells:
+                    print(f"Warning: Specified core cellview '{cell}' not found in library.")
+            # 使用YAML中指定的core cellviews
+            core_cell_list = [cell for cell in yaml_data['Core_Cellviews'] if cell in all_core_cells]
+        else:
+            # 兼容旧版本，使用所有检测到的core cellviews
+            print("No specific core cellviews defined in YAML. Using all detected core cellviews.")
+            core_cell_list = all_core_cells
+
+        print("Core cells to process:", core_cell_list)
         print("Testbench cells:", tb_cell_list)
 
-        # Get instances for each core cell
+        # Get instances for each selected core cell
         cellview_instances = {}
         for cell in core_cell_list:
             instances = get_instances_for_cellview(master, target_lib, cell)
             cellview_instances[cell] = instances
+            print(f"Cell {cell} contains instances: {instances}")
 
         # Match YAML instances to cellviews
         instance_to_cellview = match_instances_to_cellviews(yaml_instances, cellview_instances)
@@ -557,6 +556,5 @@ def translate(source_lib, yaml_data, config_folder, master):
 
         print("All instance parameters checked. Proceeding with parameter modifications.")
 
-        # send_skill_command(master, "exit")
     except Exception as e:
         print(f"An error occurred: {e}")
