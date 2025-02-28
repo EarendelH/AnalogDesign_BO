@@ -9,6 +9,7 @@ from tqdm import tqdm
 import numpy as np
 import traceback
 import logging
+import argparse
 
 
 def setup_logging(debug_mode):
@@ -184,11 +185,38 @@ def process_folders(folder_paths, process_func, debug=False):
     return results
 
 
+def parse_args():
+    """Parse command line arguments"""
+    parser = argparse.ArgumentParser(description='Process simulation results folders')
+    parser.add_argument('--run-path', type=str, help='Path to the run_test folder')
+    parser.add_argument('--output-path', type=str, help='Path for the output CSV file')
+    parser.add_argument('--update-reward', action='store_true', help='Update reward values')
+    parser.add_argument('--config-path', type=str, help='Path to the config folder (required if update-reward is set)')
+    parser.add_argument('--reward-func', type=str, help='Name of reward function (required if update-reward is set)')
+    parser.add_argument('--debug', action='store_true', help='Enable debug mode')
+
+    return parser.parse_args()
+
+
 def main():
-    """Main function with debug mode option"""
-    run_test_path = input("Enter the path of the run_test folder: ")
-    output_csv_path = input("Enter the path of the output csv file: ")
-    debug_mode = input("Enable debug mode? (y/n): ").lower() == 'y'
+    """Main function with command line arguments or interactive input"""
+    # Parse command line arguments
+    args = parse_args()
+
+    # Get run_test path (from args or user input)
+    run_test_path = args.run_path
+    if run_test_path is None:
+        run_test_path = input("Enter the path of the run_test folder: ")
+
+    # Get output CSV path (from args or user input)
+    output_csv_path = args.output_path
+    if output_csv_path is None:
+        output_csv_path = input("Enter the path of the output csv file: ")
+
+    # Get debug mode (from args or user input)
+    debug_mode = args.debug
+    if not args.run_path:  # Only ask if running in interactive mode
+        debug_mode = input("Enable debug mode? (y/n): ").lower() == 'y'
 
     # Setup logging
     setup_logging(debug_mode)
@@ -199,10 +227,21 @@ def main():
     if debug_mode:
         logging.debug(f"Found {len(folder_paths)} folders to process")
 
-    update_reward = input("Update reward? (y/n): ")
-    if update_reward.lower() == 'y':
-        config_path = input("Enter the path of the config folder: ")
-        reward_func = input("Enter the reward function name: ")
+    # Determine if rewards should be updated
+    update_reward = args.update_reward
+    if update_reward is False and args.run_path is None:  # Only ask in interactive mode
+        update_reward = input("Update reward? (y/n): ").lower() == 'y'
+
+    if update_reward:
+        # Get config path (from args or user input)
+        config_path = args.config_path
+        if config_path is None:
+            config_path = input("Enter the path of the config folder: ")
+
+        # Get reward function name (from args or user input)
+        reward_func = args.reward_func
+        if reward_func is None:
+            reward_func = input("Enter the reward function name: ")
 
         with open(os.path.join(config_path, "norm_specs.yaml"), 'r') as file:
             norm_specs = yaml.safe_load(file)
