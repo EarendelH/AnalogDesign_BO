@@ -695,7 +695,7 @@ def main(monitor_dir, config_file, train_script_path, ray_results_dir, data_shar
 if __name__ == "__main__":
     # Hardcoded configuration parameters
     MONITOR_DIR = "/home/wuhan/AnalogDesignAuto/AnalogDesignAuto_MultiAgent/custom_env/run_test"
-    CONFIG_FILE = "~/AnalogDesignAuto/AnalogDesignAuto_MultiAgent/custom_env/train_config/AXS_eex.yaml"
+    CONFIG_FILE = "/home/wuhan/AnalogDesignAuto/AnalogDesignAuto_MultiAgent/custom_env/train_config/AXS_eex.yaml"
     CONFIG_FILE = os.path.expanduser(CONFIG_FILE)
 
     TRAIN_SCRIPT_PATH = "/home/wuhan/AnalogDesignAuto/AnalogDesignAuto_MultiAgent/custom_env/train_continuous.py"
