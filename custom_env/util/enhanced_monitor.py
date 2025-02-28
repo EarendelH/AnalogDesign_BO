@@ -426,6 +426,65 @@ def ensure_directory_exists(directory):
         print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Directory already exists: {directory}")
 
 
+def clean_run_test_directory(run_test_dir, to_be_deleted_dir, blank_dir):
+    """
+    Clean the run_test directory by moving it to to_be_deleted,
+    using rsync to empty it, and then recreating an empty run_test directory
+
+    Args:
+        run_test_dir: Path to the run_test directory
+        to_be_deleted_dir: Path to the to_be_deleted directory
+        blank_dir: Path to a blank directory used for rsync
+    """
+    print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] ========================================")
+    print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Cleaning run_test directory")
+    print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] ========================================")
+
+    # Ensure blank directory exists
+    if not os.path.exists(blank_dir):
+        print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Creating blank directory: {blank_dir}")
+        os.makedirs(blank_dir, exist_ok=True)
+
+    # Ensure to_be_deleted directory exists
+    if not os.path.exists(to_be_deleted_dir):
+        print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Creating to_be_deleted directory: {to_be_deleted_dir}")
+        os.makedirs(to_be_deleted_dir, exist_ok=True)
+
+    # Move run_test to to_be_deleted
+    if os.path.exists(run_test_dir):
+        print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Moving {run_test_dir} to {to_be_deleted_dir}")
+        try:
+            mv_cmd = f"mv {run_test_dir} {to_be_deleted_dir}"
+            subprocess.run(mv_cmd, shell=True, check=True)
+            print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Successfully moved directory")
+        except subprocess.CalledProcessError as e:
+            print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Error moving directory: {e}")
+    else:
+        print(
+            f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Run test directory {run_test_dir} does not exist, nothing to move")
+
+    # Use rsync to clean to_be_deleted directory
+    print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Using rsync to clean {to_be_deleted_dir}")
+    try:
+        rsync_cmd = f"rsync --delete-before -a -H -v --progress --stats {blank_dir}/ {to_be_deleted_dir}"
+        subprocess.run(rsync_cmd, shell=True, check=True)
+        print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Successfully cleaned directory using rsync")
+    except subprocess.CalledProcessError as e:
+        print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Error running rsync: {e}")
+
+    # Recreate run_test directory
+    print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Recreating {run_test_dir}")
+    try:
+        os.makedirs(run_test_dir, exist_ok=True)
+        print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Successfully recreated run_test directory")
+    except Exception as e:
+        print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Error creating directory: {e}")
+
+    print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] ========================================")
+    print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Run test directory cleaning completed")
+    print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] ========================================")
+
+
 def safe_copy_directory(src, dst):
     """
     Safely copy a directory, handling the case where the destination already exists
@@ -457,7 +516,7 @@ def safe_copy_directory(src, dst):
 
 def main(monitor_dir, config_file, train_script_path, ray_results_dir, data_share_dir,
          scan_script_path, filter_script_path, config_dir, reward_func,
-         inactivity_timeout, check_interval, debug_mode):
+         inactivity_timeout, check_interval, debug_mode, to_be_deleted_dir, blank_dir):
     """
     Main function implementing the automatic training monitor workflow
 
@@ -474,6 +533,8 @@ def main(monitor_dir, config_file, train_script_path, ray_results_dir, data_shar
         inactivity_timeout: Time in seconds to wait for new file activity
         check_interval: Time in seconds between checks
         debug_mode: Run only steps 4-8 for debugging
+        to_be_deleted_dir: Directory where run_test will be moved for deletion
+        blank_dir: Blank directory used for rsync cleaning
     """
     print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] ========================================")
     print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Starting Enhanced Monitoring Script")
@@ -595,6 +656,11 @@ def main(monitor_dir, config_file, train_script_path, ray_results_dir, data_shar
                     if latest_checkpoint:
                         update_yaml_config(config_file, latest_checkpoint)
 
+                        # NEW STEP: Clean run_test directory before restarting training
+                        print(
+                            f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Step 8.5: Cleaning run_test directory before restarting")
+                        clean_run_test_directory(monitor_dir, to_be_deleted_dir, blank_dir)
+
                         # Step 9: Start training again
                         print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Step 9: Starting training again")
                         training_pid, log_file = run_train_script(config_file, train_script_path)
@@ -624,7 +690,7 @@ def main(monitor_dir, config_file, train_script_path, ray_results_dir, data_shar
 if __name__ == "__main__":
     # Hardcoded configuration parameters
     MONITOR_DIR = "/home/wuhan/AnalogDesignAuto/AnalogDesignAuto_MultiAgent/custom_env/run_test"
-    CONFIG_FILE = "/home/wuhan/AnalogDesignAuto/AnalogDesignAuto_MultiAgent/custom_env/train_config/AXS_eex.yaml"
+    CONFIG_FILE = "~/AnalogDesignAuto/AnalogDesignAuto_MultiAgent/custom_env/train_config/AXS_eex.yaml"
     CONFIG_FILE = os.path.expanduser(CONFIG_FILE)
 
     TRAIN_SCRIPT_PATH = "/home/wuhan/AnalogDesignAuto/AnalogDesignAuto_MultiAgent/custom_env/train_continuous.py"
@@ -638,6 +704,10 @@ if __name__ == "__main__":
 
     INACTIVITY_TIMEOUT = 1800  # 30 minutes in seconds
     CHECK_INTERVAL = 60  # 1 minute in seconds
+
+    # New parameters for run_test directory cleaning
+    TO_BE_DELETED_DIR = "/home/wuhan/to_be_deleted"
+    BLANK_DIR = "/home/wuhan/blank"
 
     # Parse command-line arguments to allow overriding the hardcoded values
     parser = argparse.ArgumentParser(description="Enhanced monitoring script for Analog Design AutoRL")
@@ -673,5 +743,7 @@ if __name__ == "__main__":
         reward_func=REWARD_FUNC,
         inactivity_timeout=INACTIVITY_TIMEOUT,
         check_interval=CHECK_INTERVAL,
-        debug_mode=args.debug
+        debug_mode=args.debug,
+        to_be_deleted_dir=TO_BE_DELETED_DIR,
+        blank_dir=BLANK_DIR
     )
