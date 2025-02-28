@@ -583,10 +583,15 @@ def main(monitor_dir, config_file, train_script_path, ray_results_dir, data_shar
             latest_checkpoint = find_latest_checkpoint(latest_restore_dir)
             if latest_checkpoint:
                 update_yaml_config(config_file, latest_checkpoint)
+
+                # NEW STEP: Clean run_test directory in debug mode too
+                print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Step 8.5: Cleaning run_test directory")
+                clean_run_test_directory(monitor_dir, to_be_deleted_dir, blank_dir)
             else:
-                print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] No checkpoint found, skipping config update")
+                print(
+                    f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] No checkpoint found, skipping config update and cleaning")
         else:
-            print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] No restore folder found, skipping steps 5-8")
+            print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] No restore folder found, skipping steps 5-8.5")
 
         print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] ========================================")
         print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Debug run completed")
