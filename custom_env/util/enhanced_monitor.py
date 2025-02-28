@@ -19,33 +19,39 @@ def clean_folder(target_folder, max_age=300):
         target_folder: Target directory to clean
         max_age: Maximum age of files in seconds (default: 300s)
     """
+    print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Cleaning folder: {target_folder}")
     current_time = time.time()
+
+    if not os.path.exists(target_folder):
+        print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Warning: Target folder {target_folder} does not exist")
+        return
 
     for entry in os.scandir(target_folder):
         if entry.is_dir():
             dir_path = entry.path
-            if current_time - os.path.getmtime(dir_path) > max_age:
+            dir_age = current_time - os.path.getmtime(dir_path)
+            if dir_age > max_age:
+                print(
+                    f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Found old directory: {dir_path} (age: {dir_age:.1f}s)")
                 for sub_entry in os.scandir(dir_path):
                     sub_path = sub_entry.path
                     if sub_entry.is_dir():
                         try:
                             shutil.rmtree(sub_path)
-                            print(f"Deleted folder: {sub_path} "
-                                  f"at {time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())}")
+                            print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Deleted folder: {sub_path}")
                         except Exception as e:
-                            print(f"Failed to delete folder: {sub_path} "
-                                  f"at {time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())}. "
-                                  f"Error: {e}")
+                            print(
+                                f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Failed to delete folder: {sub_path}. Error: {e}")
                     elif sub_entry.is_file():
                         if not (sub_entry.name.endswith('.scs') or sub_entry.name.endswith('.pkl')):
                             try:
                                 os.remove(sub_path)
-                                print(f"Deleted file: {sub_path} "
-                                      f"at {time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())}")
+                                print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Deleted file: {sub_path}")
                             except Exception as e:
-                                print(f"Failed to delete file: {sub_path} "
-                                      f"at {time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())}. "
-                                      f"Error: {e}")
+                                print(
+                                    f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Failed to delete file: {sub_path}. Error: {e}")
+
+    print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Folder cleaning completed")
 
 
 def check_directory_for_new_files(directory, time_window):
@@ -59,32 +65,50 @@ def check_directory_for_new_files(directory, time_window):
     Returns:
         Boolean indicating if new files were detected
     """
+    print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Checking for new files in: {directory}")
     current_time = time.time()
 
     # Check if directory exists
     if not os.path.exists(directory):
-        print(f"Directory {directory} does not exist.")
+        print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Directory {directory} does not exist.")
         return False
 
     # Get the most recent file modification time in the directory and its subdirectories
     most_recent_time = 0
+    most_recent_file = None
 
-    for root, _, files in os.walk(directory):
+    for root, dirs, files in os.walk(directory):
         for file in files:
             file_path = os.path.join(root, file)
-            mod_time = os.path.getmtime(file_path)
-            if mod_time > most_recent_time:
-                most_recent_time = mod_time
+            try:
+                mod_time = os.path.getmtime(file_path)
+                if mod_time > most_recent_time:
+                    most_recent_time = mod_time
+                    most_recent_file = file_path
+            except Exception as e:
+                print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Error checking file {file_path}: {e}")
 
     # Check if the most recent file is within the time window
     if most_recent_time == 0:  # No files found
+        print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] No files found in {directory}")
         return False
 
     time_diff = current_time - most_recent_time
 
-    print(f"Most recent file modification was {time_diff:.2f} seconds ago.")
+    print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Most recent file: {most_recent_file}")
+    print(
+        f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Last modified: {datetime.fromtimestamp(most_recent_time).strftime('%Y-%m-%d %H:%M:%S')} ({time_diff:.1f} seconds ago)")
 
-    return time_diff <= time_window
+    is_active = time_diff <= time_window
+
+    if is_active:
+        print(
+            f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Directory is active (file modified within {time_window} seconds)")
+    else:
+        print(
+            f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Directory is inactive (no modifications within {time_window} seconds)")
+
+    return is_active
 
 
 def find_latest_restore_folder(ray_results_dir):
@@ -97,21 +121,38 @@ def find_latest_restore_folder(ray_results_dir):
     Returns:
         Tuple of (latest_restore_directory_path, restore_id)
     """
+    print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Searching for restore folders in: {ray_results_dir}")
+
     # Find all AnalogDesignEnv_v0 directories
     env_dirs = glob.glob(os.path.join(ray_results_dir, "AnalogDesignEnv*v0"))
 
     if not env_dirs:
-        print("No AnalogDesignEnv_v0 directories found.")
+        print(
+            f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] No AnalogDesignEnv_v0 directories found in {ray_results_dir}")
         return None, None
+
+    print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Found environment directories: {env_dirs}")
 
     # Find all restore_* directories in all env directories
     restore_dirs = []
     for env_dir in env_dirs:
-        restore_dirs.extend(glob.glob(os.path.join(env_dir, "restore_*")))
+        pattern = os.path.join(env_dir, "restore_*")
+        found_dirs = glob.glob(pattern)
+        print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Searching for pattern: {pattern}")
+        print(
+            f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Found {len(found_dirs)} restore directories in {env_dir}")
+        restore_dirs.extend(found_dirs)
 
     if not restore_dirs:
-        print("No restore_* directories found.")
+        print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] No restore directories found")
         return None, None
+
+    # Print all found restore directories with their modification times
+    print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] All restore directories found:")
+    for dir_path in restore_dirs:
+        mod_time = os.path.getmtime(dir_path)
+        mod_time_str = datetime.fromtimestamp(mod_time).strftime('%Y-%m-%d %H:%M:%S')
+        print(f"  - {dir_path} (modified: {mod_time_str})")
 
     # Sort by modification time, newest first
     restore_dirs.sort(key=os.path.getmtime, reverse=True)
@@ -119,7 +160,12 @@ def find_latest_restore_folder(ray_results_dir):
     latest_restore_dir = restore_dirs[0]
     restore_id = os.path.basename(latest_restore_dir)
 
-    print(f"Found latest restore directory: {latest_restore_dir}")
+    mod_time = os.path.getmtime(latest_restore_dir)
+    mod_time_str = datetime.fromtimestamp(mod_time).strftime('%Y-%m-%d %H:%M:%S')
+
+    print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Latest restore directory: {latest_restore_dir}")
+    print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Restore ID: {restore_id}")
+    print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Last modified: {mod_time_str}")
 
     return latest_restore_dir, restore_id
 
@@ -134,25 +180,41 @@ def find_latest_checkpoint(restore_dir):
     Returns:
         Path to latest checkpoint directory
     """
+    print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Searching for checkpoints in: {restore_dir}")
+
     checkpoint_dir = os.path.join(restore_dir, "checkpoints")
 
     if not os.path.exists(checkpoint_dir):
-        print(f"Checkpoint directory {checkpoint_dir} does not exist.")
+        print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Checkpoint directory {checkpoint_dir} does not exist.")
         return None
 
     # Find all checkpoint_* directories
-    checkpoint_dirs = glob.glob(os.path.join(checkpoint_dir, "checkpoint_*"))
+    pattern = os.path.join(checkpoint_dir, "checkpoint_*")
+    checkpoint_dirs = glob.glob(pattern)
+
+    print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Searching for pattern: {pattern}")
 
     if not checkpoint_dirs:
-        print("No checkpoint_* directories found.")
+        print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] No checkpoint directories found")
         return None
+
+    # Print all found checkpoint directories with their modification times
+    print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] All checkpoint directories found:")
+    for dir_path in checkpoint_dirs:
+        mod_time = os.path.getmtime(dir_path)
+        mod_time_str = datetime.fromtimestamp(mod_time).strftime('%Y-%m-%d %H:%M:%S')
+        print(f"  - {dir_path} (modified: {mod_time_str})")
 
     # Sort by modification time, newest first
     checkpoint_dirs.sort(key=os.path.getmtime, reverse=True)
 
     latest_checkpoint_dir = checkpoint_dirs[0]
 
-    print(f"Found latest checkpoint directory: {latest_checkpoint_dir}")
+    mod_time = os.path.getmtime(latest_checkpoint_dir)
+    mod_time_str = datetime.fromtimestamp(mod_time).strftime('%Y-%m-%d %H:%M:%S')
+
+    print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Latest checkpoint directory: {latest_checkpoint_dir}")
+    print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Last modified: {mod_time_str}")
 
     return latest_checkpoint_dir
 
@@ -165,19 +227,24 @@ def update_yaml_config(config_path, checkpoint_path):
         config_path: Path to config file
         checkpoint_path: New checkpoint path to set
     """
+    print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Updating checkpoint path in config: {config_path}")
+    print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] New checkpoint path: {checkpoint_path}")
+
     try:
         with open(config_path, 'r') as file:
             config = yaml.safe_load(file)
+            old_path = config.get('checkpoint_path', 'None')
+            print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Current checkpoint path: {old_path}")
 
         config['checkpoint_path'] = checkpoint_path
 
         with open(config_path, 'w') as file:
             yaml.dump(config, file, default_flow_style=False)
 
-        print(f"Updated checkpoint_path in {config_path} to {checkpoint_path}")
+        print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Successfully updated checkpoint path")
 
     except Exception as e:
-        print(f"Error updating YAML config: {e}")
+        print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Error updating YAML config: {e}")
 
 
 def run_train_script(config_file, train_script_path):
@@ -191,11 +258,18 @@ def run_train_script(config_file, train_script_path):
     Returns:
         Tuple of (process_id, log_file)
     """
+    print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Starting training process")
+    print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Training script: {train_script_path}")
+    print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Config file: {config_file}")
+
     log_file = f"training_{datetime.now().strftime('%Y%m%d_%H%M%S')}.log"
     cmd = f"nohup python {train_script_path} --config_mode file --config_file {config_file} > {log_file} 2>&1 &"
 
+    print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Running command: {cmd}")
+
     subprocess.run(cmd, shell=True)
 
+    print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Command executed, waiting for process to start...")
     # Wait a bit for the process to start
     time.sleep(5)
 
@@ -207,14 +281,18 @@ def run_train_script(config_file, train_script_path):
             if cmdline and 'train_continuous.py' in ' '.join(cmdline) and f'--config_file {config_file}' in ' '.join(
                     cmdline):
                 pid = proc.info['pid']
+                print(
+                    f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Found matching process: PID={pid}, CMD={' '.join(cmdline)}")
                 break
-        except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
-            pass
+        except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess) as e:
+            print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Error accessing process: {e}")
 
     if pid:
-        print(f"Started training process with PID: {pid}, log file: {log_file}")
+        print(
+            f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Started training process with PID: {pid}, log file: {log_file}")
     else:
-        print(f"Started training process, but could not determine PID. Log file: {log_file}")
+        print(
+            f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] WARNING: Started training process, but could not determine PID. Log file: {log_file}")
 
     return pid, log_file
 
@@ -229,33 +307,51 @@ def kill_process_tree(pid):
     Returns:
         Boolean indicating if kill was successful
     """
+    print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Attempting to kill process tree with root PID: {pid}")
+
     if pid is None:
-        print("No PID provided, cannot kill process.")
+        print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] No PID provided, cannot kill process.")
         return False
 
     try:
         parent = psutil.Process(pid)
-        children = parent.children(recursive=True)
 
-        for child in children:
+        print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Found process: {parent.name()} (PID: {pid})")
+
+        children = parent.children(recursive=True)
+        print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Found {len(children)} child processes")
+
+        for i, child in enumerate(children):
+            print(
+                f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Child process {i + 1}: {child.name()} (PID: {child.pid})")
             child.terminate()
+            print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Sent SIGTERM to child PID: {child.pid}")
 
         parent.terminate()
+        print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Sent SIGTERM to parent PID: {pid}")
 
         # Wait for processes to terminate
+        print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Waiting for processes to terminate...")
         gone, still_alive = psutil.wait_procs(children + [parent], timeout=5)
 
-        # Force kill if still alive
-        for process in still_alive:
-            process.kill()
+        print(
+            f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] {len(gone)} processes terminated, {len(still_alive)} still alive")
 
-        print(f"Terminated process tree with root PID: {pid}")
+        # Force kill if still alive
+        if still_alive:
+            print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Some processes still alive, sending SIGKILL...")
+            for process in still_alive:
+                print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Sending SIGKILL to PID: {process.pid}")
+                process.kill()
+
+        print(
+            f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Successfully terminated process tree with root PID: {pid}")
         return True
     except psutil.NoSuchProcess:
-        print(f"Process with PID {pid} not found")
+        print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Process with PID {pid} not found")
         return False
     except Exception as e:
-        print(f"Error killing process with PID {pid}: {e}")
+        print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Error killing process with PID {pid}: {e}")
         return False
 
 
@@ -276,23 +372,42 @@ def process_run_folder(run_test_path, restore_id, output_base_dir, scan_script_p
     Returns:
         Path to output directory
     """
+    print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Processing run folder")
+    print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Run test path: {run_test_path}")
+    print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Restore ID: {restore_id}")
+
     # Create output directory
     output_dir = f"{output_base_dir}/{restore_id}"
     os.makedirs(output_dir, exist_ok=True)
+
+    print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Created output directory: {output_dir}")
 
     output_csv = f"{output_dir}/output_AXS.csv"
 
     # Run scan_run_folder_corner.py
     scan_cmd = f"python {scan_script_path} --run-path {run_test_path} --output-path {output_csv} --update-reward --config-path {config_path} --reward-func {reward_func}"
 
-    print(f"Running scan_run_folder_corner.py: {scan_cmd}")
-    subprocess.run(scan_cmd, shell=True, check=True)
+    print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Running scan_run_folder_corner.py")
+    print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Command: {scan_cmd}")
+
+    try:
+        subprocess.run(scan_cmd, shell=True, check=True)
+        print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] scan_run_folder_corner.py completed successfully")
+    except subprocess.CalledProcessError as e:
+        print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Error running scan_run_folder_corner.py: {e}")
+        return output_dir
 
     # Run filitered_csv_format.py
     filter_cmd = f"python {filter_script_path} --input {output_csv} --filter"
 
-    print(f"Running filitered_csv_format.py: {filter_cmd}")
-    subprocess.run(filter_cmd, shell=True, check=True)
+    print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Running filitered_csv_format.py")
+    print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Command: {filter_cmd}")
+
+    try:
+        subprocess.run(filter_cmd, shell=True, check=True)
+        print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] filitered_csv_format.py completed successfully")
+    except subprocess.CalledProcessError as e:
+        print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Error running filitered_csv_format.py: {e}")
 
     return output_dir
 
@@ -306,7 +421,9 @@ def ensure_directory_exists(directory):
     """
     if not os.path.exists(directory):
         os.makedirs(directory, exist_ok=True)
-        print(f"Created directory: {directory}")
+        print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Created directory: {directory}")
+    else:
+        print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Directory already exists: {directory}")
 
 
 def safe_copy_directory(src, dst):
@@ -317,14 +434,25 @@ def safe_copy_directory(src, dst):
         src: Source directory
         dst: Destination directory
     """
+    print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Copying directory")
+    print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Source: {src}")
+    print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Destination: {dst}")
+
     # Check Python version for dirs_exist_ok parameter
-    if sys.version_info >= (3, 8):
-        shutil.copytree(src, dst, dirs_exist_ok=True)
-    else:
-        # For Python < 3.8, implement an alternative
-        if os.path.exists(dst):
-            shutil.rmtree(dst)
-        shutil.copytree(src, dst)
+    try:
+        if sys.version_info >= (3, 8):
+            print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Using Python 3.8+ copytree with dirs_exist_ok")
+            shutil.copytree(src, dst, dirs_exist_ok=True)
+        else:
+            # For Python < 3.8, implement an alternative
+            print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Using Python <3.8 copytree alternative")
+            if os.path.exists(dst):
+                print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Destination exists, removing it first")
+                shutil.rmtree(dst)
+            shutil.copytree(src, dst)
+        print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Directory copied successfully")
+    except Exception as e:
+        print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Error copying directory: {e}")
 
 
 def main(monitor_dir, config_file, train_script_path, ray_results_dir, data_share_dir,
@@ -347,9 +475,16 @@ def main(monitor_dir, config_file, train_script_path, ray_results_dir, data_shar
         check_interval: Time in seconds between checks
         debug_mode: Run only steps 4-8 for debugging
     """
-    print(f"Starting Enhanced Monitoring Script at {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-    print(f"Monitoring directory: {monitor_dir}")
-    print(f"Configuration file: {config_file}")
+    print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] ========================================")
+    print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Starting Enhanced Monitoring Script")
+    print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] ========================================")
+    print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Monitoring directory: {monitor_dir}")
+    print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Configuration file: {config_file}")
+    print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Ray results directory: {ray_results_dir}")
+    print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Data share directory: {data_share_dir}")
+    print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Inactivity timeout: {inactivity_timeout} seconds")
+    print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Check interval: {check_interval} seconds")
+    print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Debug mode: {debug_mode}")
 
     # Make sure required directories exist
     checkpoint_dir = f"{data_share_dir}/checkpoint"
@@ -360,78 +495,128 @@ def main(monitor_dir, config_file, train_script_path, ray_results_dir, data_shar
     ensure_directory_exists(monitor_dir)
 
     if debug_mode:
-        print("Running in DEBUG mode - executing steps 4-8 only")
+        print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] ========================================")
+        print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Running in DEBUG mode - executing steps 4-8 only")
+        print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] ========================================")
 
         # Step 4-5: Find latest restore folder and copy to data share
+        print(
+            f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Step 4-5: Finding latest restore folder and copying to data share")
         latest_restore_dir, restore_id = find_latest_restore_folder(ray_results_dir)
         if latest_restore_dir and restore_id:
             checkpoint_share_dir = f"{checkpoint_dir}/{restore_id}"
             ensure_directory_exists(os.path.dirname(checkpoint_share_dir))
 
-            print(f"Copying {latest_restore_dir} to {checkpoint_share_dir}")
+            print(
+                f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Copying {latest_restore_dir} to {checkpoint_share_dir}")
             safe_copy_directory(latest_restore_dir, checkpoint_share_dir)
 
             # Step 6-7: Process run folder
+            print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Step 6-7: Processing run folder")
             process_run_folder(monitor_dir, restore_id, run_dir, scan_script_path, filter_script_path, config_dir,
                                reward_func)
 
             # Step 8: Update config file with latest checkpoint
+            print(
+                f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Step 8: Updating config file with latest checkpoint")
             latest_checkpoint = find_latest_checkpoint(latest_restore_dir)
             if latest_checkpoint:
                 update_yaml_config(config_file, latest_checkpoint)
+            else:
+                print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] No checkpoint found, skipping config update")
+        else:
+            print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] No restore folder found, skipping steps 5-8")
 
-        print("Debug run completed")
+        print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] ========================================")
+        print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Debug run completed")
+        print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] ========================================")
         return
 
     # Main execution loop
     training_pid = None
     log_file = None
 
+    print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] ========================================")
+    print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Starting main execution loop")
+    print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] ========================================")
+
     try:
+        loop_counter = 0
+
         while True:
+            loop_counter += 1
+            print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] ========================================")
+            print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Loop iteration: {loop_counter}")
+            print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] ========================================")
+
             if training_pid is None:
                 # Step 1: Start the training process
+                print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Step 1: Starting the training process")
                 training_pid, log_file = run_train_script(config_file, train_script_path)
-                print(f"Started training process with PID {training_pid}, log file: {log_file}")
+                print(
+                    f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Started training process with PID {training_pid}, log file: {log_file}")
                 time.sleep(check_interval)  # Give some time for the process to start
 
             # Step 2: Monitor and clean directory
+            print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Step 2: Monitoring and cleaning directory")
             clean_folder(monitor_dir)
 
             # Step 3: Check if directory has new files in the last 30 minutes
+            print(
+                f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Step 3: Checking for new files in the last {inactivity_timeout} seconds")
             if not check_directory_for_new_files(monitor_dir, inactivity_timeout):
-                print(f"No new files detected in the last {inactivity_timeout} seconds. Terminating training process.")
+                print(
+                    f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] No new files detected. Terminating training process.")
                 if training_pid:
                     kill_process_tree(training_pid)
                     training_pid = None
 
                 # Step 4-5: Find latest restore folder and copy to data share
+                print(
+                    f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Step 4-5: Finding latest restore folder and copying to data share")
                 latest_restore_dir, restore_id = find_latest_restore_folder(ray_results_dir)
                 if latest_restore_dir and restore_id:
                     checkpoint_share_dir = f"{checkpoint_dir}/{restore_id}"
                     ensure_directory_exists(os.path.dirname(checkpoint_share_dir))
 
-                    print(f"Copying {latest_restore_dir} to {checkpoint_share_dir}")
+                    print(
+                        f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Copying {latest_restore_dir} to {checkpoint_share_dir}")
                     safe_copy_directory(latest_restore_dir, checkpoint_share_dir)
 
                     # Step 6-7: Process run folder
+                    print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Step 6-7: Processing run folder")
                     process_run_folder(monitor_dir, restore_id, run_dir, scan_script_path, filter_script_path,
                                        config_dir, reward_func)
 
                     # Step 8: Update config file with latest checkpoint
+                    print(
+                        f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Step 8: Updating config file with latest checkpoint")
                     latest_checkpoint = find_latest_checkpoint(latest_restore_dir)
                     if latest_checkpoint:
                         update_yaml_config(config_file, latest_checkpoint)
 
-                    # Step 9: Start training again
-                    training_pid, log_file = run_train_script(config_file, train_script_path)
-                    print(f"Restarted training process with PID {training_pid}, log file: {log_file}")
+                        # Step 9: Start training again
+                        print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Step 9: Starting training again")
+                        training_pid, log_file = run_train_script(config_file, train_script_path)
+                        print(
+                            f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Restarted training process with PID {training_pid}, log file: {log_file}")
+                    else:
+                        print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] No checkpoint found, skipping restart")
+                else:
+                    print(
+                        f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] No restore folder found, skipping steps 5-9")
+            else:
+                print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Directory is active, continuing monitoring")
 
+            print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Sleeping for {check_interval} seconds")
             time.sleep(check_interval)  # Check at the specified interval
 
     except KeyboardInterrupt:
-        print("Script stopped by user.")
+        print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] ========================================")
+        print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Script stopped by user")
+        print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] ========================================")
         if training_pid:
+            print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Terminating training process")
             kill_process_tree(training_pid)
         sys.exit(0)
 
