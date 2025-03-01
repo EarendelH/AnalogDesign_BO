@@ -278,7 +278,7 @@ def run_train_script(config_file, train_script_path):
     for proc in psutil.process_iter(['pid', 'cmdline']):
         try:
             cmdline = proc.info['cmdline']
-            if cmdline and 'train_continuous.py' in ' '.join(cmdline) and f'--config_file {config_file}' in ' '.join(
+            if cmdline and 'train_continuous_psfascii.py' in ' '.join(cmdline) and f'--config_file {config_file}' in ' '.join(
                     cmdline):
                 pid = proc.info['pid']
                 print(
