@@ -186,7 +186,7 @@ def findPowerSupplyRejectionRatio_Haoqiang(file_path):
 
 def findPowerSupplyRejectionRatio_AXS(file_path):
 
-    vout_name = 'net3'
+    vout_name = 'DVDD'
 
     freq_list = [100000]
     freq_labels = ['100k']
