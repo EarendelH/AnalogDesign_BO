@@ -516,7 +516,7 @@ def safe_copy_directory(src, dst):
 
 def main(monitor_dir, config_file, train_script_path, ray_results_dir, data_share_dir,
          scan_script_path, filter_script_path, config_dir, reward_func,
-         inactivity_timeout, check_interval, debug_mode, to_be_deleted_dir, blank_dir):
+         inactivity_timeout, check_interval, debug_mode, to_be_deleted_dir, blank_dir, delete_enabled):
     """
     Main function implementing the automatic training monitor workflow
 
@@ -584,12 +584,14 @@ def main(monitor_dir, config_file, train_script_path, ray_results_dir, data_shar
             if latest_checkpoint:
                 update_yaml_config(config_file, latest_checkpoint)
 
-                # NEW STEP: Clean run_test directory in debug mode too
-                print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Step 8.5: Cleaning run_test directory")
-                clean_run_test_directory(monitor_dir, to_be_deleted_dir, blank_dir)
+                # Clean run_test directory only if delete is enabled
+                if delete_enabled:
+                    print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Step 8.5: Cleaning run_test directory")
+                    clean_run_test_directory(monitor_dir, to_be_deleted_dir, blank_dir)
+                else:
+                    print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Directory cleaning skipped (--delete not enabled)")
             else:
-                print(
-                    f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] No checkpoint found, skipping config update and cleaning")
+                print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] No checkpoint found, skipping config update and cleaning")
         else:
             print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] No restore folder found, skipping steps 5-8.5")
 
@@ -718,6 +720,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Enhanced monitoring script for Analog Design AutoRL")
     parser.add_argument("--monitor-dir", help="Directory to monitor for cleanup")
     parser.add_argument("--debug", action="store_true", help="Run only steps 4-8 for debugging")
+    parser.add_argument("--delete", action="store_true", help="Enable directory cleaning in debug mode")
     parser.add_argument("--config-file", help="Path to the YAML config file")
     parser.add_argument("--inactivity-timeout", type=int,
                         help="Time in seconds to wait for new file activity before restarting")
@@ -750,5 +753,6 @@ if __name__ == "__main__":
         check_interval=CHECK_INTERVAL,
         debug_mode=args.debug,
         to_be_deleted_dir=TO_BE_DELETED_DIR,
-        blank_dir=BLANK_DIR
+        blank_dir=BLANK_DIR,
+        delete_enabled=args.delete  # Add the new parameter
     )
