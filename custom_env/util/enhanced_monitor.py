@@ -263,7 +263,8 @@ def run_train_script(config_file, train_script_path):
     print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Config file: {config_file}")
 
     log_file = f"training_{datetime.now().strftime('%Y%m%d_%H%M%S')}.log"
-    cmd = f"nohup python {train_script_path} --config_mode file --config_file {config_file} > {log_file} 2>&1 &"
+    cmd = f"nohup bash -c 'source ~/bashrc.usr && python {train_script_path} --config_mode file --config_file {config_file}' > {log_file} 2>&1 &"
+    # cmd = f"nohup python {train_script_path} --config_mode file --config_file {config_file} > {log_file} 2>&1 &"
 
     print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Running command: {cmd}")
 
