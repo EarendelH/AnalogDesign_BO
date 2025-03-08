@@ -700,7 +700,7 @@ if __name__ == "__main__":
     CONFIG_FILE = "/home/wuhan/AnalogDesignAuto/AnalogDesignAuto_MultiAgent/custom_env/train_config/AXS_eex.yaml"
     CONFIG_FILE = os.path.expanduser(CONFIG_FILE)
 
-    TRAIN_SCRIPT_PATH = "/home/wuhan/AnalogDesignAuto/AnalogDesignAuto_MultiAgent/custom_env/train_continuous.py"
+    TRAIN_SCRIPT_PATH = "/home/wuhan/AnalogDesignAuto/AnalogDesignAuto_MultiAgent/custom_env/train_continuous_psfascii.py"
     RAY_RESULTS_DIR = "/home/wuhan/ray_results"
     DATA_SHARE_DIR = "/data/share/train_data/AXS"
 
