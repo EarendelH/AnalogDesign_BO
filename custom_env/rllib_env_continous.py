@@ -81,6 +81,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         self.trajectory_data = None
         self.log_file_path = None
         self.log_file_name = None
+
         self.zero_sim_result = None
         self.step_num = None
         self.norm_ideal_specs = None

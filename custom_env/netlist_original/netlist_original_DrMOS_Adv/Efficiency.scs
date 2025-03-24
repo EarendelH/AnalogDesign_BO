@@ -1,0 +1,320 @@
+// Generated for: spectre
+// Generated on: Mar 12 15:35:30 2025
+// Design library name: DRMOS_Opt
+// Design cell name: Efficiency
+// Design view name: schematic
+simulator lang=spectre
+global 0
+parameters C_BST_CHIP=7n cbst=100n cdrv=3n CIN_CHIP=5n DT_H=1.65n \
+    DT_L=2.3n DUTY=0.152 fsw=4M ILOAD=12.5 RBST_CHIP=100m RCIN_CHIP=100m \
+    VDRV=2.5 VIN=7.6
+include "/data/PDK/pdk_installed/unt55bcd/pdk_current/models/spe/unt_55bcd20_v0p5_usage_spe.lib" section=tt
+
+// Library name: DRMOS_Opt
+// Cell name: 0402_2p2uF_GRM155D71C225ME11_DC0V_25degC
+// View name: schematic
+subckt DRMOS_Opt_0402_2p2uF_GRM155D71C225ME11_DC0V_25degC_schematic port1 \
+        port2
+    L2 (11 12) inductor l=120.0p
+    L9 (18 19) inductor l=29.2p
+    L10 (19 20) inductor l=178.00p
+    L11 (20 21) inductor l=35.2p
+    L12 (21 22) inductor l=30.9p
+    L13 (22 port2) inductor l=64.8p
+    R3 (12 13) resistor r=5.64m
+    R100 (port1 11) resistor r=22.7M
+    R4 (13 14) resistor r=266
+    R5 (14 15) resistor r=5.19
+    R6 (15 16) resistor r=541.000m
+    R7 (16 17) resistor r=67.5m
+    R8 (17 18) resistor r=10.2m
+    R9 (18 19) resistor r=71.5m
+    R10 (19 20) resistor r=26.8m
+    R11 (20 21) resistor r=3.04m
+    R12 (21 22) resistor r=3.44m
+    R13 (22 port2) resistor r=11.6
+    C1 (port1 11) capacitor c=1.71u
+    C4 (13 14) capacitor c=25.7u
+    C5 (14 15) capacitor c=77.3u
+    C6 (15 16) capacitor c=73.0u
+    C7 (16 17) capacitor c=58.8u
+    C8 (17 18) capacitor c=40u
+    C11 (20 21) capacitor c=5.41u
+    C12 (21 22) capacitor c=3.21u
+    C13 (22 port2) capacitor c=2.57p
+ends DRMOS_Opt_0402_2p2uF_GRM155D71C225ME11_DC0V_25degC_schematic
+// End of subcircuit definition.
+
+// Library name: DRMOS_Opt
+// Cell name: 0201_22nF_GRM033R61A223KE84_DC0V_25degC
+// View name: schematic
+subckt DRMOS_Opt_0201_22nF_GRM033R61A223KE84_DC0V_25degC_schematic port1 \
+        port2
+    C1 (port1 11) capacitor c=22.4n
+    C4 (13 14) capacitor c=1.31e-06
+    C5 (14 15) capacitor c=2.76e-06
+    C6 (15 16) capacitor c=2.74e-06
+    C7 (16 17) capacitor c=4.32e-06
+    C8 (17 18) capacitor c=3.2e-06
+    C9 (18 19) capacitor c=2.7e-06
+    C10 (19 20) capacitor c=2.99e-06
+    C11 (20 21) capacitor c=2.21e-06
+    C13 (22 23) capacitor c=27.5n
+    C14 (23 port2) capacitor c=1.06e-12
+    L2 (11 12) inductor l=1.84e-10
+    L12 (21 22) inductor l=49.5p
+    L13 (22 23) inductor l=25.7p
+    L14 (23 port2) inductor l=25.5p
+    R3 (12 13) resistor r=36.3m
+    R100 (port1 11) resistor r=2000000000
+    R4 (13 14) resistor r=2610
+    R5 (14 15) resistor r=177
+    R6 (15 16) resistor r=30.7
+    R7 (16 17) resistor r=3.07
+    R8 (17 18) resistor r=0.765
+    R9 (18 19) resistor r=0.124
+    R10 (19 20) resistor r=0.033
+    R11 (20 21) resistor r=11.1m
+    R12 (21 22) resistor r=0.141
+    R13 (22 23) resistor r=34.4m
+    R14 (23 port2) resistor r=2.22
+ends DRMOS_Opt_0201_22nF_GRM033R61A223KE84_DC0V_25degC_schematic
+// End of subcircuit definition.
+
+// Library name: DRMOS_Opt
+// Cell name: Efficiency
+// View name: schematic
+C_BUMP3_5 (VIN_BUMP VSS_BUMP) \
+        DRMOS_Opt_0402_2p2uF_GRM155D71C225ME11_DC0V_25degC_schematic
+C_BUMP3_6 (VIN_BUMP VSS_BUMP) \
+        DRMOS_Opt_0402_2p2uF_GRM155D71C225ME11_DC0V_25degC_schematic
+C_BUMP3_4 (VIN_BUMP VSS_BUMP) \
+        DRMOS_Opt_0402_2p2uF_GRM155D71C225ME11_DC0V_25degC_schematic
+C_BUMP3_3 (VIN_BUMP VSS_BUMP) \
+        DRMOS_Opt_0402_2p2uF_GRM155D71C225ME11_DC0V_25degC_schematic
+C_BUMP3_2 (VIN_BUMP VSS_BUMP) \
+        DRMOS_Opt_0402_2p2uF_GRM155D71C225ME11_DC0V_25degC_schematic
+C_BUMP4_2 (VIN_BUMP VSS_BUMP) \
+        DRMOS_Opt_0402_2p2uF_GRM155D71C225ME11_DC0V_25degC_schematic
+C_BUMP4_3 (VIN_BUMP VSS_BUMP) \
+        DRMOS_Opt_0402_2p2uF_GRM155D71C225ME11_DC0V_25degC_schematic
+C_BUMP1_5 (VIN_BUMP VSS_BUMP) \
+        DRMOS_Opt_0402_2p2uF_GRM155D71C225ME11_DC0V_25degC_schematic
+C_BUMP1_6 (VIN_BUMP VSS_BUMP) \
+        DRMOS_Opt_0402_2p2uF_GRM155D71C225ME11_DC0V_25degC_schematic
+C_BUMP2_5 (VIN_BUMP VSS_BUMP) \
+        DRMOS_Opt_0402_2p2uF_GRM155D71C225ME11_DC0V_25degC_schematic
+C_BUMP1_4 (VIN_BUMP VSS_BUMP) \
+        DRMOS_Opt_0402_2p2uF_GRM155D71C225ME11_DC0V_25degC_schematic
+C_BUMP1_3 (VIN_BUMP VSS_BUMP) \
+        DRMOS_Opt_0402_2p2uF_GRM155D71C225ME11_DC0V_25degC_schematic
+C_BUMP1_2 (VIN_BUMP VSS_BUMP) \
+        DRMOS_Opt_0402_2p2uF_GRM155D71C225ME11_DC0V_25degC_schematic
+C_BUMP2_6 (VIN_BUMP VSS_BUMP) \
+        DRMOS_Opt_0402_2p2uF_GRM155D71C225ME11_DC0V_25degC_schematic
+C_BUMP2_4 (VIN_BUMP VSS_BUMP) \
+        DRMOS_Opt_0402_2p2uF_GRM155D71C225ME11_DC0V_25degC_schematic
+C_BUMP2_3 (VIN_BUMP VSS_BUMP) \
+        DRMOS_Opt_0402_2p2uF_GRM155D71C225ME11_DC0V_25degC_schematic
+C_BUMP2_2 (VIN_BUMP VSS_BUMP) \
+        DRMOS_Opt_0402_2p2uF_GRM155D71C225ME11_DC0V_25degC_schematic
+C_BUMP4_4 (VIN_BUMP VSS_BUMP) \
+        DRMOS_Opt_0402_2p2uF_GRM155D71C225ME11_DC0V_25degC_schematic
+C_BUMP4_6 (VIN_BUMP VSS_BUMP) \
+        DRMOS_Opt_0402_2p2uF_GRM155D71C225ME11_DC0V_25degC_schematic
+C_BUMP4_5 (VIN_BUMP VSS_BUMP) \
+        DRMOS_Opt_0402_2p2uF_GRM155D71C225ME11_DC0V_25degC_schematic
+C_BST_CHIP (BST net0137) capacitor c=C_BST_CHIP
+C_BST_BOARD (BST_BUMP SW_BUMP) capacitor c=cbst
+C_POL (net011 VSS_POL) capacitor c=28.2u ic=0
+CIN_CHIP (VIN_CHIP net0121) capacitor c=CIN_CHIP
+C_DRV (VDRV_CHIP VSS_CHIP) capacitor c=cdrv
+E8 (VGBST_DIF 0 VGBST BST_BUMP) vcvs gain=1.0
+E7 (CBST_DIFF 0 BST_BUMP SW_BUMP) vcvs gain=1.0
+E6 (LSG_DIF 0 LSG LSS) vcvs gain=1.0
+E4 (VIN_CHIP_DIFF 0 VIN_CHIP VSS_CHIP) vcvs gain=1.0
+E2 (VIN_BUMP_DIFF 0 VIN_BUMP VSS_BUMP) vcvs gain=1.0
+E3 (VOUT_POL_DIFF 0 VOUT_POL VSS_POL) vcvs gain=1.0
+E5 (HSG_DIF 0 HSG HSS) vcvs gain=1.0
+E1 (HS_VDS 0 HSD HSS) vcvs gain=1.0
+E0 (SW_DIFF 0 SW_IDEAL VSS_CHIP) vcvs gain=1.0
+E9 (VBST_DIFF 0 BST SW_IDEAL) vcvs gain=1.0
+VS_LSG_IDEAL (LSG_IDEAL VSS_CHIP) vsource type=pulse val0=0 val1=VDRV \
+        period=1/fsw delay=DUTY/fsw+DT_H+100p+100p+DT_L rise=100p \
+        fall=100p width=1/fsw-DUTY/fsw-DT_H-DT_L-100p-100p-100p-100p
+VS_BST1 (BST_BUMP VGBST) vsource type=pulse val0=0 val1=VDRV period=1/fsw \
+        delay=DUTY/fsw+DT_H+100p+100p+DT_L+10n rise=1n fall=1n \
+        width=1/fsw-DUTY/fsw-DT_H-15n
+VS_HSG_IDEAL (HSG_IDEAL SW_IDEAL) vsource type=pulse val0=0 val1=VDRV \
+        period=1/fsw delay=DT_H rise=100p fall=100p width=DUTY/fsw
+VS_BST2 (VGBST2 VSS_CHIP) vsource type=pulse val0=VDRV val1=0 period=1/fsw \
+        delay=DUTY/fsw+DT_H+100p+100p+DT_L+10n rise=1n fall=1n \
+        width=1/fsw-DUTY/fsw-DT_H-15n
+R_LSG_RES (LSG_RES VSS_CHIP) resistor r=420
+R_HSG_RES (HSG_RES SW_IDEAL) resistor r=420
+R_LSG (LSG_RES LSG) resistor r=35m
+RBST_CHIP (net0137 SW_IDEAL) resistor r=RBST_CHIP
+RCIN_CHIP (net0121 VSS_CHIP) resistor r=RCIN_CHIP
+R_BUMP2 (net036 VSS_CHIP) resistor r=0
+R_BUMP1 (net027 VIN_CHIP) resistor r=0
+R_HSG (HSG_RES HSG) resistor r=70m
+R_LSS (LSS VSS_CHIP) resistor r=0
+R_HSD (VIN_CHIP HSD) resistor r=0
+R_HSS (HSS SW_IDEAL) resistor r=0
+R_LSD (SW_IDEAL LSD) resistor r=0
+I_LOAD (VOUT_POL VSS_POL) isource dc=0 type=pwl wave=[ 0 10m 10u ILOAD ]
+VS_DRV (VDRV 0) vsource dc=VDRV type=dc
+VS_VSS (VSS 0) vsource dc=0 type=dc
+VS_VIN (VIN VSS) vsource type=pwl wave=[ 0 0 50u VIN ]
+L_SW_BUMP (SW_BUMP SW_IDEAL) inductor l=529.3p r=2.7m
+L_BST_BUMP (BST_BUMP BST) inductor l=103.67p r=1.29m
+L_DRV (VDRV VDRV_CHIP) inductor l=637.75p r=4.31m
+L_VSS_CHIP (VSS_CHIP VSS_POL) inductor l=0 r=0
+L_SW_IDEAL2 (net022 VOUT_POL) inductor l=20n r=0
+L_POL (VOUT_POL net011) inductor l=0 r=0
+L_PCB2 (VSS VSS_BUMP) inductor l=850p r=4.53m
+L_BUMP1 (VIN_BUMP net027) inductor l=36.47p r=2.655m
+L_BUMP2 (VSS_BUMP net036) inductor l=44.2p r=4.91m
+L_PCB1 (VIN VIN_BUMP) inductor l=1.221n r=18.84m
+L_SW_IDEAL1 (SW_IDEAL net022) inductor l=0 r=0
+M2 (LSD LSG LSS LSS LSS VSS_CHIP) nld9_lcgd_sw_mac l=100n w=23.97m nf=210 \
+        mr=100 as=3.5955n ad=26.2119n ps=24.033m pd=25.2818m mosdio_on=1
+M1 (HSD HSG HSS HSS HSD VSS_CHIP) nld9_lcgd_sw_mac l=100n w=21.2m nf=212 \
+        mr=51 as=3.18n ad=18.9n ps=21.26m pd=22.41m mosdio_on=1
+PM0 (net068 VGBST BST_BUMP BST_BUMP VSS_CHIP) pch3d3_nbl_12v_5t_mac w=1m \
+        l=350n sa=184n sb=184n sd=260n as=140.8p ad=130p ps=1.20282m \
+        pd=1.0026m nrd=130u nrs=130u nf=10 mr=500 sca=1.50128 scb=49.9399n \
+        scc=1.08211p mismod=1 mosdio_on=1
+PM1 (net068 VGBST2 VDRV_CHIP VDRV_CHIP VSS_CHIP) pch3d3_nbl_12v_5t_mac \
+        w=1m l=350n sa=184n sb=184n sd=260n as=140.8p ad=130p ps=1.20282m \
+        pd=1.0026m nrd=130u nrs=130u nf=10 mr=50 sca=1.50128 scb=49.9399n \
+        scc=1.08211p mismod=1 mosdio_on=1
+C_BUMP3_1 (VIN_BUMP VSS_BUMP) \
+        DRMOS_Opt_0201_22nF_GRM033R61A223KE84_DC0V_25degC_schematic
+C_BUMP1_1 (VIN_BUMP VSS_BUMP) \
+        DRMOS_Opt_0201_22nF_GRM033R61A223KE84_DC0V_25degC_schematic
+C_BUMP2_1 (VIN_BUMP VSS_BUMP) \
+        DRMOS_Opt_0201_22nF_GRM033R61A223KE84_DC0V_25degC_schematic
+C_BUMP4_1 (VIN_BUMP VSS_BUMP) \
+        DRMOS_Opt_0201_22nF_GRM033R61A223KE84_DC0V_25degC_schematic
+M46 (LSG_RES LSBUF_IN5 VSS_CHIP VSS_CHIP VDRV_CHIP VSS_CHIP) \
+        nld5_lrsp_iso_mac l=100n w=20m nf=200 mr=4 as=3n ad=12.0778n \
+        ps=20.06m pd=21.0405m mosdio_on=1
+M28 (HSG_RES HSBUF_IN7 SW_IDEAL SW_IDEAL BST VSS_CHIP) nld5_lrsp_iso_mac \
+        l=100n w=10m nf=100 mr=3 as=1.5n ad=6.20678n ps=10.03m pd=10.6265m \
+        mosdio_on=1
+M45 (LSBUF_IN5 LSBUF_IN4 VSS_CHIP VSS_CHIP) nch3d3_mac w=8m l=350n sa=184n \
+        sb=184n sd=260n as=1.0508n ad=1.04n ps=8.22102m pd=8.0208m \
+        nrd=16.25u nrs=16.25u nf=80 mr=1 sca=78.5759m scb=983.662e-27 \
+        scc=93.9319e-48 mismod=1
+M44 (LSBUF_IN4 LSBUF_IN3 VSS_CHIP VSS_CHIP) nch3d3_mac w=800u l=350n \
+        sa=184n sb=184n sd=260n as=114.8p ad=104p ps=1.0023m pd=802.08u \
+        nrd=162.5u nrs=162.5u nf=8 mr=1 sca=78.5759m scb=983.662e-27 \
+        scc=93.9319e-48 mismod=1
+M43 (LSBUF_IN3 LSBUF_IN2 VSS_CHIP VSS_CHIP) nch3d3_mac w=80u l=350n \
+        sa=184n sb=184n sd=260n as=11.48p ad=10.4p ps=102.296u pd=82.08u \
+        nrd=1.625m nrs=1.625m nf=8 mr=1 sca=101.433m scb=9.83662e-24 \
+        scc=939.319e-48 mismod=1
+M42 (LSBUF_IN2 LSBUF_IN1 VSS_CHIP VSS_CHIP) nch3d3_mac w=8u l=350n sa=184n \
+        sb=184n sd=0 as=1.472p ad=1.472p ps=16.368u pd=16.368u nrd=16.25m \
+        nrs=16.25m nf=1 mr=1 sca=105.536m scb=12.2958e-24 scc=1.17415e-45 \
+        mismod=1
+M41 (LSBUF_IN1 LSG_IDEAL VSS_CHIP VSS_CHIP) nch3d3_mac w=800n l=350n \
+        sa=184n sb=184n sd=0 as=147.2f ad=147.2f ps=1.968u pd=1.968u \
+        nrd=162.5m nrs=162.5m nf=1 mr=1 sca=143.732m scb=122.91e-24 \
+        scc=11.7415e-45 mismod=1
+M22 (HSBUF_IN2 HSBUF_IN1 SW_IDEAL SW_IDEAL) nch3d3_mac w=8u l=350n sa=184n \
+        sb=184n sd=0 as=1.472p ad=1.472p ps=16.368u pd=16.368u nrd=16.25m \
+        nrs=16.25m nf=1 mr=1 sca=105.536m scb=12.2958e-24 scc=1.17415e-45 \
+        mismod=1
+M21 (HSBUF_IN1 HSG_IDEAL SW_IDEAL SW_IDEAL) nch3d3_mac w=1.6u l=350n \
+        sa=184n sb=184n sd=0 as=294.4f ad=294.4f ps=3.568u pd=3.568u \
+        nrd=81.25m nrs=81.25m nf=1 mr=1 sca=135.372m scb=61.4789e-24 \
+        scc=5.87074e-45 mismod=1
+M27 (HSBUF_IN7 HSBUF_IN6 SW_IDEAL SW_IDEAL) nch3d3_mac w=5m l=350n sa=184n \
+        sb=184n sd=260n as=660.8p ad=650p ps=5.21322m pd=5.013m nrd=26u \
+        nrs=26u nf=50 mr=3 sca=78.5759m scb=983.662e-27 scc=93.9319e-48 \
+        mismod=1
+M26 (HSBUF_IN6 HSBUF_IN5 SW_IDEAL SW_IDEAL) nch3d3_mac w=1m l=350n sa=184n \
+        sb=184n sd=260n as=132.16p ad=130p ps=1.05322m pd=1.013m nrd=130u \
+        nrs=130u nf=50 mr=1 sca=90.7664m scb=4.91831e-24 scc=469.66e-48 \
+        mismod=1
+M25 (HSBUF_IN5 HSBUF_IN4 SW_IDEAL SW_IDEAL) nch3d3_mac w=1m l=350n sa=184n \
+        sb=184n sd=260n as=140.8p ad=130p ps=1.20282m pd=1.0026m nrd=130u \
+        nrs=130u nf=10 mr=1 sca=78.5759m scb=983.662e-27 scc=93.9319e-48 \
+        mismod=1
+M24 (HSBUF_IN4 HSBUF_IN3 SW_IDEAL SW_IDEAL) nch3d3_mac w=200u l=350n \
+        sa=184n sb=184n sd=260n as=36.8p ad=26p ps=400.736u pd=200.52u \
+        nrd=650u nrs=650u nf=2 mr=1 sca=78.5759m scb=983.662e-27 \
+        scc=93.9319e-48 mismod=1
+M23 (HSBUF_IN3 HSBUF_IN2 SW_IDEAL SW_IDEAL) nch3d3_mac w=40u l=350n \
+        sa=184n sb=184n sd=0 as=7.36p ad=7.36p ps=80.368u pd=80.368u \
+        nrd=3.25m nrs=3.25m nf=1 mr=1 sca=83.6552m scb=2.45916e-24 \
+        scc=234.83e-48 mismod=1
+M36 (LSG_RES LSBUF_IN5 VDRV_CHIP VDRV_CHIP VSS_CHIP) pde5_mac l=200n w=20m \
+        nf=200 mr=2 as=6n ad=10.6345n ps=20.12m pd=20.8125m mismod=1 \
+        mosdio_on=1
+M18 (HSG_RES HSBUF_IN7 BST BST VSS_CHIP) pde5_mac l=200n w=20m nf=200 mr=5 \
+        as=6n ad=10.6345n ps=20.12m pd=20.8125m mismod=1 mosdio_on=1
+M35 (LSBUF_IN5 LSBUF_IN4 VDRV_CHIP VDRV_CHIP) pch3d3_mac w=20m l=350n \
+        sa=184n sb=184n sd=260n as=2.6108n ad=2.6n ps=20.2522m pd=20.052m \
+        nrd=6.5u nrs=6.5u nf=200 mr=1 sca=78.5759m scb=983.662e-27 \
+        scc=93.9319e-48 mismod=1
+M34 (LSBUF_IN4 LSBUF_IN3 VDRV_CHIP VDRV_CHIP) pch3d3_mac w=2.5m l=350n \
+        sa=184n sb=184n sd=260n as=330.4p ad=330.4p ps=2.60661m \
+        pd=2.60661m nrd=52u nrs=52u nf=25 mr=1 sca=78.5759m \
+        scb=983.662e-27 scc=93.9319e-48 mismod=1
+M33 (LSBUF_IN3 LSBUF_IN2 VDRV_CHIP VDRV_CHIP) pch3d3_mac w=250u l=350n \
+        sa=184n sb=184n sd=260n as=33.04p ad=33.04p ps=266.608u \
+        pd=266.608u nrd=520u nrs=520u nf=25 mr=1 sca=101.433m \
+        scb=9.83662e-24 scc=939.319e-48 mismod=1
+M32 (LSBUF_IN2 LSBUF_IN1 VDRV_CHIP VDRV_CHIP) pch3d3_mac w=25u l=350n \
+        sa=184n sb=184n sd=0 as=4.6p ad=4.6p ps=50.368u pd=50.368u \
+        nrd=5.2m nrs=5.2m nf=1 mr=1 sca=88.0997m scb=3.93465e-24 \
+        scc=375.728e-48 mismod=1
+M31 (LSBUF_IN1 LSG_IDEAL VDRV_CHIP VDRV_CHIP) pch3d3_mac w=2.5u l=350n \
+        sa=184n sb=184n sd=0 as=460f ad=460f ps=5.368u pd=5.368u nrd=52m \
+        nrs=52m nf=1 mr=1 sca=128.1m scb=39.3465e-24 scc=3.75728e-45 \
+        mismod=1
+M12 (HSBUF_IN2 HSBUF_IN1 BST BST) pch3d3_mac w=8u l=350n sa=184n sb=184n \
+        sd=0 as=1.472p ad=1.472p ps=16.368u pd=16.368u nrd=16.25m \
+        nrs=16.25m nf=1 mr=1 sca=105.536m scb=12.2958e-24 scc=1.17415e-45 \
+        mismod=1
+M11 (HSBUF_IN1 HSG_IDEAL BST BST) pch3d3_mac w=1.6u l=350n sa=184n sb=184n \
+        sd=0 as=294.4f ad=294.4f ps=3.568u pd=3.568u nrd=81.25m nrs=81.25m \
+        nf=1 mr=1 sca=135.372m scb=61.4789e-24 scc=5.87074e-45 mismod=1
+M17 (HSBUF_IN7 HSBUF_IN6 BST BST) pch3d3_mac w=5m l=350n sa=184n sb=184n \
+        sd=260n as=660.8p ad=650p ps=5.21322m pd=5.013m nrd=26u nrs=26u \
+        nf=50 mr=1 sca=78.5759m scb=983.662e-27 scc=93.9319e-48 mismod=1
+M16 (HSBUF_IN6 HSBUF_IN5 BST BST) pch3d3_mac w=3m l=350n sa=184n sb=184n \
+        sd=260n as=396.48p ad=390p ps=3.13322m pd=3.013m nrd=43.3333u \
+        nrs=43.3333u nf=50 mr=1 sca=80.9202m scb=1.63944e-24 \
+        scc=156.553e-48 mismod=1
+M15 (HSBUF_IN5 HSBUF_IN4 BST BST) pch3d3_mac w=1m l=350n sa=184n sb=184n \
+        sd=260n as=140.8p ad=130p ps=1.20282m pd=1.0026m nrd=130u nrs=130u \
+        nf=10 mr=1 sca=78.5759m scb=983.662e-27 scc=93.9319e-48 mismod=1
+M14 (HSBUF_IN4 HSBUF_IN3 BST BST) pch3d3_mac w=200u l=350n sa=184n sb=184n \
+        sd=260n as=31.4p ad=26p ps=301.256u pd=201.04u nrd=650u nrs=650u \
+        nf=4 mr=1 sca=82.0391m scb=1.96732e-24 scc=187.864e-48 mismod=1
+M13 (HSBUF_IN3 HSBUF_IN2 BST BST) pch3d3_mac w=40u l=350n sa=184n sb=184n \
+        sd=0 as=7.36p ad=7.36p ps=80.368u pd=80.368u nrd=3.25m nrs=3.25m \
+        nf=1 mr=1 sca=83.6552m scb=2.45916e-24 scc=234.83e-48 mismod=1
+simulatorOptions options psfversion="1.1.0" reltol=1e-3 vabstol=1e-6 \
+    iabstol=1e-12 temp=25.0 tnom=27 scalem=1.0 scale=1.0 gmin=1e-18 \
+    gmindc=1e-18 rforce=1 redefinedparams=ignore maxnotes=5 maxwarns=5 \
+    digits=5 cols=80 pivrel=1e-3 sensfile="../psf/sens.output" \
+    checklimitdest=psf rclamp=1e-8 
+tran tran stop=100u errpreset=conservative cmin=10f write="spectre.ic" \
+    writefinal="spectre.fc" annotate=status maxiters=5 rclamp=1e-9 
+finalTimeOP info what=oppoint where=rawfile
+modelParameter info what=models where=rawfile
+element info what=inst where=rawfile
+outputParameter info what=output where=rawfile
+designParamVals info what=parameters where=rawfile
+primitives info what=primitives where=rawfile
+subckts info what=subckts where=rawfile
+save VIN_CHIP_DIFF SW_DIFF HSG_DIF LSG_DIF HS_VDS VIN_BUMP_DIFF \
+    VOUT_POL_DIFF LSD LSS VDRV_CHIP VGBST_DIF CBST_DIFF VBST_DIFF SW_IDEAL \
+    VSS_CHIP HSD HSS VIN_BUMP VSS_BUMP VOUT_POL VSS_POL LSG_IDEAL HSG \
+    VIN_CHIP PM1:3 VDRV VS_DRV:p VIN VS_VIN:p I_LOAD:sink 
+saveOptions options save=allpub
