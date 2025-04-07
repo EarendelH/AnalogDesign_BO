@@ -219,7 +219,7 @@ def main():
                     entropy_coeff=0.01,
                     vf_loss_coeff=0.25,
                     # sgd_minibatch_size=64,
-                    sgd_minibatch_size=32
+                    sgd_minibatch_size=32,
                     num_sgd_iter=24,
                     model={
                         "fcnet_hiddens": [256, 256, 256, 256, 256],
