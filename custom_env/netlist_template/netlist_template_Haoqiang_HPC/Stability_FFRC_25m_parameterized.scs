@@ -1,57 +1,57 @@
 // Generated for: spectre
-// Generated on: Sep  2 17:34:41 2024
+// Generated on: Sep  2 15:47:00 2024
 // Design library name: LDO_Haoqiang
-// Design cell name: tb_PSR
+// Design cell name: tb_STB_FFRC
 // Design view name: schematic
 simulator lang=spectre
 global 0
-parameters cpp=30p iload=50m ibias C0 C1 C2 C3 C4 C8 R0 w_M40_per_finger l_M40 nf_M40 w_M0_per_finger l_M0 nf_M0 w_M47_per_finger l_M47 nf_M47 w_M46_per_finger l_M46 nf_M46 w_M42_per_finger l_M42 nf_M42 w_M41_per_finger l_M41 nf_M41 w_M27_per_finger l_M27 nf_M27 w_M26_per_finger l_M26 nf_M26 w_M25_per_finger l_M25 nf_M25 w_M24_per_finger l_M24 nf_M24 w_M23_per_finger l_M23 nf_M23 w_M19_per_finger l_M19 nf_M19 w_M22_per_finger l_M22 nf_M22 w_M15_per_finger l_M15 nf_M15 w_M14_per_finger l_M14 nf_M14 w_M6_per_finger l_M6 nf_M6 w_M21_per_finger l_M21 nf_M21 w_M1_per_finger l_M1 nf_M1 w_M36_per_finger l_M36 nf_M36 w_M35_per_finger l_M35 nf_M35 w_M34_per_finger l_M34 nf_M34 w_M13_per_finger l_M13 nf_M13 w_M33_per_finger l_M33 nf_M33 w_M32_per_finger l_M32 nf_M32 w_M31_per_finger l_M31 nf_M31 w_M20_per_finger l_M20 nf_M20 w_M18_per_finger l_M18 nf_M18 w_M11_per_finger l_M11 nf_M11 w_M10_per_finger l_M10 nf_M10 w_M8_per_finger l_M8 nf_M8 w_M7_per_finger l_M7 nf_M7 w_M12_per_finger l_M12 nf_M12 w_M4_per_finger l_M4 nf_M4 w_M2_per_finger l_M2 nf_M2 w_M38_per_finger l_M38 nf_M38 w_M37_per_finger l_M37 nf_M37 w_M9_per_finger l_M9 nf_M9 w_M5_per_finger l_M5 nf_M5 w_M3_per_finger l_M3 nf_M3 w_M43_per_finger l_M43 nf_M43 w_M44_per_finger l_M44 nf_M44 w_M30_per_finger l_M30 nf_M30 w_M29_per_finger l_M29 nf_M29 w_M28_per_finger l_M28 nf_M28 w_M17_per_finger l_M17 nf_M17 w_M16_per_finger l_M16 nf_M16 w_M45_per_finger l_M45 nf_M45
-include "/home/students/wuhan/spectre_N65/crn65gplus_2d5_lk_v1d0.scs" section=tt_bip
-include "/home/students/wuhan/spectre_N65/crn65gplus_2d5_lk_v1d0.scs" section=tt_dio
-include "/home/students/wuhan/spectre_N65/crn65gplus_2d5_lk_v1d0.scs" section=tt_dio_33
-include "/home/students/wuhan/spectre_N65/crn65gplus_2d5_lk_v1d0.scs" section=tt_mim
-include "/home/students/wuhan/spectre_N65/crn65gplus_2d5_lk_v1d0.scs" section=tt_dio_dnw
-include "/home/students/wuhan/spectre_N65/crn65gplus_2d5_lk_v1d0.scs" section=tt_dio_18
-include "/home/students/wuhan/spectre_N65/crn65gplus_2d5_lk_v1d0.scs" section=tt_bip_npn
-include "/home/students/wuhan/spectre_N65/crn65gplus_2d5_lk_v1d0.scs" section=tt_33
-include "/home/students/wuhan/spectre_N65/crn65gplus_2d5_lk_v1d0.scs" section=tt_rfrtmom
-include "/home/students/wuhan/spectre_N65/crn65gplus_2d5_lk_v1d0.scs" section=tt_mos_cap_25
-include "/home/students/wuhan/spectre_N65/crn65gplus_2d5_lk_v1d0.scs" section=tt_18
-include "/home/students/wuhan/spectre_N65/crn65gplus_2d5_lk_v1d0.scs" section=tt_disres
-include "/home/students/wuhan/spectre_N65/crn65gplus_2d5_lk_v1d0.scs" section=tt_res
-include "/home/students/wuhan/spectre_N65/crn65gplus_2d5_lk_v1d0.scs" section=tt_dio_na
-include "/home/students/wuhan/spectre_N65/crn65gplus_2d5_lk_v1d0.scs" section=tt_rfmos_33
-include "/home/students/wuhan/spectre_N65/crn65gplus_2d5_lk_v1d0.scs" section=tt_dio_hvt
-include "/home/students/wuhan/spectre_N65/crn65gplus_2d5_lk_v1d0.scs" section=tt_rfmvar
-include "/home/students/wuhan/spectre_N65/crn65gplus_2d5_lk_v1d0.scs" section=tt_rfmos_18
-include "/home/students/wuhan/spectre_N65/crn65gplus_2d5_lk_v1d0.scs" section=tt_na
-include "/home/students/wuhan/spectre_N65/crn65gplus_2d5_lk_v1d0.scs" section=tt_dio_na33
-include "/home/students/wuhan/spectre_N65/crn65gplus_2d5_lk_v1d0.scs" section=tt_dio_lvt
-include "/home/students/wuhan/spectre_N65/crn65gplus_2d5_lk_v1d0.scs" section=tt_rfres_sa
-include "/home/students/wuhan/spectre_N65/crn65gplus_2d5_lk_v1d0.scs" section=tt_na33
-include "/home/students/wuhan/spectre_N65/crn65gplus_2d5_lk_v1d0.scs" section=tt_dio_esd
-include "/home/students/wuhan/spectre_N65/crn65gplus_2d5_lk_v1d0.scs" section=tt_rfmim
-include "/home/students/wuhan/spectre_N65/crn65gplus_2d5_lk_v1d0.scs" section=tt_dio_25od33
-include "/home/students/wuhan/spectre_N65/crn65gplus_2d5_lk_v1d0.scs" section=tt_25od33
-include "/home/students/wuhan/spectre_N65/crn65gplus_2d5_lk_v1d0.scs" section=tt
-include "/home/students/wuhan/spectre_N65/crn65gplus_2d5_lk_v1d0.scs" section=tt_mos_cap
-include "/home/students/wuhan/spectre_N65/crn65gplus_2d5_lk_v1d0.scs" section=tt_dio_25
-include "/home/students/wuhan/spectre_N65/crn65gplus_2d5_lk_v1d0.scs" section=tt_dio_25ud18
-include "/home/students/wuhan/spectre_N65/crn65gplus_2d5_lk_v1d0.scs" section=tt_25
-include "/home/students/wuhan/spectre_N65/crn65gplus_2d5_lk_v1d0.scs" section=tt_rfmos
-include "/home/students/wuhan/spectre_N65/crn65gplus_2d5_lk_v1d0.scs" section=tt_25ud18
-include "/home/students/wuhan/spectre_N65/crn65gplus_2d5_lk_v1d0.scs" section=tt_dio_na25od33
-include "/home/students/wuhan/spectre_N65/crn65gplus_2d5_lk_v1d0.scs" section=tt_rfjvar
-include "/home/students/wuhan/spectre_N65/crn65gplus_2d5_lk_v1d0.scs" section=tt_rfmos_25
-include "/home/students/wuhan/spectre_N65/crn65gplus_2d5_lk_v1d0.scs" section=tt_rtmom
-include "/home/students/wuhan/spectre_N65/crn65gplus_2d5_lk_v1d0.scs" section=tt_na25od33
-include "/home/students/wuhan/spectre_N65/crn65gplus_2d5_lk_v1d0.scs" section=tt_dio_na25
-include "/home/students/wuhan/spectre_N65/crn65gplus_2d5_lk_v1d0.scs" section=tt_rfres_rpo
-include "/home/students/wuhan/spectre_N65/crn65gplus_2d5_lk_v1d0.scs" section=tt_hvt
-include "/home/students/wuhan/spectre_N65/crn65gplus_2d5_lk_v1d0.scs" section=tt_rfind
-include "/home/students/wuhan/spectre_N65/crn65gplus_2d5_lk_v1d0.scs" section=tt_rfmvar_25
-include "/home/students/wuhan/spectre_N65/crn65gplus_2d5_lk_v1d0.scs" section=tt_na25
-include "/home/students/wuhan/spectre_N65/crn65gplus_2d5_lk_v1d0.scs" section=tt_lvt
+parameters cpp=30p iload=25m ibias C0 C1 C2 C3 C4 C8 R0 w_M40_per_finger l_M40 nf_M40 w_M0_per_finger l_M0 nf_M0 w_M47_per_finger l_M47 nf_M47 w_M46_per_finger l_M46 nf_M46 w_M42_per_finger l_M42 nf_M42 w_M41_per_finger l_M41 nf_M41 w_M27_per_finger l_M27 nf_M27 w_M26_per_finger l_M26 nf_M26 w_M25_per_finger l_M25 nf_M25 w_M24_per_finger l_M24 nf_M24 w_M23_per_finger l_M23 nf_M23 w_M19_per_finger l_M19 nf_M19 w_M22_per_finger l_M22 nf_M22 w_M15_per_finger l_M15 nf_M15 w_M14_per_finger l_M14 nf_M14 w_M6_per_finger l_M6 nf_M6 w_M21_per_finger l_M21 nf_M21 w_M1_per_finger l_M1 nf_M1 w_M36_per_finger l_M36 nf_M36 w_M35_per_finger l_M35 nf_M35 w_M34_per_finger l_M34 nf_M34 w_M13_per_finger l_M13 nf_M13 w_M33_per_finger l_M33 nf_M33 w_M32_per_finger l_M32 nf_M32 w_M31_per_finger l_M31 nf_M31 w_M20_per_finger l_M20 nf_M20 w_M18_per_finger l_M18 nf_M18 w_M11_per_finger l_M11 nf_M11 w_M10_per_finger l_M10 nf_M10 w_M8_per_finger l_M8 nf_M8 w_M7_per_finger l_M7 nf_M7 w_M12_per_finger l_M12 nf_M12 w_M4_per_finger l_M4 nf_M4 w_M2_per_finger l_M2 nf_M2 w_M38_per_finger l_M38 nf_M38 w_M37_per_finger l_M37 nf_M37 w_M9_per_finger l_M9 nf_M9 w_M5_per_finger l_M5 nf_M5 w_M3_per_finger l_M3 nf_M3 w_M43_per_finger l_M43 nf_M43 w_M44_per_finger l_M44 nf_M44 w_M30_per_finger l_M30 nf_M30 w_M29_per_finger l_M29 nf_M29 w_M28_per_finger l_M28 nf_M28 w_M17_per_finger l_M17 nf_M17 w_M16_per_finger l_M16 nf_M16 w_M45_per_finger l_M45 nf_M45
+include /home/lizz_lab/cse12310401/wuhan/spectre_N65/crn65gplus_2d5_lk_v1d0.scs section=tt_bip
+include /home/lizz_lab/cse12310401/wuhan/spectre_N65/crn65gplus_2d5_lk_v1d0.scs section=tt_dio
+include /home/lizz_lab/cse12310401/wuhan/spectre_N65/crn65gplus_2d5_lk_v1d0.scs section=tt_dio_33
+include /home/lizz_lab/cse12310401/wuhan/spectre_N65/crn65gplus_2d5_lk_v1d0.scs section=tt_mim
+include /home/lizz_lab/cse12310401/wuhan/spectre_N65/crn65gplus_2d5_lk_v1d0.scs section=tt_dio_dnw
+include /home/lizz_lab/cse12310401/wuhan/spectre_N65/crn65gplus_2d5_lk_v1d0.scs section=tt_dio_18
+include /home/lizz_lab/cse12310401/wuhan/spectre_N65/crn65gplus_2d5_lk_v1d0.scs section=tt_bip_npn
+include /home/lizz_lab/cse12310401/wuhan/spectre_N65/crn65gplus_2d5_lk_v1d0.scs section=tt_33
+include /home/lizz_lab/cse12310401/wuhan/spectre_N65/crn65gplus_2d5_lk_v1d0.scs section=tt_rfrtmom
+include /home/lizz_lab/cse12310401/wuhan/spectre_N65/crn65gplus_2d5_lk_v1d0.scs section=tt_mos_cap_25
+include /home/lizz_lab/cse12310401/wuhan/spectre_N65/crn65gplus_2d5_lk_v1d0.scs section=tt_18
+include /home/lizz_lab/cse12310401/wuhan/spectre_N65/crn65gplus_2d5_lk_v1d0.scs section=tt_disres
+include /home/lizz_lab/cse12310401/wuhan/spectre_N65/crn65gplus_2d5_lk_v1d0.scs section=tt_res
+include /home/lizz_lab/cse12310401/wuhan/spectre_N65/crn65gplus_2d5_lk_v1d0.scs section=tt_dio_na
+include /home/lizz_lab/cse12310401/wuhan/spectre_N65/crn65gplus_2d5_lk_v1d0.scs section=tt_rfmos_33
+include /home/lizz_lab/cse12310401/wuhan/spectre_N65/crn65gplus_2d5_lk_v1d0.scs section=tt_dio_hvt
+include /home/lizz_lab/cse12310401/wuhan/spectre_N65/crn65gplus_2d5_lk_v1d0.scs section=tt_rfmvar
+include /home/lizz_lab/cse12310401/wuhan/spectre_N65/crn65gplus_2d5_lk_v1d0.scs section=tt_rfmos_18
+include /home/lizz_lab/cse12310401/wuhan/spectre_N65/crn65gplus_2d5_lk_v1d0.scs section=tt_na
+include /home/lizz_lab/cse12310401/wuhan/spectre_N65/crn65gplus_2d5_lk_v1d0.scs section=tt_dio_na33
+include /home/lizz_lab/cse12310401/wuhan/spectre_N65/crn65gplus_2d5_lk_v1d0.scs section=tt_dio_lvt
+include /home/lizz_lab/cse12310401/wuhan/spectre_N65/crn65gplus_2d5_lk_v1d0.scs section=tt_rfres_sa
+include /home/lizz_lab/cse12310401/wuhan/spectre_N65/crn65gplus_2d5_lk_v1d0.scs section=tt_na33
+include /home/lizz_lab/cse12310401/wuhan/spectre_N65/crn65gplus_2d5_lk_v1d0.scs section=tt_dio_esd
+include /home/lizz_lab/cse12310401/wuhan/spectre_N65/crn65gplus_2d5_lk_v1d0.scs section=tt_rfmim
+include /home/lizz_lab/cse12310401/wuhan/spectre_N65/crn65gplus_2d5_lk_v1d0.scs section=tt_dio_25od33
+include /home/lizz_lab/cse12310401/wuhan/spectre_N65/crn65gplus_2d5_lk_v1d0.scs section=tt_25od33
+include /home/lizz_lab/cse12310401/wuhan/spectre_N65/crn65gplus_2d5_lk_v1d0.scs section=tt
+include /home/lizz_lab/cse12310401/wuhan/spectre_N65/crn65gplus_2d5_lk_v1d0.scs section=tt_mos_cap
+include /home/lizz_lab/cse12310401/wuhan/spectre_N65/crn65gplus_2d5_lk_v1d0.scs section=tt_dio_25
+include /home/lizz_lab/cse12310401/wuhan/spectre_N65/crn65gplus_2d5_lk_v1d0.scs section=tt_dio_25ud18
+include /home/lizz_lab/cse12310401/wuhan/spectre_N65/crn65gplus_2d5_lk_v1d0.scs section=tt_25
+include /home/lizz_lab/cse12310401/wuhan/spectre_N65/crn65gplus_2d5_lk_v1d0.scs section=tt_rfmos
+include /home/lizz_lab/cse12310401/wuhan/spectre_N65/crn65gplus_2d5_lk_v1d0.scs section=tt_25ud18
+include /home/lizz_lab/cse12310401/wuhan/spectre_N65/crn65gplus_2d5_lk_v1d0.scs section=tt_dio_na25od33
+include /home/lizz_lab/cse12310401/wuhan/spectre_N65/crn65gplus_2d5_lk_v1d0.scs section=tt_rfjvar
+include /home/lizz_lab/cse12310401/wuhan/spectre_N65/crn65gplus_2d5_lk_v1d0.scs section=tt_rfmos_25
+include /home/lizz_lab/cse12310401/wuhan/spectre_N65/crn65gplus_2d5_lk_v1d0.scs section=tt_rtmom
+include /home/lizz_lab/cse12310401/wuhan/spectre_N65/crn65gplus_2d5_lk_v1d0.scs section=tt_na25od33
+include /home/lizz_lab/cse12310401/wuhan/spectre_N65/crn65gplus_2d5_lk_v1d0.scs section=tt_dio_na25
+include /home/lizz_lab/cse12310401/wuhan/spectre_N65/crn65gplus_2d5_lk_v1d0.scs section=tt_rfres_rpo
+include /home/lizz_lab/cse12310401/wuhan/spectre_N65/crn65gplus_2d5_lk_v1d0.scs section=tt_hvt
+include /home/lizz_lab/cse12310401/wuhan/spectre_N65/crn65gplus_2d5_lk_v1d0.scs section=tt_rfind
+include /home/lizz_lab/cse12310401/wuhan/spectre_N65/crn65gplus_2d5_lk_v1d0.scs section=tt_rfmvar_25
+include /home/lizz_lab/cse12310401/wuhan/spectre_N65/crn65gplus_2d5_lk_v1d0.scs section=tt_na25
+include /home/lizz_lab/cse12310401/wuhan/spectre_N65/crn65gplus_2d5_lk_v1d0.scs section=tt_lvt
 // Library name: LDO_Haoqiang
 // Cell name: LDO_Core
 // View name: schematic
@@ -114,7 +114,7 @@ subckt LDO_Core IBIAS VBODY VF1 VF2 VFB_FFRC VH VIN VOUT VOUT_MIR VREF \
 ends LDO_Core
 // End of subcircuit definition.
 // Library name: LDO_Haoqiang
-// Cell name: tb_PSR
+// Cell name: tb_STB_FFRC
 // View name: schematic
 I0 (net6 VBODY net017 net05 net016 VH VIN net014 VOUT_MIR VREF VSET net015 \
         VSS) LDO_Core
@@ -135,7 +135,7 @@ simulatorOptions options psfversion="1.1.0" reltol=1e-3 vabstol=1e-6 \
     sensfile="../psf/sens.output" checklimitdest=psf 
 dcOp dc write="spectre.dc" maxiters=150 maxsteps=10000 annotate=status
 dcOpInfo info what=oppoint where=rawfile
-ac ac start=1 stop=1G annotate=status 
+stb stb start=1 stop=1G probe=IPRB2 annotate=status 
 modelParameter info what=models where=rawfile
 element info what=inst where=rawfile
 outputParameter info what=output where=rawfile
