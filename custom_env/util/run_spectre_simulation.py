@@ -171,6 +171,104 @@ def run_dynamic_simulation(work_dir, sim_config, zero_sim_result, show_output=Fa
     return results
 
 
+def run_dynamic_simulation_singularity(work_dir, sim_config, zero_sim_result, show_output=False, dynamic_queue=True):
+    """
+    在超算环境中使用Singularity容器运行Spectre仿真。
+    :param work_dir: 工作目录
+    :param sim_config: 配置仿真项目和相应的结果解析函数
+    :param zero_sim_result: 零仿真结果
+    :param container_path: Singularity容器路径，例如"~/container/centos_spectre.sif"
+    :param show_output: 是否显示仿真输出
+    :param dynamic_queue: 如果为True，使用动态队列机制；如果为False，运行所有仿真
+    :return: 整理后的仿真结果
+    """
+    results = copy.deepcopy(zero_sim_result)
+    fail_tag = False
+
+    container_path = "/home/lizz_lab/cse12310401/container/centos_spectre.sif"
+
+    for simulation_config in sim_config:
+        simulation = simulation_config["simulation_name"]
+        assigned_netlist_name = simulation_config[f"netlist_name"]
+        assigned_netlist_filename = f"{assigned_netlist_name}.scs"
+        objective = simulation_config["objective"]
+        logging.debug(f"Debug!!! Running Simulation: {simulation}")
+
+        # 检查指定的网表文件是否存在
+        file_list = os.listdir(work_dir)
+        logging.debug(f"Debug!!! File List: {file_list}")
+        if assigned_netlist_filename not in file_list:
+            raise ValueError(f"Assigned netlist file {assigned_netlist_filename} not found.")
+
+        # 使用Singularity运行Spectre仿真
+        scs_file_path = os.path.join(work_dir, assigned_netlist_filename)
+        singularity_cmd = f"singularity exec --bind $HOME {container_path} spectre -64 {scs_file_path}"
+        logging.debug(f"Execute command: {singularity_cmd}")
+        logging.debug(f"Run spectre simulation for: {simulation}")
+        
+        if show_output:
+            subprocess.run(singularity_cmd, shell=True)
+        else:
+            subprocess.run(singularity_cmd, shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
+        # 处理仿真文件
+        raw_dir = os.path.join(work_dir, f"{assigned_netlist_name}.raw")
+        sim_result_file = simulation_config["simulation_file"]
+        # 如果不是列表则转换为列表
+        if not isinstance(sim_result_file, list):
+            sim_result_file = [sim_result_file]
+        parse_funcs = simulation_config["parse_func"]
+        if not isinstance(parse_funcs, list):
+            parse_funcs = [parse_funcs]
+
+        # 将二进制文件转换为文本文件
+        for idx, sim_file in enumerate(sim_result_file):
+            file_to_process = os.path.join(raw_dir, sim_file)
+            processed_file = f"{file_to_process}.encode"
+            
+            # 使用Singularity运行psf命令
+            psf_cmd = f"singularity exec --bind $HOME {container_path} psf {file_to_process} -o {processed_file}"
+            subprocess.run(psf_cmd, shell=True)
+            logging.debug(f"Debug!!! Processed file: {sim_file}")
+
+            # 加载处理结果的函数并执行
+            script_name = simulation_config["script_name"]
+            function_name = parse_funcs[idx]
+            module = import_module(f"util.{script_name}")
+            logging.debug(f"Debug!!!Work Dict: {work_dir}")
+            logging.debug(f"Debug!!!Processing file: {processed_file}")
+            # 应用绝对路径以避免文件未找到错误
+            processed_file_full_path = os.path.join(raw_dir, processed_file)
+            function = getattr(module, function_name)
+            result = function(processed_file_full_path)
+            results[simulation] = result
+
+            logging.debug(f"Debug in run_dynamic_simulation_singularity, result in {simulation} is {result}")
+
+            # 在结果字典中的每个键前添加仿真名称，避免展平字典时出错
+            modified_result = {f"{simulation}_{key}": value for key, value in result.items()}
+            results[simulation] = modified_result
+
+            if dynamic_queue:
+                if any(value == 100.0 for value in result.values()) and (objective == "min"):
+                    fail_tag = True
+                    logging.warning(f"Simulation {simulation} failed. Return 100.0")
+                    logging.warning(f"Partial result success: {results}")
+                if any(value == 0.0 for value in result.values()) and (objective == "max"):
+                    fail_tag = True
+                    logging.warning(f"Simulation {simulation} failed. Return 0.0")
+                    logging.warning(f"Partial result success: {results}")
+
+        # 如果fail_tag为True则中断循环
+        if fail_tag and dynamic_queue:
+            logging.warning(f"Debug!!! Simulation {simulation} failed. Break the loop. No more simulation should be run.")
+            break
+
+    logging.debug(f"Debug!!! results: {results} and fail_tag: {fail_tag}")
+
+    return results
+
+
 def run_dynamic_simulation_psfascii(work_dir, sim_config, zero_sim_result, show_output=False, dynamic_queue=True):
     """
     Run spectre simulation. Once the output result is zero (for pwr, reset value is 1), the simulation will be stopped.

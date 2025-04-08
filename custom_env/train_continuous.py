@@ -1,4 +1,3 @@
-
 import sys
 import os
 import argparse
@@ -102,9 +101,13 @@ def main():
     parser.add_argument('--config_mode', type=str, choices=['interactive', 'file'], default='interactive',
                         help="Mode for configuration settings")
     parser.add_argument('--config_file', type=str, help="Path to configuration file")
+    # 添加HPC参数
+    parser.add_argument('--HPC', action='store_true', help="Run in HPC mode for simulation")
     args = parser.parse_args()
 
     print("Config Mode: ", args.config_mode)
+    # 显示HPC模式状态
+    print("HPC Mode: ", "Enabled" if args.HPC else "Disabled")
 
     if args.config_mode == 'file':
         if args.config_file is None:
@@ -112,6 +115,9 @@ def main():
             sys.exit(1)
         with open(args.config_file, 'r') as file:
             settings = yaml.safe_load(file)
+        # 确保配置文件兼容性：如果HPC参数不存在，设置为命令行参数值或默认为False
+        if "HPC" not in settings:
+            settings["HPC"] = args.HPC
         confirm_flag = True
     if args.config_mode == 'interactive':
         settings = {
@@ -137,6 +143,7 @@ def main():
             "checkpoint_path": None,  # To be conditionally updated
             "train_iterations": get_user_input("Train iterations(Default: 200)", "200"),
             "continue_steps_enable": get_user_input("Enable continue steps (True/False)", "False"),
+            "HPC": get_user_input("Enable HPC mode for simulation (True/False)", str(args.HPC)),
         }
 
         if settings["restore_checkpoint"] == "True":
@@ -154,22 +161,12 @@ def main():
         if args.config_mode == 'interactive':
             # Convert string boolean values to Python boolean values
             for key in ["generalize", "sim_output", "corner_sim", "dc_check", "region_extract", "dynamic_queue",
-                        "restore_checkpoint", "continue_steps_enable"]:
+                        "restore_checkpoint", "continue_steps_enable", "HPC"]:  # 添加HPC到布尔值转换列表
                 settings[key] = settings[key].lower() == "true"
-
-        # env_settings = {
-        #     "generalize": settings["generalize"],
-        #     "max_step": settings["max_step"],
-        #     "netlist_folder_name": settings["netlist_folder_name"],
-        #     "specs_folder_name": settings["specs_folder_name"],
-        #     "config_folder_name": settings["config_folder_name"],
-        #     "run_folder_name": settings["run_folder_name"],
-        #     "sim_output": settings["sim_output"],
-        #     "init_method": settings["init_method"],
-        #     "dc_check": settings["dc_check"],
-        #     "region_extract": settings["region_extract"],
-        #     "dynamic_queue": settings["dynamic_queue"],
-        # }
+        elif args.config_mode == 'file':
+            # 只对HPC参数进行默认值处理，如果不存在则设为False
+            if "HPC" not in settings:
+                settings["HPC"] = args.HPC
 
         # Environment initialization
         def env_creator(_):
@@ -188,7 +185,8 @@ def main():
                 "dynamic_queue": settings["dynamic_queue"],
                 "log_level": settings["log_level"],
                 "reward_func": settings["reward_func"],
-                "continue_steps_enable": settings["continue_steps_enable"]
+                "continue_steps_enable": settings["continue_steps_enable"],
+                "HPC": settings["HPC"]  # 将HPC参数传递给环境
             })
 
         register_env("AnalogDesignEnv_v0", env_creator)
@@ -289,7 +287,7 @@ def main():
 
         if not restore_checkpoint:
 
-            policies = {f"policy_{i + 1}" for i in range(settings["num_agents"])}
+            policies = {f"policy_{i + 1}" for i in range(int(settings["num_agents"]))}
             policies_to_train = list(policies)
             policy_mapping_fn = lambda aid, episode, worker, **kwargs: f"policy_{int(aid[-1])}"
 

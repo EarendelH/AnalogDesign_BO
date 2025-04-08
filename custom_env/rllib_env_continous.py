@@ -15,7 +15,8 @@ from util.action2param import action2param
 from util.gen_param_space import gen_param_space
 from util.util_func import create_work_dir
 from util.assign_param2netlist import update_netlist
-from util.run_spectre_simulation import run_dynamic_simulation, run_region_simulation
+# 修改导入方式，根据配置动态选择仿真函数
+from util.run_spectre_simulation import run_region_simulation, run_dynamic_simulation, run_dynamic_simulation_singularity
 from util.generalize_config import generalize_config
 from util.update_obs_space import update_obs_space_w_region, flatten_observation_w_region
 from util.update_obs_space import update_obs_space, flatten_observation
@@ -45,7 +46,8 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
             'region_extract': bool,
             'dynamic_queue': bool,
             'log_level': str,
-            'reward_func': str
+            'reward_func': str,
+            'HPC': bool  # 添加HPC参数
         }
 
         for key, value in config.items():
@@ -69,6 +71,10 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         self.dynamic_queue = self.dynamic_queue
         self.generalize = self.generalize
         self.continue_steps_enable = self.continue_steps_enable
+        
+        # 根据HPC配置选择仿真函数
+        self.HPC = getattr(self, 'HPC', False)  # 如果不存在，默认为False
+        self.run_simulation = run_dynamic_simulation_singularity if self.HPC else run_dynamic_simulation
 
         # Set log level
         numeric_level = getattr(logging, self.log_level.upper(), None)
