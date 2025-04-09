@@ -75,6 +75,7 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         # 根据HPC配置选择仿真函数
         self.HPC = getattr(self, 'HPC', False)  # 如果不存在，默认为False
         self.run_simulation = run_dynamic_simulation_singularity if self.HPC else run_dynamic_simulation
+        print(f"HPC mode: {self.HPC}, using {'run_dynamic_simulation_singularity' if self.HPC else 'run_dynamic_simulation'}")
 
         # Set log level
         numeric_level = getattr(logging, self.log_level.upper(), None)
