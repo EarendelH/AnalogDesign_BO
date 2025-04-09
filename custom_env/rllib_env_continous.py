@@ -16,7 +16,8 @@ from util.gen_param_space import gen_param_space
 from util.util_func import create_work_dir
 from util.assign_param2netlist import update_netlist
 # 修改导入方式，根据配置动态选择仿真函数
-from util.run_spectre_simulation import run_region_simulation, run_dynamic_simulation, run_dynamic_simulation_singularity
+from util.run_spectre_simulation import run_region_simulation, run_dynamic_simulation, \
+    run_dynamic_simulation_singularity
 from util.generalize_config import generalize_config
 from util.update_obs_space import update_obs_space_w_region, flatten_observation_w_region
 from util.update_obs_space import update_obs_space, flatten_observation
@@ -71,11 +72,12 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
         self.dynamic_queue = self.dynamic_queue
         self.generalize = self.generalize
         self.continue_steps_enable = self.continue_steps_enable
-        
+
         # 根据HPC配置选择仿真函数
         self.HPC = getattr(self, 'HPC', False)  # 如果不存在，默认为False
         self.run_simulation = run_dynamic_simulation_singularity if self.HPC else run_dynamic_simulation
-        print(f"HPC mode: {self.HPC}, using {'run_dynamic_simulation_singularity' if self.HPC else 'run_dynamic_simulation'}")
+        print(
+            f"HPC mode: {self.HPC}, using {'run_dynamic_simulation_singularity' if self.HPC else 'run_dynamic_simulation'}")
 
         # Set log level
         numeric_level = getattr(logging, self.log_level.upper(), None)
@@ -275,8 +277,8 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
 
         try:
             sim_result = copy.deepcopy(
-                self.run_simulation(working_dir_reset, self.sim_config_dict, self.zero_sim_result,
-                                   self.sim_output, self.dynamic_queue))
+                run_dynamic_simulation(working_dir_reset, self.sim_config_dict, self.zero_sim_result,
+                                       self.sim_output, self.dynamic_queue))
         # For avoid simulation error in init, use zero result instead.
         except Exception as e:
             logging.warning(f"Warning!!!: {e}. Simulation failed, use zero result instead.")
@@ -605,7 +607,7 @@ def step_simulation_process(working_dir_step, region_extract_tag, valid_param, s
     # Define a private function for retrying
     @retry_decorator(retry_count=2, delay_seconds=0.5, default_value=zero_sim_result)
     def _run_simulation_with_retry():
-        return self.run_simulation(working_dir_step, sim_config_dict, zero_sim_result,
+        return run_dynamic_simulation(working_dir_step, sim_config_dict, zero_sim_result,
                                       sim_output_tag, dynamic_queue_tag)
 
     try:
