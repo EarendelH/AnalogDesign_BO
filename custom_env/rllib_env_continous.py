@@ -275,8 +275,8 @@ class RllibAnalogDesignAutoEnv(MultiAgentEnv):
 
         try:
             sim_result = copy.deepcopy(
-                run_dynamic_simulation(working_dir_reset, self.sim_config_dict, self.zero_sim_result,
-                                       self.sim_output, self.dynamic_queue))
+                self.run_simulation(working_dir_reset, self.sim_config_dict, self.zero_sim_result,
+                                   self.sim_output, self.dynamic_queue))
         # For avoid simulation error in init, use zero result instead.
         except Exception as e:
             logging.warning(f"Warning!!!: {e}. Simulation failed, use zero result instead.")
@@ -605,7 +605,7 @@ def step_simulation_process(working_dir_step, region_extract_tag, valid_param, s
     # Define a private function for retrying
     @retry_decorator(retry_count=2, delay_seconds=0.5, default_value=zero_sim_result)
     def _run_simulation_with_retry():
-        return run_dynamic_simulation(working_dir_step, sim_config_dict, zero_sim_result,
+        return self.run_simulation(working_dir_step, sim_config_dict, zero_sim_result,
                                       sim_output_tag, dynamic_queue_tag)
 
     try:
