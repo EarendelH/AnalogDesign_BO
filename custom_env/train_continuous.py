@@ -219,7 +219,7 @@ def main():
                     # sgd_minibatch_size=64,
                     sgd_minibatch_size=4,
                     # num_sgd_iter=24,
-                    num_sgd_iter=4,
+                    num_sgd_iter=6,
                     model={
                         "fcnet_hiddens": [256, 256, 256, 256, 256],
                     }
@@ -313,7 +313,7 @@ def main():
                         # sgd_minibatch_size=64,
                         sgd_minibatch_size=4,
                         # num_sgd_iter=24,
-                        num_sgd_iter=4,
+                        num_sgd_iter=6,
                         model={
                             "fcnet_hiddens": [256, 256, 256, 256, 256],
                         }
