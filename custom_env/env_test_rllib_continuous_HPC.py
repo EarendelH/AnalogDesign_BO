@@ -17,7 +17,7 @@ if __name__ == "__main__":
                                     'log_level': 'DEBUG',
                                     'reward_func': 'cal_reward_Haoqiang',
                                     'continue_steps_enable': False,
-                                    'HPC': False
+                                    'HPC': True
                                 })
 
     check_env(env)
