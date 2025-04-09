@@ -311,7 +311,8 @@ def main():
                         vf_loss_coeff=0.25,
                         # sgd_minibatch_size=64,
                         sgd_minibatch_size=16,
-                        num_sgd_iter=24,
+                        # num_sgd_iter=24,
+                        num_sgd_iter=8,
                         model={
                             "fcnet_hiddens": [256, 256, 256, 256, 256],
                         }
