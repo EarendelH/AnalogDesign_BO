@@ -204,7 +204,10 @@ def main():
             config = (
                 PPOConfig()
                 .environment(env="AnalogDesignEnv_v0", clip_actions=True)
-                .rollouts(num_rollout_workers=int(settings["cpu_usage"]))
+                .rollouts(
+                    num_rollout_workers=int(settings["cpu_usage"]),
+                    rollout_fragment_length='auto'  # 让RLlib自动计算合适的值
+                )
                 .training(
                     # train_batch_size=512,
                     train_batch_size=16,
@@ -298,7 +301,10 @@ def main():
                 config = (
                     PPOConfig()
                     .environment(env="AnalogDesignEnv_v0", clip_actions=True)
-                    .rollouts(num_rollout_workers=num_cpu)
+                    .rollouts(
+                        num_rollout_workers=int(settings["cpu_usage"]),
+                        rollout_fragment_length='auto'  # 让RLlib自动计算合适的值
+                    )
                     .training(
                         # train_batch_size=512,
                         train_batch_size=16,
