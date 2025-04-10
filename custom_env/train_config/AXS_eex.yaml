@@ -1,13 +1,13 @@
 max_process_limit: false
-cpu_usage: 60
+cpu_usage: 32
 gpu_usage: 0
 generalize: true
 algorithm: PPO
 max_step: 1
 num_agents: 7
 netlist_folder_name: netlist_template_AXS
-specs_folder_name: sampled_specs_AXS
-config_folder_name: config_AXS_Simple
+specs_folder_name: sampled_specs_AXS_no_Mismatch
+config_folder_name: config_AXS_no_Mismatch
 run_folder_name: run_test
 sim_output: false
 init_method: file
@@ -15,9 +15,10 @@ corner_sim: false
 dc_check: false
 region_extract: false
 dynamic_queue: false
-restore_checkpoint: true
-checkpoint_path: /data/share/train_data/AXS/checkpoint/PPO_AnalogDesignEnv_v0_bca48_00000_0_2025-03-02_14-58-25/checkpoint_000004
+restore_checkpoint: false
+checkpoint_path:
 train_iterations: 2000
 reward_func: cal_reward_AXS
 log_level: INFO
 continue_steps_enable: false
+
