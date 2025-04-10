@@ -206,7 +206,6 @@ def main():
                 .environment(env="AnalogDesignEnv_v0", clip_actions=True)
                 .rollouts(
                     num_rollout_workers=int(settings["cpu_usage"]),
-                    rollout_fragment_length=1  # 让RLlib自动计算合适的值
                 )
                 .training(
                     # train_batch_size=512,
@@ -303,7 +302,6 @@ def main():
                     .environment(env="AnalogDesignEnv_v0", clip_actions=True)
                     .rollouts(
                         num_rollout_workers=int(settings["cpu_usage"]),
-                        rollout_fragment_length=1  # 让RLlib自动计算合适的值
                     )
                     .training(
                         # train_batch_size=512,
