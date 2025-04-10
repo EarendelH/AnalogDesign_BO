@@ -1,4 +1,3 @@
-
 import sys
 import os
 import argparse
@@ -157,20 +156,6 @@ def main():
                         "restore_checkpoint", "continue_steps_enable"]:
                 settings[key] = settings[key].lower() == "true"
 
-        # env_settings = {
-        #     "generalize": settings["generalize"],
-        #     "max_step": settings["max_step"],
-        #     "netlist_folder_name": settings["netlist_folder_name"],
-        #     "specs_folder_name": settings["specs_folder_name"],
-        #     "config_folder_name": settings["config_folder_name"],
-        #     "run_folder_name": settings["run_folder_name"],
-        #     "sim_output": settings["sim_output"],
-        #     "init_method": settings["init_method"],
-        #     "dc_check": settings["dc_check"],
-        #     "region_extract": settings["region_extract"],
-        #     "dynamic_queue": settings["dynamic_queue"],
-        # }
-
         # Environment initialization
         def env_creator(_):
             return RllibAnalogDesignAutoEnv({
@@ -208,7 +193,7 @@ def main():
                 .environment(env="AnalogDesignEnv_v0", clip_actions=True)
                 .rollouts(num_rollout_workers=int(settings["cpu_usage"]))
                 .training(
-                    train_batch_size=512,
+                    train_batch_size=32,
                     lr=2e-4,
                     gamma=0.96,
                     lambda_=0.95,
@@ -217,8 +202,8 @@ def main():
                     grad_clip=None,
                     entropy_coeff=0.01,
                     vf_loss_coeff=0.25,
-                    sgd_minibatch_size=64,
-                    num_sgd_iter=24,
+                    sgd_minibatch_size=8,
+                    num_sgd_iter=8,
                     model={
                         "fcnet_hiddens": [256, 256, 256, 256, 256],
                     }
@@ -287,7 +272,7 @@ def main():
 
         if not restore_checkpoint:
 
-            policies = {f"policy_{i + 1}" for i in range(settings["num_agents"])}
+            policies = {f"policy_{i + 1}" for i in range(int(settings["num_agents"]))}
             policies_to_train = list(policies)
             policy_mapping_fn = lambda aid, episode, worker, **kwargs: f"policy_{int(aid[-1])}"
 
@@ -299,7 +284,7 @@ def main():
                     .environment(env="AnalogDesignEnv_v0", clip_actions=True)
                     .rollouts(num_rollout_workers=num_cpu)
                     .training(
-                        train_batch_size=512,
+                        train_batch_size=32,
                         lr=2e-4,
                         gamma=0.96,
                         lambda_=0.95,
@@ -308,110 +293,14 @@ def main():
                         grad_clip=None,
                         entropy_coeff=0.01,
                         vf_loss_coeff=0.25,
-                        sgd_minibatch_size=64,
-                        num_sgd_iter=24,
+                        sgd_minibatch_size=8,
+                        num_sgd_iter=8,
                         model={
                             "fcnet_hiddens": [256, 256, 256, 256, 256],
                         }
                     )
                     .debugging(log_level="DEBUG")
                     .framework("torch")
-                    .resources(num_gpus=num_gpu)
-                    .multi_agent(
-                        policies=policies,
-                        policy_mapping_fn=policy_mapping_fn,
-                        policies_to_train=policies_to_train,
-                    )
-                )
-            elif settings["algorithm"] == "APPO":
-                config = (
-                    APPOConfig()
-                    .environment(env="AnalogDesignEnv_v0", clip_actions=True)
-                    .rollouts(num_rollout_workers=num_cpu)
-                    .training(
-                        train_batch_size=512,
-                        lr=2e-4,
-                        gamma=0.96,
-                        lambda_=0.95,
-                        use_gae=True,
-                        clip_param=0.3,
-                        grad_clip=40,
-                        entropy_coeff=0.01,
-                        vf_loss_coeff=0.5,
-                        vtrace=True,
-                        use_kl_loss=False,
-                        num_sgd_iter=1,
-                        minibatch_buffer_size=1,
-                        replay_proportion=0.2,
-                        replay_buffer_num_slots=1000,
-                        broadcast_interval=1,
-                        model={
-                            "fcnet_hiddens": [256, 256, 256, 256, 256],
-                        }
-                    )
-                    .debugging(log_level="DEBUG")
-                    .framework("torch")
-                    .resources(num_gpus=num_gpu)
-                    .multi_agent(
-                        policies=policies,
-                        policy_mapping_fn=policy_mapping_fn,
-                        policies_to_train=policies_to_train,
-                    )
-                )
-            elif settings["algorithm"] == "IMPALA":
-                config = (
-                    ImpalaConfig()
-                    .environment(env="AnalogDesignEnv_v0", clip_actions=True)
-                    .rollouts(num_rollout_workers=num_cpu)
-                    .training(
-                        train_batch_size=512,
-                        minibatch_size="auto",
-                        num_sgd_iter=1,
-                        lr=2e-4,
-                        gamma=0.96,
-                        grad_clip=40.0,
-                        vf_loss_coeff=0.5,
-                        entropy_coeff=0.01,
-                        vtrace=True,
-                        learner_queue_size=3,
-                        broadcast_interval=1,
-                        model={
-                            "fcnet_hiddens": [256, 256, 256, 256, 256],
-                        },
-                    )
-                    .resources(num_gpus=num_gpu)
-                    .debugging(log_level="DEBUG")
-                    .framework("torch")
-                    .multi_agent(
-                        policies=policies,
-                        policy_mapping_fn=policy_mapping_fn,
-                        policies_to_train=policies_to_train,
-                    )
-                )
-            elif settings["algorithm"] == "SAC":
-                config = (
-                    SACConfig()
-                    .environment(env="AnalogDesignEnv_v0", clip_actions=False)
-                    .rollouts(num_rollout_workers=num_cpu)
-                    .training(
-                        twin_q=True,
-                        q_model_config={
-                            "fcnet_hiddens": [256, 256],
-                            "fcnet_activation": "relu",
-                        },
-                        policy_model_config={
-                            "fcnet_hiddens": [256, 256],
-                            "fcnet_activation": "relu",
-                        },
-                        tau=5e-3,
-                        initial_alpha=1.0,
-                        target_entropy="auto",
-                        n_step=1,
-                        train_batch_size=512,
-                        num_steps_sampled_before_learning_starts=1024,
-                        target_network_update_freq=0,
-                        grad_clip=40,
-                    )
                     .resources(num_gpus=num_gpu)
                     .debugging(log_level="DEBUG")
                     .framework("torch")
@@ -439,7 +328,7 @@ def main():
                 alg_name,
                 name=alg_name,
                 stop={"training_iteration": train_iterations},
-                checkpoint_freq=10,
+                checkpoint_freq=25,
                 checkpoint_at_end=True,
                 local_dir=f"{user_home_dir}/ray_results/{env_name}",
                 config=config.to_dict() if isinstance(config, PPOConfig) else config,

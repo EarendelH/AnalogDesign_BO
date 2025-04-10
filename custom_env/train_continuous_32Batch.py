@@ -204,9 +204,7 @@ def main():
             config = (
                 PPOConfig()
                 .environment(env="AnalogDesignEnv_v0", clip_actions=True)
-                .rollouts(
-                    num_rollout_workers=int(settings["cpu_usage"]),
-                )
+                .rollouts(num_rollout_workers=int(settings["cpu_usage"]))
                 .training(
                     train_batch_size=32,
                     lr=2e-4,
