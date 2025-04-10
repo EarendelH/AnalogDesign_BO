@@ -210,7 +210,7 @@ def main():
                 )
                 .training(
                     # train_batch_size=512,
-                    train_batch_size=16,
+                    train_batch_size=32,
                     lr=2e-4,
                     gamma=0.96,
                     lambda_=0.95,
@@ -220,9 +220,9 @@ def main():
                     entropy_coeff=0.01,
                     vf_loss_coeff=0.25,
                     # sgd_minibatch_size=64,
-                    sgd_minibatch_size=4,
+                    sgd_minibatch_size=8,
                     # num_sgd_iter=24,
-                    num_sgd_iter=6,
+                    num_sgd_iter=8,
                     model={
                         "fcnet_hiddens": [256, 256, 256, 256, 256],
                     }
@@ -307,7 +307,7 @@ def main():
                     )
                     .training(
                         # train_batch_size=512,
-                        train_batch_size=16,
+                        train_batch_size=32,
                         lr=2e-4,
                         gamma=0.96,
                         lambda_=0.95,
@@ -317,9 +317,9 @@ def main():
                         entropy_coeff=0.01,
                         vf_loss_coeff=0.25,
                         # sgd_minibatch_size=64,
-                        sgd_minibatch_size=4,
+                        sgd_minibatch_size=8,
                         # num_sgd_iter=24,
-                        num_sgd_iter=6,
+                        num_sgd_iter=8,
                         model={
                             "fcnet_hiddens": [256, 256, 256, 256, 256],
                         }
