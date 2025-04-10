@@ -208,7 +208,7 @@ def main():
                     num_rollout_workers=int(settings["cpu_usage"]),
                 )
                 .training(
-                    train_batch_size=32,
+                    train_batch_size=16,
                     lr=2e-4,
                     gamma=0.96,
                     lambda_=0.95,
@@ -217,8 +217,8 @@ def main():
                     grad_clip=None,
                     entropy_coeff=0.01,
                     vf_loss_coeff=0.25,
-                    sgd_minibatch_size=8,
-                    num_sgd_iter=8,
+                    sgd_minibatch_size=4,
+                    num_sgd_iter=4,
                     model={
                         "fcnet_hiddens": [256, 256, 256, 256, 256],
                     }
@@ -301,7 +301,7 @@ def main():
                         num_rollout_workers=int(settings["cpu_usage"]),
                     )
                     .training(
-                        train_batch_size=32,
+                        train_batch_size=16,
                         lr=2e-4,
                         gamma=0.96,
                         lambda_=0.95,
@@ -310,8 +310,8 @@ def main():
                         grad_clip=None,
                         entropy_coeff=0.01,
                         vf_loss_coeff=0.25,
-                        sgd_minibatch_size=8,
-                        num_sgd_iter=8,
+                        sgd_minibatch_size=4,
+                        num_sgd_iter=4,
                         model={
                             "fcnet_hiddens": [256, 256, 256, 256, 256],
                         }
