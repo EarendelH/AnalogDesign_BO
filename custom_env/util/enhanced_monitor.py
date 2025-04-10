@@ -707,7 +707,7 @@ if __name__ == "__main__":
 
     SCAN_SCRIPT_PATH = "/home/wuhan/AnalogDesignAuto/AnalogDesignAuto_MultiAgent/custom_env/util/scan_run_folder_corner.py"
     FILTER_SCRIPT_PATH = "/home/wuhan/AnalogDesignAuto/AnalogDesignAuto_MultiAgent/custom_env/debug_analyze_util/filitered_csv_format.py"
-    CONFIG_DIR = "/home/wuhan/AnalogDesignAuto/AnalogDesignAuto_MultiAgent/custom_env/config/config_AXS_Simple"
+    CONFIG_DIR = "/home/wuhan/AnalogDesignAuto/AnalogDesignAuto_MultiAgent/custom_env/config/config_AXS_no_Mismatch"
     REWARD_FUNC = "cal_reward_AXS"
 
     INACTIVITY_TIMEOUT = 1800  # 30 minutes in seconds
