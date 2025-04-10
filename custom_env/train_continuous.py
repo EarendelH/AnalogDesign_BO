@@ -298,11 +298,7 @@ def main():
                 config = (
                     PPOConfig()
                     .environment(env="AnalogDesignEnv_v0", clip_actions=True)
-                    .rollouts(
-                        num_rollout_workers=num_cpu,
-                        # 添加rollout_fragment_length参数，确保其值大于0
-                        rollout_fragment_length=4
-                    )
+                    .rollouts(num_rollout_workers=num_cpu)
                     .training(
                         # train_batch_size=512,
                         train_batch_size=16,
