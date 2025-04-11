@@ -15,9 +15,9 @@ corner_sim: false
 dc_check: false
 region_extract: false
 dynamic_queue: false
-restore_checkpoint: false
-checkpoint_path:
-train_iterations: 400
+restore_checkpoint: true
+checkpoint_path: /home/wuhan/ray_results/AnalogDesignEnv_v0/PPO/PPO_AnalogDesignEnv_v0_14f4e_00000_0_2025-04-11_14-27-46/checkpoint_000003
+train_iterations: 350
 reward_func: cal_reward_Haoqiang
 log_level: INFO
 continue_steps_enable: false
