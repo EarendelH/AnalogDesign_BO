@@ -272,7 +272,7 @@ def main():
 
         if not restore_checkpoint:
 
-            policies = {f"policy_{i + 1}" for i in range(int(settings["num_agents"]))}
+            policies = {f"policy_{i + 1}" for i in range(settings["num_agents"])}
             policies_to_train = list(policies)
             policy_mapping_fn = lambda aid, episode, worker, **kwargs: f"policy_{int(aid[-1])}"
 
@@ -328,7 +328,7 @@ def main():
                 alg_name,
                 name=alg_name,
                 stop={"training_iteration": train_iterations},
-                checkpoint_freq=25,
+                checkpoint_freq=10,
                 checkpoint_at_end=True,
                 local_dir=f"{user_home_dir}/ray_results/{env_name}",
                 config=config.to_dict() if isinstance(config, PPOConfig) else config,

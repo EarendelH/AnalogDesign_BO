@@ -217,8 +217,8 @@ def main():
                     grad_clip=None,
                     entropy_coeff=0.01,
                     vf_loss_coeff=0.25,
-                    sgd_minibatch_size=64,
-                    num_sgd_iter=24,
+                    sgd_minibatch_size=16,
+                    num_sgd_iter=8,
                     model={
                         "fcnet_hiddens": [256, 256, 256, 256, 256],
                     }
@@ -299,7 +299,7 @@ def main():
                     .environment(env="AnalogDesignEnv_v0", clip_actions=True)
                     .rollouts(num_rollout_workers=num_cpu)
                     .training(
-                        train_batch_size=512,
+                        train_batch_size=64,
                         lr=2e-4,
                         gamma=0.96,
                         lambda_=0.95,
@@ -308,8 +308,8 @@ def main():
                         grad_clip=None,
                         entropy_coeff=0.01,
                         vf_loss_coeff=0.25,
-                        sgd_minibatch_size=64,
-                        num_sgd_iter=24,
+                        sgd_minibatch_size=16,
+                        num_sgd_iter=8,
                         model={
                             "fcnet_hiddens": [256, 256, 256, 256, 256],
                         }
