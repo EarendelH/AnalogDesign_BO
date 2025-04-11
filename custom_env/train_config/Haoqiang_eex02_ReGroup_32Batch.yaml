@@ -1,5 +1,5 @@
 max_process_limit: false
-cpu_usage: 32
+cpu_usage: 40
 gpu_usage: 0
 generalize: true
 algorithm: PPO
@@ -15,9 +15,9 @@ corner_sim: false
 dc_check: false
 region_extract: false
 dynamic_queue: false
-restore_checkpoint: true
-checkpoint_path: /home/wuhan/ray_results/AnalogDesignEnv_v0/PPO/PPO_AnalogDesignEnv_v0_56c99_00000_0_2025-04-11_14-43-55/checkpoint_000003
-train_iterations: 350
+restore_checkpoint: false
+checkpoint_path:
+train_iterations: 400
 reward_func: cal_reward_Haoqiang
 log_level: INFO
 continue_steps_enable: false
