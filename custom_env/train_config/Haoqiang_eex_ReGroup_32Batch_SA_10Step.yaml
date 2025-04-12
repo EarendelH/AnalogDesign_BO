@@ -1,5 +1,5 @@
 max_process_limit: false
-cpu_usage: 40
+cpu_usage: 32
 gpu_usage: 0
 generalize: true
 algorithm: PPO
@@ -13,11 +13,11 @@ sim_output: false
 init_method: random
 corner_sim: false
 dc_check: false
-region_extract: true
+region_extract: false
 dynamic_queue: false
-restore_checkpoint: true
-checkpoint_path: /data/share/train_data/Haoqiang/checkpoint/restore_4ErAlX/checkpoints/checkpoint_37
-continue_steps_enable: false
+restore_checkpoint: false
+checkpoint_path:
 train_iterations: 400
 reward_func: cal_reward_Haoqiang
 log_level: INFO
+continue_steps_enable: false

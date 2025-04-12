@@ -1,11 +1,11 @@
 max_process_limit: false
-cpu_usage: 20
-gpu_usage: 10
+cpu_usage: 32
+gpu_usage: 0
 generalize: true
 algorithm: PPO
 max_step: 1
 num_agents: 7
-netlist_folder_name: netlist_template_Haoqiang_HPC
+netlist_folder_name: netlist_template_Haoqiang
 specs_folder_name: sampled_specs_Haoqiang
 config_folder_name: config_Haoqiang_Regroup
 run_folder_name: run_test
@@ -15,9 +15,9 @@ corner_sim: false
 dc_check: false
 region_extract: false
 dynamic_queue: false
-restore_checkpoint: true
-checkpoint_path: /home/lizz_lab/cse12310401/ray_results/AnalogDesignEnv_v0/PPO/PPO_AnalogDesignEnv_v0_bf734_00000_0_2025-04-11_11-04-56/checkpoint_000003
-train_iterations: 350
+restore_checkpoint: false
+checkpoint_path:
+train_iterations: 400
 reward_func: cal_reward_Haoqiang
 log_level: INFO
 continue_steps_enable: false
