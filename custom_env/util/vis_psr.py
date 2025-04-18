@@ -8,7 +8,7 @@ def scan_and_process(root_dir, highlight_subdir):
     results = {}
 
     for subdir in next(os.walk(root_dir))[1]:
-        target_file = os.path.join(root_dir, subdir, 'PSR.raw', 'ac.ac.encode')
+        target_file = os.path.join(root_dir, subdir, 'PSR_100m.raw', 'ac.ac.encode')
         if os.path.isfile(target_file):
             trace_data = extractACTrace(target_file)
 
@@ -39,12 +39,12 @@ def plot_data(results, highlight_subdir, root_dir):
     plt.legend()
     plt.grid(True)
 
-    plt_path = os.path.join(root_dir, 'PSR.png')
+    plt_path = os.path.join(root_dir, 'PSR_100m.png')
     plt.savefig(plt_path)
     plt.show()
     print(f"Image save to：{plt_path}")
 
 
-root_dir = '/Users/hanwu/Downloads/Log_N65/Lab/b8cb5/Select_Points'
-highlight_subdir = 'tmp_20240628192613852533942'
+root_dir = '/Users/hanwu/Downloads/Jianping_good_data'
+highlight_subdir = 'tmp_20250416075532405379378_tt'
 scan_and_process(root_dir, highlight_subdir)
