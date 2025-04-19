@@ -15,7 +15,7 @@ if __name__ == "__main__":
                                     'region_extract': False,
                                     'dynamic_queue': False,
                                     'log_level': 'INFO',
-                                    'reward_func': 'cal_reward_AXS',
+                                    'reward_func': 'cal_reward_LDO',
                                     'continue_steps_enable': False
                                 })
 
