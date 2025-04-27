@@ -34,10 +34,13 @@ def main():
     parser.add_argument('--file', type=str, required=True, help='Path to CSV file')
     parser.add_argument('--max_clusters', type=int, default=10, help='Maximum number of clusters to try')
     parser.add_argument('--sakoe_chiba_radius', type=int, default=None,
-                        help='Sakoe-Chiba band radius (None = no constraint)')
+                         help='Sakoe-Chiba band radius (None = no constraint)')
     parser.add_argument('--linkage', type=str, default='ward',
-                        choices=['ward', 'complete', 'average', 'single'],
-                        help='Linkage criterion for hierarchical clustering')
+                         choices=['ward', 'complete', 'average', 'single'],
+                         help='Linkage criterion for hierarchical clustering')
+    parser.add_argument('--handle_missing', type=str, default='report',
+                         choices=['report', 'drop', 'fill_mean', 'fill_zero'],
+                         help='Strategy for handling missing values')
     args = parser.parse_args()
 
     # Ensure output directories exist
@@ -47,7 +50,7 @@ def main():
     # Step 1: Load and preprocess data
     # 步骤1：加载和预处理数据
     print("\n===== Step 1: Loading and preprocessing data =====")
-    time_points, signal_names, signals = load_data(args.file)
+    time_points, signal_names, signals = load_data(args.file, handle_missing=args.handle_missing)
     print(f"Loaded {len(signals)} signals with {len(time_points)} time points each")
 
     # Plot signals overview
