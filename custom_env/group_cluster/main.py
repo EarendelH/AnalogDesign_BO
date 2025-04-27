@@ -68,12 +68,12 @@ def main():
     dtw_matrix = calculate_dtw_distance_matrix(preprocessed_signals, args.sakoe_chiba_radius)
 
     # Step 3: Find optimal number of clusters
-    # 步骤3：寻找最优簇数
     print("\n===== Step 3: Finding optimal number of clusters =====")
     evaluation_results, best_n_clusters = find_optimal_clusters(
         dtw_matrix,
         preprocessed_signals,
-        max_clusters=args.max_clusters
+        max_clusters=args.max_clusters,
+        linkage=args.linkage  # 传递用户指定的连接方法
     )
 
     # Plot evaluation metrics
@@ -88,7 +88,13 @@ def main():
 
     # Plot dendrogram (unclustered, for all hierarchical structure)
     # 绘制树状图（未聚类，显示所有层次结构）
-    unclustered_model = hierarchical_clustering(dtw_matrix, n_clusters=None, linkage=args.linkage)
+    print("Creating model for dendrogram...")
+    unclustered_model = hierarchical_clustering(
+        dtw_matrix,
+        n_clusters=None,  # 不指定簇数
+        linkage=args.linkage,
+        distance_threshold=0.0  # 设置距离阈值为0，确保显示完整的层次结构
+    )
     plot_dendrogram(unclustered_model, distance_matrix=dtw_matrix, signal_names=signal_names)
 
     # Step 5: Visualize clustering results

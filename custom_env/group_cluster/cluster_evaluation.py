@@ -35,7 +35,7 @@ def evaluate_clustering(distance_matrix, labels):
         return -1
 
 
-def find_optimal_clusters(distance_matrix, signals, max_clusters=10):
+def find_optimal_clusters(distance_matrix, signals, max_clusters=10, linkage='average'):
     """
     Find optimal number of clusters using multiple metrics
     使用多个指标找到最优的簇数
@@ -47,6 +47,8 @@ def find_optimal_clusters(distance_matrix, signals, max_clusters=10):
                        信号数组列表
         max_clusters (int, optional): Maximum number of clusters to try
                                      尝试的最大簇数
+        linkage (str, optional): Linkage criterion for hierarchical clustering
+                                层次聚类的连接方法
 
     Returns:
         dict: Dictionary with scores for different numbers of clusters
@@ -75,7 +77,7 @@ def find_optimal_clusters(distance_matrix, signals, max_clusters=10):
             # Perform hierarchical clustering
             # 执行层次聚类
             from clustering import hierarchical_clustering
-            model = hierarchical_clustering(distance_matrix, n_clusters=n_clusters)
+            model = hierarchical_clustering(distance_matrix, n_clusters=n_clusters, linkage=linkage)
             labels = model.labels_
 
             # Calculate silhouette score
