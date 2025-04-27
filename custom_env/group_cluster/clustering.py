@@ -25,9 +25,8 @@ def hierarchical_clustering(distance_matrix, n_clusters=None, linkage='ward'):
         print(f"Performing hierarchical clustering with {linkage} linkage...")
         model = AgglomerativeClustering(
             n_clusters=n_clusters,
-            affinity='precomputed',
-            linkage=linkage,
-            compute_distances=True  # Required for plot_dendrogram
+            metric='precomputed',  # 使用'metric'替代'affinity'
+            linkage=linkage
         )
 
         # Fit the model to get cluster labels

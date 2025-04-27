@@ -89,7 +89,7 @@ def main():
     # Plot dendrogram (unclustered, for all hierarchical structure)
     # 绘制树状图（未聚类，显示所有层次结构）
     unclustered_model = hierarchical_clustering(dtw_matrix, n_clusters=None, linkage=args.linkage)
-    plot_dendrogram(unclustered_model, signal_names)
+    plot_dendrogram(unclustered_model, distance_matrix=dtw_matrix, signal_names=signal_names)
 
     # Step 5: Visualize clustering results
     # 步骤5：可视化聚类结果

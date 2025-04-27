@@ -8,7 +8,7 @@ import os
 import sys
 
 
-def plot_dendrogram(model, signal_names=None, figsize=(12, 8)):
+def plot_dendrogram(model, distance_matrix=None, signal_names=None, figsize=(12, 8)):
     """
     Plot dendrogram from hierarchical clustering
     绘制层次聚类的树状图
@@ -16,28 +16,34 @@ def plot_dendrogram(model, signal_names=None, figsize=(12, 8)):
     Args:
         model: Fitted AgglomerativeClustering model
                拟合的AgglomerativeClustering模型
+        distance_matrix (numpy.ndarray, optional): DTW distance matrix, needed for dendrogram
+                                                  DTW距离矩阵，绘制树状图所需
         signal_names (list, optional): List of signal names
                                       信号名称列表
         figsize (tuple, optional): Figure size
                                   图形大小
     """
     try:
-        # Create linkage matrix from the children attribute
-        # 从children属性创建连接矩阵
-        counts = np.zeros(model.children_.shape[0])
-        n_samples = len(model.labels_)
-        for i, merge in enumerate(model.children_):
-            current_count = 0
-            for child_idx in merge:
-                if child_idx < n_samples:
-                    current_count += 1
-                else:
-                    current_count += counts[child_idx - n_samples]
-            counts[i] = current_count
+        # Use scipy's hierarchical clustering to compute the linkage matrix
+        # 使用scipy的层次聚类计算连接矩阵
+        if distance_matrix is None:
+            print("Error: Distance matrix is required for plotting dendrogram.")
+            return
 
-        linkage_matrix = np.column_stack([
-            model.children_, model.distances_, counts
-        ]).astype(float)
+        from scipy.cluster.hierarchy import linkage as scipy_linkage
+        from scipy.cluster.hierarchy import dendrogram as scipy_dendrogram
+        from scipy.spatial.distance import squareform
+
+        # Convert to condensed distance matrix if needed
+        # 如需要，将距离矩阵转换为压缩形式
+        if distance_matrix.shape[0] == distance_matrix.shape[1]:
+            condensed_dist = squareform(distance_matrix)
+        else:
+            condensed_dist = distance_matrix
+
+        # Compute linkage matrix using the same linkage method as the model
+        # 使用与模型相同的连接方法计算连接矩阵
+        linkage_matrix = scipy_linkage(condensed_dist, method=model.linkage)
 
         # Plot the dendrogram
         # 绘制树状图
@@ -47,7 +53,7 @@ def plot_dendrogram(model, signal_names=None, figsize=(12, 8)):
         plt.ylabel('Distance', fontsize=12)
 
         labels = signal_names if signal_names else None
-        dendrogram(
+        scipy_dendrogram(
             linkage_matrix,
             truncate_mode='level',
             p=5,  # Show only the last p merged clusters
@@ -65,7 +71,6 @@ def plot_dendrogram(model, signal_names=None, figsize=(12, 8)):
 
     except Exception as e:
         print(f"Error in plotting dendrogram: {str(e)}")
-
 
 def plot_dimensionality_reduction(distance_matrix, labels, method='pca', figsize=(10, 8)):
     """
