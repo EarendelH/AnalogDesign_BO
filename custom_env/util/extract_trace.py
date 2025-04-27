@@ -297,3 +297,88 @@ def extractACTrace(file_path):
 # file = "/Users/hanwu/Downloads/ac.ac.encode"
 # dict = extractACTrace(file)
 # print(dict)
+
+def generate_trans_signals_csv(file_path):
+    """
+    Generate a CSV file containing all signals from a PSF format file.
+    The first column is the unified timestamp, followed by all signal values.
+    The CSV file is saved in the same directory as the PSF file.
+
+    生成包含PSF格式文件中所有信号的CSV文件。
+    第一列是统一的时间戳，之后是所有信号值。
+    CSV文件保存在与PSF文件相同的目录下。
+
+    Args:
+        file_path (str): Path to the PSF format file
+                        PSF格式文件的路径
+
+    Returns:
+        str: Path to the generated CSV file, or None if an error occurred
+             生成的CSV文件路径，如果发生错误则返回None
+    """
+    import os
+    import csv
+
+    try:
+        # Extract all signal data
+        # 提取所有信号数据
+        signal_dict = extractTransTrace_psf(file_path)
+
+        # Check if data extraction was successful
+        # 检查数据提取是否成功
+        if not signal_dict or "time" not in signal_dict:
+            print(f"Error: Failed to extract data from {file_path} or time series does not exist")
+            return None
+
+        # Get time series
+        # 获取时间序列
+        time_series = signal_dict["time"]
+
+        # Get all signal names (excluding time)
+        # 获取所有信号名称（不包括时间）
+        signal_names = [name for name in signal_dict.keys() if name != "time"]
+        print(f"Extracted {len(signal_names)} signals from {file_path}")
+
+        # Determine output file path (same directory as input file)
+        # 确定输出文件路径（与输入文件相同目录）
+        output_dir = os.path.dirname(file_path)
+        base_name = os.path.basename(file_path).split('.')[0]
+        output_file = os.path.join(output_dir, f"{base_name}_signals.csv")
+
+        # Create CSV file
+        # 创建CSV文件
+        with open(output_file, 'w', newline='') as csvfile:
+            # Create CSV writer
+            # 创建CSV写入器
+            fieldnames = ["time"] + signal_names
+            writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+
+            # Write header
+            # 写入表头
+            writer.writeheader()
+
+            # Write data rows
+            # 写入数据行
+            for i in range(len(time_series)):
+                row = {"time": time_series[i]}
+                for signal_name in signal_names:
+                    if i < len(signal_dict[signal_name]):
+                        row[signal_name] = signal_dict[signal_name][i]
+                    else:
+                        row[signal_name] = None
+                writer.writerow(row)
+
+        print(f"Signal data saved to: {output_file}")
+        print(f"Total time points: {len(time_series)}")
+        print(f"Total signals: {len(signal_names)}")
+
+        return output_file
+
+    except Exception as e:
+        print(f"Error generating CSV file: {str(e)}")
+        return None
+
+if __name__ == "__main__":
+    # Example usage
+    file_path = "/Users/hanwu/Downloads/Trans.raw/tran.tran.tran"
+    generate_trans_signals_csv(file_path)
