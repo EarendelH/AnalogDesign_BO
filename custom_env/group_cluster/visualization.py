@@ -7,8 +7,7 @@ import matplotlib.cm as cm
 import os
 import sys
 
-
-def plot_dendrogram(model, distance_matrix=None, signal_names=None, figsize=(12, 8)):
+def plot_dendrogram(model, distance_matrix=None, signal_names=None, figsize=(12, 8), output_dir='.'):
     """
     Plot dendrogram from hierarchical clustering
     绘制层次聚类的树状图
@@ -22,8 +21,13 @@ def plot_dendrogram(model, distance_matrix=None, signal_names=None, figsize=(12,
                                       信号名称列表
         figsize (tuple, optional): Figure size
                                   图形大小
+        output_dir (str, optional): Output directory path
+                                   输出目录路径
     """
     try:
+        import os
+        import matplotlib.pyplot as plt
+
         # Use scipy's hierarchical clustering to compute the linkage matrix
         # 使用scipy的层次聚类计算连接矩阵
         if distance_matrix is None:
@@ -64,15 +68,17 @@ def plot_dendrogram(model, distance_matrix=None, signal_names=None, figsize=(12,
 
         # Save the figure
         # 保存图形
-        plt.savefig('dendrogram.png', dpi=300, bbox_inches='tight')
-        print("Dendrogram saved as 'dendrogram.png'")
+        output_file = os.path.join(output_dir, 'dendrogram.png')
+        plt.savefig(output_file, dpi=300, bbox_inches='tight')
+        print(f"Dendrogram saved as '{output_file}'")
 
         plt.close()
 
     except Exception as e:
         print(f"Error in plotting dendrogram: {str(e)}")
 
-def plot_dimensionality_reduction(distance_matrix, labels, method='pca', figsize=(10, 8)):
+
+def plot_dimensionality_reduction(distance_matrix, labels, method='pca', figsize=(10, 8), output_dir='.'):
     """
     Plot dimensionality reduction of the distance matrix
     绘制距离矩阵的降维
@@ -86,8 +92,17 @@ def plot_dimensionality_reduction(distance_matrix, labels, method='pca', figsize
                                降维方法（'pca'或'tsne'）
         figsize (tuple, optional): Figure size
                                   图形大小
+        output_dir (str, optional): Output directory path
+                                   输出目录路径
     """
     try:
+        import os
+        import numpy as np
+        import matplotlib.pyplot as plt
+        import matplotlib.cm as cm
+        from sklearn.decomposition import PCA
+        from sklearn.manifold import TSNE
+
         # Convert distances to features for dimensionality reduction
         # 将距离转换为降维的特征
 
@@ -143,8 +158,9 @@ def plot_dimensionality_reduction(distance_matrix, labels, method='pca', figsize
         # Save the figure
         # 保存图形
         filename = f"{method.lower()}_visualization.png"
-        plt.savefig(filename, dpi=300, bbox_inches='tight')
-        print(f"{method.upper()} visualization saved as '{filename}'")
+        output_file = os.path.join(output_dir, filename)
+        plt.savefig(output_file, dpi=300, bbox_inches='tight')
+        print(f"{method.upper()} visualization saved as '{output_file}'")
 
         plt.close()
 
@@ -152,7 +168,7 @@ def plot_dimensionality_reduction(distance_matrix, labels, method='pca', figsize
         print(f"Error in plotting dimensionality reduction: {str(e)}")
 
 
-def plot_cluster_signals(time_points, signals, labels, figsize=(16, 10)):
+def plot_cluster_signals(time_points, signals, labels, figsize=(16, 10), output_dir='.'):
     """
     Plot signals grouped by cluster
     按簇分组绘制信号
@@ -166,37 +182,72 @@ def plot_cluster_signals(time_points, signals, labels, figsize=(16, 10)):
                                簇标签
         figsize (tuple, optional): Figure size
                                   图形大小
+        output_dir (str, optional): Output directory path
+                                   输出目录路径
     """
     try:
+        import os
+        import numpy as np
+        import matplotlib.pyplot as plt
+
         unique_labels = np.unique(labels)
         n_clusters = len(unique_labels)
 
+        # Check if there are noise points (DBSCAN specific)
+        # 检查是否存在噪声点（DBSCAN特有）
+        has_noise = -1 in unique_labels
+        n_valid_clusters = n_clusters - (1 if has_noise else 0)
+
         # Skip plotting if there's only one cluster or too many clusters
         # 如果只有一个簇或太多簇，则跳过绘图
-        if n_clusters == 1:
-            print("Only one cluster found. Skipping cluster signals plot.")
+        if n_valid_clusters <= 0:
+            print("No valid clusters found (all points might be noise). Skipping cluster signals plot.")
             return
+
+        if n_valid_clusters == 1:
+            print("Only one valid cluster found. Skipping cluster signals plot.")
+            return
+
+        # Create path for cluster plots directory
+        # 创建簇图目录的路径
+        cluster_plots_dir = os.path.join(output_dir, 'cluster_plots')
+        os.makedirs(cluster_plots_dir, exist_ok=True)
 
         # Determine subplot grid
         # 确定子图网格
-        n_cols = min(3, n_clusters)
-        n_rows = int(np.ceil(n_clusters / n_cols))
-
-        # Create a directory for cluster plots
-        # 创建存放簇图的目录
-        os.makedirs('cluster_plots', exist_ok=True)
+        n_cols = min(3, n_valid_clusters)
+        n_rows = int(np.ceil(n_valid_clusters / n_cols))
 
         # Plot all clusters
         # 绘制所有簇
         plt.figure(figsize=figsize)
 
+        plot_index = 1  # Track subplot index
+
         for i, label in enumerate(unique_labels):
             if label == -1:
-                # Skip noise points for visualization clarity
-                # 为了可视化清晰，跳过噪声点
+                # Plot noise points in a separate figure if they exist
+                # 如果存在噪声点，则在单独的图中绘制
+                noise_indices = np.where(labels == -1)[0]
+                if len(noise_indices) > 0:
+                    plt.figure(figsize=(12, 6))
+                    for idx in noise_indices:
+                        plt.plot(time_points, signals[idx], 'k-', alpha=0.2, linewidth=0.5)
+                    plt.title(f'Noise Points (n={len(noise_indices)})')
+                    plt.xlabel('Time')
+                    plt.ylabel('Signal Value (Z-normalized)')
+                    plt.grid(True, alpha=0.3)
+                    plt.tight_layout()
+                    output_file = os.path.join(cluster_plots_dir, 'noise_points.png')
+                    plt.savefig(output_file, dpi=300, bbox_inches='tight')
+                    print(f"Noise points plot saved as '{output_file}'")
+                    plt.close()
+                # Skip noise points in the main plot
+                # 在主图中跳过噪声点
                 continue
 
-            plt.subplot(n_rows, n_cols, i + 1)
+            plt.subplot(n_rows, n_cols, plot_index)
+            plot_index += 1
 
             # Get indices of signals in this cluster
             # 获取该簇中信号的索引
@@ -217,15 +268,16 @@ def plot_cluster_signals(time_points, signals, labels, figsize=(16, 10)):
                 plt.legend()
 
         plt.tight_layout()
-        plt.savefig('cluster_plots/all_clusters.png', dpi=300, bbox_inches='tight')
-        print("All clusters plot saved as 'cluster_plots/all_clusters.png'")
+        output_file = os.path.join(cluster_plots_dir, 'all_clusters.png')
+        plt.savefig(output_file, dpi=300, bbox_inches='tight')
+        print(f"All clusters plot saved as '{output_file}'")
 
         # Plot each cluster individually with more detail
         # 更详细地单独绘制每个簇
         for label in unique_labels:
             if label == -1:
-                # Skip noise points for visualization clarity
-                # 为了可视化清晰，跳过噪声点
+                # Skip noise points for individual plots
+                # 跳过噪声点的单独绘图
                 continue
 
             plt.figure(figsize=(12, 6))
@@ -251,8 +303,9 @@ def plot_cluster_signals(time_points, signals, labels, figsize=(16, 10)):
             plt.grid(True, alpha=0.3)
 
             plt.tight_layout()
-            plt.savefig(f'cluster_plots/cluster_{label}.png', dpi=300, bbox_inches='tight')
-            print(f"Cluster {label} plot saved as 'cluster_plots/cluster_{label}.png'")
+            output_file = os.path.join(cluster_plots_dir, f'cluster_{label}.png')
+            plt.savefig(output_file, dpi=300, bbox_inches='tight')
+            print(f"Cluster {label} plot saved as '{output_file}'")
             plt.close()
 
         plt.close()
@@ -284,8 +337,9 @@ def plot_cluster_signals(time_points, signals, labels, figsize=(16, 10)):
         plt.grid(True, alpha=0.3)
 
         plt.tight_layout()
-        plt.savefig('cluster_plots/cluster_means_comparison.png', dpi=300, bbox_inches='tight')
-        print("Cluster means comparison saved as 'cluster_plots/cluster_means_comparison.png'")
+        output_file = os.path.join(cluster_plots_dir, 'cluster_means_comparison.png')
+        plt.savefig(output_file, dpi=300, bbox_inches='tight')
+        print(f"Cluster means comparison saved as '{output_file}'")
 
         plt.close()
 
@@ -293,7 +347,7 @@ def plot_cluster_signals(time_points, signals, labels, figsize=(16, 10)):
         print(f"Error in plotting cluster signals: {str(e)}")
 
 
-def plot_evaluation_metrics(evaluation_results, figsize=(12, 8)):
+def plot_evaluation_metrics(evaluation_results, figsize=(12, 8), output_dir='.'):
     """
     Plot evaluation metrics for different numbers of clusters
     绘制不同簇数的评估指标
@@ -303,8 +357,14 @@ def plot_evaluation_metrics(evaluation_results, figsize=(12, 8)):
                                   包含评估结果的字典
         figsize (tuple, optional): Figure size
                                   图形大小
+        output_dir (str, optional): Output directory path
+                                   输出目录路径
     """
     try:
+        import os
+        import numpy as np
+        import matplotlib.pyplot as plt
+
         plt.figure(figsize=figsize)
 
         # Create subplots
@@ -362,8 +422,9 @@ def plot_evaluation_metrics(evaluation_results, figsize=(12, 8)):
         axs[2].legend()
 
         plt.tight_layout()
-        plt.savefig('evaluation_metrics.png', dpi=300, bbox_inches='tight')
-        print("Evaluation metrics plot saved as 'evaluation_metrics.png'")
+        output_file = os.path.join(output_dir, 'evaluation_metrics.png')
+        plt.savefig(output_file, dpi=300, bbox_inches='tight')
+        print(f"Evaluation metrics plot saved as '{output_file}'")
 
         plt.close()
 
