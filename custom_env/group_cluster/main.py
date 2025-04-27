@@ -35,9 +35,6 @@ def main():
     parser.add_argument('--max_clusters', type=int, default=10, help='Maximum number of clusters to try')
     parser.add_argument('--sakoe_chiba_radius', type=int, default=None,
                          help='Sakoe-Chiba band radius (None = no constraint)')
-    parser.add_argument('--linkage', type=str, default='ward',
-                         choices=['ward', 'complete', 'average', 'single'],
-                         help='Linkage criterion for hierarchical clustering')
     parser.add_argument('--handle_missing', type=str, default='report',
                          choices=['report', 'drop', 'fill_mean', 'fill_zero'],
                          help='Strategy for handling missing values')
