@@ -22,6 +22,13 @@ def hierarchical_clustering(distance_matrix, n_clusters=None, linkage='ward'):
                                                 拟合的聚类模型
     """
     try:
+        # Check if ward linkage is being used with precomputed distances (incompatible)
+        # 检查是否正在使用ward连接方法与预计算距离（不兼容）
+        if linkage == 'ward':
+            print("Warning: Ward linkage cannot be used with precomputed distances.")
+            print("Automatically switching to 'average' linkage...")
+            linkage = 'average'
+
         print(f"Performing hierarchical clustering with {linkage} linkage...")
         model = AgglomerativeClustering(
             n_clusters=n_clusters,
@@ -38,7 +45,6 @@ def hierarchical_clustering(distance_matrix, n_clusters=None, linkage='ward'):
     except Exception as e:
         print(f"Error in hierarchical clustering: {str(e)}")
         sys.exit(1)
-
 
 def time_series_kmeans(signals, n_clusters, metric="dtw", random_state=42):
     """

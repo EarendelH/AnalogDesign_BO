@@ -41,6 +41,9 @@ def main():
     parser.add_argument('--handle_missing', type=str, default='report',
                          choices=['report', 'drop', 'fill_mean', 'fill_zero'],
                          help='Strategy for handling missing values')
+    parser.add_argument('--linkage', type=str, default='average',
+                        choices=['ward', 'complete', 'average', 'single'],
+                        help='Linkage criterion for hierarchical clustering. Note: when using DTW distances, "ward" will be automatically changed to "average"')
     args = parser.parse_args()
 
     # Ensure output directories exist
