@@ -11,7 +11,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
 from sklearn.manifold import TSNE
 from sklearn.metrics import silhouette_score, calinski_harabasz_score, davies_bouldin_score
-from skimage.feature import greycomatrix, greycoprops, hog
+from skimage.feature import graycomatrix, graycoprops, hog
 from skimage import color
 import torch
 import torchvision.models as models
@@ -137,15 +137,15 @@ def extract_traditional_features(image_path):
 
         # 计算GLCM矩阵（距离=1，角度=[0, 45, 90, 135]，灰度级别=8）
         # Compute GLCM matrix (distance=1, angles=[0, 45, 90, 135], gray levels=8)
-        glcm = greycomatrix(gray_norm, [1], [0, np.pi / 4, np.pi / 2, 3 * np.pi / 4], 8, symmetric=True, normed=True)
+        glcm = graycomatrix(gray_norm, [1], [0, np.pi / 4, np.pi / 2, 3 * np.pi / 4], 8, symmetric=True, normed=True)
 
         # 提取GLCM属性
         # Extract GLCM properties
-        contrast = greycoprops(glcm, 'contrast').flatten()
-        dissimilarity = greycoprops(glcm, 'dissimilarity').flatten()
-        homogeneity = greycoprops(glcm, 'homogeneity').flatten()
-        energy = greycoprops(glcm, 'energy').flatten()
-        correlation = greycoprops(glcm, 'correlation').flatten()
+        contrast = graycoprops(glcm, 'contrast').flatten()
+        dissimilarity = graycoprops(glcm, 'dissimilarity').flatten()
+        homogeneity = graycoprops(glcm, 'homogeneity').flatten()
+        energy = graycoprops(glcm, 'energy').flatten()
+        correlation = graycoprops(glcm, 'correlation').flatten()
 
         # 合并纹理特征
         # Combine texture features
