@@ -1377,15 +1377,21 @@ def main():
         # Set visualization title
         visualization_title = f"{args.image_type.capitalize()} + {feature_type.capitalize()} Features + {cluster_method.capitalize()} Clustering"
 
-        # 运行聚类
-        # Run clustering
-        run_clustering(image_paths, image_names, feature_type, cluster_method,
-                       n_clusters=args.n_clusters, output_dir=output_dir,
-                       eps=args.eps, min_samples=args.min_samples,
-                       visualization_title=visualization_title,
-                       auto_clusters=args.auto_clusters,
-                       image_type=args.image_type,
-                       run_id=run_id)
+        # 运行聚类 - 修复：添加新的参数
+        run_clustering(
+            image_paths=image_paths,
+            image_names=image_names,
+            feature_type=feature_type,
+            cluster_method=cluster_method,
+            n_clusters=args.n_clusters,
+            output_dir=output_dir,
+            eps=args.eps,
+            min_samples=args.min_samples,
+            visualization_title=visualization_title,
+            auto_clusters=args.auto_clusters,
+            image_type=args.image_type,  # 添加这个参数
+            run_id=run_id  # 添加这个参数
+        )
 
     # 计算运行时间
     # Calculate run time
