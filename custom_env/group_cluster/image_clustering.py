@@ -596,7 +596,7 @@ def create_cluster_report(labels, image_names, title, output_path):
     print(f"Clustering report saved to {output_path}")
 
 
-def determine_optimal_clusters(features, max_clusters=15):
+def determine_optimal_clusters(features, max_clusters=15, image_type=None, feature_type=None, output_dir=None):
     """
     自动确定最佳聚类数量
     Automatically determine the optimal number of clusters
@@ -606,6 +606,12 @@ def determine_optimal_clusters(features, max_clusters=15):
                                   Feature matrix
         max_clusters (int, optional): 要尝试的最大聚类数量
                                       Maximum number of clusters to try
+        image_type (str, optional): 图像类型，用于文件名
+                                   Image type for filename
+        feature_type (str, optional): 特征类型，用于文件名
+                                     Feature type for filename
+        output_dir (str, optional): 输出目录
+                                   Output directory
 
     Returns:
         int: 最佳聚类数量
@@ -665,6 +671,21 @@ def determine_optimal_clusters(features, max_clusters=15):
     # Find number of clusters with maximum Calinski-Harabasz index
     calinski_optimal = cluster_range[np.argmax(calinski_values)] if calinski_values else elbow_optimal
 
+    # 构建唯一的输出文件名
+    # Build unique output filename
+    filename_prefix = ""
+    if image_type:
+        filename_prefix += f"{image_type}_"
+    if feature_type:
+        filename_prefix += f"{feature_type}_"
+
+    output_path = 'optimal_clusters_evaluation.png'
+    if output_dir:
+        if filename_prefix:
+            output_path = os.path.join(output_dir, f"{filename_prefix}optimal_clusters_evaluation.png")
+        else:
+            output_path = os.path.join(output_dir, output_path)
+
     # 绘制评估结果
     # Plot evaluation results
     plt.figure(figsize=(15, 10))
@@ -707,7 +728,7 @@ def determine_optimal_clusters(features, max_clusters=15):
     plt.title('Comparison of Methods')
 
     plt.tight_layout()
-    plt.savefig('optimal_clusters_evaluation.png', dpi=300, bbox_inches='tight')
+    plt.savefig(output_path, dpi=300, bbox_inches='tight')
     plt.close()
 
     # 综合三种方法的结果，取平均值并四舍五入
@@ -721,7 +742,6 @@ def determine_optimal_clusters(features, max_clusters=15):
     print(f"  Recommended number of clusters: {optimal_clusters}")
 
     return optimal_clusters
-
 
 def find_elbow_point(x, y):
     """
@@ -779,7 +799,7 @@ def find_elbow_point(x, y):
     return x[elbow_index]
 
 
-def generate_results_table(results, output_dir):
+def generate_results_table(results, output_dir, run_id=None):
     """
     生成结果比较表格并保存
     Generate results comparison table and save
@@ -789,60 +809,21 @@ def generate_results_table(results, output_dir):
                         Dictionary of results
         output_dir (str): 输出目录
                           Output directory
+        run_id (str, optional): 运行标识，用于唯一文件名
+                               Run identifier for unique filenames
     """
     # 创建表格数据
     # Create table data
     table_data = []
 
-    # 定义评估指标
-    # Define evaluation metrics
-    metrics = ['silhouette', 'calinski_harabasz', 'davies_bouldin']
-
-    # 对于每种图像类型
-    # For each image type
-    for img_type in ['wavelet', 'markov', 'multichannel']:
-        # 对于每种特征提取方法
-        # For each feature extraction method
-        for feature_type in ['traditional', 'deep']:
-            # 对于每种聚类算法
-            # For each clustering algorithm
-            for cluster_method in ['kmeans', 'dbscan', 'hierarchical']:
-                # 获取结果键
-                # Get result key
-                key = f"{img_type}_{feature_type}_{cluster_method}"
-
-                # 如果键存在
-                # If key exists
-                if key in results:
-                    # 获取评估指标
-                    # Get evaluation metrics
-                    metric_values = results[key]
-
-                    # 添加到表格数据
-                    # Add to table data
-                    row = [img_type, feature_type, cluster_method]
-                    for metric in metrics:
-                        row.append(f"{metric_values[metric]:.4f}" if not np.isnan(metric_values[metric]) else "N/A")
-
-                    table_data.append(row)
-
-    # 创建数据框
-    # Create dataframe
-    df = pd.DataFrame(table_data, columns=['Image Type', 'Feature Type', 'Clustering Method',
-                                           'Silhouette Score', 'Calinski-Harabasz Score', 'Davies-Bouldin Score'])
-
-    # 保存为CSV文件
-    # Save as CSV file
-    csv_path = os.path.join(output_dir, 'clustering_results_comparison.csv')
-    df.to_csv(csv_path, index=False)
-    print(f"\nResults comparison table saved to {csv_path}")
-
-    # 创建热力图
-    # Create heatmap
-    create_metrics_heatmap(df, output_dir)
-    # 创建表格数据
-    # Create table data
-    table_data = []
+    # 生成运行标识（如果未提供）
+    # Generate run identifier (if not provided)
+    suffix = ""
+    if run_id:
+        suffix = f"_{run_id}"
+    else:
+        from datetime import datetime
+        suffix = f"_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
 
     # 定义评估指标
     # Define evaluation metrics
@@ -883,16 +864,17 @@ def generate_results_table(results, output_dir):
 
     # 保存为CSV文件
     # Save as CSV file
-    csv_path = os.path.join(output_dir, 'clustering_results_comparison.csv')
+    csv_path = os.path.join(output_dir, f'clustering_results_comparison{suffix}.csv')
     df.to_csv(csv_path, index=False)
     print(f"\nResults comparison table saved to {csv_path}")
 
     # 创建热力图
     # Create heatmap
-    create_metrics_heatmap(df, output_dir)
+    create_metrics_heatmap(df, output_dir, run_id=run_id)
 
 
-def create_metrics_heatmap(df, output_dir):
+
+def create_metrics_heatmap(df, output_dir, run_id=None):
     """
     创建评估指标热力图
     Create heatmap of evaluation metrics
@@ -902,6 +884,8 @@ def create_metrics_heatmap(df, output_dir):
                                Results dataframe
         output_dir (str): 输出目录
                           Output directory
+        run_id (str, optional): 运行标识，用于唯一文件名
+                               Run identifier for unique filenames
     """
     # 对于每个指标创建热力图
     # Create heatmap for each metric
@@ -912,6 +896,15 @@ def create_metrics_heatmap(df, output_dir):
     df_numeric = df.copy()
     for metric in metrics:
         df_numeric[metric] = df_numeric[metric].apply(lambda x: np.nan if x == "N/A" else float(x))
+
+    # 生成运行标识
+    # Generate run identifier
+    suffix = ""
+    if run_id:
+        suffix = f"_{run_id}"
+    else:
+        from datetime import datetime
+        suffix = f"_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
 
     for metric in metrics:
         try:
@@ -954,7 +947,7 @@ def create_metrics_heatmap(df, output_dir):
             # 保存热力图
             # Save heatmap
             metric_filename = metric.lower().replace(' ', '_').replace('-', '_')
-            output_path = os.path.join(output_dir, f'heatmap_{metric_filename}.png')
+            output_path = os.path.join(output_dir, f'heatmap_{metric_filename}{suffix}.png')
             plt.savefig(output_path, dpi=300, bbox_inches='tight')
             plt.close()
 
@@ -1091,6 +1084,105 @@ def run_clustering(image_paths, image_names, feature_type, cluster_method, n_clu
 
     return labels, metrics, features_scaled
 
+def run_all_methods(image_dir, output_dir, n_clusters=5, eps=0.5, min_samples=5, max_images=None, auto_clusters=False, run_id=None):
+    """
+    运行所有聚类方法的组合
+    Run all combinations of clustering methods
+
+    Args:
+        image_dir (str): 图像目录
+                         Image directory
+        output_dir (str): 输出目录
+                          Output directory
+        n_clusters (int, optional): 簇的数量（用于K-means和层次聚类）
+                                    Number of clusters (for K-means and hierarchical clustering)
+        eps (float, optional): DBSCAN的邻域半径
+                               Neighborhood radius for DBSCAN
+        min_samples (int, optional): DBSCAN的最小样本数
+                                     Minimum number of samples for DBSCAN
+        max_images (int, optional): 每种类型的最大图像数量
+                                    Maximum number of images for each type
+        auto_clusters (bool, optional): 是否自动确定最佳聚类数量
+                                        Whether to automatically determine the optimal number of clusters
+        run_id (str, optional): 运行标识，用于唯一文件名
+                               Run identifier for unique filenames
+    """
+    # 创建输出目录
+    # Create output directory
+    os.makedirs(output_dir, exist_ok=True)
+
+    # 生成运行标识（如果未提供）
+    # Generate run identifier (if not provided)
+    if run_id is None:
+        from datetime import datetime
+        run_id = datetime.now().strftime('%Y%m%d_%H%M%S')
+
+    # 定义图像类型、特征类型和聚类方法
+    # Define image types, feature types, and clustering methods
+    image_types = ['wavelet', 'markov', 'multichannel']
+    feature_types = ['traditional', 'deep']
+    cluster_methods = ['kmeans', 'dbscan', 'hierarchical']
+
+    # 存储所有结果
+    # Store all results
+    all_results = {}
+
+    # 对于每种图像类型
+    # For each image type
+    for img_type in image_types:
+        print(f"\n\n===== Processing {img_type} images =====")
+
+        # 加载图像
+        # Load images
+        img_dir = os.path.join(image_dir, img_type)
+        if not os.path.exists(img_dir):
+            print(f"Error: Directory not found: {img_dir}")
+            continue
+
+        image_paths, image_names = load_images(image_dir, img_type, max_images=max_images)
+
+        if len(image_paths) == 0:
+            print(f"No images found in {img_dir}")
+            continue
+
+        # 创建该图像类型的输出目录
+        # Create output directory for this image type
+        img_output_dir = os.path.join(output_dir, img_type)
+        os.makedirs(img_output_dir, exist_ok=True)
+
+        # 对于每种特征类型
+        # For each feature type
+        for feature_type in feature_types:
+            # 对于每种聚类方法
+            # For each clustering method
+            for cluster_method in cluster_methods:
+                print(f"\n----- {img_type} + {feature_type} features + {cluster_method} clustering -----")
+
+                # 设置可视化标题
+                # Set visualization title
+                visualization_title = f"{img_type.capitalize()} + {feature_type.capitalize()} Features + {cluster_method.capitalize()} Clustering"
+
+                # 运行聚类
+                # Run clustering
+                _, metrics, _ = run_clustering(
+                    image_paths, image_names, feature_type, cluster_method,
+                    n_clusters=n_clusters, output_dir=img_output_dir,
+                    eps=eps, min_samples=min_samples,
+                    visualization_title=visualization_title,
+                    auto_clusters=auto_clusters,
+                    image_type=img_type,
+                    run_id=run_id
+                )
+
+                # 存储结果
+                # Store results
+                result_key = f"{img_type}_{feature_type}_{cluster_method}"
+                all_results[result_key] = metrics
+
+    # 生成结果比较表格
+    # Generate results comparison table
+    generate_results_table(all_results, output_dir, run_id=run_id)
+
 
 def run_all_methods(image_dir, output_dir, n_clusters=5, eps=0.5, min_samples=5, max_images=None, auto_clusters=False):
     """
@@ -1223,9 +1315,36 @@ def main():
 
     args = parser.parse_args()
 
-    # 创建输出目录
-    # Create output directory
-    os.makedirs(args.output_dir, exist_ok=True)
+    # 创建带有参数信息的输出目录
+    # Create output directory with parameter information
+    output_dir = args.output_dir
+
+    # 添加参数信息到输出目录名称
+    # Add parameter information to output directory name
+    if args.method != 'run_all':
+        # 对于单一方法，添加图像类型和方法信息
+        # For single method, add image type and method information
+        output_dir = f"{output_dir}_{args.image_type}_{args.method}"
+        if args.auto_clusters:
+            output_dir += "_auto"
+        else:
+            output_dir += f"_{args.n_clusters}"
+    else:
+        # 对于run_all方法，添加时间戳
+        # For run_all method, add timestamp
+        from datetime import datetime
+        output_dir = f"{output_dir}_all_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+        if args.auto_clusters:
+            output_dir += "_auto"
+        else:
+            output_dir += f"_{args.n_clusters}"
+
+    os.makedirs(output_dir, exist_ok=True)
+
+    # 生成运行ID
+    # Generate run ID
+    from datetime import datetime
+    run_id = datetime.now().strftime('%Y%m%d_%H%M%S')
 
     # 设置开始时间
     # Set start time
@@ -1235,11 +1354,12 @@ def main():
     # Run specified method
     if args.method == 'run_all':
         print("\n===== Running all clustering methods =====")
-        run_all_methods(args.image_dir, args.output_dir,
+        run_all_methods(args.image_dir, output_dir,
                         n_clusters=args.n_clusters,
                         eps=args.eps, min_samples=args.min_samples,
                         max_images=args.max_images,
-                        auto_clusters=args.auto_clusters)
+                        auto_clusters=args.auto_clusters,
+                        run_id=run_id)
     else:
         # 分解方法名称
         # Decompose method name
@@ -1260,10 +1380,12 @@ def main():
         # 运行聚类
         # Run clustering
         run_clustering(image_paths, image_names, feature_type, cluster_method,
-                       n_clusters=args.n_clusters, output_dir=args.output_dir,
+                       n_clusters=args.n_clusters, output_dir=output_dir,
                        eps=args.eps, min_samples=args.min_samples,
                        visualization_title=visualization_title,
-                       auto_clusters=args.auto_clusters)
+                       auto_clusters=args.auto_clusters,
+                       image_type=args.image_type,
+                       run_id=run_id)
 
     # 计算运行时间
     # Calculate run time
@@ -1271,7 +1393,7 @@ def main():
     run_time = end_time - start_time
 
     print(f"\n===== Clustering completed in {run_time:.2f} seconds =====")
-    print(f"Results have been saved to the '{args.output_dir}' directory")
+    print(f"Results have been saved to the '{output_dir}' directory")
 
 
 if __name__ == "__main__":
