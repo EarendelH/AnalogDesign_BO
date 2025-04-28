@@ -135,9 +135,17 @@ def extract_traditional_features(image_path):
         # Adjust image values to [0, 255] range
         gray_norm = cv2.normalize(gray_resized, None, 0, 255, cv2.NORM_MINMAX).astype(np.uint8)
 
-        # 计算GLCM矩阵（距离=1，角度=[0, 45, 90, 135]，灰度级别=8）
-        # Compute GLCM matrix (distance=1, angles=[0, 45, 90, 135], gray levels=8)
-        glcm = graycomatrix(gray_norm, [1], [0, np.pi / 4, np.pi / 2, 3 * np.pi / 4], 8, symmetric=True, normed=True)
+        # 计算GLCM矩阵（距离=1，角度=[0, 45, 90, 135]，灰度级别=256）
+        # Compute GLCM matrix (distance=1, angles=[0, 45, 90, 135], gray levels=256)
+        glcm = graycomatrix(gray_norm, [1], [0, np.pi / 4, np.pi / 2, 3 * np.pi / 4], 256, symmetric=True, normed=True)
+
+        # 提取GLCM属性
+        # Extract GLCM properties
+        contrast = graycoprops(glcm, 'contrast').flatten()
+        dissimilarity = graycoprops(glcm, 'dissimilarity').flatten()
+        homogeneity = graycoprops(glcm, 'homogeneity').flatten()
+        energy = graycoprops(glcm, 'energy').flatten()
+        correlation = graycoprops(glcm, 'correlation').flatten()
 
         # 提取GLCM属性
         # Extract GLCM properties
