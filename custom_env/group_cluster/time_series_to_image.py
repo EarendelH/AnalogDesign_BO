@@ -8,6 +8,10 @@ import pywt
 from skimage.feature import graycomatrix
 import cv2
 from matplotlib.colors import LinearSegmentedColormap
+import concurrent.futures
+import multiprocessing
+from tqdm import tqdm
+import time
 
 # 导入现有的data_loader模块
 from data_loader import load_data, preprocess_signals
@@ -295,79 +299,112 @@ def save_image(img_data, output_dirs, file_name, title, colormap='viridis', vmin
     plt.savefig(raw_output_path, dpi=300, bbox_inches='tight', pad_inches=0)
     plt.close()
 
-    print(f"Images saved to {regular_output_path} and {raw_output_path}")
+    return [regular_output_path, raw_output_path]
 
 
-def process_wavelet_transform(signals, signal_names, output_dirs):
+# ===== 新增的多线程处理函数 =====
+# ===== New multi-threaded processing functions =====
+
+def process_wavelet_signal(signal, name, output_dirs, wavelet='morl', scales=64):
     """
-    处理所有信号的小波变换并保存图像
-    Process wavelet transform for all signals and save images
+    处理单个信号的小波变换并保存图像
+    Process wavelet transform for a single signal and save image
 
     Args:
-        signals (list): 信号数据列表
-                       List of signal data
-        signal_names (list): 信号名称列表
-                           List of signal names
+        signal (numpy.ndarray): 信号数据
+                               Signal data
+        name (str): 信号名称
+                    Signal name
         output_dirs (dict): 输出目录字典
                            Output directory dictionary
+        wavelet (str, optional): 小波类型
+                                Wavelet type
+        scales (int, optional): 尺度数量
+                               Number of scales
+
+    Returns:
+        list: 保存的图像路径列表
+              List of saved image paths
     """
-    print("\nProcessing Wavelet Transform images...")
+    # 计算小波变换
+    # Calculate wavelet transform
+    cwt_image = wavelet_transform_image(signal, wavelet=wavelet, scales=scales)
 
-    for i, (signal, name) in enumerate(zip(signals, signal_names)):
-        # 计算小波变换
-        # Calculate wavelet transform
-        cwt_image = wavelet_transform_image(signal)
+    # 保存图像
+    # Save image
+    safe_name = name.replace("/", "_").replace("\\", "_").replace(":", "_")
+    saved_paths = save_image(cwt_image, output_dirs['wavelet'], f"wavelet_{safe_name}",
+                             f"Wavelet Transform: {name}", colormap='jet', vmin=0)
 
-        # 保存图像
-        # Save image
-        safe_name = name.replace("/", "_").replace("\\", "_").replace(":", "_")
-        save_image(cwt_image, output_dirs['wavelet'], f"wavelet_{safe_name}",
-                   f"Wavelet Transform: {name}", colormap='jet', vmin=0)
-
-        # 显示进度
-        # Show progress
-        if (i + 1) % 10 == 0 or (i + 1) == len(signals):
-            print(f"  Processed {i + 1}/{len(signals)} signals")
+    return saved_paths
 
 
-def process_markov_field(signals, signal_names, output_dirs, n_bins=10):
+def process_markov_signal(signal, name, output_dirs, n_bins=10):
     """
-    处理所有信号的马尔可夫转移场并保存图像
-    Process Markov Transition Field for all signals and save images
+    处理单个信号的马尔可夫转移场并保存图像
+    Process Markov Transition Field for a single signal and save image
 
     Args:
-        signals (list): 信号数据列表
-                       List of signal data
-        signal_names (list): 信号名称列表
-                           List of signal names
+        signal (numpy.ndarray): 信号数据
+                               Signal data
+        name (str): 信号名称
+                    Signal name
         output_dirs (dict): 输出目录字典
                            Output directory dictionary
         n_bins (int, optional): 量化等级数量
                                Number of quantization levels
+
+    Returns:
+        list: 保存的图像路径列表
+              List of saved image paths
     """
-    print("\nProcessing Markov Transition Field images...")
+    # 计算马尔可夫转移场
+    # Calculate Markov Transition Field
+    mtf_image = markov_transition_field(signal, n_bins=n_bins)
 
-    for i, (signal, name) in enumerate(zip(signals, signal_names)):
-        # 计算马尔可夫转移场
-        # Calculate Markov Transition Field
-        mtf_image = markov_transition_field(signal, n_bins=n_bins)
+    # 保存图像
+    # Save image
+    safe_name = name.replace("/", "_").replace("\\", "_").replace(":", "_")
+    saved_paths = save_image(mtf_image, output_dirs['markov'], f"markov_{safe_name}",
+                             f"Markov Transition Field: {name}", colormap='plasma')
 
-        # 保存图像
-        # Save image
-        safe_name = name.replace("/", "_").replace("\\", "_").replace(":", "_")
-        save_image(mtf_image, output_dirs['markov'], f"markov_{safe_name}",
-                   f"Markov Transition Field: {name}", colormap='plasma')
-
-        # 显示进度
-        # Show progress
-        if (i + 1) % 10 == 0 or (i + 1) == len(signals):
-            print(f"  Processed {i + 1}/{len(signals)} signals")
+    return saved_paths
 
 
-def process_multi_channel(signals, signal_names, output_dirs):
+def process_multichannel_signal(signal, name, output_dirs):
     """
-    处理所有信号的多通道图像表示并保存图像
-    Process multi-channel image representation for all signals and save images
+    处理单个信号的多通道图像表示并保存图像
+    Process multi-channel image representation for a single signal and save image
+
+    Args:
+        signal (numpy.ndarray): 信号数据
+                               Signal data
+        name (str): 信号名称
+                    Signal name
+        output_dirs (dict): 输出目录字典
+                           Output directory dictionary
+
+    Returns:
+        list: 保存的图像路径列表
+              List of saved image paths
+    """
+    # 创建多通道图像
+    # Create multi-channel image
+    multi_channel = multi_channel_image(signal)
+
+    # 保存图像
+    # Save image
+    safe_name = name.replace("/", "_").replace("\\", "_").replace(":", "_")
+    saved_paths = save_image(multi_channel, output_dirs['multichannel'], f"multichannel_{safe_name}",
+                             f"Multi-Channel Image: {name}")
+
+    return saved_paths
+
+
+def process_wavelet_transform(signals, signal_names, output_dirs, n_threads=1, wavelet='morl', scales=64):
+    """
+    多线程处理所有信号的小波变换并保存图像
+    Process wavelet transform for all signals using multiple threads and save images
 
     Args:
         signals (list): 信号数据列表
@@ -376,24 +413,103 @@ def process_multi_channel(signals, signal_names, output_dirs):
                            List of signal names
         output_dirs (dict): 输出目录字典
                            Output directory dictionary
+        n_threads (int, optional): 线程数量
+                                  Number of threads
+        wavelet (str, optional): 小波类型
+                                Wavelet type
+        scales (int, optional): 尺度数量
+                               Number of scales
     """
-    print("\nProcessing Multi-Channel images...")
+    print(f"\nProcessing Wavelet Transform images using {n_threads} threads...")
 
-    for i, (signal, name) in enumerate(zip(signals, signal_names)):
-        # 创建多通道图像
-        # Create multi-channel image
-        multi_channel = multi_channel_image(signal)
+    # 使用线程池执行器
+    # Use ThreadPoolExecutor
+    with concurrent.futures.ThreadPoolExecutor(max_workers=n_threads) as executor:
+        # 提交所有任务
+        # Submit all tasks
+        futures = []
+        for i, (signal, name) in enumerate(zip(signals, signal_names)):
+            future = executor.submit(
+                process_wavelet_signal, signal, name, output_dirs, wavelet, scales
+            )
+            futures.append(future)
 
-        # 保存图像
-        # Save image
-        safe_name = name.replace("/", "_").replace("\\", "_").replace(":", "_")
-        save_image(multi_channel, output_dirs['multichannel'], f"multichannel_{safe_name}",
-                   f"Multi-Channel Image: {name}")
+        # 使用tqdm显示进度
+        # Use tqdm to show progress
+        for _ in tqdm(concurrent.futures.as_completed(futures), total=len(futures), desc="Wavelet Transform"):
+            pass
 
-        # 显示进度
-        # Show progress
-        if (i + 1) % 10 == 0 or (i + 1) == len(signals):
-            print(f"  Processed {i + 1}/{len(signals)} signals")
+
+def process_markov_field(signals, signal_names, output_dirs, n_threads=1, n_bins=10):
+    """
+    多线程处理所有信号的马尔可夫转移场并保存图像
+    Process Markov Transition Field for all signals using multiple threads and save images
+
+    Args:
+        signals (list): 信号数据列表
+                       List of signal data
+        signal_names (list): 信号名称列表
+                           List of signal names
+        output_dirs (dict): 输出目录字典
+                           Output directory dictionary
+        n_threads (int, optional): 线程数量
+                                  Number of threads
+        n_bins (int, optional): 量化等级数量
+                               Number of quantization levels
+    """
+    print(f"\nProcessing Markov Transition Field images using {n_threads} threads...")
+
+    # 使用线程池执行器
+    # Use ThreadPoolExecutor
+    with concurrent.futures.ThreadPoolExecutor(max_workers=n_threads) as executor:
+        # 提交所有任务
+        # Submit all tasks
+        futures = []
+        for i, (signal, name) in enumerate(zip(signals, signal_names)):
+            future = executor.submit(
+                process_markov_signal, signal, name, output_dirs, n_bins
+            )
+            futures.append(future)
+
+        # 使用tqdm显示进度
+        # Use tqdm to show progress
+        for _ in tqdm(concurrent.futures.as_completed(futures), total=len(futures), desc="Markov Field"):
+            pass
+
+
+def process_multi_channel(signals, signal_names, output_dirs, n_threads=1):
+    """
+    多线程处理所有信号的多通道图像表示并保存图像
+    Process multi-channel image representation for all signals using multiple threads and save images
+
+    Args:
+        signals (list): 信号数据列表
+                       List of signal data
+        signal_names (list): 信号名称列表
+                           List of signal names
+        output_dirs (dict): 输出目录字典
+                           Output directory dictionary
+        n_threads (int, optional): 线程数量
+                                  Number of threads
+    """
+    print(f"\nProcessing Multi-Channel images using {n_threads} threads...")
+
+    # 使用线程池执行器
+    # Use ThreadPoolExecutor
+    with concurrent.futures.ThreadPoolExecutor(max_workers=n_threads) as executor:
+        # 提交所有任务
+        # Submit all tasks
+        futures = []
+        for i, (signal, name) in enumerate(zip(signals, signal_names)):
+            future = executor.submit(
+                process_multichannel_signal, signal, name, output_dirs
+            )
+            futures.append(future)
+
+        # 使用tqdm显示进度
+        # Use tqdm to show progress
+        for _ in tqdm(concurrent.futures.as_completed(futures), total=len(futures), desc="Multi-Channel"):
+            pass
 
 
 def main():
@@ -430,6 +546,12 @@ def main():
     parser.add_argument('--scales', type=int, default=64,
                         help='Number of scales for wavelet transform')
 
+    # 多线程参数
+    # Multi-threading parameters
+    default_threads = max(1, multiprocessing.cpu_count())
+    parser.add_argument('--n_threads', type=int, default=default_threads,
+                        help=f'Number of threads to use (default: {default_threads})')
+
     args = parser.parse_args()
 
     # 确定要使用的方法
@@ -455,19 +577,34 @@ def main():
     preprocessed_signals = preprocess_signals(signals)
     print("Signals preprocessed with Z-score normalization")
 
+    # 显示线程数信息
+    # Display thread count information
+    print(f"\n===== Using {args.n_threads} threads for processing =====")
+
+    # 记录开始时间
+    # Record start time
+    start_time = time.time()
+
     # 应用选定的转换方法
     # Apply selected conversion methods
     if 'wavelet' in methods:
-        process_wavelet_transform(preprocessed_signals, signal_names, output_dirs)
+        process_wavelet_transform(preprocessed_signals, signal_names, output_dirs,
+                                  n_threads=args.n_threads, wavelet=args.wavelet, scales=args.scales)
 
     if 'markov' in methods:
         process_markov_field(preprocessed_signals, signal_names, output_dirs,
-                             n_bins=args.n_bins)
+                             n_threads=args.n_threads, n_bins=args.n_bins)
 
     if 'multichannel' in methods:
-        process_multi_channel(preprocessed_signals, signal_names, output_dirs)
+        process_multi_channel(preprocessed_signals, signal_names, output_dirs,
+                              n_threads=args.n_threads)
 
-    print("\n===== Time series to image conversion completed successfully =====")
+    # 计算并显示总处理时间
+    # Calculate and display total processing time
+    end_time = time.time()
+    total_time = end_time - start_time
+
+    print(f"\n===== Time series to image conversion completed successfully in {total_time:.2f} seconds =====")
     print("Results have been saved to two directories:")
     print("  - Regular visualizations: 'image_representations'")
     print("  - Raw images without visual elements: 'image_representations_raw'")
