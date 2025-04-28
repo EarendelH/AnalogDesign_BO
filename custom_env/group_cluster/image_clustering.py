@@ -957,7 +957,8 @@ def create_metrics_heatmap(df, output_dir, run_id=None):
 
 
 def run_clustering(image_paths, image_names, feature_type, cluster_method, n_clusters=5, output_dir=None,
-                   eps=0.5, min_samples=5, visualization_title=None, auto_clusters=False):
+                   eps=0.5, min_samples=5, visualization_title=None, auto_clusters=False,
+                   image_type=None, run_id=None):
     """
     运行完整的聚类流程
     Run complete clustering pipeline
@@ -983,6 +984,10 @@ def run_clustering(image_paths, image_names, feature_type, cluster_method, n_clu
                                              Visualization title
         auto_clusters (bool, optional): 是否自动确定最佳聚类数量
                                         Whether to automatically determine the optimal number of clusters
+        image_type (str, optional): 图像类型，用于文件名
+                                   Image type for filename
+        run_id (str, optional): 运行标识，用于唯一文件名
+                               Run identifier for unique filenames
 
     Returns:
         tuple: (labels, metrics, features) 聚类标签、评估指标和特征
@@ -1038,7 +1043,12 @@ def run_clustering(image_paths, image_names, feature_type, cluster_method, n_clu
     # 如果启用了自动确定聚类数量且是kmeans或hierarchical
     # If auto_clusters is enabled and method is kmeans or hierarchical
     if auto_clusters and cluster_method in ['kmeans', 'hierarchical']:
-        optimal_n_clusters = determine_optimal_clusters(features_scaled)
+        optimal_n_clusters = determine_optimal_clusters(
+            features_scaled,
+            image_type=image_type,
+            feature_type=feature_type,
+            output_dir=output_dir
+        )
         print(f"Using automatically determined number of clusters: {optimal_n_clusters}")
         n_clusters = optimal_n_clusters
 
@@ -1079,7 +1089,23 @@ def run_clustering(image_paths, image_names, feature_type, cluster_method, n_clu
     # 可视化聚类结果
     # Visualize clustering results
     if output_dir is not None:
-        output_path = os.path.join(output_dir, f"{feature_type}_{cluster_method}_clustering.png")
+        # 构建文件名前缀
+        filename_prefix = ""
+        if image_type:
+            filename_prefix += f"{image_type}_"
+        filename_prefix += f"{feature_type}_{cluster_method}"
+
+        # 添加聚类数量或自动聚类标志
+        if auto_clusters:
+            filename_prefix += f"_auto"
+        else:
+            filename_prefix += f"_{n_clusters}"
+
+        # 添加运行标识
+        if run_id:
+            filename_prefix += f"_{run_id}"
+
+        output_path = os.path.join(output_dir, f"{filename_prefix}_clustering.png")
         visualize_clustering(features_scaled, labels, image_names, visualization_title, output_path)
 
     return labels, metrics, features_scaled
@@ -1164,115 +1190,33 @@ def run_all_methods(image_dir, output_dir, n_clusters=5, eps=0.5, min_samples=5,
 
                 # 运行聚类
                 # Run clustering
-                _, metrics, _ = run_clustering(
-                    image_paths, image_names, feature_type, cluster_method,
-                    n_clusters=n_clusters, output_dir=img_output_dir,
-                    eps=eps, min_samples=min_samples,
-                    visualization_title=visualization_title,
-                    auto_clusters=auto_clusters,
-                    image_type=img_type,
-                    run_id=run_id
-                )
+                try:
+                    _, metrics, _ = run_clustering(
+                        image_paths=image_paths,
+                        image_names=image_names,
+                        feature_type=feature_type,
+                        cluster_method=cluster_method,
+                        n_clusters=n_clusters,
+                        output_dir=img_output_dir,
+                        eps=eps,
+                        min_samples=min_samples,
+                        visualization_title=visualization_title,
+                        auto_clusters=auto_clusters,
+                        image_type=img_type,
+                        run_id=run_id
+                    )
 
-                # 存储结果
-                # Store results
-                result_key = f"{img_type}_{feature_type}_{cluster_method}"
-                all_results[result_key] = metrics
+                    # 存储结果
+                    # Store results
+                    result_key = f"{img_type}_{feature_type}_{cluster_method}"
+                    all_results[result_key] = metrics
+                except Exception as e:
+                    print(f"Error processing {img_type}_{feature_type}_{cluster_method}: {str(e)}")
+                    continue
 
     # 生成结果比较表格
     # Generate results comparison table
     generate_results_table(all_results, output_dir, run_id=run_id)
-
-
-def run_all_methods(image_dir, output_dir, n_clusters=5, eps=0.5, min_samples=5, max_images=None, auto_clusters=False):
-    """
-    运行所有聚类方法的组合
-    Run all combinations of clustering methods
-
-    Args:
-        image_dir (str): 图像目录
-                         Image directory
-        output_dir (str): 输出目录
-                          Output directory
-        n_clusters (int, optional): 簇的数量（用于K-means和层次聚类）
-                                    Number of clusters (for K-means and hierarchical clustering)
-        eps (float, optional): DBSCAN的邻域半径
-                               Neighborhood radius for DBSCAN
-        min_samples (int, optional): DBSCAN的最小样本数
-                                     Minimum number of samples for DBSCAN
-        max_images (int, optional): 每种类型的最大图像数量
-                                    Maximum number of images for each type
-        auto_clusters (bool, optional): 是否自动确定最佳聚类数量
-                                        Whether to automatically determine the optimal number of clusters
-    """
-    # 创建输出目录
-    # Create output directory
-    os.makedirs(output_dir, exist_ok=True)
-
-    # 定义图像类型、特征类型和聚类方法
-    # Define image types, feature types, and clustering methods
-    image_types = ['wavelet', 'markov', 'multichannel']
-    feature_types = ['traditional', 'deep']
-    cluster_methods = ['kmeans', 'dbscan', 'hierarchical']
-
-    # 存储所有结果
-    # Store all results
-    all_results = {}
-
-    # 对于每种图像类型
-    # For each image type
-    for img_type in image_types:
-        print(f"\n\n===== Processing {img_type} images =====")
-
-        # 加载图像
-        # Load images
-        img_dir = os.path.join(image_dir, img_type)
-        if not os.path.exists(img_dir):
-            print(f"Error: Directory not found: {img_dir}")
-            continue
-
-        image_paths, image_names = load_images(image_dir, img_type, max_images=max_images)
-
-        if len(image_paths) == 0:
-            print(f"No images found in {img_dir}")
-            continue
-
-        # 创建该图像类型的输出目录
-        # Create output directory for this image type
-        img_output_dir = os.path.join(output_dir, img_type)
-        os.makedirs(img_output_dir, exist_ok=True)
-
-        # 对于每种特征类型
-        # For each feature type
-        for feature_type in feature_types:
-            # 对于每种聚类方法
-            # For each clustering method
-            for cluster_method in cluster_methods:
-                print(f"\n----- {img_type} + {feature_type} features + {cluster_method} clustering -----")
-
-                # 设置可视化标题
-                # Set visualization title
-                visualization_title = f"{img_type.capitalize()} + {feature_type.capitalize()} Features + {cluster_method.capitalize()} Clustering"
-
-                # 运行聚类
-                # Run clustering
-                _, metrics, _ = run_clustering(
-                    image_paths, image_names, feature_type, cluster_method,
-                    n_clusters=n_clusters, output_dir=img_output_dir,
-                    eps=eps, min_samples=min_samples,
-                    visualization_title=visualization_title,
-                    auto_clusters=auto_clusters
-                )
-
-                # 存储结果
-                # Store results
-                result_key = f"{img_type}_{feature_type}_{cluster_method}"
-                all_results[result_key] = metrics
-
-    # 生成结果比较表格
-    # Generate results comparison table
-    generate_results_table(all_results, output_dir)
-
 
 def main():
     """
