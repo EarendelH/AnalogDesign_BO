@@ -588,17 +588,187 @@ def create_cluster_report(labels, image_names, title, output_path):
     print(f"Clustering report saved to {output_path}")
 
 
-def generate_results_table(results, output_dir):
+def determine_optimal_clusters(features, max_clusters=15):
     """
-    生成结果比较表格并保存
-    Generate results comparison table and save
+    自动确定最佳聚类数量
+    Automatically determine the optimal number of clusters
 
     Args:
-        results (dict): 结果字典
-                        Dictionary of results
-        output_dir (str): 输出目录
-                          Output directory
+        features (numpy.ndarray): 特征矩阵
+                                  Feature matrix
+        max_clusters (int, optional): 要尝试的最大聚类数量
+                                      Maximum number of clusters to try
+
+    Returns:
+        int: 最佳聚类数量
+             Optimal number of clusters
     """
+    print("\nDetermining optimal number of clusters...")
+
+    # 确保最大聚类数不超过样本数的一半
+    # Ensure max clusters does not exceed half the number of samples
+    max_clusters = min(max_clusters, features.shape[0] // 2)
+
+    # 初始化评分列表
+    # Initialize score lists
+    inertia_values = []
+    silhouette_values = []
+    calinski_values = []
+
+    # 尝试不同的聚类数量
+    # Try different numbers of clusters
+    cluster_range = range(2, max_clusters + 1)
+
+    for n_clusters in tqdm(cluster_range):
+        # K-means聚类
+        # K-means clustering
+        kmeans = KMeans(n_clusters=n_clusters, random_state=42, n_init=10)
+        labels = kmeans.fit_predict(features)
+
+        # 计算惯性（簇内平方和）
+        # Calculate inertia (within-cluster sum of squares)
+        inertia_values.append(kmeans.inertia_)
+
+        # 计算轮廓系数
+        # Calculate silhouette score
+        try:
+            silhouette_avg = silhouette_score(features, labels)
+            silhouette_values.append(silhouette_avg)
+        except:
+            silhouette_values.append(0)
+
+        # 计算Calinski-Harabasz指数
+        # Calculate Calinski-Harabasz index
+        try:
+            calinski = calinski_harabasz_score(features, labels)
+            calinski_values.append(calinski)
+        except:
+            calinski_values.append(0)
+
+    # 计算肘部法则的结果
+    # Calculate elbow method result
+    elbow_optimal = find_elbow_point(cluster_range, inertia_values)
+
+    # 找到轮廓系数最大的聚类数量
+    # Find number of clusters with maximum silhouette score
+    silhouette_optimal = cluster_range[np.argmax(silhouette_values)] if silhouette_values else elbow_optimal
+
+    # 找到Calinski-Harabasz指数最大的聚类数量
+    # Find number of clusters with maximum Calinski-Harabasz index
+    calinski_optimal = cluster_range[np.argmax(calinski_values)] if calinski_values else elbow_optimal
+
+    # 绘制评估结果
+    # Plot evaluation results
+    plt.figure(figsize=(15, 10))
+
+    # 绘制惯性曲线（肘部法则）
+    # Plot inertia curve (elbow method)
+    plt.subplot(2, 2, 1)
+    plt.plot(cluster_range, inertia_values, 'bo-')
+    plt.axvline(x=elbow_optimal, color='r', linestyle='--')
+    plt.xlabel('Number of Clusters')
+    plt.ylabel('Inertia')
+    plt.title(f'Elbow Method (Optimal: {elbow_optimal})')
+    plt.grid(True)
+
+    # 绘制轮廓系数曲线
+    # Plot silhouette score curve
+    plt.subplot(2, 2, 2)
+    plt.plot(cluster_range, silhouette_values, 'go-')
+    plt.axvline(x=silhouette_optimal, color='r', linestyle='--')
+    plt.xlabel('Number of Clusters')
+    plt.ylabel('Silhouette Score')
+    plt.title(f'Silhouette Method (Optimal: {silhouette_optimal})')
+    plt.grid(True)
+
+    # 绘制Calinski-Harabasz指数曲线
+    # Plot Calinski-Harabasz index curve
+    plt.subplot(2, 2, 3)
+    plt.plot(cluster_range, calinski_values, 'mo-')
+    plt.axvline(x=calinski_optimal, color='r', linestyle='--')
+    plt.xlabel('Number of Clusters')
+    plt.ylabel('Calinski-Harabasz Index')
+    plt.title(f'Calinski-Harabasz Method (Optimal: {calinski_optimal})')
+    plt.grid(True)
+
+    # 综合评估结果
+    # Combined evaluation results
+    plt.subplot(2, 2, 4)
+    plt.bar(['Elbow', 'Silhouette', 'Calinski-Harabasz'], [elbow_optimal, silhouette_optimal, calinski_optimal])
+    plt.ylabel('Optimal Number of Clusters')
+    plt.title('Comparison of Methods')
+
+    plt.tight_layout()
+    plt.savefig('optimal_clusters_evaluation.png', dpi=300, bbox_inches='tight')
+    plt.close()
+
+    # 综合三种方法的结果，取平均值并四舍五入
+    # Combine results from three methods, take average and round
+    optimal_clusters = int(round((elbow_optimal + silhouette_optimal + calinski_optimal) / 3))
+
+    print(f"\nEstimated optimal number of clusters:")
+    print(f"  Elbow Method: {elbow_optimal}")
+    print(f"  Silhouette Method: {silhouette_optimal}")
+    print(f"  Calinski-Harabasz Method: {calinski_optimal}")
+    print(f"  Recommended number of clusters: {optimal_clusters}")
+
+    return optimal_clusters
+
+
+def find_elbow_point(x, y):
+    """
+    根据肘部法则找到最佳拐点
+    Find the optimal elbow point
+
+    Args:
+        x (list): x坐标值
+                 x-coordinate values
+        y (list): y坐标值
+                 y-coordinate values
+
+    Returns:
+        int: 最佳拐点对应的x值
+             x-value of the optimal elbow point
+    """
+    # 标准化x和y
+    # Normalize x and y
+    x_norm = np.array(x)
+    y_norm = np.array(y)
+
+    # 如果数据点太少，返回中间点
+    # If too few data points, return the middle point
+    if len(x_norm) < 3:
+        return x_norm[len(x_norm) // 2]
+
+    # 标准化到[0,1]范围
+    # Normalize to [0,1] range
+    x_norm = (x_norm - min(x_norm)) / (max(x_norm) - min(x_norm))
+    y_norm = (y_norm - min(y_norm)) / (max(y_norm) - min(y_norm))
+
+    # 计算到直线的距离
+    # Calculate distance to the line
+    a = np.array([x_norm[0], y_norm[0]])
+    b = np.array([x_norm[-1], y_norm[-1]])
+
+    # 计算直线的方向向量
+    # Calculate direction vector of the line
+    direction = b - a
+
+    # 计算每个点到直线的距离
+    # Calculate distance of each point to the line
+    distances = []
+    for i in range(len(x_norm)):
+        point = np.array([x_norm[i], y_norm[i]])
+        # 垂直距离公式：|(p-a)×(b-a)|/|b-a|
+        # Perpendicular distance formula: |(p-a)×(b-a)|/|b-a|
+        distance = abs(np.cross(point - a, direction)) / np.linalg.norm(direction)
+        distances.append(distance)
+
+    # 找到距离最大的点
+    # Find the point with maximum distance
+    elbow_index = np.argmax(distances)
+
+    return x[elbow_index]
     # 创建表格数据
     # Create table data
     table_data = []
@@ -717,7 +887,7 @@ def create_metrics_heatmap(df, output_dir):
 
 
 def run_clustering(image_paths, image_names, feature_type, cluster_method, n_clusters=5, output_dir=None,
-                   eps=0.5, min_samples=5, visualization_title=None):
+                   eps=0.5, min_samples=5, visualization_title=None, auto_clusters=False):
     """
     运行完整的聚类流程
     Run complete clustering pipeline
@@ -741,6 +911,8 @@ def run_clustering(image_paths, image_names, feature_type, cluster_method, n_clu
                                      Minimum number of samples for DBSCAN
         visualization_title (str, optional): 可视化标题
                                              Visualization title
+        auto_clusters (bool, optional): 是否自动确定最佳聚类数量
+                                        Whether to automatically determine the optimal number of clusters
 
     Returns:
         tuple: (labels, metrics, features) 聚类标签、评估指标和特征
@@ -793,6 +965,13 @@ def run_clustering(image_paths, image_names, feature_type, cluster_method, n_clu
     scaler = StandardScaler()
     features_scaled = scaler.fit_transform(features_array)
 
+    # 如果启用了自动确定聚类数量且是kmeans或hierarchical
+    # If auto_clusters is enabled and method is kmeans or hierarchical
+    if auto_clusters and cluster_method in ['kmeans', 'hierarchical']:
+        optimal_n_clusters = determine_optimal_clusters(features_scaled)
+        print(f"Using automatically determined number of clusters: {optimal_n_clusters}")
+        n_clusters = optimal_n_clusters
+
     # 聚类
     # Clustering
     print(f"\nPerforming {cluster_method} clustering...")
@@ -836,7 +1015,7 @@ def run_clustering(image_paths, image_names, feature_type, cluster_method, n_clu
     return labels, metrics, features_scaled
 
 
-def run_all_methods(image_dir, output_dir, n_clusters=5, eps=0.5, min_samples=5, max_images=None):
+def run_all_methods(image_dir, output_dir, n_clusters=5, eps=0.5, min_samples=5, max_images=None, auto_clusters=False):
     """
     运行所有聚类方法的组合
     Run all combinations of clustering methods
@@ -854,6 +1033,8 @@ def run_all_methods(image_dir, output_dir, n_clusters=5, eps=0.5, min_samples=5,
                                      Minimum number of samples for DBSCAN
         max_images (int, optional): 每种类型的最大图像数量
                                     Maximum number of images for each type
+        auto_clusters (bool, optional): 是否自动确定最佳聚类数量
+                                        Whether to automatically determine the optimal number of clusters
     """
     # 创建输出目录
     # Create output directory
@@ -910,7 +1091,8 @@ def run_all_methods(image_dir, output_dir, n_clusters=5, eps=0.5, min_samples=5,
                     image_paths, image_names, feature_type, cluster_method,
                     n_clusters=n_clusters, output_dir=img_output_dir,
                     eps=eps, min_samples=min_samples,
-                    visualization_title=visualization_title
+                    visualization_title=visualization_title,
+                    auto_clusters=auto_clusters
                 )
 
                 # 存储结果
@@ -950,6 +1132,8 @@ def main():
                         help='Clustering method to use')
     parser.add_argument('--n_clusters', type=int, default=5,
                         help='Number of clusters for K-means and hierarchical clustering')
+    parser.add_argument('--auto_clusters', action='store_true',
+                        help='Automatically determine optimal number of clusters (for K-means and hierarchical clustering)')
     parser.add_argument('--eps', type=float, default=0.5,
                         help='Epsilon parameter for DBSCAN')
     parser.add_argument('--min_samples', type=int, default=5,
@@ -977,7 +1161,8 @@ def main():
         run_all_methods(args.image_dir, args.output_dir,
                         n_clusters=args.n_clusters,
                         eps=args.eps, min_samples=args.min_samples,
-                        max_images=args.max_images)
+                        max_images=args.max_images,
+                        auto_clusters=args.auto_clusters)
     else:
         # 分解方法名称
         # Decompose method name
@@ -1000,7 +1185,8 @@ def main():
         run_clustering(image_paths, image_names, feature_type, cluster_method,
                        n_clusters=args.n_clusters, output_dir=args.output_dir,
                        eps=args.eps, min_samples=args.min_samples,
-                       visualization_title=visualization_title)
+                       visualization_title=visualization_title,
+                       auto_clusters=args.auto_clusters)
 
     # 计算运行时间
     # Calculate run time

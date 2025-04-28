@@ -21,17 +21,43 @@ def create_output_directories(methods):
     Args:
         methods (list): 需要创建的方法目录列表
                        List of method directories to create
+
+    Returns:
+        dict: 包含每种方法的常规和原始图像目录路径的字典
+              Dictionary containing regular and raw image directory paths for each method
     """
-    base_dir = "image_representations"
-    os.makedirs(base_dir, exist_ok=True)
+    # 创建常规图像主目录
+    # Create regular image main directory
+    regular_base_dir = "image_representations"
+    os.makedirs(regular_base_dir, exist_ok=True)
+
+    # 创建原始图像主目录
+    # Create raw image main directory
+    raw_base_dir = "image_representations_raw"
+    os.makedirs(raw_base_dir, exist_ok=True)
 
     created_dirs = {}
     for method in methods:
-        method_dir = os.path.join(base_dir, method)
-        os.makedirs(method_dir, exist_ok=True)
-        created_dirs[method] = method_dir
+        # 为每种方法创建常规图像目录
+        # Create regular image directory for each method
+        regular_method_dir = os.path.join(regular_base_dir, method)
+        os.makedirs(regular_method_dir, exist_ok=True)
 
-    print(f"Created output directories in '{base_dir}'")
+        # 为每种方法创建原始图像目录
+        # Create raw image directory for each method
+        raw_method_dir = os.path.join(raw_base_dir, method)
+        os.makedirs(raw_method_dir, exist_ok=True)
+
+        # 存储目录路径
+        # Store directory paths
+        created_dirs[method] = {
+            'regular': regular_method_dir,
+            'raw': raw_method_dir
+        }
+
+    print(f"Created output directories:")
+    print(f"  - Regular images: '{regular_base_dir}'")
+    print(f"  - Raw images: '{raw_base_dir}'")
     return created_dirs
 
 
@@ -201,16 +227,18 @@ def multi_channel_image(signal_data, figsize=(10, 8)):
     return img_3d
 
 
-def save_image(img_data, output_path, title, colormap='viridis', vmin=None, vmax=None):
+def save_image(img_data, output_dirs, file_name, title, colormap='viridis', vmin=None, vmax=None):
     """
-    保存图像数据到文件
-    Save image data to file
+    保存图像数据到文件，包括常规可视化图像和原始图像
+    Save image data to files, including regular visualization and raw image
 
     Args:
         img_data (numpy.ndarray): 图像数据
                                  Image data
-        output_path (str): 输出文件路径
-                          Output file path
+        output_dirs (dict): 输出目录字典，包含'regular'和'raw'路径
+                          Output directory dictionary, containing 'regular' and 'raw' paths
+        file_name (str): 文件名（不包含路径和扩展名）
+                        File name (without path and extension)
         title (str): 图像标题
                     Image title
         colormap (str, optional): 颜色映射
@@ -220,6 +248,10 @@ def save_image(img_data, output_path, title, colormap='viridis', vmin=None, vmax
         vmax (float, optional): 颜色映射最大值
                                Maximum value for colormap
     """
+    # 1. 保存常规可视化图像（带有标题、颜色条等）
+    # 1. Save regular visualization image (with title, colorbar, etc.)
+    regular_output_path = os.path.join(output_dirs['regular'], f"{file_name}.png")
+
     plt.figure(figsize=(10, 8))
 
     # 检查是否为彩色图像（多通道）
@@ -233,13 +265,40 @@ def save_image(img_data, output_path, title, colormap='viridis', vmin=None, vmax
     plt.title(title)
     plt.tight_layout()
 
-    plt.savefig(output_path, dpi=300, bbox_inches='tight')
+    plt.savefig(regular_output_path, dpi=300, bbox_inches='tight')
     plt.close()
 
-    print(f"Image saved to {output_path}")
+    # 2. 保存原始图像（只有图像数据，没有额外元素）
+    # 2. Save raw image (only image data, without extra elements)
+    raw_output_path = os.path.join(output_dirs['raw'], f"{file_name}.png")
+
+    # 创建新的图像，不带任何额外元素
+    # Create new figure without any extra elements
+    plt.figure(figsize=(10, 8))
+
+    # 移除所有坐标轴、标题和其他元素
+    # Remove all axes, titles, and other elements
+    ax = plt.gca()
+    ax.set_axis_off()
+    plt.subplots_adjust(top=1, bottom=0, right=1, left=0, hspace=0, wspace=0)
+    plt.margins(0, 0)
+
+    # 检查是否为彩色图像
+    # Check if it's a color image
+    if img_data.ndim == 3 and img_data.shape[2] == 3:
+        plt.imshow(img_data)
+    else:
+        plt.imshow(img_data, cmap=colormap, aspect='auto', vmin=vmin, vmax=vmax)
+
+    # 保存没有边框和填充的图像
+    # Save image without borders and padding
+    plt.savefig(raw_output_path, dpi=300, bbox_inches='tight', pad_inches=0)
+    plt.close()
+
+    print(f"Images saved to {regular_output_path} and {raw_output_path}")
 
 
-def process_wavelet_transform(signals, signal_names, output_dir):
+def process_wavelet_transform(signals, signal_names, output_dirs):
     """
     处理所有信号的小波变换并保存图像
     Process wavelet transform for all signals and save images
@@ -249,8 +308,8 @@ def process_wavelet_transform(signals, signal_names, output_dir):
                        List of signal data
         signal_names (list): 信号名称列表
                            List of signal names
-        output_dir (str): 输出目录
-                         Output directory
+        output_dirs (dict): 输出目录字典
+                           Output directory dictionary
     """
     print("\nProcessing Wavelet Transform images...")
 
@@ -262,9 +321,8 @@ def process_wavelet_transform(signals, signal_names, output_dir):
         # 保存图像
         # Save image
         safe_name = name.replace("/", "_").replace("\\", "_").replace(":", "_")
-        output_path = os.path.join(output_dir, f"wavelet_{safe_name}.png")
-        save_image(cwt_image, output_path, f"Wavelet Transform: {name}",
-                   colormap='jet', vmin=0)
+        save_image(cwt_image, output_dirs['wavelet'], f"wavelet_{safe_name}",
+                   f"Wavelet Transform: {name}", colormap='jet', vmin=0)
 
         # 显示进度
         # Show progress
@@ -272,7 +330,7 @@ def process_wavelet_transform(signals, signal_names, output_dir):
             print(f"  Processed {i + 1}/{len(signals)} signals")
 
 
-def process_markov_field(signals, signal_names, output_dir, n_bins=10):
+def process_markov_field(signals, signal_names, output_dirs, n_bins=10):
     """
     处理所有信号的马尔可夫转移场并保存图像
     Process Markov Transition Field for all signals and save images
@@ -282,8 +340,8 @@ def process_markov_field(signals, signal_names, output_dir, n_bins=10):
                        List of signal data
         signal_names (list): 信号名称列表
                            List of signal names
-        output_dir (str): 输出目录
-                         Output directory
+        output_dirs (dict): 输出目录字典
+                           Output directory dictionary
         n_bins (int, optional): 量化等级数量
                                Number of quantization levels
     """
@@ -297,9 +355,8 @@ def process_markov_field(signals, signal_names, output_dir, n_bins=10):
         # 保存图像
         # Save image
         safe_name = name.replace("/", "_").replace("\\", "_").replace(":", "_")
-        output_path = os.path.join(output_dir, f"markov_{safe_name}.png")
-        save_image(mtf_image, output_path, f"Markov Transition Field: {name}",
-                   colormap='plasma')
+        save_image(mtf_image, output_dirs['markov'], f"markov_{safe_name}",
+                   f"Markov Transition Field: {name}", colormap='plasma')
 
         # 显示进度
         # Show progress
@@ -307,7 +364,7 @@ def process_markov_field(signals, signal_names, output_dir, n_bins=10):
             print(f"  Processed {i + 1}/{len(signals)} signals")
 
 
-def process_multi_channel(signals, signal_names, output_dir):
+def process_multi_channel(signals, signal_names, output_dirs):
     """
     处理所有信号的多通道图像表示并保存图像
     Process multi-channel image representation for all signals and save images
@@ -317,8 +374,8 @@ def process_multi_channel(signals, signal_names, output_dir):
                        List of signal data
         signal_names (list): 信号名称列表
                            List of signal names
-        output_dir (str): 输出目录
-                         Output directory
+        output_dirs (dict): 输出目录字典
+                           Output directory dictionary
     """
     print("\nProcessing Multi-Channel images...")
 
@@ -330,8 +387,8 @@ def process_multi_channel(signals, signal_names, output_dir):
         # 保存图像
         # Save image
         safe_name = name.replace("/", "_").replace("\\", "_").replace(":", "_")
-        output_path = os.path.join(output_dir, f"multichannel_{safe_name}.png")
-        save_image(multi_channel, output_path, f"Multi-Channel Image: {name}")
+        save_image(multi_channel, output_dirs['multichannel'], f"multichannel_{safe_name}",
+                   f"Multi-Channel Image: {name}")
 
         # 显示进度
         # Show progress
@@ -401,17 +458,19 @@ def main():
     # 应用选定的转换方法
     # Apply selected conversion methods
     if 'wavelet' in methods:
-        process_wavelet_transform(preprocessed_signals, signal_names, output_dirs['wavelet'])
+        process_wavelet_transform(preprocessed_signals, signal_names, output_dirs)
 
     if 'markov' in methods:
-        process_markov_field(preprocessed_signals, signal_names, output_dirs['markov'],
+        process_markov_field(preprocessed_signals, signal_names, output_dirs,
                              n_bins=args.n_bins)
 
     if 'multichannel' in methods:
-        process_multi_channel(preprocessed_signals, signal_names, output_dirs['multichannel'])
+        process_multi_channel(preprocessed_signals, signal_names, output_dirs)
 
     print("\n===== Time series to image conversion completed successfully =====")
-    print("Results have been saved to the 'image_representations' directory")
+    print("Results have been saved to two directories:")
+    print("  - Regular visualizations: 'image_representations'")
+    print("  - Raw images without visual elements: 'image_representations_raw'")
 
 
 if __name__ == "__main__":
