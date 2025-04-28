@@ -777,6 +777,69 @@ def find_elbow_point(x, y):
     elbow_index = np.argmax(distances)
 
     return x[elbow_index]
+
+
+def generate_results_table(results, output_dir):
+    """
+    生成结果比较表格并保存
+    Generate results comparison table and save
+
+    Args:
+        results (dict): 结果字典
+                        Dictionary of results
+        output_dir (str): 输出目录
+                          Output directory
+    """
+    # 创建表格数据
+    # Create table data
+    table_data = []
+
+    # 定义评估指标
+    # Define evaluation metrics
+    metrics = ['silhouette', 'calinski_harabasz', 'davies_bouldin']
+
+    # 对于每种图像类型
+    # For each image type
+    for img_type in ['wavelet', 'markov', 'multichannel']:
+        # 对于每种特征提取方法
+        # For each feature extraction method
+        for feature_type in ['traditional', 'deep']:
+            # 对于每种聚类算法
+            # For each clustering algorithm
+            for cluster_method in ['kmeans', 'dbscan', 'hierarchical']:
+                # 获取结果键
+                # Get result key
+                key = f"{img_type}_{feature_type}_{cluster_method}"
+
+                # 如果键存在
+                # If key exists
+                if key in results:
+                    # 获取评估指标
+                    # Get evaluation metrics
+                    metric_values = results[key]
+
+                    # 添加到表格数据
+                    # Add to table data
+                    row = [img_type, feature_type, cluster_method]
+                    for metric in metrics:
+                        row.append(f"{metric_values[metric]:.4f}" if not np.isnan(metric_values[metric]) else "N/A")
+
+                    table_data.append(row)
+
+    # 创建数据框
+    # Create dataframe
+    df = pd.DataFrame(table_data, columns=['Image Type', 'Feature Type', 'Clustering Method',
+                                           'Silhouette Score', 'Calinski-Harabasz Score', 'Davies-Bouldin Score'])
+
+    # 保存为CSV文件
+    # Save as CSV file
+    csv_path = os.path.join(output_dir, 'clustering_results_comparison.csv')
+    df.to_csv(csv_path, index=False)
+    print(f"\nResults comparison table saved to {csv_path}")
+
+    # 创建热力图
+    # Create heatmap
+    create_metrics_heatmap(df, output_dir)
     # 创建表格数据
     # Create table data
     table_data = []
