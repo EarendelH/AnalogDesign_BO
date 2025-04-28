@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import cv2
 from tqdm import tqdm
-from sklearn.cluster import KMeans, DBSCAN, AgglomerativeClustering
+from sklearn.cluster import AgglomerativeClustering
 from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
 from sklearn.manifold import TSNE
@@ -17,7 +17,6 @@ import torch
 import torchvision.models as models
 import torchvision.transforms as transforms
 from PIL import Image
-from tabulate import tabulate
 import seaborn as sns
 import warnings
 import time
@@ -138,14 +137,6 @@ def extract_traditional_features(image_path):
         # 计算GLCM矩阵（距离=1，角度=[0, 45, 90, 135]，灰度级别=256）
         # Compute GLCM matrix (distance=1, angles=[0, 45, 90, 135], gray levels=256)
         glcm = graycomatrix(gray_norm, [1], [0, np.pi / 4, np.pi / 2, 3 * np.pi / 4], 256, symmetric=True, normed=True)
-
-        # 提取GLCM属性
-        # Extract GLCM properties
-        contrast = graycoprops(glcm, 'contrast').flatten()
-        dissimilarity = graycoprops(glcm, 'dissimilarity').flatten()
-        homogeneity = graycoprops(glcm, 'homogeneity').flatten()
-        energy = graycoprops(glcm, 'energy').flatten()
-        correlation = graycoprops(glcm, 'correlation').flatten()
 
         # 提取GLCM属性
         # Extract GLCM properties
@@ -289,68 +280,6 @@ def extract_deep_features(image_path, model_name='resnet18'):
     except Exception as e:
         print(f"Error extracting deep features from {image_path}: {e}")
         return None
-
-
-def kmeans_clustering(features, n_clusters=5):
-    """
-    使用K-means算法对特征进行聚类
-    Cluster features using K-means algorithm
-
-    Args:
-        features (numpy.ndarray): 特征矩阵
-                                  Feature matrix
-        n_clusters (int, optional): 簇的数量
-                                    Number of clusters
-
-    Returns:
-        tuple: (labels, metrics) 聚类标签和评估指标
-                                 Clustering labels and evaluation metrics
-    """
-    # 创建并拟合K-means模型
-    # Create and fit K-means model
-    kmeans = KMeans(n_clusters=n_clusters, random_state=42, n_init=10)
-    labels = kmeans.fit_predict(features)
-
-    # 计算评估指标
-    # Calculate evaluation metrics
-    metrics = calculate_metrics(features, labels)
-
-    return labels, metrics
-
-
-def dbscan_clustering(features, eps=0.5, min_samples=5):
-    """
-    使用DBSCAN算法对特征进行聚类
-    Cluster features using DBSCAN algorithm
-
-    Args:
-        features (numpy.ndarray): 特征矩阵
-                                  Feature matrix
-        eps (float, optional): 邻域半径
-                               Neighborhood radius
-        min_samples (int, optional): 成为核心点所需的最小样本数
-                                     Minimum number of samples required to be a core point
-
-    Returns:
-        tuple: (labels, metrics) 聚类标签和评估指标
-                                 Clustering labels and evaluation metrics
-    """
-    # 创建并拟合DBSCAN模型
-    # Create and fit DBSCAN model
-    dbscan = DBSCAN(eps=eps, min_samples=min_samples)
-    labels = dbscan.fit_predict(features)
-
-    # 计算评估指标（当存在不止一个簇且不是所有点都是噪声点时）
-    # Calculate evaluation metrics (when there is more than one cluster and not all points are noise)
-    n_clusters = len(set(labels)) - (1 if -1 in labels else 0)
-    if n_clusters > 1 and not all(l == -1 for l in labels):
-        metrics = calculate_metrics(features, labels)
-    else:
-        # 如果所有点都被归为一个簇或噪声点，则评估指标为空
-        # If all points are classified as one cluster or noise, evaluation metrics are empty
-        metrics = {'silhouette': float('nan'), 'calinski_harabasz': float('nan'), 'davies_bouldin': float('nan')}
-
-    return labels, metrics
 
 
 def hierarchical_clustering(features, n_clusters=5):
@@ -625,23 +554,19 @@ def determine_optimal_clusters(features, max_clusters=15, image_type=None, featu
 
     # 初始化评分列表
     # Initialize score lists
-    inertia_values = []
     silhouette_values = []
     calinski_values = []
+    davies_values = []
 
     # 尝试不同的聚类数量
     # Try different numbers of clusters
     cluster_range = range(2, max_clusters + 1)
 
     for n_clusters in tqdm(cluster_range):
-        # K-means聚类
-        # K-means clustering
-        kmeans = KMeans(n_clusters=n_clusters, random_state=42, n_init=10)
-        labels = kmeans.fit_predict(features)
-
-        # 计算惯性（簇内平方和）
-        # Calculate inertia (within-cluster sum of squares)
-        inertia_values.append(kmeans.inertia_)
+        # 层次聚类
+        # Hierarchical clustering
+        hc = AgglomerativeClustering(n_clusters=n_clusters, linkage='ward')
+        labels = hc.fit_predict(features)
 
         # 计算轮廓系数
         # Calculate silhouette score
@@ -659,17 +584,25 @@ def determine_optimal_clusters(features, max_clusters=15, image_type=None, featu
         except:
             calinski_values.append(0)
 
-    # 计算肘部法则的结果
-    # Calculate elbow method result
-    elbow_optimal = find_elbow_point(cluster_range, inertia_values)
+        # 计算Davies-Bouldin指数
+        # Calculate Davies-Bouldin index
+        try:
+            davies = davies_bouldin_score(features, labels)
+            davies_values.append(davies)
+        except:
+            davies_values.append(float('inf'))  # 使用无穷大表示最差结果
 
     # 找到轮廓系数最大的聚类数量
     # Find number of clusters with maximum silhouette score
-    silhouette_optimal = cluster_range[np.argmax(silhouette_values)] if silhouette_values else elbow_optimal
+    silhouette_optimal = cluster_range[np.argmax(silhouette_values)] if silhouette_values else 2
 
     # 找到Calinski-Harabasz指数最大的聚类数量
     # Find number of clusters with maximum Calinski-Harabasz index
-    calinski_optimal = cluster_range[np.argmax(calinski_values)] if calinski_values else elbow_optimal
+    calinski_optimal = cluster_range[np.argmax(calinski_values)] if calinski_values else 2
+
+    # 找到Davies-Bouldin指数最小的聚类数量（值越小越好）
+    # Find number of clusters with minimum Davies-Bouldin index (smaller is better)
+    davies_optimal = cluster_range[np.argmin(davies_values)] if not all(v == float('inf') for v in davies_values) else 2
 
     # 构建唯一的输出文件名
     # Build unique output filename
@@ -690,19 +623,9 @@ def determine_optimal_clusters(features, max_clusters=15, image_type=None, featu
     # Plot evaluation results
     plt.figure(figsize=(15, 10))
 
-    # 绘制惯性曲线（肘部法则）
-    # Plot inertia curve (elbow method)
-    plt.subplot(2, 2, 1)
-    plt.plot(cluster_range, inertia_values, 'bo-')
-    plt.axvline(x=elbow_optimal, color='r', linestyle='--')
-    plt.xlabel('Number of Clusters')
-    plt.ylabel('Inertia')
-    plt.title(f'Elbow Method (Optimal: {elbow_optimal})')
-    plt.grid(True)
-
     # 绘制轮廓系数曲线
     # Plot silhouette score curve
-    plt.subplot(2, 2, 2)
+    plt.subplot(2, 2, 1)
     plt.plot(cluster_range, silhouette_values, 'go-')
     plt.axvline(x=silhouette_optimal, color='r', linestyle='--')
     plt.xlabel('Number of Clusters')
@@ -712,18 +635,30 @@ def determine_optimal_clusters(features, max_clusters=15, image_type=None, featu
 
     # 绘制Calinski-Harabasz指数曲线
     # Plot Calinski-Harabasz index curve
-    plt.subplot(2, 2, 3)
-    plt.plot(cluster_range, calinski_values, 'mo-')
+    plt.subplot(2, 2, 2)
+    plt.plot(cluster_range, calinski_values, 'bo-')
     plt.axvline(x=calinski_optimal, color='r', linestyle='--')
     plt.xlabel('Number of Clusters')
     plt.ylabel('Calinski-Harabasz Index')
     plt.title(f'Calinski-Harabasz Method (Optimal: {calinski_optimal})')
     plt.grid(True)
 
+    # 绘制Davies-Bouldin指数曲线
+    # Plot Davies-Bouldin index curve
+    plt.subplot(2, 2, 3)
+    valid_davies = [v if v != float('inf') else np.nan for v in davies_values]
+    plt.plot(cluster_range, valid_davies, 'mo-')
+    plt.axvline(x=davies_optimal, color='r', linestyle='--')
+    plt.xlabel('Number of Clusters')
+    plt.ylabel('Davies-Bouldin Index')
+    plt.title(f'Davies-Bouldin Method (Optimal: {davies_optimal})')
+    plt.grid(True)
+
     # 综合评估结果
     # Combined evaluation results
     plt.subplot(2, 2, 4)
-    plt.bar(['Elbow', 'Silhouette', 'Calinski-Harabasz'], [elbow_optimal, silhouette_optimal, calinski_optimal])
+    plt.bar(['Silhouette', 'Calinski-Harabasz', 'Davies-Bouldin'],
+            [silhouette_optimal, calinski_optimal, davies_optimal])
     plt.ylabel('Optimal Number of Clusters')
     plt.title('Comparison of Methods')
 
@@ -733,70 +668,253 @@ def determine_optimal_clusters(features, max_clusters=15, image_type=None, featu
 
     # 综合三种方法的结果，取平均值并四舍五入
     # Combine results from three methods, take average and round
-    optimal_clusters = int(round((elbow_optimal + silhouette_optimal + calinski_optimal) / 3))
+    optimal_clusters = int(round((silhouette_optimal + calinski_optimal + davies_optimal) / 3))
 
     print(f"\nEstimated optimal number of clusters:")
-    print(f"  Elbow Method: {elbow_optimal}")
     print(f"  Silhouette Method: {silhouette_optimal}")
     print(f"  Calinski-Harabasz Method: {calinski_optimal}")
+    print(f"  Davies-Bouldin Method: {davies_optimal}")
     print(f"  Recommended number of clusters: {optimal_clusters}")
 
     return optimal_clusters
 
-def find_elbow_point(x, y):
+
+def run_clustering(image_paths, image_names, feature_type, n_clusters=5, output_dir=None,
+                   visualization_title=None, auto_clusters=False, image_type=None, run_id=None):
     """
-    根据肘部法则找到最佳拐点
-    Find the optimal elbow point
+    运行完整的聚类流程
+    Run complete clustering pipeline
 
     Args:
-        x (list): x坐标值
-                 x-coordinate values
-        y (list): y坐标值
-                 y-coordinate values
+        image_paths (list): 图像路径列表
+                            List of image paths
+        image_names (list): 图像名称列表
+                            List of image names
+        feature_type (str): 特征类型 ('traditional', 'deep')
+                            Feature type
+        n_clusters (int, optional): 簇的数量
+                                    Number of clusters
+        output_dir (str, optional): 输出目录
+                                    Output directory
+        visualization_title (str, optional): 可视化标题
+                                             Visualization title
+        auto_clusters (bool, optional): 是否自动确定最佳聚类数量
+                                        Whether to automatically determine the optimal number of clusters
+        image_type (str, optional): 图像类型，用于文件名
+                                   Image type for filename
+        run_id (str, optional): 运行标识，用于唯一文件名
+                               Run identifier for unique filenames
 
     Returns:
-        int: 最佳拐点对应的x值
-             x-value of the optimal elbow point
+        tuple: (labels, metrics, features) 聚类标签、评估指标和特征
+                                           Clustering labels, evaluation metrics, and features
     """
-    # 标准化x和y
-    # Normalize x and y
-    x_norm = np.array(x)
-    y_norm = np.array(y)
+    # 设置默认输出目录
+    # Set default output directory
+    if output_dir is None:
+        output_dir = 'clustering_results'
+    os.makedirs(output_dir, exist_ok=True)
 
-    # 如果数据点太少，返回中间点
-    # If too few data points, return the middle point
-    if len(x_norm) < 3:
-        return x_norm[len(x_norm) // 2]
+    # 设置默认可视化标题
+    # Set default visualization title
+    if visualization_title is None:
+        visualization_title = f"{feature_type.capitalize()} Features + Hierarchical Clustering"
 
-    # 标准化到[0,1]范围
-    # Normalize to [0,1] range
-    x_norm = (x_norm - min(x_norm)) / (max(x_norm) - min(x_norm))
-    y_norm = (y_norm - min(y_norm)) / (max(y_norm) - min(y_norm))
+    # 提取特征
+    # Extract features
+    print(f"\nExtracting {feature_type} features from {len(image_paths)} images...")
+    features_list = []
 
-    # 计算到直线的距离
-    # Calculate distance to the line
-    a = np.array([x_norm[0], y_norm[0]])
-    b = np.array([x_norm[-1], y_norm[-1]])
+    for image_path in tqdm(image_paths):
+        if feature_type == 'traditional':
+            features = extract_traditional_features(image_path)
+        elif feature_type == 'deep':
+            features = extract_deep_features(image_path)
+        else:
+            print(f"Error: Unsupported feature type {feature_type}")
+            return None, None, None
 
-    # 计算直线的方向向量
-    # Calculate direction vector of the line
-    direction = b - a
+        if features is not None:
+            features_list.append(features)
 
-    # 计算每个点到直线的距离
-    # Calculate distance of each point to the line
-    distances = []
-    for i in range(len(x_norm)):
-        point = np.array([x_norm[i], y_norm[i]])
-        # 垂直距离公式：|(p-a)×(b-a)|/|b-a|
-        # Perpendicular distance formula: |(p-a)×(b-a)|/|b-a|
-        distance = abs(np.cross(point - a, direction)) / np.linalg.norm(direction)
-        distances.append(distance)
+    # 检查是否所有特征都成功提取
+    # Check if all features were successfully extracted
+    if len(features_list) != len(image_paths):
+        print(f"Warning: Only {len(features_list)} out of {len(image_paths)} features were extracted successfully.")
 
-    # 找到距离最大的点
-    # Find the point with maximum distance
-    elbow_index = np.argmax(distances)
+        # 更新图像名称列表以匹配成功提取的特征
+        # Update image names list to match successfully extracted features
+        valid_indices = [i for i, f in enumerate(features_list) if f is not None]
+        image_names = [image_names[i] for i in valid_indices if i < len(image_names)]
 
-    return x[elbow_index]
+    # 将特征列表转换为NumPy数组
+    # Convert features list to NumPy array
+    features_array = np.array(features_list)
+
+    # 标准化特征
+    # Standardize features
+    scaler = StandardScaler()
+    features_scaled = scaler.fit_transform(features_array)
+
+    # 如果启用了自动确定聚类数量
+    # If auto_clusters is enabled
+    if auto_clusters:
+        optimal_n_clusters = determine_optimal_clusters(
+            features_scaled,
+            image_type=image_type,
+            feature_type=feature_type,
+            output_dir=output_dir
+        )
+        print(f"Using automatically determined number of clusters: {optimal_n_clusters}")
+        n_clusters = optimal_n_clusters
+
+    # 层次聚类
+    # Hierarchical clustering
+    print(f"\nPerforming hierarchical clustering...")
+    labels, metrics = hierarchical_clustering(features_scaled, n_clusters=n_clusters)
+
+    # 输出评估指标
+    # Output evaluation metrics
+    print("\nClustering evaluation metrics:")
+    for metric_name, metric_value in metrics.items():
+        if not np.isnan(metric_value):
+            print(f"  {metric_name}: {metric_value:.4f}")
+        else:
+            print(f"  {metric_name}: N/A")
+
+    # 获取聚类的唯一标签和每个聚类的大小
+    # Get unique cluster labels and size of each cluster
+    unique_labels = np.unique(labels)
+    cluster_sizes = [np.sum(labels == label) for label in unique_labels]
+
+    print("\nClustering results:")
+    for label, size in zip(unique_labels, cluster_sizes):
+        if label == -1:
+            print(f"  Noise points: {size}")
+        else:
+            print(f"  Cluster {label}: {size} images")
+
+    # 可视化聚类结果
+    # Visualize clustering results
+    if output_dir is not None:
+        # 构建文件名前缀
+        filename_prefix = ""
+        if image_type:
+            filename_prefix += f"{image_type}_"
+        filename_prefix += f"{feature_type}_hierarchical"
+
+        # 添加聚类数量或自动聚类标志
+        if auto_clusters:
+            filename_prefix += f"_auto"
+        else:
+            filename_prefix += f"_{n_clusters}"
+
+        # 添加运行标识
+        if run_id:
+            filename_prefix += f"_{run_id}"
+
+        output_path = os.path.join(output_dir, f"{filename_prefix}_clustering.png")
+        visualize_clustering(features_scaled, labels, image_names, visualization_title, output_path)
+
+    return labels, metrics, features_scaled
+
+
+def run_all_types(image_dir, output_dir, n_clusters=5, max_images=None, auto_clusters=False, run_id=None):
+    """
+    对所有图像类型运行层次聚类
+    Run hierarchical clustering for all image types
+
+    Args:
+        image_dir (str): 图像目录
+                         Image directory
+        output_dir (str): 输出目录
+                          Output directory
+        n_clusters (int, optional): 簇的数量
+                                    Number of clusters
+        max_images (int, optional): 每种类型的最大图像数量
+                                    Maximum number of images for each type
+        auto_clusters (bool, optional): 是否自动确定最佳聚类数量
+                                        Whether to automatically determine the optimal number of clusters
+        run_id (str, optional): 运行标识，用于唯一文件名
+                               Run identifier for unique filenames
+    """
+    # 创建输出目录
+    # Create output directory
+    os.makedirs(output_dir, exist_ok=True)
+
+    # 生成运行标识（如果未提供）
+    # Generate run identifier (if not provided)
+    if run_id is None:
+        from datetime import datetime
+        run_id = datetime.now().strftime('%Y%m%d_%H%M%S')
+
+    # 定义图像类型和特征类型
+    # Define image types and feature types
+    image_types = ['wavelet', 'markov', 'multichannel']
+    feature_types = ['traditional', 'deep']
+
+    # 存储所有结果
+    # Store all results
+    all_results = {}
+
+    # 对于每种图像类型
+    # For each image type
+    for img_type in image_types:
+        print(f"\n\n===== Processing {img_type} images =====")
+
+        # 加载图像
+        # Load images
+        img_dir = os.path.join(image_dir, img_type)
+        if not os.path.exists(img_dir):
+            print(f"Error: Directory not found: {img_dir}")
+            continue
+
+        image_paths, image_names = load_images(image_dir, img_type, max_images=max_images)
+
+        if len(image_paths) == 0:
+            print(f"No images found in {img_dir}")
+            continue
+
+        # 创建该图像类型的输出目录
+        # Create output directory for this image type
+        img_output_dir = os.path.join(output_dir, img_type)
+        os.makedirs(img_output_dir, exist_ok=True)
+
+        # 对于每种特征类型
+        # For each feature type
+        for feature_type in feature_types:
+            print(f"\n----- {img_type} + {feature_type} features + hierarchical clustering -----")
+
+            # 设置可视化标题
+            # Set visualization title
+            visualization_title = f"{img_type.capitalize()} + {feature_type.capitalize()} Features + Hierarchical Clustering"
+
+            # 运行聚类
+            # Run clustering
+            try:
+                _, metrics, _ = run_clustering(
+                    image_paths=image_paths,
+                    image_names=image_names,
+                    feature_type=feature_type,
+                    n_clusters=n_clusters,
+                    output_dir=img_output_dir,
+                    visualization_title=visualization_title,
+                    auto_clusters=auto_clusters,
+                    image_type=img_type,
+                    run_id=run_id
+                )
+
+                # 存储结果
+                # Store results
+                result_key = f"{img_type}_{feature_type}"
+                all_results[result_key] = metrics
+            except Exception as e:
+                print(f"Error processing {img_type}_{feature_type}: {str(e)}")
+                continue
+
+    # 生成结果比较表格
+    # Generate results comparison table
+    generate_results_table(all_results, output_dir, run_id=run_id)
 
 
 def generate_results_table(results, output_dir, run_id=None):
@@ -835,31 +953,28 @@ def generate_results_table(results, output_dir, run_id=None):
         # 对于每种特征提取方法
         # For each feature extraction method
         for feature_type in ['traditional', 'deep']:
-            # 对于每种聚类算法
-            # For each clustering algorithm
-            for cluster_method in ['kmeans', 'dbscan', 'hierarchical']:
-                # 获取结果键
-                # Get result key
-                key = f"{img_type}_{feature_type}_{cluster_method}"
+            # 获取结果键
+            # Get result key
+            key = f"{img_type}_{feature_type}"
 
-                # 如果键存在
-                # If key exists
-                if key in results:
-                    # 获取评估指标
-                    # Get evaluation metrics
-                    metric_values = results[key]
+            # 如果键存在
+            # If key exists
+            if key in results:
+                # 获取评估指标
+                # Get evaluation metrics
+                metric_values = results[key]
 
-                    # 添加到表格数据
-                    # Add to table data
-                    row = [img_type, feature_type, cluster_method]
-                    for metric in metrics:
-                        row.append(f"{metric_values[metric]:.4f}" if not np.isnan(metric_values[metric]) else "N/A")
+                # 添加到表格数据
+                # Add to table data
+                row = [img_type, feature_type]
+                for metric in metrics:
+                    row.append(f"{metric_values[metric]:.4f}" if not np.isnan(metric_values[metric]) else "N/A")
 
-                    table_data.append(row)
+                table_data.append(row)
 
     # 创建数据框
     # Create dataframe
-    df = pd.DataFrame(table_data, columns=['Image Type', 'Feature Type', 'Clustering Method',
+    df = pd.DataFrame(table_data, columns=['Image Type', 'Feature Type',
                                            'Silhouette Score', 'Calinski-Harabasz Score', 'Davies-Bouldin Score'])
 
     # 保存为CSV文件
@@ -871,7 +986,6 @@ def generate_results_table(results, output_dir, run_id=None):
     # 创建热力图
     # Create heatmap
     create_metrics_heatmap(df, output_dir, run_id=run_id)
-
 
 
 def create_metrics_heatmap(df, output_dir, run_id=None):
@@ -914,8 +1028,8 @@ def create_metrics_heatmap(df, output_dir, run_id=None):
             # Use mean as aggregation function, ignore NaN values
             heatmap_df = pd.pivot_table(
                 df_numeric,
-                index=['Image Type', 'Feature Type'],
-                columns='Clustering Method',
+                index='Image Type',
+                columns='Feature Type',
                 values=metric,
                 aggfunc='mean'
             )
@@ -956,268 +1070,6 @@ def create_metrics_heatmap(df, output_dir, run_id=None):
             print(f"Warning: Could not create heatmap for {metric}: {str(e)}")
 
 
-def run_clustering(image_paths, image_names, feature_type, cluster_method, n_clusters=5, output_dir=None,
-                   eps=0.5, min_samples=5, visualization_title=None, auto_clusters=False,
-                   image_type=None, run_id=None):
-    """
-    运行完整的聚类流程
-    Run complete clustering pipeline
-
-    Args:
-        image_paths (list): 图像路径列表
-                            List of image paths
-        image_names (list): 图像名称列表
-                            List of image names
-        feature_type (str): 特征类型 ('traditional', 'deep')
-                            Feature type
-        cluster_method (str): 聚类方法 ('kmeans', 'dbscan', 'hierarchical')
-                              Clustering method
-        n_clusters (int, optional): 簇的数量（用于K-means和层次聚类）
-                                    Number of clusters (for K-means and hierarchical clustering)
-        output_dir (str, optional): 输出目录
-                                    Output directory
-        eps (float, optional): DBSCAN的邻域半径
-                               Neighborhood radius for DBSCAN
-        min_samples (int, optional): DBSCAN的最小样本数
-                                     Minimum number of samples for DBSCAN
-        visualization_title (str, optional): 可视化标题
-                                             Visualization title
-        auto_clusters (bool, optional): 是否自动确定最佳聚类数量
-                                        Whether to automatically determine the optimal number of clusters
-        image_type (str, optional): 图像类型，用于文件名
-                                   Image type for filename
-        run_id (str, optional): 运行标识，用于唯一文件名
-                               Run identifier for unique filenames
-
-    Returns:
-        tuple: (labels, metrics, features) 聚类标签、评估指标和特征
-                                           Clustering labels, evaluation metrics, and features
-    """
-    # 设置默认输出目录
-    # Set default output directory
-    if output_dir is None:
-        output_dir = 'clustering_results'
-    os.makedirs(output_dir, exist_ok=True)
-
-    # 设置默认可视化标题
-    # Set default visualization title
-    if visualization_title is None:
-        visualization_title = f"{feature_type.capitalize()} Features + {cluster_method.capitalize()} Clustering"
-
-    # 提取特征
-    # Extract features
-    print(f"\nExtracting {feature_type} features from {len(image_paths)} images...")
-    features_list = []
-
-    for image_path in tqdm(image_paths):
-        if feature_type == 'traditional':
-            features = extract_traditional_features(image_path)
-        elif feature_type == 'deep':
-            features = extract_deep_features(image_path)
-        else:
-            print(f"Error: Unsupported feature type {feature_type}")
-            return None, None, None
-
-        if features is not None:
-            features_list.append(features)
-
-    # 检查是否所有特征都成功提取
-    # Check if all features were successfully extracted
-    if len(features_list) != len(image_paths):
-        print(f"Warning: Only {len(features_list)} out of {len(image_paths)} features were extracted successfully.")
-
-        # 更新图像名称列表以匹配成功提取的特征
-        # Update image names list to match successfully extracted features
-        valid_indices = [i for i, f in enumerate(features_list) if f is not None]
-        image_names = [image_names[i] for i in valid_indices if i < len(image_names)]
-
-    # 将特征列表转换为NumPy数组
-    # Convert features list to NumPy array
-    features_array = np.array(features_list)
-
-    # 标准化特征
-    # Standardize features
-    scaler = StandardScaler()
-    features_scaled = scaler.fit_transform(features_array)
-
-    # 如果启用了自动确定聚类数量且是kmeans或hierarchical
-    # If auto_clusters is enabled and method is kmeans or hierarchical
-    if auto_clusters and cluster_method in ['kmeans', 'hierarchical']:
-        optimal_n_clusters = determine_optimal_clusters(
-            features_scaled,
-            image_type=image_type,
-            feature_type=feature_type,
-            output_dir=output_dir
-        )
-        print(f"Using automatically determined number of clusters: {optimal_n_clusters}")
-        n_clusters = optimal_n_clusters
-
-    # 聚类
-    # Clustering
-    print(f"\nPerforming {cluster_method} clustering...")
-    if cluster_method == 'kmeans':
-        labels, metrics = kmeans_clustering(features_scaled, n_clusters=n_clusters)
-    elif cluster_method == 'dbscan':
-        labels, metrics = dbscan_clustering(features_scaled, eps=eps, min_samples=min_samples)
-    elif cluster_method == 'hierarchical':
-        labels, metrics = hierarchical_clustering(features_scaled, n_clusters=n_clusters)
-    else:
-        print(f"Error: Unsupported clustering method {cluster_method}")
-        return None, None, None
-
-    # 输出评估指标
-    # Output evaluation metrics
-    print("\nClustering evaluation metrics:")
-    for metric_name, metric_value in metrics.items():
-        if not np.isnan(metric_value):
-            print(f"  {metric_name}: {metric_value:.4f}")
-        else:
-            print(f"  {metric_name}: N/A")
-
-    # 获取聚类的唯一标签和每个聚类的大小
-    # Get unique cluster labels and size of each cluster
-    unique_labels = np.unique(labels)
-    cluster_sizes = [np.sum(labels == label) for label in unique_labels]
-
-    print("\nClustering results:")
-    for label, size in zip(unique_labels, cluster_sizes):
-        if label == -1:
-            print(f"  Noise points: {size}")
-        else:
-            print(f"  Cluster {label}: {size} images")
-
-    # 可视化聚类结果
-    # Visualize clustering results
-    if output_dir is not None:
-        # 构建文件名前缀
-        filename_prefix = ""
-        if image_type:
-            filename_prefix += f"{image_type}_"
-        filename_prefix += f"{feature_type}_{cluster_method}"
-
-        # 添加聚类数量或自动聚类标志
-        if auto_clusters:
-            filename_prefix += f"_auto"
-        else:
-            filename_prefix += f"_{n_clusters}"
-
-        # 添加运行标识
-        if run_id:
-            filename_prefix += f"_{run_id}"
-
-        output_path = os.path.join(output_dir, f"{filename_prefix}_clustering.png")
-        visualize_clustering(features_scaled, labels, image_names, visualization_title, output_path)
-
-    return labels, metrics, features_scaled
-
-def run_all_methods(image_dir, output_dir, n_clusters=5, eps=0.5, min_samples=5, max_images=None, auto_clusters=False, run_id=None):
-    """
-    运行所有聚类方法的组合
-    Run all combinations of clustering methods
-
-    Args:
-        image_dir (str): 图像目录
-                         Image directory
-        output_dir (str): 输出目录
-                          Output directory
-        n_clusters (int, optional): 簇的数量（用于K-means和层次聚类）
-                                    Number of clusters (for K-means and hierarchical clustering)
-        eps (float, optional): DBSCAN的邻域半径
-                               Neighborhood radius for DBSCAN
-        min_samples (int, optional): DBSCAN的最小样本数
-                                     Minimum number of samples for DBSCAN
-        max_images (int, optional): 每种类型的最大图像数量
-                                    Maximum number of images for each type
-        auto_clusters (bool, optional): 是否自动确定最佳聚类数量
-                                        Whether to automatically determine the optimal number of clusters
-        run_id (str, optional): 运行标识，用于唯一文件名
-                               Run identifier for unique filenames
-    """
-    # 创建输出目录
-    # Create output directory
-    os.makedirs(output_dir, exist_ok=True)
-
-    # 生成运行标识（如果未提供）
-    # Generate run identifier (if not provided)
-    if run_id is None:
-        from datetime import datetime
-        run_id = datetime.now().strftime('%Y%m%d_%H%M%S')
-
-    # 定义图像类型、特征类型和聚类方法
-    # Define image types, feature types, and clustering methods
-    image_types = ['wavelet', 'markov', 'multichannel']
-    feature_types = ['traditional', 'deep']
-    cluster_methods = ['kmeans', 'dbscan', 'hierarchical']
-
-    # 存储所有结果
-    # Store all results
-    all_results = {}
-
-    # 对于每种图像类型
-    # For each image type
-    for img_type in image_types:
-        print(f"\n\n===== Processing {img_type} images =====")
-
-        # 加载图像
-        # Load images
-        img_dir = os.path.join(image_dir, img_type)
-        if not os.path.exists(img_dir):
-            print(f"Error: Directory not found: {img_dir}")
-            continue
-
-        image_paths, image_names = load_images(image_dir, img_type, max_images=max_images)
-
-        if len(image_paths) == 0:
-            print(f"No images found in {img_dir}")
-            continue
-
-        # 创建该图像类型的输出目录
-        # Create output directory for this image type
-        img_output_dir = os.path.join(output_dir, img_type)
-        os.makedirs(img_output_dir, exist_ok=True)
-
-        # 对于每种特征类型
-        # For each feature type
-        for feature_type in feature_types:
-            # 对于每种聚类方法
-            # For each clustering method
-            for cluster_method in cluster_methods:
-                print(f"\n----- {img_type} + {feature_type} features + {cluster_method} clustering -----")
-
-                # 设置可视化标题
-                # Set visualization title
-                visualization_title = f"{img_type.capitalize()} + {feature_type.capitalize()} Features + {cluster_method.capitalize()} Clustering"
-
-                # 运行聚类
-                # Run clustering
-                try:
-                    _, metrics, _ = run_clustering(
-                        image_paths=image_paths,
-                        image_names=image_names,
-                        feature_type=feature_type,
-                        cluster_method=cluster_method,
-                        n_clusters=n_clusters,
-                        output_dir=img_output_dir,
-                        eps=eps,
-                        min_samples=min_samples,
-                        visualization_title=visualization_title,
-                        auto_clusters=auto_clusters,
-                        image_type=img_type,
-                        run_id=run_id
-                    )
-
-                    # 存储结果
-                    # Store results
-                    result_key = f"{img_type}_{feature_type}_{cluster_method}"
-                    all_results[result_key] = metrics
-                except Exception as e:
-                    print(f"Error processing {img_type}_{feature_type}_{cluster_method}: {str(e)}")
-                    continue
-
-    # 生成结果比较表格
-    # Generate results comparison table
-    generate_results_table(all_results, output_dir, run_id=run_id)
-
 def main():
     """
     主函数
@@ -1239,18 +1091,13 @@ def main():
 
     # 聚类方法参数
     # Clustering method parameters
-    parser.add_argument('--method', type=str, default='traditional_kmeans',
-                        choices=['traditional_kmeans', 'traditional_dbscan', 'traditional_hierarchical',
-                                 'deep_kmeans', 'deep_dbscan', 'deep_hierarchical', 'run_all'],
+    parser.add_argument('--method', type=str, default='traditional_hierarchical',
+                        choices=['traditional_hierarchical', 'deep_hierarchical', 'run_all'],
                         help='Clustering method to use')
     parser.add_argument('--n_clusters', type=int, default=5,
-                        help='Number of clusters for K-means and hierarchical clustering')
+                        help='Number of clusters for hierarchical clustering')
     parser.add_argument('--auto_clusters', action='store_true',
-                        help='Automatically determine optimal number of clusters (for K-means and hierarchical clustering)')
-    parser.add_argument('--eps', type=float, default=0.5,
-                        help='Epsilon parameter for DBSCAN')
-    parser.add_argument('--min_samples', type=int, default=5,
-                        help='Minimum samples parameter for DBSCAN')
+                        help='Automatically determine optimal number of clusters')
 
     # 输出参数
     # Output parameters
@@ -1297,17 +1144,16 @@ def main():
     # 运行指定的方法
     # Run specified method
     if args.method == 'run_all':
-        print("\n===== Running all clustering methods =====")
-        run_all_methods(args.image_dir, output_dir,
-                        n_clusters=args.n_clusters,
-                        eps=args.eps, min_samples=args.min_samples,
-                        max_images=args.max_images,
-                        auto_clusters=args.auto_clusters,
-                        run_id=run_id)
+        print("\n===== Running clustering for all image types =====")
+        run_all_types(args.image_dir, output_dir,
+                      n_clusters=args.n_clusters,
+                      max_images=args.max_images,
+                      auto_clusters=args.auto_clusters,
+                      run_id=run_id)
     else:
         # 分解方法名称
         # Decompose method name
-        feature_type, cluster_method = args.method.split('_')
+        feature_type = args.method.split('_')[0]  # traditional 或 deep
 
         # 加载图像
         # Load images
@@ -1319,22 +1165,19 @@ def main():
 
         # 设置可视化标题
         # Set visualization title
-        visualization_title = f"{args.image_type.capitalize()} + {feature_type.capitalize()} Features + {cluster_method.capitalize()} Clustering"
+        visualization_title = f"{args.image_type.capitalize()} + {feature_type.capitalize()} Features + Hierarchical Clustering"
 
-        # 运行聚类 - 修复：添加新的参数
+        # 运行聚类
         run_clustering(
             image_paths=image_paths,
             image_names=image_names,
             feature_type=feature_type,
-            cluster_method=cluster_method,
             n_clusters=args.n_clusters,
             output_dir=output_dir,
-            eps=args.eps,
-            min_samples=args.min_samples,
             visualization_title=visualization_title,
             auto_clusters=args.auto_clusters,
-            image_type=args.image_type,  # 添加这个参数
-            run_id=run_id  # 添加这个参数
+            image_type=args.image_type,
+            run_id=run_id
         )
 
     # 计算运行时间
