@@ -907,54 +907,60 @@ def create_metrics_heatmap(df, output_dir):
     # Create heatmap for each metric
     metrics = ['Silhouette Score', 'Calinski-Harabasz Score', 'Davies-Bouldin Score']
 
+    # 首先将所有 "N/A" 转换为 np.nan
+    # First convert all "N/A" to np.nan
+    df_numeric = df.copy()
     for metric in metrics:
-        # 创建用于热力图的数据框
-        # Create dataframe for heatmap
-        heatmap_df = df.pivot_table(
-            index=['Image Type', 'Feature Type'],
-            columns='Clustering Method',
-            values=metric,
-            aggfunc='mean'
-        )
+        df_numeric[metric] = df_numeric[metric].apply(lambda x: np.nan if x == "N/A" else float(x))
 
-        # 对于Davies-Bouldin指数，较小的值更好
-        # For Davies-Bouldin index, smaller values are better
-        if metric == 'Davies-Bouldin Score':
-            # 将"N/A"转换为NaN
-            # Convert "N/A" to NaN
-            heatmap_df = heatmap_df.applymap(lambda x: np.nan if x == "N/A" else float(x))
-            # 反转颜色映射（较小的值为红色）
-            # Reverse colormap (smaller values are red)
-            cmap = 'RdYlGn_r'
-        else:
-            # 将"N/A"转换为NaN
-            # Convert "N/A" to NaN
-            heatmap_df = heatmap_df.applymap(lambda x: np.nan if x == "N/A" else float(x))
-            # 使用标准颜色映射（较大的值为绿色）
-            # Use standard colormap (larger values are green)
-            cmap = 'RdYlGn'
+    for metric in metrics:
+        try:
+            # 创建用于热力图的数据框
+            # Create dataframe for heatmap
+            # 使用mean作为聚合函数，忽略NaN值
+            # Use mean as aggregation function, ignore NaN values
+            heatmap_df = pd.pivot_table(
+                df_numeric,
+                index=['Image Type', 'Feature Type'],
+                columns='Clustering Method',
+                values=metric,
+                aggfunc='mean'
+            )
 
-        # 创建热力图
-        # Create heatmap
-        plt.figure(figsize=(10, 8))
-        sns.heatmap(heatmap_df, annot=True, cmap=cmap, fmt='.4f', linewidths=0.5)
+            # 对于Davies-Bouldin指数，较小的值更好
+            # For Davies-Bouldin index, smaller values are better
+            if metric == 'Davies-Bouldin Score':
+                # 使用反转的颜色映射（较小的值为绿色）
+                # Use reversed colormap (smaller values are green)
+                cmap = 'RdYlGn_r'
+            else:
+                # 使用标准颜色映射（较大的值为绿色）
+                # Use standard colormap (larger values are green)
+                cmap = 'RdYlGn'
 
-        # 添加标题
-        # Add title
-        plt.title(f'Comparison of {metric} Across Methods', fontsize=16)
+            # 创建热力图
+            # Create heatmap
+            plt.figure(figsize=(10, 8))
+            sns.heatmap(heatmap_df, annot=True, cmap=cmap, fmt='.4f', linewidths=0.5)
 
-        # 调整布局
-        # Adjust layout
-        plt.tight_layout()
+            # 添加标题
+            # Add title
+            plt.title(f'Comparison of {metric} Across Methods', fontsize=16)
 
-        # 保存热力图
-        # Save heatmap
-        metric_filename = metric.lower().replace(' ', '_').replace('-', '_')
-        output_path = os.path.join(output_dir, f'heatmap_{metric_filename}.png')
-        plt.savefig(output_path, dpi=300, bbox_inches='tight')
-        plt.close()
+            # 调整布局
+            # Adjust layout
+            plt.tight_layout()
 
-        print(f"Heatmap for {metric} saved to {output_path}")
+            # 保存热力图
+            # Save heatmap
+            metric_filename = metric.lower().replace(' ', '_').replace('-', '_')
+            output_path = os.path.join(output_dir, f'heatmap_{metric_filename}.png')
+            plt.savefig(output_path, dpi=300, bbox_inches='tight')
+            plt.close()
+
+            print(f"Heatmap for {metric} saved to {output_path}")
+        except Exception as e:
+            print(f"Warning: Could not create heatmap for {metric}: {str(e)}")
 
 
 def run_clustering(image_paths, image_names, feature_type, cluster_method, n_clusters=5, output_dir=None,
