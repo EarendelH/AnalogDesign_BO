@@ -50,6 +50,10 @@ def main():
                         help='Linkage criterion for hierarchical clustering (all = try all methods)')
     parser.add_argument('--max_clusters', type=int, default=10,
                         help='Maximum number of clusters to try')
+    # Add new parameter for manual cluster number specification
+    # 添加新参数，用于手动指定簇的数量
+    parser.add_argument('--n_clusters', type=int, default=None,
+                        help='Manually specify the number of clusters (overrides automatic calculation)')
 
     args = parser.parse_args()
 
@@ -81,107 +85,136 @@ def main():
     # 存储聚类结果的字典
     clustering_results = {}
 
-    # Step 3: Determine optimal number of clusters for each linkage method
-    # 步骤3：确定每种连接方法的最优簇数
-    print("\n===== Step 3: Finding optimal number of clusters =====")
+    # Check if user manually specified the number of clusters
+    # 检查用户是否手动指定了簇的数量
+    if args.n_clusters is not None:
+        print(f"\n===== Using manually specified number of clusters: {args.n_clusters} =====")
+        manual_n_clusters = args.n_clusters
 
-    if args.linkage == 'all':
-        # Evaluate all linkage methods
-        # 评估所有连接方法
-        all_results = evaluate_all_linkage_methods(dtw_matrix, preprocessed_signals, max_clusters=args.max_clusters)
+        # Validate the specified number of clusters
+        # 验证指定的簇数量
+        if manual_n_clusters < 2:
+            print("Error: Number of clusters must be at least 2.")
+            sys.exit(1)
+        if manual_n_clusters > len(signals):
+            print(
+                f"Error: Number of clusters ({manual_n_clusters}) cannot exceed the number of signals ({len(signals)}).")
+            sys.exit(1)
 
-        # Plot comparison of linkage methods
-        # 绘制连接方法的比较
-        plot_linkage_comparison(all_results, output_dir=output_dir)
-
-        # Create comparison table and determine overall best method
-        # 创建比较表并确定总体最佳方法
-        best_linkage, best_n_clusters = create_linkage_comparison_table(all_results, output_dir=output_dir)
-
-        print(f"\nBest linkage method: {best_linkage}")
-        print(f"Best number of clusters: {best_n_clusters}")
-
-        # Perform clustering for each linkage method with its optimal number of clusters
-        # 使用每种连接方法的最优簇数执行聚类
-        for linkage, results in all_results.items():
-            # Get the best number of clusters for this linkage method
-            # 获取该连接方法的最佳簇数
-            best_idx = np.argmax(results['silhouette'])
-            n_clusters = results['n_clusters'][best_idx]
-
-            print(f"\n===== Performing hierarchical clustering with {linkage} linkage and {n_clusters} clusters =====")
-            model = hierarchical_clustering(dtw_matrix, n_clusters=n_clusters, linkage=linkage)
-            labels = model.labels_
-            silhouette = evaluate_clustering(dtw_matrix, labels)
-            print(f"Hierarchical Clustering ({linkage}) Silhouette Score: {silhouette:.4f}")
-
-            # Store results for this linkage method
-            # 存储该连接方法的结果
-            clustering_results[linkage] = {
-                'model': model,
-                'labels': labels,
-                'silhouette': silhouette,
-                'n_clusters': n_clusters
-            }
-
-            # Plot evaluation metrics for this linkage method
-            # 绘制该连接方法的评估指标
-            plot_evaluation_metrics(results, output_dir=output_dir, linkage=linkage)
-
-            # Plot dendrogram (unclustered, for all hierarchical structure)
-            # 绘制树状图（未聚类，显示所有层次结构）
-            print(f"Creating dendrogram for {linkage} linkage...")
-            unclustered_model = hierarchical_clustering(
-                dtw_matrix,
-                n_clusters=None,
-                linkage=linkage,
-                distance_threshold=0.0
-            )
-            plot_dendrogram(unclustered_model, distance_matrix=dtw_matrix, signal_names=signal_names,
-                            output_dir=output_dir, linkage=linkage)
-
-            # Visualize clustering results for this linkage method
-            # 可视化该连接方法的聚类结果
-            print(f"Generating visualizations for {linkage} linkage...")
-            plot_dimensionality_reduction(dtw_matrix, labels, method='pca',
-                                          output_dir=output_dir, linkage=linkage)
-            plot_dimensionality_reduction(dtw_matrix, labels, method='tsne',
-                                          output_dir=output_dir, linkage=linkage)
-            plot_cluster_signals(time_points, preprocessed_signals, labels,
-                                 output_dir=output_dir, linkage=linkage)
-
-            # Print and save results for this linkage method
-            # 打印和保存该连接方法的结果
-            print(f"\n===== Clustering results for {linkage} linkage =====")
-            print_clustering_summary(labels, signal_names)
-            save_results(labels, signal_names, output_dir=output_dir, linkage=linkage)
-
-        # Step 4: Use the overall best method for the final results
-        # 步骤4：使用总体最佳方法作为最终结果
-        final_labels = clustering_results[best_linkage]['labels']
-        final_method = f"Hierarchical Clustering with {best_linkage} linkage"
-        final_silhouette = clustering_results[best_linkage]['silhouette']
-
+        # Skip the optimal cluster number detection step
+        # 跳过最优簇数检测步骤
+        best_n_clusters = manual_n_clusters
     else:
-        # Single linkage method specified
-        # 指定了单一连接方法
-        evaluation_results, best_n_clusters = find_optimal_clusters(
-            dtw_matrix,
-            preprocessed_signals,
-            max_clusters=args.max_clusters,
-            linkage=args.linkage
-        )
+        # Step 3: Determine optimal number of clusters for each linkage method
+        # 步骤3：确定每种连接方法的最优簇数
+        print("\n===== Step 3: Finding optimal number of clusters =====")
 
-        # Plot evaluation metrics
-        # 绘制评估指标
-        plot_evaluation_metrics(evaluation_results, output_dir=output_dir, linkage=args.linkage)
-        print(f"Recommended number of clusters: {best_n_clusters}")
+        if args.linkage == 'all':
+            # Evaluate all linkage methods
+            # 评估所有连接方法
+            all_results = evaluate_all_linkage_methods(dtw_matrix, preprocessed_signals, max_clusters=args.max_clusters)
 
-        # Step 4: Perform hierarchical clustering with the specified linkage method
-        # 步骤4：使用指定的连接方法执行层次聚类
+            # Plot comparison of linkage methods
+            # 绘制连接方法的比较
+            plot_linkage_comparison(all_results, output_dir=output_dir)
+
+            # Create comparison table and determine overall best method
+            # 创建比较表并确定总体最佳方法
+            best_linkage, best_n_clusters = create_linkage_comparison_table(all_results, output_dir=output_dir)
+
+            print(f"\nBest linkage method: {best_linkage}")
+            print(f"Best number of clusters: {best_n_clusters}")
+
+            # Perform clustering for each linkage method with its optimal number of clusters
+            # 使用每种连接方法的最优簇数执行聚类
+            for linkage, results in all_results.items():
+                # Get the best number of clusters for this linkage method
+                # 获取该连接方法的最佳簇数
+                best_idx = np.argmax(results['silhouette'])
+                n_clusters = results['n_clusters'][best_idx]
+
+                print(
+                    f"\n===== Performing hierarchical clustering with {linkage} linkage and {n_clusters} clusters =====")
+                model = hierarchical_clustering(dtw_matrix, n_clusters=n_clusters, linkage=linkage)
+                labels = model.labels_
+                silhouette = evaluate_clustering(dtw_matrix, labels)
+                print(f"Hierarchical Clustering ({linkage}) Silhouette Score: {silhouette:.4f}")
+
+                # Store results for this linkage method
+                # 存储该连接方法的结果
+                clustering_results[linkage] = {
+                    'model': model,
+                    'labels': labels,
+                    'silhouette': silhouette,
+                    'n_clusters': n_clusters
+                }
+
+                # Plot evaluation metrics for this linkage method
+                # 绘制该连接方法的评估指标
+                plot_evaluation_metrics(results, output_dir=output_dir, linkage=linkage)
+
+                # Plot dendrogram (unclustered, for all hierarchical structure)
+                # 绘制树状图（未聚类，显示所有层次结构）
+                print(f"Creating dendrogram for {linkage} linkage...")
+                unclustered_model = hierarchical_clustering(
+                    dtw_matrix,
+                    n_clusters=None,
+                    linkage=linkage,
+                    distance_threshold=0.0
+                )
+                plot_dendrogram(unclustered_model, distance_matrix=dtw_matrix, signal_names=signal_names,
+                                output_dir=output_dir, linkage=linkage)
+
+                # Visualize clustering results for this linkage method
+                # 可视化该连接方法的聚类结果
+                print(f"Generating visualizations for {linkage} linkage...")
+                plot_dimensionality_reduction(dtw_matrix, labels, method='pca',
+                                              output_dir=output_dir, linkage=linkage)
+                plot_dimensionality_reduction(dtw_matrix, labels, method='tsne',
+                                              output_dir=output_dir, linkage=linkage)
+                plot_cluster_signals(time_points, preprocessed_signals, labels,
+                                     output_dir=output_dir, linkage=linkage)
+
+                # Print and save results for this linkage method
+                # 打印和保存该连接方法的结果
+                print(f"\n===== Clustering results for {linkage} linkage =====")
+                print_clustering_summary(labels, signal_names)
+                save_results(labels, signal_names, output_dir=output_dir, linkage=linkage)
+
+            # Step 4: Use the overall best method for the final results
+            # 步骤4：使用总体最佳方法作为最终结果
+            final_labels = clustering_results[best_linkage]['labels']
+            final_method = f"Hierarchical Clustering with {best_linkage} linkage"
+            final_silhouette = clustering_results[best_linkage]['silhouette']
+
+        else:
+            # Single linkage method specified
+            # 指定了单一连接方法
+            evaluation_results, best_n_clusters = find_optimal_clusters(
+                dtw_matrix,
+                preprocessed_signals,
+                max_clusters=args.max_clusters,
+                linkage=args.linkage
+            )
+
+            # Plot evaluation metrics
+            # 绘制评估指标
+            plot_evaluation_metrics(evaluation_results, output_dir=output_dir, linkage=args.linkage)
+            print(f"Recommended number of clusters: {best_n_clusters}")
+
+    # Step 4: Perform hierarchical clustering with the final parameters
+    # 步骤4：使用最终参数执行层次聚类
+    if args.linkage == 'all' and args.n_clusters is None:
+        # We've already performed clustering for all methods above
+        # 我们已经在上面为所有方法执行了聚类
+        pass
+    else:
+        # Perform clustering with the specified linkage method and number of clusters
+        # 使用指定的连接方法和簇数执行聚类
+        active_n_clusters = args.n_clusters if args.n_clusters is not None else best_n_clusters
         print(
-            f"\n===== Performing hierarchical clustering with {args.linkage} linkage and {best_n_clusters} clusters =====")
-        model = hierarchical_clustering(dtw_matrix, n_clusters=best_n_clusters, linkage=args.linkage)
+            f"\n===== Performing hierarchical clustering with {args.linkage} linkage and {active_n_clusters} clusters =====")
+        model = hierarchical_clustering(dtw_matrix, n_clusters=active_n_clusters, linkage=args.linkage)
         labels = model.labels_
         silhouette = evaluate_clustering(dtw_matrix, labels)
         print(f"Hierarchical Clustering Silhouette Score: {silhouette:.4f}")
@@ -206,9 +239,9 @@ def main():
     # 步骤5：可视化最终聚类结果
     print("\n===== Visualizing final clustering results =====")
 
-    if args.linkage != 'all':
-        # Visualizations already created for 'all' linkage methods
-        # 'all'连接方法的可视化已经创建
+    if args.linkage != 'all' or args.n_clusters is not None:
+        # Visualizations already created for 'all' linkage methods (when not using manual n_clusters)
+        # 'all'连接方法的可视化已经创建（当不使用手动指定的簇数时）
         print("Generating PCA visualization...")
         plot_dimensionality_reduction(dtw_matrix, final_labels, method='pca',
                                       output_dir=output_dir, linkage=args.linkage)
@@ -226,11 +259,18 @@ def main():
     # Step 6: Print final results
     # 步骤6：打印最终结果
     print(f"\n===== Final clustering results ({final_method}) =====")
-    if args.linkage != 'all':
-        # Results already printed and saved for 'all' linkage methods
-        # 'all'连接方法的结果已经打印和保存
+    if args.linkage != 'all' or args.n_clusters is not None:
+        # Results already printed and saved for 'all' linkage methods (when not using manual n_clusters)
+        # 'all'连接方法的结果已经打印和保存（当不使用手动指定的簇数时）
         print_clustering_summary(final_labels, signal_names)
         save_results(final_labels, signal_names, output_dir=output_dir, linkage=args.linkage)
+
+    # Print information about how the clustering was performed
+    # 打印关于聚类如何执行的信息
+    if args.n_clusters is not None:
+        print(f"\nClustering was performed with manually specified {args.n_clusters} clusters.")
+    else:
+        print(f"\nClustering was performed with automatically determined {best_n_clusters} clusters.")
 
     print("\n===== Clustering completed successfully =====")
     print(f"Best clustering method: {final_method} (Silhouette Score: {final_silhouette:.4f})")
