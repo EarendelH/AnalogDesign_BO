@@ -378,7 +378,7 @@ def generate_trans_signals_csv(file_path):
         print(f"Error generating CSV file: {str(e)}")
         return None
 
-if __name__ == "__main__":
-    # Example usage
-    file_path = "/Users/hanwu/Downloads/Trans.raw/tran.tran.tran"
-    generate_trans_signals_csv(file_path)
+# if __name__ == "__main__":
+#     # Example usage
+#     file_path = "/Users/hanwu/Downloads/Trans.raw/Netlist/Trans_5.raw/tran.tran.tran"
+#     generate_trans_signals_csv(file_path)

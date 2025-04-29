@@ -51,8 +51,8 @@ def print_clustering_summary(labels, signal_names=None):
 
 def save_results(labels, signal_names=None, output_dir='output', linkage='average'):
     """
-    Save clustering results to a text file
-    将聚类结果保存到文本文件
+    Save clustering results to a text file and CSV file
+    将聚类结果保存到文本文件和CSV文件
 
     Args:
         labels (numpy.ndarray): Cluster labels
@@ -65,11 +65,14 @@ def save_results(labels, signal_names=None, output_dir='output', linkage='averag
                                 使用的连接方法
     """
     try:
-        # Create output file path
+        # Create output file paths
         # 创建输出文件路径
-        output_file = os.path.join(output_dir, f'clustering_results_{linkage}.txt')
+        output_text_file = os.path.join(output_dir, f'clustering_results_{linkage}.txt')
+        output_csv_file = os.path.join(output_dir, f'clustering_results_{linkage}.csv')
 
-        with open(output_file, 'w') as f:
+        # Save detailed results as text file (original format)
+        # 将详细结果保存为文本文件（原始格式）
+        with open(output_text_file, 'w') as f:
             f.write(f"===== Clustering Results (Linkage: {linkage}) =====\n\n")
 
             unique_labels = np.unique(labels)
@@ -104,11 +107,29 @@ def save_results(labels, signal_names=None, output_dir='output', linkage='averag
                         for idx in cluster_indices:
                             f.write(f"    - {signal_names[idx]}\n")
 
-        print(f"Clustering results saved to '{output_file}'")
+        # Save simplified results as CSV (only signal names and their cluster labels)
+        # 将简化结果保存为CSV（仅包含信号名称和它们的簇标签）
+        if signal_names:
+            import pandas as pd
+
+            # Create DataFrame with signal names and cluster labels
+            # 创建包含信号名称和簇标签的DataFrame
+            df = pd.DataFrame({
+                'signal_name': signal_names,
+                'cluster': labels
+            })
+
+            # Save to CSV file without index
+            # 保存为CSV文件，不包含索引
+            df.to_csv(output_csv_file, index=False)
+            print(f"Simplified clustering results saved to '{output_csv_file}'")
+        else:
+            print("Warning: No signal names provided, CSV file not created.")
+
+        print(f"Detailed clustering results saved to '{output_text_file}'")
 
     except Exception as e:
         print(f"Error in saving results: {str(e)}")
-
 
 def ensure_output_directory(max_clusters, linkage='average'):
     """
