@@ -15,9 +15,9 @@ corner_sim: false
 dc_check: false
 region_extract: false
 dynamic_queue: false
-restore_checkpoint: false
-checkpoint_path:
-train_iterations: 400
+restore_checkpoint: true
+checkpoint_path: /data/share/train_data/Haoqiang/checkpoint_select/Haoqiang_Batch32_78bdd/checkpoint_000015
+train_iterations: 5
 reward_func: cal_reward_Haoqiang
 log_level: INFO
 continue_steps_enable: false
