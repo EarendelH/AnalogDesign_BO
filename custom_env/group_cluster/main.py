@@ -4,6 +4,7 @@ import sys
 import numpy as np
 import matplotlib.pyplot as plt
 import glob
+import pandas as pd
 
 # Import modules
 from data_loader import load_data, preprocess_signals
@@ -46,8 +47,8 @@ def process_single_file(file_path, sakoe_chiba_radius, linkage, max_clusters, n_
                          结果的输出目录
 
     Returns:
-        tuple: (final_method, final_silhouette) - Final clustering method and silhouette score
-               (最终聚类方法, 最终轮廓系数)
+        tuple: (final_method, final_silhouette, labels, signal_names) - Final clustering method, silhouette score, cluster labels and signal names
+               (最终聚类方法, 最终轮廓系数, 聚类标签, 信号名称)
     """
     # Step 1: Load and preprocess data
     # 步骤1：加载和预处理数据
@@ -264,7 +265,7 @@ def process_single_file(file_path, sakoe_chiba_radius, linkage, max_clusters, n_
     print(f"\n===== Processing completed for file: {file_path} =====")
     print(f"Results and visualizations have been saved to the directory: {output_dir}")
 
-    return final_method, final_silhouette
+    return final_method, final_silhouette, final_labels, signal_names
 
 
 def main():
@@ -331,6 +332,11 @@ def main():
 
         print(f"Found {len(csv_files)} CSV files in {args.input_dir}")
 
+        # Dictionary to store all clustering results for summary CSV
+        # 用于存储所有聚类结果以生成汇总CSV的字典
+        all_results = {}
+        first_file_signal_names = None
+
         # Process each CSV file
         # 处理每个CSV文件
         for file_path in csv_files:
@@ -344,7 +350,7 @@ def main():
             # Process the current file
             # 处理当前文件
             try:
-                final_method, final_silhouette = process_single_file(
+                final_method, final_silhouette, labels, signal_names = process_single_file(
                     file_path=file_path,
                     sakoe_chiba_radius=args.sakoe_chiba_radius,
                     linkage=args.linkage,
@@ -353,12 +359,41 @@ def main():
                     output_dir=output_dir
                 )
 
+                # Store results for summary CSV
+                # 存储结果以生成汇总CSV
+                all_results[file_name] = labels
+
+                # Keep the first file's signal names for the summary CSV
+                # 保存第一个文件的信号名称以用于汇总CSV
+                if first_file_signal_names is None:
+                    first_file_signal_names = signal_names
+
                 print(
                     f"File {file_path} - Best clustering method: {final_method} (Silhouette Score: {final_silhouette:.4f})")
             except Exception as e:
                 print(f"Error processing file {file_path}: {str(e)}")
                 print("Continuing with next file...")
                 continue
+
+        # Create a summary CSV file if we have results
+        # 如果有结果，创建汇总CSV文件
+        if all_results and first_file_signal_names:
+            print("\n===== Creating summary CSV file =====")
+
+            # Initialize DataFrame with signal names column
+            # 初始化DataFrame，包含信号名称列
+            summary_df = pd.DataFrame({'signal_name': first_file_signal_names})
+
+            # Add a column for each file's cluster results
+            # 为每个文件的聚类结果添加一列
+            for file_name, labels in all_results.items():
+                summary_df[f'cluster_{file_name}'] = labels
+
+            # Save to CSV
+            # 保存为CSV
+            summary_file = os.path.join(args.input_dir, f'clustering_results_{args.linkage}.csv')
+            summary_df.to_csv(summary_file, index=False)
+            print(f"Summary CSV file saved to {summary_file}")
 
         print("\n===== Batch processing completed successfully =====")
 
@@ -379,7 +414,7 @@ def main():
 
         # Process the single file
         # 处理单个文件
-        final_method, final_silhouette = process_single_file(
+        final_method, final_silhouette, labels, signal_names = process_single_file(
             file_path=args.file,
             sakoe_chiba_radius=args.sakoe_chiba_radius,
             linkage=args.linkage,
