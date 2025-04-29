@@ -49,7 +49,7 @@ def print_clustering_summary(labels, signal_names=None):
                     print(f"    - {signal_names[idx]}")
 
 
-def save_results(labels, signal_names=None, output_dir='.', filename='clustering_results.txt'):
+def save_results(labels, signal_names=None, output_dir='output', linkage='average'):
     """
     Save clustering results to a text file
     将聚类结果保存到文本文件
@@ -59,20 +59,18 @@ def save_results(labels, signal_names=None, output_dir='.', filename='clustering
                                簇标签
         signal_names (list, optional): List of signal names
                                       信号名称列表
-        output_dir (str, optional): Output directory path
-                                   输出目录路径
-        filename (str, optional): Output file name
-                                 输出文件名
+        output_dir (str, optional): Output directory
+                                   输出目录
+        linkage (str, optional): Linkage method used
+                                使用的连接方法
     """
     try:
-        import os
-
-        # Create full path for output file
-        # 创建输出文件的完整路径
-        output_file = os.path.join(output_dir, filename)
+        # Create output file path
+        # 创建输出文件路径
+        output_file = os.path.join(output_dir, f'clustering_results_{linkage}.txt')
 
         with open(output_file, 'w') as f:
-            f.write("===== Clustering Results =====\n\n")
+            f.write(f"===== Clustering Results (Linkage: {linkage}) =====\n\n")
 
             unique_labels = np.unique(labels)
             n_clusters = len(unique_labels)
@@ -107,176 +105,41 @@ def save_results(labels, signal_names=None, output_dir='.', filename='clustering
                             f.write(f"    - {signal_names[idx]}\n")
 
         print(f"Clustering results saved to '{output_file}'")
-        return output_file
 
     except Exception as e:
         print(f"Error in saving results: {str(e)}")
-        return None
 
-def ensure_output_directory(algorithm_name=None, timestamp=None):
+
+def ensure_output_directory(max_clusters, linkage='average'):
     """
-    Ensure output directories exist with algorithm-specific paths
-    确保输出目录存在，并使用算法特定的路径
+    Ensure output directories exist with control options in the name
+    确保带有控制选项的输出目录存在
 
     Args:
-        algorithm_name (str, optional): Algorithm name to create specific directory
-                                        算法名称用于创建特定目录
-        timestamp (str, optional): Timestamp for unique directory naming
-                                  时间戳用于唯一目录命名
+        max_clusters (int): Maximum number of clusters
+                           最大簇数
+        linkage (str, optional): Linkage method ('all' for all methods)
+                                连接方法（'all'表示所有方法）
 
     Returns:
-        str: Path to the created output directory
-             创建的输出目录路径
+        str: Path to the output directory
+             输出目录路径
     """
-    import os
-    import datetime
+    # Create output directory name with control options
+    # 创建带有控制选项的输出目录名
+    dir_name = f"output_maxk{max_clusters}_linkage{linkage}"
 
-    # Create a base directory for all results
-    # 为所有结果创建一个基础目录
-    base_dir = 'clustering_results'
-    os.makedirs(base_dir, exist_ok=True)
+    # Create output directories
+    # 创建输出目录
+    os.makedirs(dir_name, exist_ok=True)
+    os.makedirs(os.path.join(dir_name, 'cluster_plots'), exist_ok=True)
 
-    # If no timestamp provided, create one
-    # 如果没有提供时间戳，则创建一个
-    if timestamp is None:
-        timestamp = datetime.datetime.now().strftime('%Y%m%d_%H%M%S')
-
-    # Create a specific directory for this run
-    # 为本次运行创建一个特定目录
-    if algorithm_name:
-        # Clean up algorithm name for directory use
-        # 清理算法名称，使其适合作为目录名
-        alg_name = algorithm_name.lower().replace(' ', '_')
-        output_dir = os.path.join(base_dir, f"{timestamp}_{alg_name}")
-    else:
-        output_dir = os.path.join(base_dir, timestamp)
-
-    os.makedirs(output_dir, exist_ok=True)
-
-    # Create subdirectories for plots
-    # 为图表创建子目录
-    cluster_plots_dir = os.path.join(output_dir, 'cluster_plots')
-    os.makedirs(cluster_plots_dir, exist_ok=True)
-
-    print(f"Output directory created: {output_dir}")
-    return output_dir
+    print(f"Output directories created: {dir_name}")
+    return dir_name
 
 
-def ensure_output_directory(algorithm_name=None, timestamp=None):
-    """
-    Ensure output directories exist with algorithm-specific paths
-    确保输出目录存在，并使用算法特定的路径
-
-    Args:
-        algorithm_name (str, optional): Algorithm name to create specific directory
-                                        算法名称用于创建特定目录
-        timestamp (str, optional): Timestamp for unique directory naming
-                                  时间戳用于唯一目录命名
-
-    Returns:
-        str: Path to the created output directory
-             创建的输出目录路径
-    """
-    import os
-    import datetime
-
-    # Create a base directory for all results
-    # 为所有结果创建一个基础目录
-    base_dir = 'clustering_results'
-    os.makedirs(base_dir, exist_ok=True)
-
-    # If no timestamp provided, create one
-    # 如果没有提供时间戳，则创建一个
-    if timestamp is None:
-        timestamp = datetime.datetime.now().strftime('%Y%m%d_%H%M%S')
-
-    # Create a specific directory for this run
-    # 为本次运行创建一个特定目录
-    if algorithm_name:
-        # Clean up algorithm name for directory use
-        # 清理算法名称，使其适合作为目录名
-        alg_name = algorithm_name.lower().replace(' ', '_')
-        output_dir = os.path.join(base_dir, f"{timestamp}_{alg_name}")
-    else:
-        output_dir = os.path.join(base_dir, timestamp)
-
-    os.makedirs(output_dir, exist_ok=True)
-
-    # Create subdirectories for plots
-    # 为图表创建子目录
-    cluster_plots_dir = os.path.join(output_dir, 'cluster_plots')
-    os.makedirs(cluster_plots_dir, exist_ok=True)
-
-    print(f"Output directory created: {output_dir}")
-    return output_dir
-
-
-def save_results(labels, signal_names=None, output_dir='.', filename='clustering_results.txt'):
-    """
-    Save clustering results to a text file
-    将聚类结果保存到文本文件
-
-    Args:
-        labels (numpy.ndarray): Cluster labels
-                               簇标签
-        signal_names (list, optional): List of signal names
-                                      信号名称列表
-        output_dir (str, optional): Output directory path
-                                   输出目录路径
-        filename (str, optional): Output file name
-                                 输出文件名
-    """
-    try:
-        import os
-
-        # Create full path for output file
-        # 创建输出文件的完整路径
-        output_file = os.path.join(output_dir, filename)
-
-        with open(output_file, 'w') as f:
-            f.write("===== Clustering Results =====\n\n")
-
-            unique_labels = np.unique(labels)
-            n_clusters = len(unique_labels)
-
-            f.write(f"Number of clusters: {n_clusters}\n\n")
-
-            # Write cluster sizes
-            # 写入簇大小
-            f.write("Cluster sizes:\n")
-            for label in sorted(unique_labels):
-                if label == -1:
-                    n_members = np.sum(labels == label)
-                    f.write(f"  Noise points: {n_members}\n")
-                else:
-                    n_members = np.sum(labels == label)
-                    f.write(f"  Cluster {label}: {n_members} signals\n")
-
-            # Write cluster members if signal names are provided
-            # 如果提供了信号名称，则写入簇成员
-            if signal_names:
-                f.write("\nCluster members:\n")
-                for label in sorted(unique_labels):
-                    if label == -1:
-                        f.write("  Noise points:\n")
-                        noise_indices = np.where(labels == label)[0]
-                        for idx in noise_indices:
-                            f.write(f"    - {signal_names[idx]}\n")
-                    else:
-                        f.write(f"  Cluster {label}:\n")
-                        cluster_indices = np.where(labels == label)[0]
-                        for idx in cluster_indices:
-                            f.write(f"    - {signal_names[idx]}\n")
-
-        print(f"Clustering results saved to '{output_file}'")
-        return output_file
-
-    except Exception as e:
-        print(f"Error in saving results: {str(e)}")
-        return None
-
-
-def plot_signals_overview(time_points, signals, signal_names=None, n_signals=None, figsize=(14, 8), output_dir='.'):
+def plot_signals_overview(time_points, signals, signal_names=None, n_signals=None, figsize=(14, 8),
+                          output_dir='output'):
     """
     Plot an overview of signals
     绘制信号概览
@@ -292,13 +155,10 @@ def plot_signals_overview(time_points, signals, signal_names=None, n_signals=Non
                                   绘制的信号数量（None = 全部）
         figsize (tuple, optional): Figure size
                                   图形大小
-        output_dir (str, optional): Output directory path
-                                   输出目录路径
+        output_dir (str, optional): Output directory
+                                   输出目录
     """
     try:
-        import os
-        import matplotlib.pyplot as plt
-
         # Determine how many signals to plot
         # 确定要绘制的信号数量
         if n_signals is None or n_signals > len(signals):
@@ -326,8 +186,8 @@ def plot_signals_overview(time_points, signals, signal_names=None, n_signals=Non
         plt.grid(True, alpha=0.3)
         plt.tight_layout()
 
-        # Create full path for output file
-        # 创建输出文件的完整路径
+        # Save the figure to the output directory
+        # 将图形保存到输出目录
         output_file = os.path.join(output_dir, 'signals_overview.png')
         plt.savefig(output_file, dpi=300, bbox_inches='tight')
         print(f"Signals overview saved as '{output_file}'")
@@ -338,35 +198,83 @@ def plot_signals_overview(time_points, signals, signal_names=None, n_signals=Non
         print(f"Error in plotting signals overview: {str(e)}")
 
 
-def save_parameters(params, output_dir='.', filename='parameters.txt'):
+def create_linkage_comparison_table(all_results, output_dir='output'):
     """
-    Save algorithm parameters to a text file
-    将算法参数保存到文本文件
+    Create a comparison table for different linkage methods
+    创建不同连接方法的比较表
 
     Args:
-        params (dict): Dictionary with parameter names and values
-                      包含参数名称和值的字典
-        output_dir (str, optional): Output directory path
-                                   输出目录路径
-        filename (str, optional): Output file name
-                                 输出文件名
+        all_results (dict): Dictionary with results for each linkage method
+                           包含每种连接方法结果的字典
+        output_dir (str, optional): Output directory
+                                   输出目录
+
+    Returns:
+        tuple: (best_method, best_n_clusters) - Best linkage method and number of clusters
+               (最佳连接方法，最佳簇数量)
     """
     try:
-        import os
+        # Get the best number of clusters for each method based on silhouette score
+        # 基于轮廓系数获取每种方法的最佳簇数
+        best_n_clusters = {}
+        best_scores = {
+            'silhouette': {},
+            'davies_bouldin': {},
+            'calinski_harabasz': {}
+        }
 
-        # Create full path for output file
-        # 创建输出文件的完整路径
-        output_file = os.path.join(output_dir, filename)
+        for linkage, results in all_results.items():
+            # Get the index of the maximum silhouette score
+            # 获取最大轮廓系数的索引
+            best_idx = np.argmax(results['silhouette'])
+            best_n_clusters[linkage] = results['n_clusters'][best_idx]
 
+            # Get the best scores for each metric
+            # 获取每个指标的最佳分数
+            best_scores['silhouette'][linkage] = max(results['silhouette'])
+            best_scores['davies_bouldin'][linkage] = min(results['davies_bouldin'])
+            best_scores['calinski_harabasz'][linkage] = max(results['calinski_harabasz'])
+
+        # Create comparison table
+        # 创建比较表
+        output_file = os.path.join(output_dir, 'linkage_comparison.txt')
         with open(output_file, 'w') as f:
-            f.write("===== Algorithm Parameters =====\n\n")
+            f.write("===== Linkage Methods Comparison =====\n\n")
 
-            for key, value in params.items():
-                f.write(f"{key}: {value}\n")
+            # Table header
+            # 表格标题
+            f.write(
+                "Linkage Method | Best Clusters | Silhouette Score | Davies-Bouldin Index | Calinski-Harabasz Index\n")
+            f.write(
+                "---------------|---------------|------------------|---------------------|------------------------\n")
 
-        print(f"Parameters saved to '{output_file}'")
-        return output_file
+            # Table rows
+            # 表格行
+            for linkage in all_results.keys():
+                f.write(f"{linkage.ljust(15)}| {str(best_n_clusters[linkage]).ljust(15)}| "
+                        f"{best_scores['silhouette'][linkage]:.4f}".ljust(18) + "| "
+                                                                                f"{best_scores['davies_bouldin'][linkage]:.4f}".ljust(
+                    21) + "| "
+                          f"{best_scores['calinski_harabasz'][linkage]:.4f}\n")
+
+            # Identify the best method for each metric
+            # 确定每个指标的最佳方法
+            best_silhouette_method = max(best_scores['silhouette'], key=best_scores['silhouette'].get)
+            best_db_method = min(best_scores['davies_bouldin'], key=best_scores['davies_bouldin'].get)
+            best_ch_method = max(best_scores['calinski_harabasz'], key=best_scores['calinski_harabasz'].get)
+
+            f.write("\nBest methods for each evaluation metric:\n")
+            f.write(
+                f"Silhouette Score (higher is better): {best_silhouette_method} ({best_scores['silhouette'][best_silhouette_method]:.4f})\n")
+            f.write(
+                f"Davies-Bouldin Index (lower is better): {best_db_method} ({best_scores['davies_bouldin'][best_db_method]:.4f})\n")
+            f.write(
+                f"Calinski-Harabasz Index (higher is better): {best_ch_method} ({best_scores['calinski_harabasz'][best_ch_method]:.4f})\n")
+
+        print(f"Linkage comparison table saved to '{output_file}'")
+
+        return best_silhouette_method, best_n_clusters[best_silhouette_method]
 
     except Exception as e:
-        print(f"Error in saving parameters: {str(e)}")
-        return None
+        print(f"Error in creating linkage comparison table: {str(e)}")
+        return None, None

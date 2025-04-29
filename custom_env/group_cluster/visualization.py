@@ -7,7 +7,7 @@ import matplotlib.cm as cm
 import os
 import sys
 
-def plot_dendrogram(model, distance_matrix=None, signal_names=None, figsize=(12, 8), output_dir='.'):
+def plot_dendrogram(model, distance_matrix=None, signal_names=None, figsize=(12, 8), output_dir='output', linkage='average'):
     """
     Plot dendrogram from hierarchical clustering
     绘制层次聚类的树状图
@@ -21,13 +21,12 @@ def plot_dendrogram(model, distance_matrix=None, signal_names=None, figsize=(12,
                                       信号名称列表
         figsize (tuple, optional): Figure size
                                   图形大小
-        output_dir (str, optional): Output directory path
-                                   输出目录路径
+        output_dir (str, optional): Output directory
+                                   输出目录
+        linkage (str, optional): Linkage method used
+                                使用的连接方法
     """
     try:
-        import os
-        import matplotlib.pyplot as plt
-
         # Use scipy's hierarchical clustering to compute the linkage matrix
         # 使用scipy的层次聚类计算连接矩阵
         if distance_matrix is None:
@@ -52,7 +51,7 @@ def plot_dendrogram(model, distance_matrix=None, signal_names=None, figsize=(12,
         # Plot the dendrogram
         # 绘制树状图
         plt.figure(figsize=figsize)
-        plt.title('Hierarchical Clustering Dendrogram', fontsize=15)
+        plt.title(f'Hierarchical Clustering Dendrogram ({linkage} linkage)', fontsize=15)
         plt.xlabel('Signal Index or Signal Name', fontsize=12)
         plt.ylabel('Distance', fontsize=12)
 
@@ -66,9 +65,9 @@ def plot_dendrogram(model, distance_matrix=None, signal_names=None, figsize=(12,
         )
         plt.tight_layout()
 
-        # Save the figure
-        # 保存图形
-        output_file = os.path.join(output_dir, 'dendrogram.png')
+        # Save the figure to the output directory
+        # 将图形保存到输出目录
+        output_file = os.path.join(output_dir, f'dendrogram_{linkage}.png')
         plt.savefig(output_file, dpi=300, bbox_inches='tight')
         print(f"Dendrogram saved as '{output_file}'")
 
@@ -77,8 +76,7 @@ def plot_dendrogram(model, distance_matrix=None, signal_names=None, figsize=(12,
     except Exception as e:
         print(f"Error in plotting dendrogram: {str(e)}")
 
-
-def plot_dimensionality_reduction(distance_matrix, labels, method='pca', figsize=(10, 8), output_dir='.'):
+def plot_dimensionality_reduction(distance_matrix, labels, method='pca', figsize=(10, 8), output_dir='output', linkage='average'):
     """
     Plot dimensionality reduction of the distance matrix
     绘制距离矩阵的降维
@@ -92,35 +90,27 @@ def plot_dimensionality_reduction(distance_matrix, labels, method='pca', figsize
                                降维方法（'pca'或'tsne'）
         figsize (tuple, optional): Figure size
                                   图形大小
-        output_dir (str, optional): Output directory path
-                                   输出目录路径
+        output_dir (str, optional): Output directory
+                                   输出目录
+        linkage (str, optional): Linkage method used
+                                使用的连接方法
     """
     try:
-        import os
-        import numpy as np
-        import matplotlib.pyplot as plt
-        import matplotlib.cm as cm
-        from sklearn.decomposition import PCA
-        from sklearn.manifold import TSNE
-
-        # Convert distances to features for dimensionality reduction
-        # 将距离转换为降维的特征
-
         # Apply dimensionality reduction
         # 应用降维
         if method.lower() == 'pca':
             reducer = PCA(n_components=2)
             embedding = reducer.fit_transform(distance_matrix)
-            title = 'PCA of DTW Distances'
+            title = f'PCA of DTW Distances ({linkage} linkage)'
         elif method.lower() == 'tsne':
             reducer = TSNE(n_components=2, metric='precomputed', random_state=42)
             embedding = reducer.fit_transform(distance_matrix)
-            title = 't-SNE of DTW Distances'
+            title = f't-SNE of DTW Distances ({linkage} linkage)'
         else:
             print(f"Unknown method: {method}. Using PCA.")
             reducer = PCA(n_components=2)
             embedding = reducer.fit_transform(distance_matrix)
-            title = 'PCA of DTW Distances'
+            title = f'PCA of DTW Distances ({linkage} linkage)'
 
         # Plot the result
         # 绘制结果
@@ -155,10 +145,9 @@ def plot_dimensionality_reduction(distance_matrix, labels, method='pca', figsize
         plt.legend()
         plt.tight_layout()
 
-        # Save the figure
-        # 保存图形
-        filename = f"{method.lower()}_visualization.png"
-        output_file = os.path.join(output_dir, filename)
+        # Save the figure to the output directory
+        # 将图形保存到输出目录
+        output_file = os.path.join(output_dir, f'{method.lower()}_visualization_{linkage}.png')
         plt.savefig(output_file, dpi=300, bbox_inches='tight')
         print(f"{method.upper()} visualization saved as '{output_file}'")
 
@@ -166,7 +155,6 @@ def plot_dimensionality_reduction(distance_matrix, labels, method='pca', figsize
 
     except Exception as e:
         print(f"Error in plotting dimensionality reduction: {str(e)}")
-
 
 def plot_cluster_signals(time_points, signals, labels, figsize=(16, 10), output_dir='.'):
     """
@@ -430,3 +418,94 @@ def plot_evaluation_metrics(evaluation_results, figsize=(12, 8), output_dir='.')
 
     except Exception as e:
         print(f"Error in plotting evaluation metrics: {str(e)}")
+
+
+def plot_linkage_comparison(all_results, figsize=(15, 12), output_dir='output'):
+    """
+    Plot comparison of evaluation metrics for different linkage methods
+    绘制不同连接方法的评估指标比较
+
+    Args:
+        all_results (dict): Dictionary with results for each linkage method
+                           包含每种连接方法结果的字典
+        figsize (tuple, optional): Figure size
+                                  图形大小
+        output_dir (str, optional): Output directory
+                                   输出目录
+    """
+    try:
+        # Create subplots
+        # 创建子图
+        fig, axs = plt.subplots(3, 1, figsize=figsize, sharex=True)
+
+        # Get unique cluster numbers across all methods
+        # 获取所有方法中的唯一簇数
+        all_n_clusters = set()
+        for results in all_results.values():
+            all_n_clusters.update(results['n_clusters'])
+        all_n_clusters = sorted(list(all_n_clusters))
+
+        # Plot silhouette score comparison
+        # 绘制轮廓系数比较
+        for linkage, results in all_results.items():
+            # Create interpolated values for consistent x-axis
+            # 创建插值，使x轴一致
+            axs[0].plot(results['n_clusters'], results['silhouette'],
+                        'o-', linewidth=2, label=linkage)
+
+            # Highlight the best value for each method
+            # 突出显示每种方法的最佳值
+            best_idx = np.argmax(results['silhouette'])
+            best_n = results['n_clusters'][best_idx]
+            best_score = results['silhouette'][best_idx]
+            axs[0].scatter([best_n], [best_score], s=100, marker='*')
+
+        axs[0].set_ylabel('Silhouette Score\n(higher is better)')
+        axs[0].set_title('Comparison of Clustering Evaluation Metrics Across Linkage Methods')
+        axs[0].grid(True, alpha=0.3)
+        axs[0].legend(title='Linkage Method')
+
+        # Plot Davies-Bouldin index comparison
+        # 绘制Davies-Bouldin指数比较
+        for linkage, results in all_results.items():
+            axs[1].plot(results['n_clusters'], results['davies_bouldin'],
+                        'o-', linewidth=2, label=linkage)
+
+            # Highlight the best value for each method
+            # 突出显示每种方法的最佳值
+            best_idx = np.argmin(results['davies_bouldin'])
+            best_n = results['n_clusters'][best_idx]
+            best_score = results['davies_bouldin'][best_idx]
+            axs[1].scatter([best_n], [best_score], s=100, marker='*')
+
+        axs[1].set_ylabel('Davies-Bouldin Index\n(lower is better)')
+        axs[1].grid(True, alpha=0.3)
+        axs[1].legend(title='Linkage Method')
+
+        # Plot Calinski-Harabasz index comparison
+        # 绘制Calinski-Harabasz指数比较
+        for linkage, results in all_results.items():
+            axs[2].plot(results['n_clusters'], results['calinski_harabasz'],
+                        'o-', linewidth=2, label=linkage)
+
+            # Highlight the best value for each method
+            # 突出显示每种方法的最佳值
+            best_idx = np.argmax(results['calinski_harabasz'])
+            best_n = results['n_clusters'][best_idx]
+            best_score = results['calinski_harabasz'][best_idx]
+            axs[2].scatter([best_n], [best_score], s=100, marker='*')
+
+        axs[2].set_xlabel('Number of Clusters')
+        axs[2].set_ylabel('Calinski-Harabasz Index\n(higher is better)')
+        axs[2].grid(True, alpha=0.3)
+        axs[2].legend(title='Linkage Method')
+
+        plt.tight_layout()
+        output_file = os.path.join(output_dir, 'linkage_comparison_plot.png')
+        plt.savefig(output_file, dpi=300, bbox_inches='tight')
+        print(f"Linkage comparison plot saved as '{output_file}'")
+
+        plt.close()
+
+    except Exception as e:
+        print(f"Error in plotting linkage comparison: {str(e)}")
