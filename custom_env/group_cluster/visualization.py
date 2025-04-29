@@ -156,7 +156,7 @@ def plot_dimensionality_reduction(distance_matrix, labels, method='pca', figsize
     except Exception as e:
         print(f"Error in plotting dimensionality reduction: {str(e)}")
 
-def plot_cluster_signals(time_points, signals, labels, figsize=(16, 10), output_dir='.'):
+def plot_cluster_signals(time_points, signals, labels, figsize=(16, 10), output_dir='output', linkage='average'):
     """
     Plot signals grouped by cluster
     按簇分组绘制信号
@@ -170,72 +170,42 @@ def plot_cluster_signals(time_points, signals, labels, figsize=(16, 10), output_
                                簇标签
         figsize (tuple, optional): Figure size
                                   图形大小
-        output_dir (str, optional): Output directory path
-                                   输出目录路径
+        output_dir (str, optional): Output directory
+                                   输出目录
+        linkage (str, optional): Linkage method used
+                                使用的连接方法
     """
     try:
-        import os
-        import numpy as np
-        import matplotlib.pyplot as plt
-
         unique_labels = np.unique(labels)
         n_clusters = len(unique_labels)
 
-        # Check if there are noise points (DBSCAN specific)
-        # 检查是否存在噪声点（DBSCAN特有）
-        has_noise = -1 in unique_labels
-        n_valid_clusters = n_clusters - (1 if has_noise else 0)
-
         # Skip plotting if there's only one cluster or too many clusters
         # 如果只有一个簇或太多簇，则跳过绘图
-        if n_valid_clusters <= 0:
-            print("No valid clusters found (all points might be noise). Skipping cluster signals plot.")
+        if n_clusters == 1:
+            print("Only one cluster found. Skipping cluster signals plot.")
             return
-
-        if n_valid_clusters == 1:
-            print("Only one valid cluster found. Skipping cluster signals plot.")
-            return
-
-        # Create path for cluster plots directory
-        # 创建簇图目录的路径
-        cluster_plots_dir = os.path.join(output_dir, 'cluster_plots')
-        os.makedirs(cluster_plots_dir, exist_ok=True)
 
         # Determine subplot grid
         # 确定子图网格
-        n_cols = min(3, n_valid_clusters)
-        n_rows = int(np.ceil(n_valid_clusters / n_cols))
+        n_cols = min(3, n_clusters)
+        n_rows = int(np.ceil(n_clusters / n_cols))
+
+        # Create cluster_plots subdirectory in the output directory
+        # 在输出目录中创建cluster_plots子目录
+        cluster_plots_dir = os.path.join(output_dir, 'cluster_plots')
+        os.makedirs(cluster_plots_dir, exist_ok=True)
 
         # Plot all clusters
         # 绘制所有簇
         plt.figure(figsize=figsize)
 
-        plot_index = 1  # Track subplot index
-
         for i, label in enumerate(unique_labels):
             if label == -1:
-                # Plot noise points in a separate figure if they exist
-                # 如果存在噪声点，则在单独的图中绘制
-                noise_indices = np.where(labels == -1)[0]
-                if len(noise_indices) > 0:
-                    plt.figure(figsize=(12, 6))
-                    for idx in noise_indices:
-                        plt.plot(time_points, signals[idx], 'k-', alpha=0.2, linewidth=0.5)
-                    plt.title(f'Noise Points (n={len(noise_indices)})')
-                    plt.xlabel('Time')
-                    plt.ylabel('Signal Value (Z-normalized)')
-                    plt.grid(True, alpha=0.3)
-                    plt.tight_layout()
-                    output_file = os.path.join(cluster_plots_dir, 'noise_points.png')
-                    plt.savefig(output_file, dpi=300, bbox_inches='tight')
-                    print(f"Noise points plot saved as '{output_file}'")
-                    plt.close()
-                # Skip noise points in the main plot
-                # 在主图中跳过噪声点
+                # Skip noise points for visualization clarity
+                # 为了可视化清晰，跳过噪声点
                 continue
 
-            plt.subplot(n_rows, n_cols, plot_index)
-            plot_index += 1
+            plt.subplot(n_rows, n_cols, i + 1)
 
             # Get indices of signals in this cluster
             # 获取该簇中信号的索引
@@ -256,7 +226,7 @@ def plot_cluster_signals(time_points, signals, labels, figsize=(16, 10), output_
                 plt.legend()
 
         plt.tight_layout()
-        output_file = os.path.join(cluster_plots_dir, 'all_clusters.png')
+        output_file = os.path.join(cluster_plots_dir, f'all_clusters_{linkage}.png')
         plt.savefig(output_file, dpi=300, bbox_inches='tight')
         print(f"All clusters plot saved as '{output_file}'")
 
@@ -264,8 +234,8 @@ def plot_cluster_signals(time_points, signals, labels, figsize=(16, 10), output_
         # 更详细地单独绘制每个簇
         for label in unique_labels:
             if label == -1:
-                # Skip noise points for individual plots
-                # 跳过噪声点的单独绘图
+                # Skip noise points for visualization clarity
+                # 为了可视化清晰，跳过噪声点
                 continue
 
             plt.figure(figsize=(12, 6))
@@ -291,7 +261,7 @@ def plot_cluster_signals(time_points, signals, labels, figsize=(16, 10), output_
             plt.grid(True, alpha=0.3)
 
             plt.tight_layout()
-            output_file = os.path.join(cluster_plots_dir, f'cluster_{label}.png')
+            output_file = os.path.join(cluster_plots_dir, f'cluster_{label}_{linkage}.png')
             plt.savefig(output_file, dpi=300, bbox_inches='tight')
             print(f"Cluster {label} plot saved as '{output_file}'")
             plt.close()
@@ -318,14 +288,14 @@ def plot_cluster_signals(time_points, signals, labels, figsize=(16, 10), output_
             # 绘制平均信号
             plt.plot(time_points, mean_signal, linewidth=2, label=f'Cluster {label}')
 
-        plt.title('Comparison of Cluster Mean Signals')
+        plt.title(f'Comparison of Cluster Mean Signals ({linkage} linkage)')
         plt.xlabel('Time')
         plt.ylabel('Signal Value (Z-normalized)')
         plt.legend()
         plt.grid(True, alpha=0.3)
 
         plt.tight_layout()
-        output_file = os.path.join(cluster_plots_dir, 'cluster_means_comparison.png')
+        output_file = os.path.join(cluster_plots_dir, f'cluster_means_comparison_{linkage}.png')
         plt.savefig(output_file, dpi=300, bbox_inches='tight')
         print(f"Cluster means comparison saved as '{output_file}'")
 
@@ -334,8 +304,7 @@ def plot_cluster_signals(time_points, signals, labels, figsize=(16, 10), output_
     except Exception as e:
         print(f"Error in plotting cluster signals: {str(e)}")
 
-
-def plot_evaluation_metrics(evaluation_results, figsize=(12, 8), output_dir='.'):
+def plot_evaluation_metrics(evaluation_results, figsize=(12, 8), output_dir='output', linkage='average'):
     """
     Plot evaluation metrics for different numbers of clusters
     绘制不同簇数的评估指标
@@ -345,14 +314,12 @@ def plot_evaluation_metrics(evaluation_results, figsize=(12, 8), output_dir='.')
                                   包含评估结果的字典
         figsize (tuple, optional): Figure size
                                   图形大小
-        output_dir (str, optional): Output directory path
-                                   输出目录路径
+        output_dir (str, optional): Output directory
+                                   输出目录
+        linkage (str, optional): Linkage method used
+                                使用的连接方法
     """
     try:
-        import os
-        import numpy as np
-        import matplotlib.pyplot as plt
-
         plt.figure(figsize=figsize)
 
         # Create subplots
@@ -364,7 +331,7 @@ def plot_evaluation_metrics(evaluation_results, figsize=(12, 8), output_dir='.')
         axs[0].plot(evaluation_results['n_clusters'], evaluation_results['silhouette'],
                     'bo-', linewidth=2)
         axs[0].set_ylabel('Silhouette Score\n(higher is better)')
-        axs[0].set_title('Clustering Evaluation Metrics')
+        axs[0].set_title(f'Clustering Evaluation Metrics ({linkage} linkage)')
         axs[0].grid(True, alpha=0.3)
 
         # Highlight the best value
@@ -410,7 +377,7 @@ def plot_evaluation_metrics(evaluation_results, figsize=(12, 8), output_dir='.')
         axs[2].legend()
 
         plt.tight_layout()
-        output_file = os.path.join(output_dir, 'evaluation_metrics.png')
+        output_file = os.path.join(output_dir, f'evaluation_metrics_{linkage}.png')
         plt.savefig(output_file, dpi=300, bbox_inches='tight')
         print(f"Evaluation metrics plot saved as '{output_file}'")
 
@@ -418,7 +385,6 @@ def plot_evaluation_metrics(evaluation_results, figsize=(12, 8), output_dir='.')
 
     except Exception as e:
         print(f"Error in plotting evaluation metrics: {str(e)}")
-
 
 def plot_linkage_comparison(all_results, figsize=(15, 12), output_dir='output'):
     """
