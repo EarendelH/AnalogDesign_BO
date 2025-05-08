@@ -60,12 +60,15 @@ def load_data(file_path):
         # 提取信号
         signals = [df[name].values for name in signal_names]
 
-        # Check if all signals have the same length
-        # 检查所有信号是否具有相同的长度
+        # Check if all signals have the same length - modified to warning
+        # 检查所有信号是否具有相同的长度 - 修改为警告
         signal_lengths = [len(signal) for signal in signals]
         if len(set(signal_lengths)) > 1:
-            print("Error: Not all signals have the same length.")
-            sys.exit(1)
+            print("Warning: Not all signals have the same length.")
+            print("Signal lengths:")
+            for i, (name, length) in enumerate(zip(signal_names, signal_lengths)):
+                print(f"  - Signal {i}: '{name}', Length: {length}")
+            print("Signals will be rescaled to the shortest length.")
 
         return time_points, signal_names, signals
 
@@ -76,6 +79,78 @@ def load_data(file_path):
         print(f"Error: {str(e)}")
         sys.exit(1)
 
+
+def rescale_signals_to_min_length(signals, time_points=None):
+    """
+    Rescale all signals to the length of the shortest signal
+    将所有信号缩放到最短信号的长度
+
+    Args:
+        signals (list): List of signal arrays
+                        信号数组列表
+        time_points (numpy.ndarray, optional): Time points array
+                                              时间点数组
+
+    Returns:
+        tuple: (rescaled_signals, rescaled_time_points)
+               缩放后的信号、缩放后的时间点
+    """
+    # Find the length of the shortest signal
+    # 找到最短信号的长度
+    signal_lengths = [len(signal) for signal in signals]
+    min_length = min(signal_lengths)
+
+    # If all signals already have the same length, return as is
+    # 如果所有信号已经具有相同的长度，直接返回
+    if len(set(signal_lengths)) == 1:
+        if time_points is not None:
+            return signals, time_points
+        return signals
+
+    print(f"Rescaling all signals to the minimum length: {min_length}")
+
+    # Rescale each signal to the minimum length using interpolation
+    # 使用插值将每个信号缩放到最小长度
+    rescaled_signals = []
+    import scipy.interpolate as interp
+
+    for i, signal in enumerate(signals):
+        if len(signal) == min_length:
+            # No need to rescale if already at min_length
+            # 如果已经是最小长度，则不需要缩放
+            rescaled_signals.append(signal)
+        else:
+            # Create interpolation function
+            # 创建插值函数
+            x_original = np.linspace(0, 1, len(signal))
+            x_new = np.linspace(0, 1, min_length)
+            f = interp.interp1d(x_original, signal)
+
+            # Apply interpolation
+            # 应用插值
+            rescaled_signal = f(x_new)
+            rescaled_signals.append(rescaled_signal)
+
+            # Print rescaling info
+            # 打印缩放信息
+            print(f"  - Signal {i} rescaled from length {len(signal)} to {min_length}")
+
+    # Also rescale time_points if provided
+    # 如果提供了时间点，也对其进行缩放
+    rescaled_time_points = None
+    if time_points is not None:
+        if len(time_points) > min_length:
+            x_original = np.linspace(0, 1, len(time_points))
+            x_new = np.linspace(0, 1, min_length)
+            f = interp.interp1d(x_original, time_points)
+            rescaled_time_points = f(x_new)
+            print(f"  - Time points rescaled from length {len(time_points)} to {min_length}")
+        else:
+            rescaled_time_points = time_points
+
+        return rescaled_signals, rescaled_time_points
+
+    return rescaled_signals
 
 def preprocess_signals(signals):
     """

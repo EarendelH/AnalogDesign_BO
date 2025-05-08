@@ -7,7 +7,7 @@ import glob
 import pandas as pd
 
 # Import modules
-from data_loader import load_data, preprocess_signals
+from data_loader import load_data, preprocess_signals, rescale_signals_to_min_length
 from dtw_calculator import calculate_dtw_distance_matrix
 from clustering import hierarchical_clustering
 from cluster_evaluation import evaluate_clustering, find_optimal_clusters, evaluate_all_linkage_methods
@@ -56,6 +56,10 @@ def process_single_file(file_path, sakoe_chiba_radius, linkage, max_clusters, n_
     print("\n===== Step 1: Loading and preprocessing data =====")
     time_points, signal_names, signals = load_data(file_path)
     print(f"Loaded {len(signals)} signals with {len(time_points)} time points each")
+
+    # New: Check and process signals with different lengths
+    # 新增: 检查并处理不同长度的序列
+    signals, time_points = rescale_signals_to_min_length(signals, time_points)
 
     # Plot signals overview
     # 绘制信号概览
