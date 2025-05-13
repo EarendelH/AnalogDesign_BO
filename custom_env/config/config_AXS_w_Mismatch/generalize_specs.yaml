@@ -5,6 +5,13 @@ DC:
     bounds:
     - 0.00002
     - 0.000025
+Mismatch:
+  Mismatch_sigma:
+    objective: min
+    reward_type: optimal
+    bounds:
+    - 0.009
+    - 0.01
 Line_Reg:
   Line_Reg_lineReg:
     objective: min

@@ -6,6 +6,14 @@
   parse_func: findIQ_AXS
   simulation_item:
     - IQ
+- simulation_name: Mismatch
+  objective: min
+  netlist_name: Mismatch
+  simulation_file: mc1_separate
+  script_name: findDC
+  parse_func: findMismatch_AXS
+  simulation_item:
+    - sigma
 - simulation_name: Line_Reg
   objective: min
   netlist_name: Line_Reg
