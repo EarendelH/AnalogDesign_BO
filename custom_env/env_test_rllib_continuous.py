@@ -6,7 +6,7 @@ if __name__ == "__main__":
                                     'max_step': 1,
                                     'netlist_folder_name': 'netlist_template_Haoqiang',
                                     'specs_folder_name': 'sampled_specs_Haoqiang',
-                                    'config_folder_name': 'config_Haoqiang_Regroup',
+                                    'config_folder_name': 'config_Haoqiang_AutoGroup_7',
                                     'run_folder_name': 'run_test',
                                     'sim_output': False,
                                     'init_method': 'file',
