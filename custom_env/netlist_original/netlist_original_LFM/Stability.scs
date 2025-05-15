@@ -1,0 +1,390 @@
+// Generated for: spectre
+// Generated on: May 15 16:40:10 2025
+// Design library name: LDO_OPT_LouFM
+// Design cell name: tb_stb
+// Design view name: schematic
+simulator lang=spectre
+global 0
+parameters ILOAD=500u VIN=1.2 VIN_AC=1 CLOAD BIAS_SF
+include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_bip
+include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_dio
+include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_dio_33
+include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_mim
+include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_dio_dnw
+include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_dio_18
+include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_bip_npn
+include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_33
+include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_rfrtmom
+include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_mos_cap_25
+include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_18
+include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_disres
+include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_res
+include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_dio_na
+include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_rfmos_33
+include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_dio_hvt
+include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_rfmvar
+include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_rfmos_18
+include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_na
+include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_dio_na33
+include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_dio_lvt
+include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_rfres_sa
+include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_na33
+include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_dio_esd
+include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_rfmim
+include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_dio_25od33
+include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_25od33
+include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt
+include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_mos_cap
+include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_dio_25
+include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_dio_25ud18
+include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_25
+include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_rfmos
+include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_25ud18
+include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_dio_na25od33
+include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_rfjvar
+include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_rfmos_25
+include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_rtmom
+include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_na25od33
+include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_dio_na25
+include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_rfres_rpo
+include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_hvt
+include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_rfind
+include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_rfmvar_25
+include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_na25
+include "/data/PDK/pdk_installed/tsmc65_gp/tsmcN65/../models/spectre/crn65gplus_2d5_lk_v1d0.scs" section=tt_lvt
+
+// Library name: LDO_OPT_LouFM
+// Cell name: LDO_CORE
+// View name: schematic
+subckt LDO_CORE BIAS BIAS_CAP BIAS_SF GND STB_X STB_Y VDD VFB VOUT VREF
+    M11 (GND V2 net08 VDD) pch_lvt_mac l=60n w=1u multi=40 nf=1 sigma=1 \
+        sd=200n ad=1.75e-13 as=1.75e-13 pd=2.35u ps=2.35u nrd=0.1 nrs=0.1 \
+        sa=175.00n sb=175.00n sca=0 scb=0 scc=0 mismatchflag=1
+    M32 (net067 net067 GND GND) nch_25_mac l=1u w=1.5u multi=2 nf=1 \
+        sigma=1 sd=310.0n ad=3.45e-13 as=3.45e-13 pd=3.46u ps=3.46u \
+        nrd=0.103333 nrs=0.103333 sa=230.0n sb=230.0n sca=0 scb=0 scc=0 \
+        mismatchflag=1
+    M35 (net065 net067 GND GND) nch_25_mac l=1u w=1.5u multi=2 nf=1 \
+        sigma=1 sd=310.0n ad=3.45e-13 as=3.45e-13 pd=3.46u ps=3.46u \
+        nrd=0.103333 nrs=0.103333 sa=230.0n sb=230.0n sca=0 scb=0 scc=0 \
+        mismatchflag=1
+    M33 (EA_BIAS_N net0146 GND GND) nch_25_mac l=1u w=1.5u multi=2 nf=1 \
+        sigma=1 sd=310.0n ad=3.45e-13 as=3.45e-13 pd=3.46u ps=3.46u \
+        nrd=0.103333 nrs=0.103333 sa=230.0n sb=230.0n sca=0 scb=0 scc=0 \
+        mismatchflag=1
+    M22 (net086 VB2 GND GND) nch_25_mac l=1.2u w=500n multi=1 nf=1 sigma=1 \
+        sd=310.0n ad=1.15e-13 as=1.15e-13 pd=1.46u ps=1.46u nrd=0.31 \
+        nrs=0.31 sa=230.0n sb=230.0n sca=0 scb=0 scc=0 mismatchflag=1
+    M18 (VB1 VB2 GND GND) nch_25_mac l=1.2u w=500n multi=2 nf=1 sigma=1 \
+        sd=310.0n ad=1.15e-13 as=1.15e-13 pd=1.46u ps=1.46u nrd=0.31 \
+        nrs=0.31 sa=230.0n sb=230.0n sca=0 scb=0 scc=0 mismatchflag=1
+    M16 (VB2 VB2 GND GND) nch_25_mac l=1.2u w=500n multi=1 nf=1 sigma=1 \
+        sd=310.0n ad=1.15e-13 as=1.15e-13 pd=1.46u ps=1.46u nrd=0.31 \
+        nrs=0.31 sa=230.0n sb=230.0n sca=0 scb=0 scc=0 mismatchflag=1
+    M30 (net0146 net0146 GND GND) nch_25_mac l=1u w=1.5u multi=2 nf=1 \
+        sigma=1 sd=310.0n ad=3.45e-13 as=3.45e-13 pd=3.46u ps=3.46u \
+        nrd=0.103333 nrs=0.103333 sa=230.0n sb=230.0n sca=0 scb=0 scc=0 \
+        mismatchflag=1
+    M15 (net0115 net073 GND GND) nch_25_mac l=280n w=400n multi=1 nf=1 \
+        sigma=1 sd=310n ad=9.2e-14 as=9.2e-14 pd=1.26u ps=1.26u nrd=0.3875 \
+        nrs=0.3875 sa=230n sb=230n sca=0 scb=0 scc=0 mismatchflag=1
+    M9 (net0117 net073 GND GND) nch_25_mac l=280n w=400n multi=1 nf=1 \
+        sigma=1 sd=310n ad=9.2e-14 as=9.2e-14 pd=1.26u ps=1.26u nrd=0.3875 \
+        nrs=0.3875 sa=230n sb=230n sca=0 scb=0 scc=0 mismatchflag=1
+    C13 (EA_BIAS_P net115) capacitor c=1p
+    C31 (net031 GND) capacitor c=1p
+    M89 (VB VB GND GND) nch_mac l=800n w=200n multi=1 nf=1 sigma=1 sd=200n \
+        ad=3.5e-14 as=3.5e-14 pd=750.0n ps=750.0n nrd=0.5 nrs=0.5 \
+        sa=175.00n sb=175.00n sca=0 scb=0 scc=0 mismatchflag=1
+    M88 (net0164 VB net0144 GND) nch_mac l=100n w=200n multi=2 nf=1 \
+        sigma=1 sd=200n ad=3.5e-14 as=3.5e-14 pd=750.0n ps=750.0n nrd=0.5 \
+        nrs=0.5 sa=175.00n sb=175.00n sca=0 scb=0 scc=0 mismatchflag=1
+    M87 (V2 VB net0161 GND) nch_mac l=100n w=200n multi=2 nf=1 sigma=1 \
+        sd=200n ad=3.5e-14 as=3.5e-14 pd=750.0n ps=750.0n nrd=0.5 nrs=0.5 \
+        sa=175.00n sb=175.00n sca=0 scb=0 scc=0 mismatchflag=1
+    M80 (net0144 net0150 GND GND) nch_mac l=100n w=200n multi=3 nf=1 \
+        sigma=1 sd=200n ad=3.5e-14 as=3.5e-14 pd=750.0n ps=750.0n nrd=0.5 \
+        nrs=0.5 sa=175.00n sb=175.00n sca=0 scb=0 scc=0 mismatchflag=1
+    M81 (net0161 net0159 GND GND) nch_mac l=100n w=200n multi=3 nf=1 \
+        sigma=1 sd=200n ad=3.5e-14 as=3.5e-14 pd=750.0n ps=750.0n nrd=0.5 \
+        nrs=0.5 sa=175.00n sb=175.00n sca=0 scb=0 scc=0 mismatchflag=1
+    M63 (EA_BIAS_P net056 net0173 GND) nch_mac l=500n w=1u multi=1 nf=1 \
+        sigma=1 sd=200n ad=1.75e-13 as=1.75e-13 pd=2.35u ps=2.35u nrd=0.1 \
+        nrs=0.1 sa=175.00n sb=175.00n sca=0 scb=0 scc=0 mismatchflag=1
+    M62 (net0180 net056 net0174 GND) nch_mac l=500n w=1u multi=1 nf=1 \
+        sigma=1 sd=200n ad=1.75e-13 as=1.75e-13 pd=2.35u ps=2.35u nrd=0.1 \
+        nrs=0.1 sa=175.00n sb=175.00n sca=0 scb=0 scc=0 mismatchflag=1
+    M54 (net057 BIAS_EA_FC GND GND) nch_mac l=1.3u w=500n multi=2 nf=1 \
+        sigma=1 sd=200n ad=8.75e-14 as=8.75e-14 pd=1.35u ps=1.35u nrd=0.2 \
+        nrs=0.2 sa=175.00n sb=175.00n sca=0 scb=0 scc=0 mismatchflag=1
+    M60 (net0143 VFB net052 GND) nch_mac l=100n w=300n multi=2 nf=1 \
+        sigma=1 sd=200n ad=5.25e-14 as=5.25e-14 pd=950.0n ps=950.0n \
+        nrd=0.333333 nrs=0.333333 sa=175.00n sb=175.00n sca=0 scb=0 scc=0 \
+        mismatchflag=1
+    M83 (net0152 net0150 GND GND) nch_mac l=100n w=200n multi=1 nf=1 \
+        sigma=1 sd=200n ad=3.5e-14 as=3.5e-14 pd=750.0n ps=750.0n nrd=0.5 \
+        nrs=0.5 sa=175.00n sb=175.00n sca=0 scb=0 scc=0 mismatchflag=1
+    M53 (net058 BIAS_EA_FC GND GND) nch_mac l=1.3u w=500n multi=2 nf=1 \
+        sigma=1 sd=200n ad=8.75e-14 as=8.75e-14 pd=1.35u ps=1.35u nrd=0.2 \
+        nrs=0.2 sa=175.00n sb=175.00n sca=0 scb=0 scc=0 mismatchflag=1
+    M43 (net0174 net0180 GND GND) nch_mac l=1u w=1.2u multi=1 nf=1 sigma=1 \
+        sd=200n ad=2.1e-13 as=2.1e-13 pd=2.75u ps=2.75u nrd=0.0833333 \
+        nrs=0.0833333 sa=175.00n sb=175.00n sca=0 scb=0 scc=0 \
+        mismatchflag=1
+    M59 (net0142 VREF net052 GND) nch_mac l=100n w=300n multi=2 nf=1 \
+        sigma=1 sd=200n ad=5.25e-14 as=5.25e-14 pd=950.0n ps=950.0n \
+        nrd=0.333333 nrs=0.333333 sa=175.00n sb=175.00n sca=0 scb=0 scc=0 \
+        mismatchflag=1
+    M82 (net0228 net0159 GND GND) nch_mac l=100n w=200n multi=1 nf=1 \
+        sigma=1 sd=200n ad=3.5e-14 as=3.5e-14 pd=750.0n ps=750.0n nrd=0.5 \
+        nrs=0.5 sa=175.00n sb=175.00n sca=0 scb=0 scc=0 mismatchflag=1
+    M52 (net0173 net0180 GND GND) nch_mac l=1u w=1.2u multi=1 nf=1 sigma=1 \
+        sd=200n ad=2.1e-13 as=2.1e-13 pd=2.75u ps=2.75u nrd=0.0833333 \
+        nrs=0.0833333 sa=175.00n sb=175.00n sca=0 scb=0 scc=0 \
+        mismatchflag=1
+    M28 (net052 BIAS_EA_FC GND GND) nch_mac l=1.3u w=500n multi=2 nf=1 \
+        sigma=1 sd=200n ad=8.75e-14 as=8.75e-14 pd=1.35u ps=1.35u nrd=0.2 \
+        nrs=0.2 sa=175.00n sb=175.00n sca=0 scb=0 scc=0 mismatchflag=1
+    M42 (BIAS_EA_FC BIAS_EA_FC GND GND) nch_mac l=1.3u w=500n multi=2 nf=1 \
+        sigma=1 sd=200n ad=8.75e-14 as=8.75e-14 pd=1.35u ps=1.35u nrd=0.2 \
+        nrs=0.2 sa=175.00n sb=175.00n sca=0 scb=0 scc=0 mismatchflag=1
+    M19 (BIAS_FVF BIAS_FVF GND GND) nch_mac l=500n w=500n multi=1 nf=1 \
+        sigma=1 sd=200n ad=8.75e-14 as=8.75e-14 pd=1.35u ps=1.35u nrd=0.2 \
+        nrs=0.2 sa=175.00n sb=175.00n sca=0 scb=0 scc=0 mismatchflag=1
+    M20 (STB_Y BIAS_FVF GND GND) nch_mac l=500n w=500n multi=7 nf=1 \
+        sigma=1 sd=200n ad=8.75e-14 as=8.75e-14 pd=1.35u ps=1.35u nrd=0.2 \
+        nrs=0.2 sa=175.00n sb=175.00n sca=0 scb=0 scc=0 mismatchflag=1
+    M61 (net056 net056 GND GND) nch_25_mac l=400n w=400n multi=1 nf=1 \
+        sigma=1 sd=310.0n ad=9.2e-14 as=9.2e-14 pd=1.26u ps=1.26u \
+        nrd=0.3875 nrs=0.3875 sa=230.0n sb=230.0n sca=0 scb=0 scc=0 \
+        mismatchflag=1
+    M101 (VB BIAS_EA_RFC VDD VDD) pch_mac l=500n w=500n multi=1 nf=1 \
+        sigma=1 sd=200n ad=8.75e-14 as=8.75e-14 pd=1.35u ps=1.35u nrd=0.2 \
+        nrs=0.2 sa=175.00n sb=175.00n sca=0 scb=0 scc=0 mismatchflag=1
+    M100 (BIAS_EA_RFC BIAS_EA_RFC VDD VDD) pch_mac l=500n w=500n multi=1 \
+        nf=1 sigma=1 sd=200n ad=8.75e-14 as=8.75e-14 pd=1.35u ps=1.35u \
+        nrd=0.2 nrs=0.2 sa=175.00n sb=175.00n sca=0 scb=0 scc=0 \
+        mismatchflag=1
+    M98 (net0154 BIAS_EA_RFC VDD VDD) pch_mac l=500n w=500n multi=4 nf=1 \
+        sigma=1 sd=200n ad=8.75e-14 as=8.75e-14 pd=1.35u ps=1.35u nrd=0.2 \
+        nrs=0.2 sa=175.00n sb=175.00n sca=0 scb=0 scc=0 mismatchflag=1
+    M97 (V2 net0164 VDD VDD) pch_mac l=500n w=500n multi=3 nf=1 sigma=1 \
+        sd=200n ad=8.75e-14 as=8.75e-14 pd=1.35u ps=1.35u nrd=0.2 nrs=0.2 \
+        sa=175.00n sb=175.00n sca=0 scb=0 scc=0 mismatchflag=1
+    M96 (net0164 net0164 VDD VDD) pch_mac l=500n w=500n multi=3 nf=1 \
+        sigma=1 sd=200n ad=8.75e-14 as=8.75e-14 pd=1.35u ps=1.35u nrd=0.2 \
+        nrs=0.2 sa=175.00n sb=175.00n sca=0 scb=0 scc=0 mismatchflag=1
+    M95 (net0159 STB_X net0154 VDD) pch_mac l=150.0n w=600n multi=2 nf=1 \
+        sigma=1 sd=200n ad=1.05e-13 as=1.05e-13 pd=1.55u ps=1.55u \
+        nrd=0.166667 nrs=0.166667 sa=175.00n sb=175.00n sca=0 scb=0 scc=0 \
+        mismatchflag=1
+    M94 (net0150 VOUT1 net0154 VDD) pch_mac l=150.0n w=600n multi=2 nf=1 \
+        sigma=1 sd=200n ad=1.05e-13 as=1.05e-13 pd=1.55u ps=1.55u \
+        nrd=0.166667 nrs=0.166667 sa=175.00n sb=175.00n sca=0 scb=0 scc=0 \
+        mismatchflag=1
+    M91 (net0161 VOUT1 net0154 VDD) pch_mac l=150.0n w=600n multi=2 nf=1 \
+        sigma=1 sd=200n ad=1.05e-13 as=1.05e-13 pd=1.55u ps=1.55u \
+        nrd=0.166667 nrs=0.166667 sa=175.00n sb=175.00n sca=0 scb=0 scc=0 \
+        mismatchflag=1
+    M90 (net0144 STB_X net0154 VDD) pch_mac l=150.0n w=600n multi=2 nf=1 \
+        sigma=1 sd=200n ad=1.05e-13 as=1.05e-13 pd=1.55u ps=1.55u \
+        nrd=0.166667 nrs=0.166667 sa=175.00n sb=175.00n sca=0 scb=0 scc=0 \
+        mismatchflag=1
+    M72 (net056 net058 VDD VDD) pch_mac l=1.4u w=250.0n multi=2 nf=1 \
+        sigma=1 sd=200n ad=4.375e-14 as=4.375e-14 pd=850.0n ps=850.0n \
+        nrd=0.4 nrs=0.4 sa=175.00n sb=175.00n sca=0 scb=0 scc=0 \
+        mismatchflag=1
+    M71 (net058 net058 VDD VDD) pch_mac l=1.4u w=250.0n multi=2 nf=1 \
+        sigma=1 sd=200n ad=4.375e-14 as=4.375e-14 pd=850.0n ps=850.0n \
+        nrd=0.4 nrs=0.4 sa=175.00n sb=175.00n sca=0 scb=0 scc=0 \
+        mismatchflag=1
+    M70 (net0143 net058 VDD VDD) pch_mac l=300n w=500n multi=1 nf=1 \
+        sigma=1 sd=200n ad=8.75e-14 as=8.75e-14 pd=1.35u ps=1.35u nrd=0.2 \
+        nrs=0.2 sa=175.00n sb=175.00n sca=0 scb=0 scc=0 mismatchflag=1
+    M69 (net0142 net058 VDD VDD) pch_mac l=300n w=500n multi=1 nf=1 \
+        sigma=1 sd=200n ad=8.75e-14 as=8.75e-14 pd=1.35u ps=1.35u nrd=0.2 \
+        nrs=0.2 sa=175.00n sb=175.00n sca=0 scb=0 scc=0 mismatchflag=1
+    M67 (EA_BIAS_P net057 net0143 VDD) pch_mac l=300n w=500n multi=1 nf=1 \
+        sigma=1 sd=200n ad=8.75e-14 as=8.75e-14 pd=1.35u ps=1.35u nrd=0.2 \
+        nrs=0.2 sa=175.00n sb=175.00n sca=0 scb=0 scc=0 mismatchflag=1
+    M66 (net0180 net057 net0142 VDD) pch_mac l=300n w=500n multi=1 nf=1 \
+        sigma=1 sd=200n ad=8.75e-14 as=8.75e-14 pd=1.35u ps=1.35u nrd=0.2 \
+        nrs=0.2 sa=175.00n sb=175.00n sca=0 scb=0 scc=0 mismatchflag=1
+    M51 (net083 V2 VDD VDD) pch_mac l=800n w=200n multi=1 nf=1 sigma=1 \
+        sd=200n ad=3.5e-14 as=3.5e-14 pd=750.0n ps=750.0n nrd=0.5 nrs=0.5 \
+        sa=175.00n sb=175.00n sca=0 scb=0 scc=0 mismatchflag=1
+    M50 (net080 net080 VDD VDD) pch_mac l=600n w=600n multi=1 nf=1 sigma=1 \
+        sd=200n ad=1.05e-13 as=1.05e-13 pd=1.55u ps=1.55u nrd=0.166667 \
+        nrs=0.166667 sa=175.00n sb=175.00n sca=0 scb=0 scc=0 \
+        mismatchflag=1
+    M49 (net074 net080 VDD VDD) pch_mac l=600n w=600n multi=2 nf=1 sigma=1 \
+        sd=200n ad=1.05e-13 as=1.05e-13 pd=1.55u ps=1.55u nrd=0.166667 \
+        nrs=0.166667 sa=175.00n sb=175.00n sca=0 scb=0 scc=0 \
+        mismatchflag=1
+    M48 (BIAS_CAP BIAS_CAP VDD VDD) pch_mac l=200n w=500n multi=1 nf=1 \
+        sigma=1 sd=200n ad=8.75e-14 as=8.75e-14 pd=1.35u ps=1.35u nrd=0.2 \
+        nrs=0.2 sa=175.00n sb=175.00n sca=0 scb=0 scc=0 mismatchflag=1
+    M47 (net074 BIAS_CAP VDD VDD) pch_mac l=200n w=500n multi=1 nf=1 \
+        sigma=1 sd=200n ad=8.75e-14 as=8.75e-14 pd=1.35u ps=1.35u nrd=0.2 \
+        nrs=0.2 sa=175.00n sb=175.00n sca=0 scb=0 scc=0 mismatchflag=1
+    M41 (VB2 BIAS_EA_CAP VDD VDD) pch_mac l=600n w=150.0n multi=2 nf=1 \
+        sigma=1 sd=200n ad=2.625e-14 as=2.625e-14 pd=650.0n ps=650.0n \
+        nrd=0.666667 nrs=0.666667 sa=175.00n sb=175.00n sca=0 scb=0 scc=0 \
+        mismatchflag=1
+    M40 (BIAS_EA_CAP BIAS_EA_CAP VDD VDD) pch_mac l=600n w=150.0n multi=2 \
+        nf=1 sigma=1 sd=200n ad=2.625e-14 as=2.625e-14 pd=650.0n ps=650.0n \
+        nrd=0.666667 nrs=0.666667 sa=175.00n sb=175.00n sca=0 scb=0 scc=0 \
+        mismatchflag=1
+    M39 (net076 BIAS_EA_CAP VDD VDD) pch_mac l=600n w=150.0n multi=2 nf=1 \
+        sigma=1 sd=200n ad=2.625e-14 as=2.625e-14 pd=650.0n ps=650.0n \
+        nrd=0.666667 nrs=0.666667 sa=175.00n sb=175.00n sca=0 scb=0 scc=0 \
+        mismatchflag=1
+    M36 (net086 net086 VDD VDD) pch_mac l=300n w=300n multi=2 nf=1 sigma=1 \
+        sd=200n ad=5.25e-14 as=5.25e-14 pd=950.0n ps=950.0n nrd=0.333333 \
+        nrs=0.333333 sa=175.00n sb=175.00n sca=0 scb=0 scc=0 \
+        mismatchflag=1
+    M31 (net115 net086 VDD VDD) pch_mac l=300n w=300n multi=10 nf=1 \
+        sigma=1 sd=200n ad=5.25e-14 as=5.25e-14 pd=950.0n ps=950.0n \
+        nrd=0.333333 nrs=0.333333 sa=175.00n sb=175.00n sca=0 scb=0 scc=0 \
+        mismatchflag=1
+    M26 (net073 VB1 net0118 VDD) pch_mac l=100n w=500n multi=1 nf=1 \
+        sigma=1 sd=200n ad=8.75e-14 as=8.75e-14 pd=1.35u ps=1.35u nrd=0.2 \
+        nrs=0.2 sa=175.00n sb=175.00n sca=0 scb=0 scc=0 mismatchflag=1
+    M25 (net079 VB1 net0116 VDD) pch_mac l=100n w=500n multi=1 nf=1 \
+        sigma=1 sd=200n ad=8.75e-14 as=8.75e-14 pd=1.35u ps=1.35u nrd=0.2 \
+        nrs=0.2 sa=175.00n sb=175.00n sca=0 scb=0 scc=0 mismatchflag=1
+    M57 (net053 EA_BIAS_N net031 net053) pch_mac l=300n w=200n multi=1 \
+        nf=1 sigma=1 sd=200n ad=3.5e-14 as=3.5e-14 pd=750.0n ps=750.0n \
+        nrd=0.5 nrs=0.5 sa=175.00n sb=175.00n sca=0 scb=0 scc=0 \
+        mismatchflag=1
+    M14 (GND net079 net115 VDD) pch_mac l=100n w=500n multi=1 nf=1 sigma=1 \
+        sd=200n ad=8.75e-14 as=8.75e-14 pd=1.35u ps=1.35u nrd=0.2 nrs=0.2 \
+        sa=175.00n sb=175.00n sca=0 scb=0 scc=0 mismatchflag=1
+    M13 (BIAS_FVF net024 VDD VDD) pch_mac l=500n w=1u multi=10 nf=1 \
+        sigma=1 sd=200n ad=1.75e-13 as=1.75e-13 pd=2.35u ps=2.35u nrd=0.1 \
+        nrs=0.1 sa=175.00n sb=175.00n sca=0 scb=0 scc=0 mismatchflag=1
+    M12 (BIAS_EA_FC net024 VDD VDD) pch_mac l=500n w=1u multi=2 nf=1 \
+        sigma=1 sd=200n ad=1.75e-13 as=1.75e-13 pd=2.35u ps=2.35u nrd=0.1 \
+        nrs=0.1 sa=175.00n sb=175.00n sca=0 scb=0 scc=0 mismatchflag=1
+    M8 (net024 net024 VDD VDD) pch_mac l=500n w=1u multi=2 nf=1 sigma=1 \
+        sd=200n ad=1.75e-13 as=1.75e-13 pd=2.35u ps=2.35u nrd=0.1 nrs=0.1 \
+        sa=175.00n sb=175.00n sca=0 scb=0 scc=0 mismatchflag=1
+    M3 (net06 VOUT1 V2 net06) pch_mac l=300n w=200n multi=1 nf=1 sigma=1 \
+        sd=200n ad=3.5e-14 as=3.5e-14 pd=750.0n ps=750.0n nrd=0.5 nrs=0.5 \
+        sa=175.00n sb=175.00n sca=0 scb=0 scc=0 mismatchflag=1
+    M0 (net08 BIAS_SF VDD VDD) pch_mac l=100n w=1u multi=40 nf=1 sigma=1 \
+        sd=200n ad=1.75e-13 as=1.75e-13 pd=2.35u ps=2.35u nrd=0.1 nrs=0.1 \
+        sa=175.00n sb=175.00n sca=0 scb=0 scc=0 mismatchflag=1
+    M1 (BIAS_SF BIAS_SF VDD VDD) pch_mac l=100n w=1u multi=10 nf=1 sigma=1 \
+        sd=200n ad=1.75e-13 as=1.75e-13 pd=2.35u ps=2.35u nrd=0.1 nrs=0.1 \
+        sa=175.00n sb=175.00n sca=0 scb=0 scc=0 mismatchflag=1
+    M21 (STB_Y EA_BIAS_P VFB VFB) pch_mac l=500n w=1.2u multi=8 nf=1 \
+        sigma=1 sd=200n ad=2.1e-13 as=2.1e-13 pd=2.75u ps=2.75u \
+        nrd=0.0833333 nrs=0.0833333 sa=175.00n sb=175.00n sca=0 scb=0 \
+        scc=0 mismatchflag=1
+    M17 (VOUT net08 VDD VDD) pch_mac l=60n w=25.0u multi=120 nf=5 sigma=1 \
+        sd=200n ad=2.875e-12 as=2.875e-12 pd=31.15u ps=31.15u nrd=0.004 \
+        nrs=0.004 sa=175.00n sb=175.00n sca=0 scb=0 scc=0 mismatchflag=1
+    M45 (net0146 EA_BIAS_P net074 VDD) pch_hvt_mac l=200n w=1.5u multi=2 \
+        nf=1 sigma=1 sd=200n ad=2.625e-13 as=2.625e-13 pd=3.35u ps=3.35u \
+        nrd=0.0666667 nrs=0.0666667 sa=175.00n sb=175.00n sca=0 scb=0 \
+        scc=0 mismatchflag=1
+    M44 (net067 EA_BIAS_N net074 VDD) pch_hvt_mac l=200n w=1.5u multi=2 \
+        nf=1 sigma=1 sd=200n ad=2.625e-13 as=2.625e-13 pd=3.35u ps=3.35u \
+        nrd=0.0666667 nrs=0.0666667 sa=175.00n sb=175.00n sca=0 scb=0 \
+        scc=0 mismatchflag=1
+    M68 (net057 net057 VDD VDD) pch_25_mac l=400n w=400n multi=1 nf=1 \
+        sigma=1 sd=310.0n ad=9.2e-14 as=9.2e-14 pd=1.26u ps=1.26u \
+        nrd=0.3875 nrs=0.3875 sa=230.0n sb=230.0n sca=0 scb=0 scc=0 \
+        mismatchflag=1
+    M56 (net065 net065 VDD VDD) pch_25_mac l=500n w=400n multi=2 nf=1 \
+        sigma=1 sd=310.0n ad=9.2e-14 as=9.2e-14 pd=1.26u ps=1.26u \
+        nrd=0.3875 nrs=0.3875 sa=230.0n sb=230.0n sca=0 scb=0 scc=0 \
+        mismatchflag=1
+    M55 (EA_BIAS_N net065 VDD VDD) pch_25_mac l=500n w=400n multi=2 nf=1 \
+        sigma=1 sd=310.0n ad=9.2e-14 as=9.2e-14 pd=1.26u ps=1.26u \
+        nrd=0.3875 nrs=0.3875 sa=230.0n sb=230.0n sca=0 scb=0 scc=0 \
+        mismatchflag=1
+    M34 (VB1 VB1 VDD VDD) pch_25_mac l=900n w=600n multi=1 nf=1 sigma=1 \
+        sd=310.0n ad=1.38e-13 as=1.38e-13 pd=1.66u ps=1.66u nrd=0.258333 \
+        nrs=0.258333 sa=230.0n sb=230.0n sca=0 scb=0 scc=0 mismatchflag=1
+    M29 (net0116 EA_BIAS_P net076 net076) pch_25_mac l=300n w=400n multi=1 \
+        nf=1 sigma=1 sd=310.0n ad=9.2e-14 as=9.2e-14 pd=1.26u ps=1.26u \
+        nrd=0.3875 nrs=0.3875 sa=230.0n sb=230.0n sca=0 scb=0 scc=0 \
+        mismatchflag=1
+    M27 (net0118 net031 net076 net076) pch_25_mac l=300n w=400n multi=1 \
+        nf=1 sigma=1 sd=310.0n ad=9.2e-14 as=9.2e-14 pd=1.26u ps=1.26u \
+        nrd=0.3875 nrs=0.3875 sa=230.0n sb=230.0n sca=0 scb=0 scc=0 \
+        mismatchflag=1
+    M85 (net0150 VB net0152 net0152) nch_mac l=1u w=2u multi=2 nf=1 \
+        sigma=1 sd=200n ad=3.5e-13 as=3.5e-13 pd=4.35u ps=4.35u nrd=0.05 \
+        nrs=0.05 sa=175.00n sb=175.00n sca=0 scb=0 scc=0 mismatchflag=1
+    M86 (net0159 VB net0228 net0228) nch_mac l=1u w=2u multi=2 nf=1 \
+        sigma=1 sd=200n ad=3.5e-13 as=3.5e-13 pd=4.35u ps=4.35u nrd=0.05 \
+        nrs=0.05 sa=175.00n sb=175.00n sca=0 scb=0 scc=0 mismatchflag=1
+    M46 (net053 net031 EA_BIAS_N net053) nch_mac l=300n w=200n multi=1 \
+        nf=1 sigma=1 sd=200n ad=3.5e-14 as=3.5e-14 pd=750.0n ps=750.0n \
+        nrd=0.5 nrs=0.5 sa=175.00n sb=175.00n sca=0 scb=0 scc=0 \
+        mismatchflag=1
+    M38 (net083 net083 GND GND) nch_mac l=800n w=200n multi=1 nf=1 sigma=1 \
+        sd=200n ad=3.5e-14 as=3.5e-14 pd=750.0n ps=750.0n nrd=0.5 nrs=0.5 \
+        sa=175.00n sb=175.00n sca=0 scb=0 scc=0 mismatchflag=1
+    M37 (net080 net083 GND GND) nch_mac l=800n w=200n multi=2 nf=1 sigma=1 \
+        sd=200n ad=3.5e-14 as=3.5e-14 pd=750.0n ps=750.0n nrd=0.5 nrs=0.5 \
+        sa=175.00n sb=175.00n sca=0 scb=0 scc=0 mismatchflag=1
+    M24 (net073 VB2 net0117 GND) nch_mac l=60n w=200n multi=1 nf=1 sigma=1 \
+        sd=200n ad=3.5e-14 as=3.5e-14 pd=750n ps=750n nrd=0.5 nrs=0.5 \
+        sa=175n sb=175n sca=0 scb=0 scc=0 mismatchflag=1
+    M23 (net079 VB2 net0115 GND) nch_mac l=60n w=200n multi=1 nf=1 sigma=1 \
+        sd=200n ad=3.5e-14 as=3.5e-14 pd=750n ps=750n nrd=0.5 nrs=0.5 \
+        sa=175n sb=175n sca=0 scb=0 scc=0 mismatchflag=1
+    M2 (net06 V2 VOUT1 net06) nch_mac l=300n w=200n multi=1 nf=1 sigma=1 \
+        sd=200n ad=3.5e-14 as=3.5e-14 pd=750.0n ps=750.0n nrd=0.5 nrs=0.5 \
+        sa=175.00n sb=175.00n sca=0 scb=0 scc=0 mismatchflag=1
+    M4 (BIAS BIAS GND GND) nch_mac l=500n w=1u multi=2 nf=1 sigma=1 \
+        sd=200n ad=1.75e-13 as=1.75e-13 pd=2.35u ps=2.35u nrd=0.1 nrs=0.1 \
+        sa=175.00n sb=175.00n sca=0 scb=0 scc=0 mismatchflag=1
+    M6 (net024 BIAS GND GND) nch_mac l=500n w=1u multi=2 nf=1 sigma=1 \
+        sd=200n ad=1.75e-13 as=1.75e-13 pd=2.35u ps=2.35u nrd=0.1 nrs=0.1 \
+        sa=175.00n sb=175.00n sca=0 scb=0 scc=0 mismatchflag=1
+    M10 (BIAS_EA_CAP BIAS GND GND) nch_mac l=500n w=1u multi=2 nf=1 \
+        sigma=1 sd=200n ad=1.75e-13 as=1.75e-13 pd=2.35u ps=2.35u nrd=0.1 \
+        nrs=0.1 sa=175.00n sb=175.00n sca=0 scb=0 scc=0 mismatchflag=1
+    M5 (BIAS_VIN_INV BIAS GND GND) nch_mac l=500n w=1u multi=2 nf=1 \
+        sigma=1 sd=200n ad=1.75e-13 as=1.75e-13 pd=2.35u ps=2.35u nrd=0.1 \
+        nrs=0.1 sa=175.00n sb=175.00n sca=0 scb=0 scc=0 mismatchflag=1
+    M7 (BIAS_EA_RFC BIAS GND GND) nch_mac l=500n w=1u multi=10 nf=1 \
+        sigma=1 sd=200n ad=1.75e-13 as=1.75e-13 pd=2.35u ps=2.35u nrd=0.1 \
+        nrs=0.1 sa=175.00n sb=175.00n sca=0 scb=0 scc=0 mismatchflag=1
+ends LDO_CORE
+// End of subcircuit definition.
+
+// Library name: LDO_OPT_LouFM
+// Cell name: tb_stb
+// View name: schematic
+C0 (VOUT GND_OFFCHIP) capacitor c=CLOAD
+I5 (BIAS_CAP GND_OFFCHIP) isource dc=4u type=dc
+I4 (BIAS_SF GND_OFFCHIP) isource dc=BIAS_SF type=dc
+I3 (VDD_OFFCHIP BIAS) isource dc=1u type=dc
+I1 (VOUT GND_OFFCHIP) isource dc=ILOAD type=dc
+V5 (GND GND_OFFCHIP) vsource dc=0 type=dc
+V4 (VDD VDD_OFFCHIP) vsource dc=0 type=dc
+V3 (VREF GND_OFFCHIP) vsource dc=1 type=dc
+V1 (VDD_OFFCHIP GND_OFFCHIP) vsource dc=VIN mag=VIN_AC type=dc
+V0 (GND_OFFCHIP 0) vsource dc=0 type=dc
+IPRB0 (STB_X net02) iprobe
+I0 (BIAS BIAS_CAP BIAS_SF GND STB_X net02 VDD VOUT VOUT VREF) LDO_CORE
+simulatorOptions options psfversion="1.1.0" reltol=1e-3 vabstol=1e-6 \
+    iabstol=1e-12 temp=27 tnom=27 scalem=1.0 scale=1.0 gmin=1e-12 rforce=1 \
+    maxnotes=5 maxwarns=5 digits=5 cols=80 pivrel=1e-3 \
+    sensfile="../psf/sens.output" checklimitdest=psf 
+dcOp dc write="spectre.dc" maxiters=150 maxsteps=10000 annotate=status
+dcOpInfo info what=oppoint where=rawfile
+stb stb start=1 stop=1e8 dec=200 probe=IPRB0 annotate=status 
+modelParameter info what=models where=rawfile
+element info what=inst where=rawfile
+outputParameter info what=output where=rawfile
+designParamVals info what=parameters where=rawfile
+primitives info what=primitives where=rawfile
+subckts info what=subckts where=rawfile
+saveOptions options save=allpub
