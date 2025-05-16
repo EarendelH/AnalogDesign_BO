@@ -5,107 +5,164 @@ DC:
     bounds:
     - 0.000008
     - 0.00002
-Stability_1m:
-  Stability_1m_gainBandWidth:
-    objective: max
-    reward_type: optimal
-    bounds:
-    - 1000000.0
-    - 2000000.0
-  Stability_1m_phaseMargin:
-    objective: max
-    reward_type: satisfactory
-    bounds:
-    - 30.0
-    - 30.1
-Stability_50m:
-  Stability_50m_gainBandWidth:
-    objective: max
-    reward_type: optimal
-    bounds:
-    - 1000000.0
-    - 2000000.0
-  Stability_50m_phaseMargin:
-    objective: max
-    reward_type: satisfactory
-    bounds:
-    - 30.0
-    - 30.1
-Stability_100m:
-  Stability_100m_gainBandWidth:
-    objective: max
-    reward_type: optimal
-    bounds:
-    - 1000000.0
-    - 2000000.0
-  Stability_100m_phaseMargin:
-    objective: max
-    reward_type: satisfactory
-    bounds:
-    - 30.0
-    - 30.1
-Load_Reg:
-  Load_Reg_loadReg:
+Line_Reg_1m:
+  Line_Reg_1m_lineReg:
     objective: min
     reward_type: optimal
     bounds:
-    - 0.1
-    - 0.2
+    - 0.005
+    - 0.01
 Line_Reg_100m:
   Line_Reg_100m_lineReg:
     objective: min
     reward_type: optimal
     bounds:
     - 0.008
-    - 0.012
-Line_Reg_1m:
-  Line_Reg_1m_lineReg:
+    - 0.015
+Load_Reg:
+  Load_Reg_loadReg:
     objective: min
     reward_type: optimal
     bounds:
-    - 0.004
-    - 0.008
-Trans_1_2V:
-  Trans_1_2V_overShoot:
-    objective: min
-    reward_type: optimal
-    bounds:
-    - 0.07
-    - 0.11
-  Trans_1_2V_underShoot:
-    objective: min
-    reward_type: optimal
-    bounds:
-    - 0.06
-    - 0.1
-PSR:
-  PSR_psr_100:
+    - 0.12
+    - 0.2
+PSR_100m:
+  PSR_100m_psr_100:
     objective: max
     reward_type: optimal
     bounds:
     - 40.0
     - 50.0
-  PSR_psr_1k:
+  PSR_100m_psr_1k:
     objective: max
     reward_type: optimal
     bounds:
     - 35.0
     - 45.0
-  PSR_psr_10k:
+  PSR_100m_psr_10k:
     objective: max
     reward_type: optimal
     bounds:
     - 15.0
     - 25.0
-  PSR_psr_100k:
+  PSR_100m_psr_100k:
     objective: max
     reward_type: optimal
     bounds:
     - 0.0
     - 5.0
-  PSR_psr_1M:
+  PSR_100m_psr_1M:
     objective: max
     reward_type: optimal
     bounds:
     - 0.0
     - 0.1
+PSR_1m:
+  PSR_1m_psr_100:
+    objective: max
+    reward_type: optimal
+    bounds:
+    - 40.0
+    - 50.0
+  PSR_1m_psr_1k:
+    objective: max
+    reward_type: optimal
+    bounds:
+    - 35.0
+    - 45.0
+  PSR_1m_psr_10k:
+    objective: max
+    reward_type: optimal
+    bounds:
+    - 15.0
+    - 25.0
+  PSR_1m_psr_100k:
+    objective: max
+    reward_type: optimal
+    bounds:
+    - 0.0
+    - 5.0
+  PSR_1m_psr_1M:
+    objective: max
+    reward_type: optimal
+    bounds:
+    - 0.0
+    - 0.1
+Stability_1m_0_75V:
+  Stability_1m_0_75V_gainBandWidth:
+    objective: max
+    reward_type: optimal
+    bounds:
+    - 1000000.0
+    - 2000000.0
+  Stability_1m_0_75V_phaseMargin:
+    objective: max
+    reward_type: satisfactory
+    bounds:
+    - 30.0
+    - 30.1
+Stability_1m_1_2V:
+  Stability_1m_1_2V_gainBandWidth:
+    objective: max
+    reward_type: optimal
+    bounds:
+    - 1000000.0
+    - 2000000.0
+  Stability_1m_1_2V_phaseMargin:
+    objective: max
+    reward_type: satisfactory
+    bounds:
+    - 30.0
+    - 30.1
+Stability_100m_0_75V:
+  Stability_100m_0_75V_gainBandWidth:
+    objective: max
+    reward_type: optimal
+    bounds:
+    - 1000000.0
+    - 2000000.0
+  Stability_100m_0_75V_phaseMargin:
+    objective: max
+    reward_type: satisfactory
+    bounds:
+    - 30.0
+    - 30.1
+Stability_100m_1_2V:
+  Stability_100m_1_2V_gainBandWidth:
+    objective: max
+    reward_type: optimal
+    bounds:
+    - 1000000.0
+    - 2000000.0
+  Stability_100m_1_2V_phaseMargin:
+    objective: max
+    reward_type: satisfactory
+    bounds:
+    - 30.0
+    - 30.1
+Trans_0_75V:
+  Trans_0_75V_overShoot:
+    objective: min
+    reward_type: optimal
+    bounds:
+    - 0.11
+    - 0.22
+  Trans_0_75V_underShoot:
+    objective: min
+    reward_type: optimal
+    bounds:
+    - 0.077
+    - 0.15
+Trans_1_2V:
+  Trans_1_2V_overShoot:
+    objective: min
+    reward_type: optimal
+    bounds:
+    - 0.072
+    - 0.15
+  Trans_1_2V_underShoot:
+    objective: min
+    reward_type: optimal
+    bounds:
+    - 0.062
+    - 0.12
