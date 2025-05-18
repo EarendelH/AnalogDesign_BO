@@ -4,10 +4,10 @@ gpu_usage: 0
 generalize: true
 algorithm: PPO
 max_step: 1
-num_agents: 3
+num_agents: 4
 netlist_folder_name: netlist_template_AXS
 specs_folder_name: sampled_specs_AXS_no_Mismatch
-config_folder_name: config_AXS_Block
+config_folder_name: config_AXS_AutoGroup_4
 run_folder_name: run_test
 sim_output: false
 init_method: file
@@ -16,7 +16,7 @@ dc_check: false
 region_extract: false
 dynamic_queue: false
 restore_checkpoint: true
-checkpoint_path: /data/share/train_data/AXS/checkpoint/AXS_Batch64_Block_4b624_omBDSK/checkpoints/checkpoint_6
+checkpoint_path: /data/share/train_data/AXS/checkpoint/AXS_Batch64_AutoGroup4_3680c/checkpoint_000033
 train_iterations: 1000
 reward_func: cal_reward_AXS
 log_level: INFO
