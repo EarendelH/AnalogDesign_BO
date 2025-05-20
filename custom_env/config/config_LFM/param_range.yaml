@@ -9,6 +9,22 @@ other_variable:
     value:
       range: [5.0u, 15.0u]
       step: 0.2u
+  - variable_name: BIAS
+    value:
+      range: [0.5u, 5.0u]
+      step: 0.1u
+  - variable_name: BIAS_CAP
+    value:
+      range: [0.5u, 10.0u]
+      step: 0.1u
+  - variable_name: C13
+    value:
+      range: [0.5p, 2.0p]
+      step: 0.1p
+  - variable_name: C31
+    value:
+      range: [0.5p, 2.0p]
+      step: 0.1p
 M11:
   instance_type: pch_lvt_mac
   params:

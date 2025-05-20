@@ -152,9 +152,9 @@ ends LDO_CORE
 // Cell name: tb_stb
 // View name: schematic
 C0 (VOUT GND_OFFCHIP) capacitor c=CLOAD
-I5 (BIAS_CAP GND_OFFCHIP) isource dc=4u type=dc
+I5 (BIAS_CAP GND_OFFCHIP) isource dc=BIAS_CAP type=dc
 I4 (BIAS_SF GND_OFFCHIP) isource dc=BIAS_SF type=dc
-I3 (VDD_OFFCHIP BIAS) isource dc=1u type=dc
+I3 (VDD_OFFCHIP BIAS) isource dc=BIAS type=dc
 I1 (VOUT GND_OFFCHIP) isource dc=ILOAD type=dc
 V5 (GND GND_OFFCHIP) vsource dc=0 type=dc
 V4 (VDD VDD_OFFCHIP) vsource dc=0 type=dc
