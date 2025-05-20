@@ -4,9 +4,9 @@ from rllib_env_continous_psfascii import RllibAnalogDesignAutoEnv
 if __name__ == "__main__":
     env = RllibAnalogDesignAutoEnv({'generalize': True,
                                     'max_step': 1,
-                                    'netlist_folder_name': 'netlist_template_AXS',
+                                    'netlist_folder_name': 'netlist_template_AXS_UM',
                                     'specs_folder_name': 'sampled_specs_AXS_no_Mismatch',
-                                    'config_folder_name': 'config_AXS_Block',
+                                    'config_folder_name': 'config_AXS_AutoGroup_7',
                                     'run_folder_name': 'run_test',
                                     'sim_output': False,
                                     'init_method': 'file',
