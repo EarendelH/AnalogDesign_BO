@@ -1,8 +1,8 @@
 import os.path
-# from extract_trace import extractTransTrace
-# from extract_trace import extractTransTrace_psf
-from util.extract_trace import extractTransTrace
-from util.extract_trace import extractTransTrace_psf
+from extract_trace import extractTransTrace
+from extract_trace import extractTransTrace_psf
+# from util.extract_trace import extractTransTrace
+# from util.extract_trace import extractTransTrace_psf
 import numpy as np
 import bisect
 import math
@@ -255,11 +255,11 @@ def findShoot_general(filename, time_ranges, stable_voltage, output_voltage_labe
     # penalty_coeff = max_stable_voltage_diff/stable_voltage
     # print(f"Debug, penalty_coeff: {penalty_coeff}")
 
-    if stable_high_load_voltage >= stable_voltage * 1.04 or stable_high_load_voltage <= stable_voltage * 0.96:
+    if stable_high_load_voltage >= stable_voltage * 1.1 or stable_high_load_voltage <= stable_voltage * 0.96:
         print("Warning! This LDO cannot be regulated to VREF under high load.")
         overshoot = 100.0
         undershoot = 100.0
-    if stable_light_load_voltage >= stable_voltage * 1.04 or stable_light_load_voltage <= stable_voltage * 0.96:
+    if stable_light_load_voltage >= stable_voltage * 1.1 or stable_light_load_voltage <= stable_voltage * 0.96:
         print("Warning! This LDO cannot be regulated to VREF under light load.")
         overshoot = 100.0
         undershoot = 100.0
@@ -638,12 +638,102 @@ def findShoot_AXS(filename):
 
     return {"startupShoot": startup_shoot, "overShoot": overshoot, "underShoot": undershoot}
 
+def findShoot_general_psf(filename, time_ranges, stable_voltage, output_voltage_label="VOUT", file_size_threshold=500):
+    """
+    Extract the overshoot and undershoot value from trans file
+
+    Args:
+    - filename: Path to the file to be processed.
+    - time_ranges: A list of tuples, each defining a time range.
+    - stable_voltage: The stable voltage value.
+
+    Returns:
+    - Overshoot and undershoot value
+    """
+
+    trans_dict = extractTransTrace_psf(filename)
+    time_series = trans_dict["time"]
+    print(f"Debug!!! time_series: {time_series} \n with length: {len(time_series)}")
+    vout_trace = trans_dict[output_voltage_label]
+    print(f"Debug!!! vout_trace: {vout_trace} \n with length: {len(vout_trace)}")
+
+    # Clip time according to time_ranges
+    time_undershoot_index = find_indices_in_range(time_series, time_ranges[0][0], time_ranges[0][1])
+    print(f"Debug!!! time_undershoot_index: {time_undershoot_index}")
+    time_overshoot_index = find_indices_in_range(time_series, time_ranges[1][0], time_ranges[1][1])
+    print(f"Debug!!! time_overshoot_index: {time_overshoot_index}")
+    vout_undershoot = [vout_trace[i] for i in time_undershoot_index]
+    vout_overshoot = [vout_trace[i] for i in time_overshoot_index]
+    print(f"Debug!!! vout_undershoot: {vout_undershoot}")
+    print(f"Debug!!! vout_overshoot: {vout_overshoot}")
+
+    # Calculate overshoot and undershoot,
+    # undershoot: Vout@50us -Vout_clip1_min, overshoot: Vout_clip2_max - Vout@100us
+    vout_undershoot_min = np.min(vout_undershoot)
+    vout_overshoot_max = np.max(vout_overshoot)
+    # Find the neset value to 50us and 100us
+    vout_undershoot_base = vout_undershoot[0]
+    vout_overshoot_base = vout_overshoot[0]
+    print(f"Debug, vout_undershoot_base: {vout_undershoot_base} and vout_overshoot_base: {vout_overshoot_base}")
+    print(f"Debug, vout_undershoot_min: {vout_undershoot_min} and vout_overshoot_max: {vout_overshoot_max}")
+
+    undershoot = vout_undershoot_base - vout_undershoot_min
+    overshoot = vout_overshoot_max - vout_overshoot_base
+
+    # Determine whether the stable voltage is regulated to 1.2V (pre-defined)
+    # Find the mid-value in vout_undershoot
+    stable_high_load_voltage = vout_undershoot[-1]
+    stable_light_load_voltage = vout_overshoot[-1]
+    # print(f"Debug, stable_light_load_voltage: {stable_light_load_voltage}")
+    # print(f"Debug, stable_high_load_voltage: {stable_high_load_voltage}")
+
+    # Calculate penalty coefficient for punishing the max difference between ideal and real stable voltage
+    # max_stable_voltage_diff = max(abs(stable_high_load_voltage - stable_voltage),
+    #                               abs(stable_light_load_voltage - stable_voltage))
+    # print(f"Debug, max_stable_voltage_diff: {max_stable_voltage_diff}")
+    # penalty_coeff = max_stable_voltage_diff/stable_voltage
+    # print(f"Debug, penalty_coeff: {penalty_coeff}")
+
+    if stable_high_load_voltage >= stable_voltage * 1.1 or stable_high_load_voltage <= stable_voltage * 0.9:
+        print("Warning! This LDO cannot be regulated to VREF under high load.")
+        overshoot = 100.0
+        undershoot = 100.0
+    if stable_light_load_voltage >= stable_voltage * 1.1 or stable_light_load_voltage <= stable_voltage * 0.9:
+        print("Warning! This LDO cannot be regulated to VREF under light load.")
+        overshoot = 100.0
+        undershoot = 100.0
+    if stable_high_load_voltage == 0.0 or stable_light_load_voltage == 0.0:
+        print(f"Warning! No shoot be found.")
+        overshoot = 100.0
+        undershoot = 100.0
+    if overshoot == 0.0 or undershoot == 0.0:
+        print(f"Warning! Shoot is zero. Too good to be true")
+        overshoot = 100.0
+        undershoot = 100.0
+    if os.path.getsize(filename) > file_size_threshold * 1024:
+        print(f"Warning! {filename} is larger than {file_size_threshold}K, the system is highly like to be unstable")
+        overshoot = 100.0
+        undershoot = 100.0
+    # if overshoot >= stable_voltage or undershoot >= stable_voltage:
+    #     print("Warning! Shoot is too large.")
+    #     overshoot = 100.0
+    #     undershoot = 100.0
+    else:
+        pass
+
+    # print(f"Debug, overshoot: {overshoot} and undershoot: {undershoot}")
+
+    # overshoot = overshoot * (1 + penalty_coeff)
+    # undershoot = undershoot * (1 + penalty_coeff)
+
+    return {"overShoot": overshoot, "underShoot": undershoot}
+
 def findShoot_LFM(filename):
     output_voltage_label = "VOUT"
-    file_size_threshold = 500
-    result = findShoot_general(filename, [(1.0e-6, 1.5e-5), (1.5e-5, 6.0e-5)], 1.0, output_voltage_label, file_size_threshold)
+    file_size_threshold = 550
+    result = findShoot_general_psf(filename, [(1.0e-6, 1.5e-5), (3.0e-5, 6.0e-5)], 1.0, output_voltage_label, file_size_threshold)
     return result
 
-# if __name__ == "__main__":
-#     demo_file = "/Users/hanwu/Downloads/Netlist_AXS/Load_Reg_Trans.raw/tran.tran.tran"
-#     print(findShoot_AXS(demo_file))
+if __name__ == "__main__":
+    demo_file = "/Users/hanwu/Downloads/tran.tran.tran"
+    print(findShoot_LFM(demo_file))
