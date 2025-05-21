@@ -3,8 +3,8 @@ import numpy as np
 import yaml
 import logging
 
-# from util.util_func import unit_conversion
-from util_func import unit_conversion
+from util.util_func import unit_conversion
+# from util_func import unit_conversion
 
 # Test Code
 # result_config_file = "../config_3/result.yaml"
