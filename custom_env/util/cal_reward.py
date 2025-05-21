@@ -729,7 +729,7 @@ def cal_reward_DRMOS(ideal_specs_dict, cur_specs_dict, norm_specs_dict):
 
     return rew
 
-def cal_reward_DRMOS(ideal_specs_dict, cur_specs_dict, norm_specs_dict):
+def cal_reward_LFM(ideal_specs_dict, cur_specs_dict, norm_specs_dict):
     """
     Calculate the reward based on the ideal specs and current specs.
     Support three types of objectives:
