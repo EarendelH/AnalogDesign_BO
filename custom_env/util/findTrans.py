@@ -1,8 +1,8 @@
 import os.path
-from extract_trace import extractTransTrace
-from extract_trace import extractTransTrace_psf
-# from util.extract_trace import extractTransTrace
-# from util.extract_trace import extractTransTrace_psf
+# from extract_trace import extractTransTrace
+# from extract_trace import extractTransTrace_psf
+from util.extract_trace import extractTransTrace
+from util.extract_trace import extractTransTrace_psf
 import numpy as np
 import bisect
 import math
@@ -734,6 +734,6 @@ def findShoot_LFM(filename):
     result = findShoot_general_psf(filename, [(1.0e-6, 1.5e-5), (3.0e-5, 6.0e-5)], 1.0, output_voltage_label, file_size_threshold)
     return result
 
-if __name__ == "__main__":
-    demo_file = "/Users/hanwu/Downloads/tran.tran.tran"
-    print(findShoot_LFM(demo_file))
+# if __name__ == "__main__":
+#     demo_file = "/Users/hanwu/Downloads/tran.tran.tran"
+#     print(findShoot_LFM(demo_file))
