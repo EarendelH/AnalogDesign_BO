@@ -729,6 +729,115 @@ def cal_reward_DRMOS(ideal_specs_dict, cur_specs_dict, norm_specs_dict):
 
     return rew
 
+def cal_reward_DRMOS(ideal_specs_dict, cur_specs_dict, norm_specs_dict):
+    """
+    Calculate the reward based on the ideal specs and current specs.
+    Support three types of objectives:
+    - max: maximize the value
+    - min: minimize the value
+    - range: keep value within specified range
+
+    Args:
+        ideal_specs_dict: Dict with ideal specs value and property
+        cur_specs_dict: Dict with current specs
+        norm_specs_dict: Dict with normalized specs
+    Returns:
+        reward: float, reward value
+    """
+    logging.debug("Calculating reward for DRMOS")
+    logging.debug(f"Ideal specs: {ideal_specs_dict}")
+    logging.debug(f"Current specs: {cur_specs_dict}")
+
+    # Flatten cur_specs_dict
+    cur_specs_flatten = {k: v for d in cur_specs_dict.values() for k, v in d.items()}
+    norm_specs_flatten = {k: v for d in norm_specs_dict.values() for k, v in d.items()}
+    min_rew_range = 5
+    max_rew_range = 10
+
+    reward_weight = {
+        'DC_IQ': 0.0097,
+        'Stability_100u_gainBandWidth': 0.0208,
+        'Stability_100u_phaseMargin': 0.0995,
+        'Stability_1m_gainBandWidth': 0.0208,
+        'Stability_1m_phaseMargin': 0.0995,
+        'Stability_10m_gainBandWidth': 0.0208,
+        'Stability_10m_phaseMargin': 0.0995,
+        'Stability_100m_gainBandWidth': 0.0208,
+        'Stability_100m_phaseMargin': 0.0995,
+        'Stability_300m_gainBandWidth': 0.0208,
+        'Stability_300m_phaseMargin': 0.0995,
+        'Trans_overShoot': 0.0097,
+        'Trans_underShoot': 0.0097,
+        'PSR_100u_psr_1M': 0.0462,
+        'PSR_100u_psr_10M': 0.0462,
+        'PSR_100u_psr_100M': 0.0462,
+        'PSR_100u_psr_1G': 0.0462,
+        'PSR_300m_psr_1M': 0.0462,
+        'PSR_300m_psr_10M': 0.0462,
+        'PSR_300m_psr_100M': 0.0462,
+        'PSR_300m_psr_1G': 0.0462,
+    }
+
+    rew = 0
+
+    for spec, detail in ideal_specs_dict.items():
+        single_reward = 0
+        cur_spec_value = float(cur_specs_flatten[spec])
+        constrain_objective = detail['objective']
+
+        if constrain_objective == "range":
+            # Get range bounds from value list
+            range_min, range_max = detail['value']
+            if range_min <= cur_spec_value <= range_max:
+                single_reward = 0.0
+            else:
+                # If below minimum, treat as max objective
+                if cur_spec_value < range_min:
+                    single_reward = min((cur_spec_value - range_min) / (cur_spec_value + range_min), 0.0)
+                # If above maximum, treat as min objective
+                else:
+                    single_reward = min((range_max - cur_spec_value) / (cur_spec_value + range_max), 0.0)
+        else:
+            # Handle max/min objectives
+            ideal_spec_value = float(detail['value'])
+            if constrain_objective == "max":
+                single_reward = min((cur_spec_value - ideal_spec_value) / (cur_spec_value + ideal_spec_value), 0.0)
+            elif constrain_objective == "min":
+                single_reward = min((ideal_spec_value - cur_spec_value) / (cur_spec_value + ideal_spec_value), 0.0)
+
+        weighted_single_reward = single_reward * reward_weight[spec]
+        rew += float(weighted_single_reward)
+
+    rew = rew * min_rew_range
+
+    if rew >= 0:
+        rew_base = 10
+        rew_bonus = 0
+        for spec, detail in ideal_specs_dict.items():
+            single_reward = 0
+            reward_type = detail['reward_type']
+
+            # Only calculate bonus reward for optimal type and non-range objectives
+            if reward_type == "optimal" and detail['objective'] != "range":
+                general_ideal_spec_value = float(norm_specs_flatten[spec])
+                cur_spec_value = float(cur_specs_flatten[spec])
+                constrain_objective = detail['objective']
+
+                if constrain_objective == "max":
+                    single_reward = max(
+                        (cur_spec_value - general_ideal_spec_value) / (cur_spec_value + general_ideal_spec_value), 0.0)
+                elif constrain_objective == "min":
+                    single_reward = max(
+                        (general_ideal_spec_value - cur_spec_value) / (cur_spec_value + general_ideal_spec_value), 0.0)
+
+                weighted_single_reward = single_reward * reward_weight[spec]
+                rew_bonus += float(weighted_single_reward)
+
+        rew_bonus = rew_bonus * max_rew_range
+        rew = rew_base + rew_bonus
+
+    return rew
+
 # if __name__ == '__main__':
 #     ideal_specs_file = "/Users/hanwu/ML/AnalogDesignAuto_MultiAgent/custom_env/ideal_specs/sampled_specs_DRMOS/1.yaml"
 #     with open(ideal_specs_file, 'r') as f:
