@@ -730,7 +730,7 @@ def findShoot_general_psf(filename, time_ranges, stable_voltage, output_voltage_
 
 def findShoot_LFM(filename):
     output_voltage_label = "VOUT"
-    file_size_threshold = 550
+    file_size_threshold = 600
     result = findShoot_general_psf(filename, [(1.0e-6, 1.5e-5), (3.0e-5, 6.0e-5)], 1.0, output_voltage_label, file_size_threshold)
     return result
 
