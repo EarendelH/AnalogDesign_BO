@@ -195,6 +195,17 @@ def findPowerSupplyRejectionRatio_AXS(file_path):
 
     return result
 
+def findPowerSupplyRejectionRatio_LFM(file_path):
+
+    vout_name = 'VOUT'
+
+    freq_list = [1000000, 10000000, 100000000, 1000000000]
+    freq_labels = ['1M', '10M', '100M', '1G']
+
+    result = findPowerSupplyRejectionRatio_interpolated(vout_name, file_path, freq_list, freq_labels)
+
+    return result
+
 # if __name__ == "__main__":
 #     file_path = "/Users/hanwu/Downloads/Netlist_AXS/PSR.raw/ac.ac"
 #     value_dict = findPowerSupplyRejectionRatio_AXS(file_path)

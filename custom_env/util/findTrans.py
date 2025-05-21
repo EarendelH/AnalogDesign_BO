@@ -638,6 +638,12 @@ def findShoot_AXS(filename):
 
     return {"startupShoot": startup_shoot, "overShoot": overshoot, "underShoot": undershoot}
 
+def findShoot_LFM(filename):
+    output_voltage_label = "VOUT"
+    file_size_threshold = 500
+    result = findShoot_general(filename, [(1.0e-6, 1.5e-5), (1.5e-5, 6.0e-5)], 1.0, output_voltage_label, file_size_threshold)
+    return result
+
 # if __name__ == "__main__":
 #     demo_file = "/Users/hanwu/Downloads/Netlist_AXS/Load_Reg_Trans.raw/tran.tran.tran"
 #     print(findShoot_AXS(demo_file))
