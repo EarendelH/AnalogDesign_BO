@@ -653,19 +653,19 @@ def findShoot_general_psf(filename, time_ranges, stable_voltage, output_voltage_
 
     trans_dict = extractTransTrace_psf(filename)
     time_series = trans_dict["time"]
-    print(f"Debug!!! time_series: {time_series} \n with length: {len(time_series)}")
+    # print(f"Debug!!! time_series: {time_series} \n with length: {len(time_series)}")
     vout_trace = trans_dict[output_voltage_label]
-    print(f"Debug!!! vout_trace: {vout_trace} \n with length: {len(vout_trace)}")
+    # print(f"Debug!!! vout_trace: {vout_trace} \n with length: {len(vout_trace)}")
 
     # Clip time according to time_ranges
     time_undershoot_index = find_indices_in_range(time_series, time_ranges[0][0], time_ranges[0][1])
-    print(f"Debug!!! time_undershoot_index: {time_undershoot_index}")
+    # print(f"Debug!!! time_undershoot_index: {time_undershoot_index}")
     time_overshoot_index = find_indices_in_range(time_series, time_ranges[1][0], time_ranges[1][1])
-    print(f"Debug!!! time_overshoot_index: {time_overshoot_index}")
+    # print(f"Debug!!! time_overshoot_index: {time_overshoot_index}")
     vout_undershoot = [vout_trace[i] for i in time_undershoot_index]
     vout_overshoot = [vout_trace[i] for i in time_overshoot_index]
-    print(f"Debug!!! vout_undershoot: {vout_undershoot}")
-    print(f"Debug!!! vout_overshoot: {vout_overshoot}")
+    # print(f"Debug!!! vout_undershoot: {vout_undershoot}")
+    # print(f"Debug!!! vout_overshoot: {vout_overshoot}")
 
     # Calculate overshoot and undershoot,
     # undershoot: Vout@50us -Vout_clip1_min, overshoot: Vout_clip2_max - Vout@100us
@@ -674,8 +674,8 @@ def findShoot_general_psf(filename, time_ranges, stable_voltage, output_voltage_
     # Find the neset value to 50us and 100us
     vout_undershoot_base = vout_undershoot[0]
     vout_overshoot_base = vout_overshoot[0]
-    print(f"Debug, vout_undershoot_base: {vout_undershoot_base} and vout_overshoot_base: {vout_overshoot_base}")
-    print(f"Debug, vout_undershoot_min: {vout_undershoot_min} and vout_overshoot_max: {vout_overshoot_max}")
+    # print(f"Debug, vout_undershoot_base: {vout_undershoot_base} and vout_overshoot_base: {vout_overshoot_base}")
+    # print(f"Debug, vout_undershoot_min: {vout_undershoot_min} and vout_overshoot_max: {vout_overshoot_max}")
 
     undershoot = vout_undershoot_base - vout_undershoot_min
     overshoot = vout_overshoot_max - vout_overshoot_base
