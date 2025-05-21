@@ -73,3 +73,12 @@
   simulation_item:
     - phaseMargin
     - gainBandWidth
+- simulation_name: Stability_300m
+  objective: max
+  netlist_name: Stability_300m
+  simulation_file: stb.margin.stb
+  script_name: findStability
+  parse_func: findPhaseMarginAndGBW
+  simulation_item:
+    - phaseMargin
+    - gainBandWidth
