@@ -360,10 +360,10 @@ def main():
 
 if __name__ == '__main__':
     # Fixed input parameters - modify these values as needed
-    directory_path = "/Users/hanwu/Downloads/run_select/Haoqiang"  # Directory path to scan
-    subdir_prefix = "Haoqiang_Batch32_Group8"  # Subdirectory prefix to match
-    # directory_path = "/data/share/train_data/Haoqiang/run_select"  # Directory path to scan
-    # subdir_prefix = "Haoqiang_Batch32_Block_7b412"  # Subdirectory prefix to match
+    # directory_path = "/Users/hanwu/Downloads/run_select/Haoqiang"  # Directory path to scan
+    # subdir_prefix = "Haoqiang_Batch32_Group8"  # Subdirectory prefix to match
+    directory_path = "/data/share/train_data/Haoqiang/run_select"  # Directory path to scan
+    subdir_prefix = "Haoqiang_Batch32_Block_7b412"  # Subdirectory prefix to match
     xlsx_file_prefix = "output_Haoqiang_format"  # XLSX file prefix to match
     index_start = 2  # Index range start (inclusive)
     index_end = 25  # Index range end (inclusive)
