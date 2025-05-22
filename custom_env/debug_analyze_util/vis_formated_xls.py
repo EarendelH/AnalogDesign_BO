@@ -118,7 +118,7 @@ def filter_and_sort_data(data_list):
 
     # Extract numeric part for sorting
     numeric_values = []
-    for folder_name in combined_df['Folder_Name']:
+    for folder_name in combined_df['Folder Name']:
         numeric_value = extract_numeric_from_folder(folder_name)
         numeric_values.append(numeric_value)
 
@@ -182,7 +182,7 @@ def plot_scatter_by_index(data, index_range, output_dir, prefix):
             plt.figure(figsize=(10, 6))
 
             # Create scatter plot with index on x-axis (chronological order)
-            plt.scatter(x_values, data[col], alpha=0.6, s=50)
+            plt.scatter(x_values, data[col], alpha=0.5, s=5, edgecolors='none')
 
             plt.title(f'{col} vs Chronological Order', fontsize=14, fontweight='bold')
             plt.xlabel('Chronological Order (Index)', fontsize=12)
@@ -273,7 +273,7 @@ def plot_fom_scatter(data, output_dir, prefix):
         x_values = range(len(data))
 
         plt.figure(figsize=(10, 6))
-        plt.scatter(x_values, data['FoM'], alpha=0.6, s=50, color='red')
+        plt.scatter(x_values, data['FoM'], alpha=0.5, s=5, color='red', edgecolors='none')
 
         plt.title('Figure of Merit (FoM) vs Chronological Order', fontsize=14, fontweight='bold')
         plt.xlabel('Chronological Order (Index)', fontsize=12)
@@ -361,7 +361,7 @@ def main():
 if __name__ == '__main__':
     # Fixed input parameters - modify these values as needed
     # directory_path = "/Users/hanwu/Downloads/run_select/Haoqiang"  # Directory path to scan
-    # subdir_prefix = "Haoqiang_Batch32_Group8_a3666"  # Subdirectory prefix to match
+    # subdir_prefix = "Haoqiang_Batch32_Group8"  # Subdirectory prefix to match
     directory_path = "/data/share/train_data/Haoqiang/run_select"  # Directory path to scan
     subdir_prefix = "Haoqiang_Batch32_Block_7b412"  # Subdirectory prefix to match
     xlsx_file_prefix = "output_Haoqiang_format"  # XLSX file prefix to match
