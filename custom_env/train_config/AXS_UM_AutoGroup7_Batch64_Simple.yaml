@@ -1,11 +1,11 @@
 max_process_limit: false
-cpu_usage: 32
-gpu_usage: 0
+cpu_usage: 25
+gpu_usage: 1
 generalize: true
 algorithm: PPO
 max_step: 1
 num_agents: 7
-netlist_folder_name: netlist_template_AXS
+netlist_folder_name: netlist_template_AXS_UM
 specs_folder_name: sampled_specs_AXS_Simple
 config_folder_name: config_AXS_AutoGroup_7_Simple
 run_folder_name: run_test
@@ -17,7 +17,7 @@ region_extract: false
 dynamic_queue: false
 restore_checkpoint: false
 checkpoint_path:
-train_iterations: 2000
+train_iterations: 3000
 reward_func: cal_reward_AXS
 log_level: INFO
 continue_steps_enable: false
