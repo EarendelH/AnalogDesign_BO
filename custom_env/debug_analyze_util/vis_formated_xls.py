@@ -9,28 +9,27 @@ import glob
 import numpy as np
 
 
-def extract_timestamp_from_folder(folder_name):
+def extract_numeric_from_folder(folder_name):
     """
-    Extract timestamp from folder name following the format used in create_work_dir function
-    Format: %Y%m%d%H%M%S (e.g., 20240315142530)
+    Extract numeric part from folder name for sorting
+    Expected format: tmp_[numeric_part]_suffix (e.g., tmp_202505201632592393178875_tt)
 
     Args:
         folder_name: String containing folder name
 
     Returns:
-        datetime object or None if no valid timestamp found
+        int: Numeric part for sorting, or 0 if not found
     """
-    # Pattern to match timestamp format: YYYYMMDDHHMMSS
-    timestamp_pattern = r'(\d{14})'
-    match = re.search(timestamp_pattern, folder_name)
+    # Pattern to extract numeric part between tmp_ and _suffix
+    numeric_pattern = r'tmp_(\d+)_'
+    match = re.search(numeric_pattern, folder_name)
 
     if match:
-        timestamp_str = match.group(1)
         try:
-            return datetime.datetime.strptime(timestamp_str, '%Y%m%d%H%M%S')
+            return int(match.group(1))
         except ValueError:
-            return None
-    return None
+            return 0
+    return 0
 
 
 def scan_and_read_xlsx(directory, subdir_prefix, file_prefix):
@@ -103,7 +102,7 @@ def scan_and_read_xlsx(directory, subdir_prefix, file_prefix):
 
 def filter_and_sort_data(data_list):
     """
-    Combine all dataframes and sort by timestamp extracted from folder names
+    Combine all dataframes and sort by numeric part extracted from folder names
 
     Args:
         data_list: List of DataFrames
@@ -114,23 +113,31 @@ def filter_and_sort_data(data_list):
     if not data_list:
         return pd.DataFrame()
 
-    # Combine all dataframes
+    # Combine all dataframes using concat for better performance
     combined_df = pd.concat(data_list, ignore_index=True)
 
-    # Extract timestamps and add as new column
-    timestamps = []
+    # Extract numeric part for sorting
+    numeric_values = []
     for folder_name in combined_df['Folder_Name']:
-        timestamp = extract_timestamp_from_folder(folder_name)
-        timestamps.append(timestamp)
+        numeric_value = extract_numeric_from_folder(folder_name)
+        numeric_values.append(numeric_value)
 
-    combined_df['Timestamp'] = timestamps
+    # Add numeric sort key column
+    combined_df = combined_df.copy()  # Avoid fragmentation warning
+    combined_df['Sort_Key'] = numeric_values
 
-    # Remove rows with invalid timestamps and sort
-    valid_data = combined_df[combined_df['Timestamp'].notna()].copy()
-    sorted_data = valid_data.sort_values('Timestamp').reset_index(drop=True)
+    # Remove rows with invalid numeric values (0) and sort
+    valid_data = combined_df[combined_df['Sort_Key'] > 0].copy()
+    sorted_data = valid_data.sort_values('Sort_Key').reset_index(drop=True)
+
+    # Remove the temporary sort key column
+    sorted_data = sorted_data.drop('Sort_Key', axis=1)
 
     print(f"Combined {len(data_list)} files into {len(sorted_data)} valid records")
-    print(f"Time range: {sorted_data['Timestamp'].min()} to {sorted_data['Timestamp'].max()}")
+    if len(sorted_data) > 0:
+        first_folder = sorted_data['Folder_Name'].iloc[0]
+        last_folder = sorted_data['Folder_Name'].iloc[-1]
+        print(f"Folder range: {first_folder} to {last_folder}")
 
     return sorted_data
 
@@ -161,26 +168,26 @@ def plot_scatter_by_index(data, index_range, output_dir, prefix):
 
     # Filter for numeric columns only
     for col in columns:
-        if col not in ['Folder_Name', 'Timestamp', 'Tag'] and pd.api.types.is_numeric_dtype(data[col]):
+        if col not in ['Folder_Name', 'Sort_Key', 'Tag'] and pd.api.types.is_numeric_dtype(data[col]):
             numeric_columns.append(col)
 
     print(f"Plotting {len(numeric_columns)} numeric columns...")
+
+    # Create a simple index for x-axis (representing chronological order)
+    x_values = range(len(data))
 
     # Plot each numeric column with progress bar
     for col in tqdm(numeric_columns, desc="Creating scatter plots"):
         try:
             plt.figure(figsize=(10, 6))
 
-            # Create scatter plot with timestamp on x-axis
-            plt.scatter(data['Timestamp'], data[col], alpha=0.6, s=50)
+            # Create scatter plot with index on x-axis (chronological order)
+            plt.scatter(x_values, data[col], alpha=0.6, s=50)
 
-            plt.title(f'{col} vs Time', fontsize=14, fontweight='bold')
-            plt.xlabel('Time', fontsize=12)
+            plt.title(f'{col} vs Chronological Order', fontsize=14, fontweight='bold')
+            plt.xlabel('Chronological Order (Index)', fontsize=12)
             plt.ylabel(col, fontsize=12)
             plt.grid(True, alpha=0.3)
-
-            # Rotate x-axis labels for better readability
-            plt.xticks(rotation=45)
             plt.tight_layout()
 
             # Save plot - handle special characters in column names
@@ -262,14 +269,16 @@ def plot_fom_scatter(data, output_dir, prefix):
 
         img_dir = os.path.join(output_dir, f"{prefix}_img")
 
-        plt.figure(figsize=(10, 6))
-        plt.scatter(data['Timestamp'], data['FoM'], alpha=0.6, s=50, color='red')
+        # Create a simple index for x-axis (representing chronological order)
+        x_values = range(len(data))
 
-        plt.title('Figure of Merit (FoM) vs Time', fontsize=14, fontweight='bold')
-        plt.xlabel('Time', fontsize=12)
+        plt.figure(figsize=(10, 6))
+        plt.scatter(x_values, data['FoM'], alpha=0.6, s=50, color='red')
+
+        plt.title('Figure of Merit (FoM) vs Chronological Order', fontsize=14, fontweight='bold')
+        plt.xlabel('Chronological Order (Index)', fontsize=12)
         plt.ylabel('FoM', fontsize=12)
         plt.grid(True, alpha=0.3)
-        plt.xticks(rotation=45)
         plt.tight_layout()
 
         # Save FoM plot
@@ -349,9 +358,10 @@ def main():
     print(f"Results saved in: {directory_path}")
     print(f"Images saved in: {os.path.join(directory_path, f'{subdir_prefix}_img')}")
 
-
 if __name__ == '__main__':
     # Fixed input parameters - modify these values as needed
+    # directory_path = "/Users/hanwu/Downloads/run_select/Haoqiang"  # Directory path to scan
+    # subdir_prefix = "Haoqiang_Batch32_Group8_a3666"  # Subdirectory prefix to match
     directory_path = "/data/share/train_data/Haoqiang/run_select"  # Directory path to scan
     subdir_prefix = "Haoqiang_Batch32_Block_7b412"  # Subdirectory prefix to match
     xlsx_file_prefix = "output_Haoqiang_format"  # XLSX file prefix to match
