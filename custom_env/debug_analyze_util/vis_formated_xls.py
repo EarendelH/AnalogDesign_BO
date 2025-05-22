@@ -1,145 +1,367 @@
+import os
 import pandas as pd
 import matplotlib.pyplot as plt
-import os
+import re
+import datetime
+from pathlib import Path
 from tqdm import tqdm
+import glob
+import numpy as np
 
 
-def plot_data(data, column_name):
+def extract_timestamp_from_folder(folder_name):
     """
-    Plot a scatter plot of the specified column against the sorted index.
+    Extract timestamp from folder name following the format used in create_work_dir function
+    Format: %Y%m%d%H%M%S (e.g., 20240315142530)
 
     Args:
-    data (pd.DataFrame): The loaded Excel data.
-    column_name (str): The name of the column to plot.
-    """
-    fig, ax = plt.subplots(figsize=(10, 6))
-    ax.scatter(data.index, data[column_name], alpha=0.6, s=1, color='blue', edgecolors='none')
-    ax.set_title(f'Scatter Plot of {column_name} over Time')
-    ax.set_xlabel('Time Index')
-    ax.set_ylabel(column_name)
-    ax.set_xticks([0, len(data) - 1])
-    ax.set_xticklabels([data['Timestamp'].iloc[0].strftime('%Y-%m-%d %H:%M:%S'),
-                        data['Timestamp'].iloc[-1].strftime('%Y-%m-%d %H:%M:%S')])
-    ax.grid(True)
-    plt.tight_layout()
-    return fig
-
-
-def select_columns(columns):
-    """
-    Display column names and let the user select a range of columns.
-
-    Args:
-    columns (list): List of column names.
+        folder_name: String containing folder name
 
     Returns:
-    list: Selected column names.
+        datetime object or None if no valid timestamp found
     """
-    while True:
-        print("\nAvailable columns:")
-        for i, col in enumerate(columns):
-            print(f"{i}: {col}")
+    # Pattern to match timestamp format: YYYYMMDDHHMMSS
+    timestamp_pattern = r'(\d{14})'
+    match = re.search(timestamp_pattern, folder_name)
 
-        start_index = int(input("Enter the starting column index: "))
-        end_index = int(input("Enter the ending column index: "))
-
-        selected_columns = columns[start_index:end_index + 1]
-
-        print("\nYou have selected the following columns:")
-        for i, col in enumerate(selected_columns, start=1):
-            print(f"{i}. {col}")
-
-        confirm = input("\nDo you confirm this selection? (yes/no): ").lower()
-        if confirm == 'yes' or confirm == 'y':
-            return selected_columns
-        else:
-            print("Selection cancelled. Please try again.")
+    if match:
+        timestamp_str = match.group(1)
+        try:
+            return datetime.datetime.strptime(timestamp_str, '%Y%m%d%H%M%S')
+        except ValueError:
+            return None
+    return None
 
 
-def filter_by_tag(data):
+def scan_and_read_xlsx(directory, subdir_prefix, file_prefix):
     """
-    Filter the data based on the Tag column.
+    Scan directory for subdirectories with specific prefix and read xlsx files with specific file prefix
 
     Args:
-    data (pd.DataFrame): The loaded Excel data.
+        directory: Base directory path to scan
+        subdir_prefix: Prefix to match subdirectories
+        file_prefix: Prefix to match xlsx files (e.g., "output_Haoqiang_format")
 
     Returns:
-    pd.DataFrame: Filtered data.
+        List of DataFrames with folder information
     """
-    if 'Tag' not in data.columns:
-        use_all = input("Tag column not found. Do you want to proceed with all data? (yes/no): ").lower()
-        return data if use_all == 'yes' or use_all == 'y' else None
+    data_list = []
 
-    default_tags = ['ff', 'ss', 'fs', 'tt']
-    use_default = input(f"Do you want to use default tags {default_tags}? (yes/no): ").lower()
+    # Find all subdirectories matching the prefix
+    subdirs = [d for d in os.listdir(directory)
+               if os.path.isdir(os.path.join(directory, d)) and d.startswith(subdir_prefix)]
 
-    if use_default == 'yes' or use_default == 'y':
-        tags = default_tags
-    else:
-        tags = input("Enter tags to filter (comma-separated): ").split(',')
-        tags = [tag.strip() for tag in tags]
+    print(f"Found {len(subdirs)} subdirectories matching prefix '{subdir_prefix}'")
+    print(f"Subdirectories: {subdirs}")
 
-    return data[data['Tag'].isin(tags)]
+    # Process each subdirectory with progress bar
+    for subdir in tqdm(subdirs, desc="Reading xlsx files"):
+        subdir_path = os.path.join(directory, subdir)
+
+        # Find xlsx files with specific prefix in subdirectory
+        all_xlsx_files = glob.glob(os.path.join(subdir_path, "*.xlsx"))
+        matching_xlsx_files = [f for f in all_xlsx_files
+                               if os.path.basename(f).startswith(file_prefix)]
+
+        # Check if exactly one file matches the requirement
+        if len(matching_xlsx_files) == 0:
+            print(f"Error: No xlsx files with prefix '{file_prefix}' found in {subdir}")
+            print(f"Available xlsx files: {[os.path.basename(f) for f in all_xlsx_files]}")
+            exit(1)
+        elif len(matching_xlsx_files) > 1:
+            print(f"Error: Multiple xlsx files with prefix '{file_prefix}' found in {subdir}")
+            print(f"Matching files: {[os.path.basename(f) for f in matching_xlsx_files]}")
+            print("Expected exactly one file per subdirectory")
+            exit(1)
+
+        # Process the single matching file
+        xlsx_file = matching_xlsx_files[0]
+        try:
+            # Read xlsx file
+            df = pd.read_excel(xlsx_file)
+
+            # Add folder name column for tracking
+            df['Folder_Name'] = subdir
+
+            # Filter data where Tag column equals 'tt'
+            if 'Tag' in df.columns:
+                df_filtered = df[df['Tag'] == 'tt'].copy()
+                if not df_filtered.empty:
+                    data_list.append(df_filtered)
+                    print(f"Successfully processed: {os.path.basename(xlsx_file)} from {subdir}")
+                else:
+                    print(f"Warning: No records with Tag='tt' found in {xlsx_file}")
+            else:
+                print(f"Warning: No 'Tag' column found in {xlsx_file}")
+
+        except Exception as e:
+            print(f"Error reading {xlsx_file}: {str(e)}")
+            exit(1)
+
+    return data_list
 
 
-def sort_data_by_path(data):
+def filter_and_sort_data(data_list):
     """
-    Sort the data based on the full file path.
+    Combine all dataframes and sort by timestamp extracted from folder names
 
     Args:
-    data (pd.DataFrame): The loaded Excel data.
+        data_list: List of DataFrames
 
     Returns:
-    pd.DataFrame: Sorted data.
+        Combined and sorted DataFrame
     """
-    print("Sorting data based on file paths...")
+    if not data_list:
+        return pd.DataFrame()
 
-    # Sort the data based on the full path with progress bar
-    sorted_data = data.sort_values('Folder Name')
+    # Combine all dataframes
+    combined_df = pd.concat(data_list, ignore_index=True)
 
-    # Reset the index after sorting
-    sorted_data = sorted_data.reset_index(drop=True)
+    # Extract timestamps and add as new column
+    timestamps = []
+    for folder_name in combined_df['Folder_Name']:
+        timestamp = extract_timestamp_from_folder(folder_name)
+        timestamps.append(timestamp)
+
+    combined_df['Timestamp'] = timestamps
+
+    # Remove rows with invalid timestamps and sort
+    valid_data = combined_df[combined_df['Timestamp'].notna()].copy()
+    sorted_data = valid_data.sort_values('Timestamp').reset_index(drop=True)
+
+    print(f"Combined {len(data_list)} files into {len(sorted_data)} valid records")
+    print(f"Time range: {sorted_data['Timestamp'].min()} to {sorted_data['Timestamp'].max()}")
 
     return sorted_data
 
 
-# Example usage
-file_path = input('Enter the path to the processed Excel file: ')
+def plot_scatter_by_index(data, index_range, output_dir, prefix):
+    """
+    Plot scatter plots for columns within specified index range
 
-# Load the Excel file with progress bar
-data = pd.read_excel(file_path)
+    Args:
+        data: DataFrame containing the data
+        index_range: Tuple (start, end) for column indices
+        output_dir: Directory to save plots
+        prefix: Prefix for output files
 
-# Filter data by Tag
-filtered_data = filter_by_tag(data)
-if filtered_data is None:
-    print("Data filtering cancelled. Exiting.")
-    exit()
+    Returns:
+        List of column names that were plotted
+    """
+    start_idx, end_idx = index_range
+    plotted_columns = []
 
-# Extract the timestamp from 'Folder Name' and convert it to datetime
-print(f"Extracting timestamps from 'Folder Name'...")
-filtered_data['Timestamp'] = pd.to_datetime(filtered_data['Folder Name'].str.extract(r'(\d{14})')[0],
-                                            format='%Y%m%d%H%M%S')
+    # Create output directory if it doesn't exist
+    img_dir = os.path.join(output_dir, f"{prefix}_img")
+    os.makedirs(img_dir, exist_ok=True)
 
-# Sort the data based on the full file path
-sorted_data = sort_data_by_path(filtered_data)
+    # Get columns within the specified range
+    columns = data.columns[start_idx:end_idx + 1]
+    numeric_columns = []
 
-# Get all column names except 'Folder Name', 'Timestamp', 'Tag', 'File Name', and 'Full Path'
-all_columns = [col for col in sorted_data.columns if
-               col not in ['Folder Name', 'Timestamp', 'Tag']]
+    # Filter for numeric columns only
+    for col in columns:
+        if col not in ['Folder_Name', 'Timestamp', 'Tag'] and pd.api.types.is_numeric_dtype(data[col]):
+            numeric_columns.append(col)
 
-# Let the user select columns
-column_name_list = select_columns(all_columns)
+    print(f"Plotting {len(numeric_columns)} numeric columns...")
 
-# Create a directory to store the plots
-plot_dir = os.path.join(os.path.dirname(file_path), 'scatter_plots_' + os.path.basename(file_path))
-os.makedirs(plot_dir, exist_ok=True)
+    # Plot each numeric column with progress bar
+    for col in tqdm(numeric_columns, desc="Creating scatter plots"):
+        try:
+            plt.figure(figsize=(10, 6))
 
-# Plot the data and save each plot as a separate image file
-for column_name in tqdm(column_name_list, desc="Generating plots"):
-    fig = plot_data(sorted_data, column_name)
-    plot_file_name = f'{column_name}_scatter_plot.png'
-    plot_file_path = os.path.join(plot_dir, plot_file_name)
-    fig.savefig(plot_file_path)
-    plt.close(fig)
+            # Create scatter plot with timestamp on x-axis
+            plt.scatter(data['Timestamp'], data[col], alpha=0.6, s=50)
 
-print("All plots have been generated and saved in the 'scatter_plots' directory.")
+            plt.title(f'{col} vs Time', fontsize=14, fontweight='bold')
+            plt.xlabel('Time', fontsize=12)
+            plt.ylabel(col, fontsize=12)
+            plt.grid(True, alpha=0.3)
+
+            # Rotate x-axis labels for better readability
+            plt.xticks(rotation=45)
+            plt.tight_layout()
+
+            # Save plot - handle special characters in column names
+            sanitized_col_name = col.replace('/', '_').replace('\\', '_')
+            plot_filename = f"{sanitized_col_name}.png"
+            plot_path = os.path.join(img_dir, plot_filename)
+            plt.savefig(plot_path, dpi=300, bbox_inches='tight')
+            plt.close()
+
+            plotted_columns.append(col)
+
+        except Exception as e:
+            print(f"Error plotting {col}: {str(e)}")
+
+    return plotted_columns
+
+
+def calculate_fom(data, delta_vout_indices, iq_index, C, ILOAD):
+    """
+    Calculate Figure of Merit (FoM) using the formula: (C * delta_VOUT * IQ) / (ILOAD)^2
+    where delta_VOUT is the maximum of two specified columns
+
+    Args:
+        data: DataFrame containing the data
+        delta_vout_indices: Tuple (col1_index, col2_index) for delta_VOUT calculation
+        iq_index: Column index for IQ data
+        C: Constant value C
+        ILOAD: Constant value ILOAD
+
+    Returns:
+        DataFrame with added FoM column
+    """
+    try:
+        col1_idx, col2_idx = delta_vout_indices
+        columns = data.columns
+
+        # Get column names
+        col1_name = columns[col1_idx]
+        col2_name = columns[col2_idx]
+        iq_col_name = columns[iq_index]
+
+        print(f"Calculating FoM using:")
+        print(f"  delta_VOUT columns: {col1_name}, {col2_name}")
+        print(f"  IQ column: {iq_col_name}")
+        print(f"  C = {C}, ILOAD = {ILOAD}")
+
+        # Calculate delta_VOUT as maximum of two columns
+        delta_vout = np.maximum(data[col1_name], data[col2_name])
+
+        # Calculate FoM: (C * delta_VOUT * IQ) / (ILOAD)^2
+        fom = (C * delta_vout * data[iq_col_name]) / (ILOAD ** 2)
+
+        # Add FoM column to dataframe
+        data_with_fom = data.copy()
+        data_with_fom['FoM'] = fom
+
+        print(f"FoM calculated. Range: {fom.min():.2e} to {fom.max():.2e}")
+
+        return data_with_fom
+
+    except Exception as e:
+        print(f"Error calculating FoM: {str(e)}")
+        return data
+
+
+def plot_fom_scatter(data, output_dir, prefix):
+    """
+    Plot scatter plot for FoM values
+
+    Args:
+        data: DataFrame containing FoM data
+        output_dir: Directory to save plots
+        prefix: Prefix for output files
+    """
+    try:
+        if 'FoM' not in data.columns:
+            print("No FoM column found for plotting")
+            return
+
+        img_dir = os.path.join(output_dir, f"{prefix}_img")
+
+        plt.figure(figsize=(10, 6))
+        plt.scatter(data['Timestamp'], data['FoM'], alpha=0.6, s=50, color='red')
+
+        plt.title('Figure of Merit (FoM) vs Time', fontsize=14, fontweight='bold')
+        plt.xlabel('Time', fontsize=12)
+        plt.ylabel('FoM', fontsize=12)
+        plt.grid(True, alpha=0.3)
+        plt.xticks(rotation=45)
+        plt.tight_layout()
+
+        # Save FoM plot
+        plot_path = os.path.join(img_dir, 'FoM.png')
+        plt.savefig(plot_path, dpi=300, bbox_inches='tight')
+        plt.close()
+
+        print("FoM scatter plot saved successfully")
+
+    except Exception as e:
+        print(f"Error plotting FoM: {str(e)}")
+
+
+def save_combined_data(data, output_path, prefix):
+    """
+    Save combined and processed data to Excel file
+
+    Args:
+        data: DataFrame to save
+        output_path: Directory to save the file
+        prefix: Prefix for filename
+    """
+    try:
+        output_file = os.path.join(output_path, f"{prefix}_combined_data.xlsx")
+
+        # Save to Excel file
+        data.to_excel(output_file, index=False)
+
+        print(f"Combined data saved to: {output_file}")
+        print(f"Data shape: {data.shape}")
+
+    except Exception as e:
+        print(f"Error saving combined data: {str(e)}")
+
+
+def main():
+    """
+    Main processing function
+    """
+    print("Starting batch visualization process...")
+
+    # Step 1: Scan and read xlsx files
+    print("\nStep 1: Scanning and reading xlsx files...")
+    data_list = scan_and_read_xlsx(directory_path, subdir_prefix, xlsx_file_prefix)
+
+    if not data_list:
+        print("No valid data found. Exiting.")
+        return
+
+    # Step 2: Filter and sort data
+    print("\nStep 2: Filtering and sorting data...")
+    sorted_data = filter_and_sort_data(data_list)
+
+    if sorted_data.empty:
+        print("No valid data after filtering. Exiting.")
+        return
+
+    # Step 3: Plot scatter plots for specified index range
+    print(f"\nStep 3: Creating scatter plots for columns {index_start} to {index_end}...")
+    plotted_columns = plot_scatter_by_index(sorted_data, (index_start, index_end),
+                                            directory_path, subdir_prefix)
+
+    # Step 4: Calculate FoM
+    print("\nStep 4: Calculating Figure of Merit (FoM)...")
+    data_with_fom = calculate_fom(sorted_data, (delta_vout_col1_index, delta_vout_col2_index),
+                                  iq_column_index, C_value, ILOAD_value)
+
+    # Step 5: Plot FoM scatter
+    print("\nStep 5: Creating FoM scatter plot...")
+    plot_fom_scatter(data_with_fom, directory_path, subdir_prefix)
+
+    # Step 6: Save combined data
+    print("\nStep 6: Saving combined data...")
+    save_combined_data(data_with_fom, directory_path, subdir_prefix)
+
+    print(f"\nBatch visualization completed successfully!")
+    print(f"Results saved in: {directory_path}")
+    print(f"Images saved in: {os.path.join(directory_path, f'{subdir_prefix}_img')}")
+
+
+if __name__ == '__main__':
+    # Fixed input parameters - modify these values as needed
+    directory_path = "/data/share/train_data/Haoqiang/run_select"  # Directory path to scan
+    subdir_prefix = "Haoqiang_Batch32_Block_7b412"  # Subdirectory prefix to match
+    xlsx_file_prefix = "output_Haoqiang_format"  # XLSX file prefix to match
+    index_start = 2  # Index range start (inclusive)
+    index_end = 25  # Index range end (inclusive)
+    delta_vout_col1_index = 19  # First column index for delta_VOUT calculation
+    delta_vout_col2_index = 20  # Second column index for delta_VOUT calculation
+    iq_column_index = 3  # IQ column index
+    C_value = 2e-12  # Constant C value for FoM calculation
+    ILOAD_value = 0.05  # Constant ILOAD value for FoM calculation
+
+    # Run main processing
+    main()
