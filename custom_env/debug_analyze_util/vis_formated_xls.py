@@ -182,7 +182,7 @@ def plot_scatter_by_index(data, index_range, output_dir, prefix):
             plt.figure(figsize=(10, 6))
 
             # Create scatter plot with index on x-axis (chronological order)
-            plt.scatter(x_values, data[col], alpha=0.1, s=2, edgecolors='none')
+            plt.scatter(x_values, data[col], alpha=0.2, s=5, edgecolors='none')
 
             plt.title(f'{col} vs Chronological Order', fontsize=14, fontweight='bold')
             plt.xlabel('Chronological Order (Index)', fontsize=12)
@@ -273,7 +273,7 @@ def plot_fom_scatter(data, output_dir, prefix):
         x_values = range(len(data))
 
         plt.figure(figsize=(10, 6))
-        plt.scatter(x_values, data['FoM'], alpha=0.1, s=2, color='red', edgecolors='none')
+        plt.scatter(x_values, data['FoM'], alpha=0.2, s=5, color='red', edgecolors='none')
 
         plt.title('Figure of Merit (FoM) vs Chronological Order', fontsize=14, fontweight='bold')
         plt.xlabel('Chronological Order (Index)', fontsize=12)
@@ -359,19 +359,33 @@ def main():
     print(f"Images saved in: {os.path.join(directory_path, f'{subdir_prefix}_img')}")
 
 if __name__ == '__main__':
+    # # Fixed input parameters - modify these values as needed
+    # directory_path = "/Users/hanwu/Downloads/run_select/Haoqiang"  # Directory path to scan
+    # subdir_prefix = "Haoqiang_Batch32_Group8"  # Subdirectory prefix to match
+    # # directory_path = "/data/share/train_data/Haoqiang/run_select"  # Directory path to scan
+    # # subdir_prefix = "Haoqiang_Batch32_Block_7b412"  # Subdirectory prefix to match
+    # xlsx_file_prefix = "output_Haoqiang_format"  # XLSX file prefix to match
+    # index_start = 2  # Index range start (inclusive)
+    # index_end = 25  # Index range end (inclusive)
+    # delta_vout_col1_index = 19  # First column index for delta_VOUT calculation
+    # delta_vout_col2_index = 20  # Second column index for delta_VOUT calculation
+    # iq_column_index = 3  # IQ column index
+    # C_value = 2e-12  # Constant C value for FoM calculation
+    # ILOAD_value = 0.05  # Constant ILOAD value for FoM calculation
+
     # Fixed input parameters - modify these values as needed
-    directory_path = "/Users/hanwu/Downloads/run_select/Haoqiang"  # Directory path to scan
-    subdir_prefix = "Haoqiang_Batch32_Group8"  # Subdirectory prefix to match
+    directory_path = "/Users/hanwu/Downloads/run_select/AXS"  # Directory path to scan
+    subdir_prefix = "AXS"  # Subdirectory prefix to match
     # directory_path = "/data/share/train_data/Haoqiang/run_select"  # Directory path to scan
     # subdir_prefix = "Haoqiang_Batch32_Block_7b412"  # Subdirectory prefix to match
-    xlsx_file_prefix = "output_Haoqiang_format"  # XLSX file prefix to match
+    xlsx_file_prefix = "output_AXS_format"  # XLSX file prefix to match
     index_start = 2  # Index range start (inclusive)
-    index_end = 25  # Index range end (inclusive)
-    delta_vout_col1_index = 19  # First column index for delta_VOUT calculation
-    delta_vout_col2_index = 20  # Second column index for delta_VOUT calculation
+    index_end = 17  # Index range end (inclusive)
+    delta_vout_col1_index = 8  # First column index for delta_VOUT calculation
+    delta_vout_col2_index = 9  # Second column index for delta_VOUT calculation
     iq_column_index = 3  # IQ column index
-    C_value = 2e-12  # Constant C value for FoM calculation
-    ILOAD_value = 0.05  # Constant ILOAD value for FoM calculation
+    C_value = 2.2e-6  # Constant C value for FoM calculation
+    ILOAD_value = 0.1  # Constant ILOAD value for FoM calculation
 
     # Run main processing
     main()
