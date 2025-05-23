@@ -235,21 +235,6 @@ M80:
     value:
       range: [1, 5]
       step: "1"
-M81:
-  instance_type: nch_mac
-  params:
-  - variable_name: w_M81_per_finger
-    value:
-      range: [120.0n, 300.0n]
-      step: 10n
-  - variable_name: l_M81
-    value:
-      range: [60.0n, 200.0n]
-      step: 20n
-  - variable_name: nf_M81
-    value:
-      range: [1, 5]
-      step: "1"
 M63:
   instance_type: nch_mac
   params:
@@ -367,21 +352,6 @@ M59:
       range: [60.0n, 200.0n]
       step: 20n
   - variable_name: nf_M59
-    value:
-      range: [1, 5]
-      step: "1"
-M82:
-  instance_type: nch_mac
-  params:
-  - variable_name: w_M82_per_finger
-    value:
-      range: [120.0n, 300.0n]
-      step: 10n
-  - variable_name: l_M82
-    value:
-      range: [60.0n, 200.0n]
-      step: 20n
-  - variable_name: nf_M82
     value:
       range: [1, 5]
       step: "1"
@@ -1020,7 +990,7 @@ M17:
   params:
   - variable_name: w_M17_per_finger
     value:
-      range: [25u, 30u]
+      range: [1u, 10u]
       step: "0.5u"
   - variable_name: l_M17
     value:
@@ -1028,7 +998,7 @@ M17:
       step: 10n
   - variable_name: nf_M17
     value:
-      range: [4, 5]
+      range: [1, 10]
       step: "1"
 M45:
   instance_type: pch_hvt_mac
