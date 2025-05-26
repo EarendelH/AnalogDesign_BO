@@ -1,0 +1,135 @@
+DC:
+  DC_IQ:
+    objective: min
+    reward_type: optimal
+    bounds:
+    - 0.0003
+    - 0.0001
+Stability_100u:
+  Stability_100u_gainBandWidth:
+    objective: max
+    reward_type: optimal
+    bounds:
+    - 5000.0
+    - 15000.0
+  Stability_100u_phaseMargin:
+    objective: max
+    reward_type: satisfactory
+    bounds:
+    - 30.0
+    - 30.1
+Stability_1m:
+  Stability_1m_gainBandWidth:
+    objective: max
+    reward_type: optimal
+    bounds:
+    - 100000.0
+    - 300000.0
+  Stability_1m_phaseMargin:
+    objective: max
+    reward_type: satisfactory
+    bounds:
+    - 60.0
+    - 60.1
+Stability_10m:
+  Stability_10m_gainBandWidth:
+    objective: max
+    reward_type: optimal
+    bounds:
+    - 5000000.0
+    - 15000000.0
+  Stability_10m_phaseMargin:
+    objective: max
+    reward_type: satisfactory
+    bounds:
+    - 60.0
+    - 60.1
+Stability_100m:
+  Stability_100m_gainBandWidth:
+    objective: max
+    reward_type: optimal
+    bounds:
+    - 20000000.0
+    - 60000000.0
+  Stability_100m_phaseMargin:
+    objective: max
+    reward_type: satisfactory
+    bounds:
+    - 60.0
+    - 60.1
+Stability_300m:
+  Stability_300m_gainBandWidth:
+    objective: max
+    reward_type: optimal
+    bounds:
+    - 10000000.0
+    - 40000000.0
+  Stability_300m_phaseMargin:
+    objective: max
+    reward_type: satisfactory
+    bounds:
+    - 60.0
+    - 60.1
+Trans:
+  Trans_overShoot:
+    objective: min
+    reward_type: optimal
+    bounds:
+    - 0.005
+    - 0.01
+  Trans_underShoot:
+    objective: min
+    reward_type: optimal
+    bounds:
+    - 0.005
+    - 0.01
+PSR_100u:
+  PSR_100u_psr_1M:
+    objective: max
+    reward_type: optimal
+    bounds:
+    - 40.0
+    - 60.0
+  PSR_100u_psr_10M:
+    objective: max
+    reward_type: optimal
+    bounds:
+    - 50.0
+    - 70.0
+  PSR_100u_psr_100M:
+    objective: max
+    reward_type: optimal
+    bounds:
+    - 70.0
+    - 80.0
+  PSR_100u_psr_1G:
+    objective: max
+    reward_type: optimal
+    bounds:
+    - 70.0
+    - 80.0
+PSR_300m:
+  PSR_300m_psr_1M:
+    objective: max
+    reward_type: optimal
+    bounds:
+    - 10.0
+    - 30.0
+  PSR_300m_psr_10M:
+    objective: max
+    reward_type: optimal
+    bounds:
+    - 10.0
+    - 30.0
+  PSR_300m_psr_100M:
+    objective: max
+    reward_type: optimal
+    bounds:
+    - 20.0
+    - 40.0
+  PSR_300m_psr_1G:
+    objective: max
+    reward_type: optimal
+    bounds:
+    - 50.0
+    - 70.0
