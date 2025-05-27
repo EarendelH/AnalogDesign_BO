@@ -126,16 +126,19 @@ def create_policies_and_mapping(agent_ids):
     Returns:
         tuple: (policies_dict, policy_mapping_function, policies_to_train_list)
     """
-    # Create policies dictionary with one policy per agent
-    policies = {f"policy_{agent_id}": None for agent_id in agent_ids}
+    # Set policies to None to let RLlib auto-infer all policies from environment
+    # This allows RLlib to automatically create policies with correct obs/action spaces
+    policies = None
 
-    # Create list of policies to train (all policies)
-    policies_to_train = list(policies.keys())
+    # Set policies_to_train to None to train all auto-inferred policies
+    policies_to_train = None
 
     # Create policy mapping function that maps each agent to its own policy
+    # RLlib will automatically create policy_{agent_id} for each agent
     policy_mapping_fn = lambda aid, episode, worker, **kwargs: f"policy_{aid}"
 
-    logging.info(f"Created {len(policies)} policies for agents: {agent_ids}")
+    logging.info(f"Auto-inferring policies for {len(agent_ids)} agents: {agent_ids}")
+    logging.info("RLlib will automatically create one policy per agent with correct spaces")
 
     return policies, policy_mapping_fn, policies_to_train
 
