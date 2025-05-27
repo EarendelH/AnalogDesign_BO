@@ -26,6 +26,7 @@ from ray.tune.logger import UnifiedLogger
 DEFAULT_RESULTS_DIR = os.path.expanduser("~/ray_results")
 
 from rllib_env_continous_psfascii import RllibAnalogDesignAutoEnv
+from ray.rllib.policy.policy import PolicySpec
 
 # Set up logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -126,19 +127,18 @@ def create_policies_and_mapping(agent_ids):
     Returns:
         tuple: (policies_dict, policy_mapping_function, policies_to_train_list)
     """
-    # Set policies to None to let RLlib auto-infer all policies from environment
-    # This allows RLlib to automatically create policies with correct obs/action spaces
-    policies = None
+    # Create policies dictionary with PolicySpec for each agent
+    # PolicySpec() will use default policy class and let RLlib infer obs/action spaces
+    policies = {f"policy_{agent_id}": PolicySpec() for agent_id in agent_ids}
 
-    # Set policies_to_train to None to train all auto-inferred policies
-    policies_to_train = None
+    # Create list of policies to train (all policies)
+    policies_to_train = list(policies.keys())
 
     # Create policy mapping function that maps each agent to its own policy
-    # RLlib will automatically create policy_{agent_id} for each agent
     policy_mapping_fn = lambda aid, episode, worker, **kwargs: f"policy_{aid}"
 
-    logging.info(f"Auto-inferring policies for {len(agent_ids)} agents: {agent_ids}")
-    logging.info("RLlib will automatically create one policy per agent with correct spaces")
+    logging.info(f"Created {len(policies)} PolicySpecs for agents: {agent_ids}")
+    logging.info("Each agent will have its own policy with auto-inferred spaces")
 
     return policies, policy_mapping_fn, policies_to_train
 
