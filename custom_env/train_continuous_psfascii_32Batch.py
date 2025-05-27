@@ -22,6 +22,7 @@ from ray.rllib.algorithms.callbacks import DefaultCallbacks
 from ray.rllib.utils.typing import PolicyID
 from typing import Dict
 from ray.tune.logger import UnifiedLogger
+
 DEFAULT_RESULTS_DIR = os.path.expanduser("~/ray_results")
 
 from rllib_env_continous_psfascii import RllibAnalogDesignAutoEnv
@@ -31,17 +32,19 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 
 
 def format_time(seconds):
+    """Format seconds to human readable time string"""
     return str(datetime.timedelta(seconds=int(seconds)))
 
 
 def generated_restore_id(length=6):
+    """Generate random ID for restore session identification"""
     characters = string.digits + string.ascii_letters
     random_string = ''.join(random.choice(characters) for _ in range(length))
-
     return random_string
 
 
 def print_progress_table(id, result, iteration, total_time):
+    """Print training progress in table format"""
     # Define the columns and their formats
     columns = [
         ("ID", id, 6),
@@ -88,6 +91,53 @@ def confirm_settings(settings):
         print(f"{k}: {v}")
     confirm = input("\nConfirm to start training? (y/n): ").lower().strip()
     return confirm == "y"
+
+
+def get_agent_ids_from_env(env_creator_func):
+    """
+    Dynamically get agent IDs from environment instance
+
+    Args:
+        env_creator_func: Function that creates environment instance
+
+    Returns:
+        list: List of agent IDs from the environment
+    """
+    try:
+        # Create temporary environment instance to get agent IDs
+        temp_env = env_creator_func({})
+        agent_ids = list(temp_env.agents)
+        # Clean up temporary environment
+        del temp_env
+        return agent_ids
+    except Exception as e:
+        logging.error(f"Failed to get agent IDs from environment: {e}")
+        # Fallback to default agent naming if environment creation fails
+        return [f"Agent_{i + 1}" for i in range(13)]  # Default 13 agents based on config
+
+
+def create_policies_and_mapping(agent_ids):
+    """
+    Create policies dictionary and mapping function based on agent IDs
+
+    Args:
+        agent_ids: List of agent IDs from environment
+
+    Returns:
+        tuple: (policies_dict, policy_mapping_function, policies_to_train_list)
+    """
+    # Create policies dictionary with one policy per agent
+    policies = {f"policy_{agent_id}": None for agent_id in agent_ids}
+
+    # Create list of policies to train (all policies)
+    policies_to_train = list(policies.keys())
+
+    # Create policy mapping function that maps each agent to its own policy
+    policy_mapping_fn = lambda aid, episode, worker, **kwargs: f"policy_{aid}"
+
+    logging.info(f"Created {len(policies)} policies for agents: {agent_ids}")
+
+    return policies, policy_mapping_fn, policies_to_train
 
 
 def main():
@@ -156,7 +206,7 @@ def main():
                         "restore_checkpoint", "continue_steps_enable"]:
                 settings[key] = settings[key].lower() == "true"
 
-        # Environment initialization
+        # Environment initialization function
         def env_creator(_):
             return RllibAnalogDesignAutoEnv({
                 "generalize": settings["generalize"],
@@ -176,17 +226,23 @@ def main():
                 "continue_steps_enable": settings["continue_steps_enable"]
             })
 
+        # Register environment
         register_env("AnalogDesignEnv_v0", env_creator)
-
         env_name = "AnalogDesignEnv_v0"
+
+        # Get agent IDs dynamically from environment
+        agent_ids = get_agent_ids_from_env(env_creator)
+
+        # Create policies and mapping based on actual agent IDs
+        policies, policy_mapping_fn, policies_to_train = create_policies_and_mapping(agent_ids)
+
+        # Initialize Ray
         ray.init()
 
         # Restore or Initialize train
         restore_checkpoint = settings["restore_checkpoint"]
         if settings["restore_checkpoint"]:
-            policies = {f"policy_{i + 1}" for i in range(int(settings["num_agents"]))}
-            policies_to_train = list(policies)
-            policy_mapping_fn = lambda aid, episode, worker, **kwargs: f"policy_{aid}"
+            logging.info("Starting training from checkpoint")
 
             config = (
                 PPOConfig()
@@ -223,7 +279,6 @@ def main():
             logging.info(f"Attempting to restore from checkpoint: {checkpoint_path}")
 
             try:
-
                 restore_id = generated_restore_id()
 
                 new_log_dir = os.path.join(DEFAULT_RESULTS_DIR, env_name, f"restore_{restore_id}")
@@ -271,12 +326,8 @@ def main():
                 sys.exit(1)
 
         if not restore_checkpoint:
-
-            policies = {f"policy_{i + 1}" for i in range(settings["num_agents"])}
-            policies_to_train = list(policies)
-            policy_mapping_fn = lambda aid, episode, worker, **kwargs: f"policy_{aid}"
-
             logging.info("Starting new training session without checkpoint")
+
             # If not restoring, use the original configuration
             if settings["algorithm"] == "PPO":
                 config = (
@@ -302,8 +353,6 @@ def main():
                     .debugging(log_level="DEBUG")
                     .framework("torch")
                     .resources(num_gpus=num_gpu)
-                    .debugging(log_level="DEBUG")
-                    .framework("torch")
                     .multi_agent(
                         policies=policies,
                         policy_mapping_fn=policy_mapping_fn,
@@ -313,7 +362,7 @@ def main():
             else:
                 raise ValueError(f"Unsupported algorithm: {settings['algorithm']}")
 
-            # Typing Train Iterations
+            # Training iterations
             train_iterations = settings["train_iterations"]
 
             logging.info("Starting training process...")
@@ -321,7 +370,6 @@ def main():
             user_home_dir = os.path.expanduser("~")
 
             # Run the training
-
             alg_name = settings["algorithm"]
 
             tune.run(
@@ -338,6 +386,7 @@ def main():
 
 
 def print_model_structure(model):
+    """Print neural network model structure for debugging"""
     logging.info("Model structure:")
     for name, param in model.named_parameters():
         logging.info(f"  {name}: {param.shape}")
