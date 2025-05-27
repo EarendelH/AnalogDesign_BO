@@ -14,7 +14,7 @@ if __name__ == "__main__":
                                     'dc_check': False,
                                     'region_extract': False,
                                     'dynamic_queue': False,
-                                    'log_level': 'DEUBG',
+                                    'log_level': 'DEBUG',
                                     'reward_func': 'cal_reward_LFM',
                                     'continue_steps_enable': False
                                 })
