@@ -186,7 +186,7 @@ def main():
         if settings["restore_checkpoint"]:
             policies = {f"policy_{i + 1}" for i in range(int(settings["num_agents"]))}
             policies_to_train = list(policies)
-            policy_mapping_fn = lambda aid, episode, worker, **kwargs: f"policy_{int(aid[-1])}"
+            policy_mapping_fn = lambda aid, episode, worker, **kwargs: f"policy_{aid.split('_')[-1]}"
 
             config = (
                 PPOConfig()
@@ -274,7 +274,7 @@ def main():
 
             policies = {f"policy_{i + 1}" for i in range(settings["num_agents"])}
             policies_to_train = list(policies)
-            policy_mapping_fn = lambda aid, episode, worker, **kwargs: f"policy_{int(aid[-1])}"
+            policy_mapping_fn = lambda aid, episode, worker, **kwargs: f"policy_{aid.split('_')[-1]}"
 
             logging.info("Starting new training session without checkpoint")
             # If not restoring, use the original configuration
