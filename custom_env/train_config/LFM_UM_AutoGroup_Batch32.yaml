@@ -1,0 +1,23 @@
+max_process_limit: false
+cpu_usage: 20
+gpu_usage: 1
+generalize: true
+algorithm: PPO
+max_step: 1
+num_agents: 13
+netlist_folder_name: netlist_template_LFM_UM
+specs_folder_name: sampled_specs_LFM
+config_folder_name: config_LFM_AutoGroup
+run_folder_name: run_LFM_AutoGroup
+sim_output: false
+init_method: file
+corner_sim: false
+dc_check: false
+region_extract: false
+dynamic_queue: false
+restore_checkpoint: false
+checkpoint_path:
+train_iterations: 3000
+reward_func: cal_reward_LFM
+log_level: INFO
+continue_steps_enable: false
