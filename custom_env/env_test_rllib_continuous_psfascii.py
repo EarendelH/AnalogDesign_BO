@@ -4,7 +4,7 @@ from rllib_env_continous_psfascii import RllibAnalogDesignAutoEnv
 if __name__ == "__main__":
     env = RllibAnalogDesignAutoEnv({'generalize': True,
                                     'max_step': 1,
-                                    'netlist_folder_name': 'netlist_template_LFM',
+                                    'netlist_folder_name': 'netlist_template_LFM_UM',
                                     'specs_folder_name': 'sampled_specs_LFM',
                                     'config_folder_name': 'config_LFM_Block',
                                     'run_folder_name': 'run_LFM_Block',
