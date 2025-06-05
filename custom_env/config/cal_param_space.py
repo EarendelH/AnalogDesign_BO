@@ -90,7 +90,7 @@ def load_yaml_and_calculate(file_path):
 
 
 def main():
-    file_path = "/Users/hanwu/ML/AnalogDesignAuto_MultiAgent/custom_env/config/config_Haoqiang_Regroup/param_range.yaml"
+    file_path = "/Users/hanwu/ML/AnalogDesignAuto_MultiAgent/custom_env/config/config_LFM_AutoGroup/param_range.yaml"
     device_combinations, total_log_combinations = load_yaml_and_calculate(file_path)
 
     # 打印每个设备的组合数
