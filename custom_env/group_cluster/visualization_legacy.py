@@ -4,315 +4,10 @@ from scipy.cluster.hierarchy import dendrogram
 from sklearn.decomposition import PCA
 from sklearn.manifold import TSNE
 import matplotlib.cm as cm
-import matplotlib.colors as mcolors
 import os
 import sys
 
-
-def generate_cluster_colors(n_clusters, colormap='viridis'):
-    """
-    Generate a set of theme colors for clusters using modern color palettes
-    为簇生成一套主题色，使用现代化调色板
-
-    Args:
-        n_clusters (int): Number of clusters
-                         簇的数量
-        colormap (str): Colormap name ('viridis', 'plasma', 'inferno', 'cividis')
-                       调色板名称
-
-    Returns:
-        list: List of RGB color tuples
-              RGB颜色元组列表
-    """
-    try:
-        # Use modern scientific colormaps
-        # 使用现代科学调色板
-        if n_clusters == 1:
-            return ['#1f77b4']  # Default blue for single cluster
-
-        # Generate evenly spaced colors from the colormap
-        # 从调色板生成均匀间隔的颜色
-        cmap = plt.get_cmap(colormap)
-        colors = [cmap(i / (n_clusters - 1)) for i in range(n_clusters)]
-
-        # Convert to hex format for consistency
-        # 转换为十六进制格式以保持一致性
-        hex_colors = [mcolors.to_hex(color) for color in colors]
-
-        return hex_colors
-
-    except Exception as e:
-        print(f"Error in generating cluster colors: {str(e)}")
-        # Fallback to default colors
-        # 回退到默认颜色
-        default_colors = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd',
-                          '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf']
-        return default_colors[:n_clusters]
-
-
-def create_derived_colors(base_color, n_variations=5, alpha=0.25):
-    """
-    Create color variations based on a base theme color
-    基于基础主题色创建颜色变化
-
-    Args:
-        base_color (str): Base color in hex format
-                         十六进制格式的基础颜色
-        n_variations (int): Number of color variations needed
-                           需要的颜色变化数量
-        alpha (float): Transparency level for derived colors
-                      衍生颜色的透明度级别
-
-    Returns:
-        list: List of RGBA color tuples
-              RGBA颜色元组列表
-    """
-    try:
-        # Convert hex to RGB
-        # 将十六进制转换为RGB
-        base_rgb = mcolors.to_rgb(base_color)
-
-        # Create variations by adjusting hue slightly
-        # 通过轻微调整色相创建变化
-        hsv = mcolors.rgb_to_hsv(base_rgb)
-
-        variations = []
-        for i in range(n_variations):
-            # Adjust hue by small amounts
-            # 小幅度调整色相
-            hue_shift = (i - n_variations // 2) * 0.05  # Small hue shifts
-            new_hue = (hsv[0] + hue_shift) % 1.0
-
-            # Slightly adjust saturation and value for more variation
-            # 轻微调整饱和度和明度以增加变化
-            sat_adjust = 0.9 + (i * 0.02)  # Slight saturation variation
-            val_adjust = 0.85 + (i * 0.03)  # Slight brightness variation
-
-            new_hsv = [new_hue, min(1.0, hsv[1] * sat_adjust), min(1.0, hsv[2] * val_adjust)]
-            new_rgb = mcolors.hsv_to_rgb(new_hsv)
-
-            # Add alpha for transparency
-            # 添加透明度
-            rgba = (*new_rgb, alpha)
-            variations.append(rgba)
-
-        return variations
-
-    except Exception as e:
-        print(f"Error in creating derived colors: {str(e)}")
-        # Fallback to simple alpha variation
-        # 回退到简单的透明度变化
-        base_rgba = (*mcolors.to_rgb(base_color), alpha)
-        return [base_rgba] * n_variations
-
-
-def plot_cluster_signals(time_points, signals, labels, figsize=(16, 10), output_dir='output', linkage='average'):
-    """
-    Plot signals grouped by cluster with modern styling and simplified design
-    Generate both transparent SVG and PNG formats
-    使用现代样式和简化设计按簇分组绘制信号
-    生成透明背景的SVG和PNG格式
-
-    Args:
-        time_points (numpy.ndarray): Time points
-                                    时间点
-        signals (list): List of signal arrays
-                       信号数组列表
-        labels (numpy.ndarray): Cluster labels
-                               簇标签
-        figsize (tuple, optional): Figure size
-                                  图形大小
-        output_dir (str, optional): Output directory
-                                   输出目录
-        linkage (str, optional): Linkage method used
-                                使用的连接方法
-    """
-    try:
-        unique_labels = np.unique(labels)
-        n_clusters = len(unique_labels)
-
-        # Skip plotting if there's only one cluster
-        # 如果只有一个簇则跳过绘图
-        if n_clusters == 1:
-            print("Only one cluster found. Skipping cluster signals plot.")
-            return
-
-        # Generate theme colors for clusters
-        # 为簇生成主题色
-        cluster_colors = generate_cluster_colors(n_clusters, colormap='viridis')
-
-        # Create cluster_plots subdirectory in the output directory
-        # 在输出目录中创建cluster_plots子目录
-        cluster_plots_dir = os.path.join(output_dir, 'cluster_plots')
-        os.makedirs(cluster_plots_dir, exist_ok=True)
-
-        # Find global y-axis range for consistency across subplots
-        # 找到全局y轴范围以保持子图间的一致性
-        all_signals = np.concatenate(signals)
-        y_min, y_max = np.min(all_signals), np.max(all_signals)
-        y_range = y_max - y_min
-        y_padding = y_range * 0.05  # Add 5% padding
-        global_ylim = (y_min - y_padding, y_max + y_padding)
-
-        # Plot each cluster individually with modern styling
-        # 使用现代样式单独绘制每个簇
-        for i, label in enumerate(unique_labels):
-            if label == -1:
-                # Skip noise points for visualization clarity
-                # 为了可视化清晰跳过噪声点
-                continue
-
-            # Create figure with 1:1 aspect ratio for individual cluster plots
-            # 为单个簇图创建1:1长宽比的图形
-            fig, ax = plt.subplots(figsize=(8, 8))
-
-            # Remove all spines to create a borderless plot
-            # 移除所有边框以创建无边框图
-            ax.spines['top'].set_visible(False)
-            ax.spines['right'].set_visible(False)
-            ax.spines['bottom'].set_visible(False)
-            ax.spines['left'].set_visible(False)
-
-            # Remove ticks and labels as requested
-            # 按要求移除刻度和标签
-            ax.set_xticks([])
-            ax.set_yticks([])
-            ax.set_xlabel('')
-            ax.set_ylabel('')
-            ax.set_title('')
-
-            # Get indices of signals in this cluster
-            # 获取该簇中信号的索引
-            cluster_indices = np.where(labels == label)[0]
-
-            # Get theme color for this cluster
-            # 获取该簇的主题色
-            theme_color = cluster_colors[i]
-
-            # Create derived colors for individual signals
-            # 为单个信号创建衍生颜色
-            derived_colors = create_derived_colors(theme_color, len(cluster_indices), alpha=0.25)
-
-            # Plot each signal in this cluster with derived colors and reduced opacity
-            # 使用衍生颜色和降低的不透明度绘制该簇中的每个信号
-            for j, idx in enumerate(cluster_indices):
-                color_idx = j % len(derived_colors)
-                ax.plot(time_points, signals[idx],
-                        color=derived_colors[color_idx],
-                        linewidth=6.0,  # Same as previous mean line width
-                        alpha=0.25)  # Reduced from 0.7 to 0.25 (25% opacity)
-
-            # Calculate and plot the mean signal with theme color and further increased width
-            # 计算并使用主题色和进一步增加的宽度绘制平均信号
-            mean_signal = np.mean([signals[idx] for idx in cluster_indices], axis=0)
-            ax.plot(time_points, mean_signal,
-                    color=theme_color,
-                    linewidth=10.0,  # Further increased line width
-                    alpha=1.0)
-
-            # Set consistent y-axis limits to fill the canvas
-            # 设置一致的y轴范围以填满画布
-            ax.set_ylim(global_ylim)
-            ax.set_xlim(time_points[0], time_points[-1])  # Fill x-axis completely
-
-            # Set transparent background
-            # 设置透明背景
-            ax.set_facecolor('none')
-            fig.patch.set_facecolor('none')
-
-            # Save in both SVG and PNG formats with transparent backgrounds and tight layout
-            # 保存为透明背景的SVG和PNG格式，使用紧凑布局填满画布
-            plt.subplots_adjust(left=0, right=1, top=1, bottom=0)  # Fill entire canvas
-
-            # Save as SVG (vector format for scalability)
-            # 保存为SVG（矢量格式便于缩放）
-            svg_file = os.path.join(cluster_plots_dir, f'cluster_{label}_{linkage}.svg')
-            plt.savefig(svg_file, format='svg', bbox_inches='tight', pad_inches=0,
-                        facecolor='none', edgecolor='none', transparent=True)
-            print(f"Cluster {label} SVG plot saved as '{svg_file}'")
-
-            # Save as PNG (raster format with high DPI)
-            # 保存为PNG（高DPI光栅格式）
-            png_file = os.path.join(cluster_plots_dir, f'cluster_{label}_{linkage}.png')
-            plt.savefig(png_file, dpi=600, bbox_inches='tight', pad_inches=0,
-                        facecolor='none', edgecolor='none', transparent=True)
-            print(f"Cluster {label} PNG plot saved as '{png_file}'")
-
-            plt.close()
-
-        # Plot cluster means comparison with golden ratio (0.618:1) aspect ratio
-        # 使用黄金比例（0.618:1）长宽比绘制簇均值比较图
-        fig, ax = plt.subplots(figsize=(12, 12))  # Width=12, Height=12*0.618≈7.416
-
-        # Remove all spines to create a borderless plot
-        # 移除所有边框以创建无边框图
-        ax.spines['top'].set_visible(False)
-        ax.spines['right'].set_visible(False)
-        ax.spines['bottom'].set_visible(False)
-        ax.spines['left'].set_visible(False)
-
-        # Remove ticks and labels
-        # 移除刻度和标签
-        ax.set_xticks([])
-        ax.set_yticks([])
-        ax.set_xlabel('')
-        ax.set_ylabel('')
-        ax.set_title('')
-
-        # Plot mean signals for each cluster
-        # 绘制每个簇的平均信号
-        for i, label in enumerate(unique_labels):
-            if label == -1:
-                continue
-
-            # Get indices of signals in this cluster
-            # 获取该簇中信号的索引
-            cluster_indices = np.where(labels == label)[0]
-
-            # Calculate mean signal of this cluster
-            # 计算该簇的平均信号
-            mean_signal = np.mean([signals[idx] for idx in cluster_indices], axis=0)
-
-            # Plot the mean signal with consistent theme color and increased line width
-            # 使用一致的主题色和增加的线宽绘制平均信号
-            ax.plot(time_points, mean_signal,
-                    color=cluster_colors[i],
-                    linewidth=15.0,  # Increased line width for consistency
-                    alpha=1.0)
-
-        # Set consistent y-axis limits and fill the canvas
-        # 设置一致的y轴范围并填满画布
-        ax.set_ylim(global_ylim)
-        ax.set_xlim(time_points[0], time_points[-1])  # Fill x-axis completely
-        ax.set_facecolor('none')
-        fig.patch.set_facecolor('none')
-
-        # Save comparison plot in both formats with transparent backgrounds and canvas-filling layout
-        # 保存透明背景的比较图为两种格式，使用填满画布的布局
-        plt.subplots_adjust(left=0, right=1, top=1, bottom=0)  # Fill entire canvas
-
-        # Save as SVG (vector format for scalability)
-        # 保存为SVG（矢量格式便于缩放）
-        svg_file = os.path.join(cluster_plots_dir, f'cluster_means_comparison_{linkage}.svg')
-        plt.savefig(svg_file, format='svg', bbox_inches='tight', pad_inches=0,
-                    facecolor='none', edgecolor='none', transparent=True)
-        print(f"Cluster means comparison SVG saved as '{svg_file}'")
-
-        # Save as PNG (raster format with high DPI)
-        # 保存为PNG（高DPI光栅格式）
-        png_file = os.path.join(cluster_plots_dir, f'cluster_means_comparison_{linkage}.png')
-        plt.savefig(png_file, dpi=600, bbox_inches='tight', pad_inches=0,
-                    facecolor='none', edgecolor='none', transparent=True)
-        print(f"Cluster means comparison PNG saved as '{png_file}'")
-
-        plt.close()
-
-    except Exception as e:
-        print(f"Error in plotting cluster signals: {str(e)}")
-
-
-def plot_dendrogram(model, distance_matrix=None, signal_names=None, figsize=(12, 8), output_dir='output',
-                    linkage='average'):
+def plot_dendrogram(model, distance_matrix=None, signal_names=None, figsize=(12, 8), output_dir='output', linkage='average'):
     """
     Plot dendrogram from hierarchical clustering
     绘制层次聚类的树状图
@@ -381,9 +76,7 @@ def plot_dendrogram(model, distance_matrix=None, signal_names=None, figsize=(12,
     except Exception as e:
         print(f"Error in plotting dendrogram: {str(e)}")
 
-
-def plot_dimensionality_reduction(distance_matrix, labels, method='pca', figsize=(10, 8), output_dir='output',
-                                  linkage='average'):
+def plot_dimensionality_reduction(distance_matrix, labels, method='pca', figsize=(10, 8), output_dir='output', linkage='average'):
     """
     Plot dimensionality reduction of the distance matrix
     绘制距离矩阵的降维
@@ -463,6 +156,153 @@ def plot_dimensionality_reduction(distance_matrix, labels, method='pca', figsize
     except Exception as e:
         print(f"Error in plotting dimensionality reduction: {str(e)}")
 
+def plot_cluster_signals(time_points, signals, labels, figsize=(16, 10), output_dir='output', linkage='average'):
+    """
+    Plot signals grouped by cluster
+    按簇分组绘制信号
+
+    Args:
+        time_points (numpy.ndarray): Time points
+                                    时间点
+        signals (list): List of signal arrays
+                       信号数组列表
+        labels (numpy.ndarray): Cluster labels
+                               簇标签
+        figsize (tuple, optional): Figure size
+                                  图形大小
+        output_dir (str, optional): Output directory
+                                   输出目录
+        linkage (str, optional): Linkage method used
+                                使用的连接方法
+    """
+    try:
+        unique_labels = np.unique(labels)
+        n_clusters = len(unique_labels)
+
+        # Skip plotting if there's only one cluster or too many clusters
+        # 如果只有一个簇或太多簇，则跳过绘图
+        if n_clusters == 1:
+            print("Only one cluster found. Skipping cluster signals plot.")
+            return
+
+        # Determine subplot grid
+        # 确定子图网格
+        n_cols = min(3, n_clusters)
+        n_rows = int(np.ceil(n_clusters / n_cols))
+
+        # Create cluster_plots subdirectory in the output directory
+        # 在输出目录中创建cluster_plots子目录
+        cluster_plots_dir = os.path.join(output_dir, 'cluster_plots')
+        os.makedirs(cluster_plots_dir, exist_ok=True)
+
+        # Plot all clusters
+        # 绘制所有簇
+        plt.figure(figsize=figsize)
+
+        for i, label in enumerate(unique_labels):
+            if label == -1:
+                # Skip noise points for visualization clarity
+                # 为了可视化清晰，跳过噪声点
+                continue
+
+            plt.subplot(n_rows, n_cols, i + 1)
+
+            # Get indices of signals in this cluster
+            # 获取该簇中信号的索引
+            cluster_indices = np.where(labels == label)[0]
+
+            # Plot each signal in this cluster
+            # 绘制该簇中的每个信号
+            for idx in cluster_indices:
+                plt.plot(time_points, signals[idx], alpha=0.3, linewidth=1)
+
+            # Calculate and plot the mean signal of this cluster
+            # 计算并绘制该簇的平均信号
+            mean_signal = np.mean([signals[idx] for idx in cluster_indices], axis=0)
+            plt.plot(time_points, mean_signal, 'k-', linewidth=2, label='Mean')
+
+            plt.title(f'Cluster {label} (n={len(cluster_indices)})')
+            if i == 0:
+                plt.legend()
+
+        plt.tight_layout()
+        output_file = os.path.join(cluster_plots_dir, f'all_clusters_{linkage}.png')
+        plt.savefig(output_file, dpi=300, bbox_inches='tight')
+        print(f"All clusters plot saved as '{output_file}'")
+
+        # Plot each cluster individually with more detail
+        # 更详细地单独绘制每个簇
+        for label in unique_labels:
+            if label == -1:
+                # Skip noise points for visualization clarity
+                # 为了可视化清晰，跳过噪声点
+                continue
+
+            plt.figure(figsize=(12, 6))
+
+            # Get indices of signals in this cluster
+            # 获取该簇中信号的索引
+            cluster_indices = np.where(labels == label)[0]
+
+            # Plot each signal in this cluster
+            # 绘制该簇中的每个信号
+            for idx in cluster_indices:
+                plt.plot(time_points, signals[idx], alpha=0.3, linewidth=1)
+
+            # Calculate and plot the mean signal of this cluster
+            # 计算并绘制该簇的平均信号
+            mean_signal = np.mean([signals[idx] for idx in cluster_indices], axis=0)
+            plt.plot(time_points, mean_signal, 'r-', linewidth=2, label='Mean')
+
+            plt.title(f'Cluster {label} (n={len(cluster_indices)})')
+            plt.xlabel('Time')
+            plt.ylabel('Signal Value (Z-normalized)')
+            plt.legend()
+            plt.grid(True, alpha=0.3)
+
+            plt.tight_layout()
+            output_file = os.path.join(cluster_plots_dir, f'cluster_{label}_{linkage}.png')
+            plt.savefig(output_file, dpi=300, bbox_inches='tight')
+            print(f"Cluster {label} plot saved as '{output_file}'")
+            plt.close()
+
+        plt.close()
+
+        # Plot cluster means for comparison
+        # 绘制簇均值进行比较
+        plt.figure(figsize=(12, 6))
+
+        for label in unique_labels:
+            if label == -1:
+                continue
+
+            # Get indices of signals in this cluster
+            # 获取该簇中信号的索引
+            cluster_indices = np.where(labels == label)[0]
+
+            # Calculate mean signal of this cluster
+            # 计算该簇的平均信号
+            mean_signal = np.mean([signals[idx] for idx in cluster_indices], axis=0)
+
+            # Plot the mean signal
+            # 绘制平均信号
+            plt.plot(time_points, mean_signal, linewidth=2, label=f'Cluster {label}')
+
+        plt.title(f'Comparison of Cluster Mean Signals ({linkage} linkage)')
+        plt.xlabel('Time')
+        plt.ylabel('Signal Value (Z-normalized)')
+        plt.legend()
+        plt.grid(True, alpha=0.3)
+
+        plt.tight_layout()
+        output_file = os.path.join(cluster_plots_dir, f'cluster_means_comparison_{linkage}.png')
+        plt.savefig(output_file, dpi=300, bbox_inches='tight')
+        print(f"Cluster means comparison saved as '{output_file}'")
+
+        plt.close()
+
+    except Exception as e:
+        print(f"Error in plotting cluster signals: {str(e)}")
 
 def plot_evaluation_metrics(evaluation_results, figsize=(12, 8), output_dir='output', linkage='average'):
     """
@@ -545,7 +385,6 @@ def plot_evaluation_metrics(evaluation_results, figsize=(12, 8), output_dir='out
 
     except Exception as e:
         print(f"Error in plotting evaluation metrics: {str(e)}")
-
 
 def plot_linkage_comparison(all_results, figsize=(15, 12), output_dir='output'):
     """
