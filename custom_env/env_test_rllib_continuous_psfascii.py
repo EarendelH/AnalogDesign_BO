@@ -6,7 +6,7 @@ if __name__ == "__main__":
                                     'max_step': 1,
                                     'netlist_folder_name': 'netlist_template_LFM',
                                     'specs_folder_name': 'sampled_specs_LFM',
-                                    'config_folder_name': 'config_LFM_AutoGroup_14',
+                                    'config_folder_name': 'config_LFM_AutoGroup_18',
                                     'run_folder_name': 'run_LFM_Block',
                                     'sim_output': False,
                                     'init_method': 'random',
