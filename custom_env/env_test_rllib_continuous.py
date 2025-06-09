@@ -9,7 +9,7 @@ if __name__ == "__main__":
                                     'config_folder_name': 'config_Jianping_AutoGroup',
                                     'run_folder_name': 'run_test',
                                     'sim_output': False,
-                                    'init_method': 'random',
+                                    'init_method': 'file',
                                     'corner_sim': False,
                                     'dc_check': False,
                                     'region_extract': False,
