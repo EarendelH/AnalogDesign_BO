@@ -10,6 +10,7 @@ import matplotlib.pyplot as plt  # 用于绘图
 import pickle
 import json
 import swanlab
+from tqdm import tqdm
 
 from bo_surrogate_model import SurrogateModel
 
@@ -125,6 +126,8 @@ class BayesianOptimizer:
                     # 否则创建新的run
                     if swanlab_run_name is None:
                         swanlab_run_name = f"bo_run_{self.run_timestamp}"
+                    else:
+                        swanlab_run_name = f"{swanlab_run_name}_{self.run_timestamp}"
                     
                     swanlab.init(
                         project=swanlab_project,
@@ -791,7 +794,7 @@ class BayesianOptimizer:
         acquisition_values = []
 
         # 从多个起点优化采集函数
-        for _ in range(n_points):
+        for _ in tqdm(range(n_points)):
             x0 = np.random.uniform(self.bounds[0], self.bounds[1])
 
             # 优化采集函数

@@ -4,7 +4,7 @@ gpu_usage: 0
 generalize: true
 algorithm: PPO
 max_step: 1
-num_agents: 5
+num_agents: 1
 netlist_folder_name: netlist_template_Jianping_N65
 specs_folder_name: sampled_specs_Jianping_N65
 config_folder_name: config_Jianping_N65
@@ -18,8 +18,8 @@ dynamic_queue: false
 continue_steps_enable: false
 restore_checkpoint: false
 checkpoint_path:
-train_iterations: 1000
+train_iterations: 300
 reward_func: cal_reward_Jianping
 log_level: INFO
-swanlab_run_name: Jianping_eex_32Batch_BO
+swanlab_run_name: Jianping_eex04_32Batch_BO
 surrogate_learning_rate: 0.0001

@@ -43,5 +43,5 @@ def main_loop(target_folder):
 
 
 # monitor_dir = input("Please input the directory you want to monitor: ")
-monitor_dir = "/home/wangziheng/AnalogDesignAuto_BO/AnalogDesignAuto_MultiAgent/custom_env/run_Haoqiang_Regroup_BO/run_20250704_151306"
+monitor_dir = "/home/wangziheng/AnalogDesignAuto_BO/AnalogDesignAuto_MultiAgent/custom_env/run_Jianping_BO/run_20250704_210816"
 main_loop(monitor_dir)
