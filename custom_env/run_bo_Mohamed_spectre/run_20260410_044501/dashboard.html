@@ -1,0 +1,100 @@
+
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Bayesian Optimization Dashboard</title>
+            <meta http-equiv="refresh" content="10">
+            <style>
+                body { font-family: Arial, sans-serif; margin: 20px; }
+                .container { max-width: 1200px; margin: 0 auto; }
+                .header { text-align: center; margin-bottom: 30px; }
+                .plots { display: flex; flex-wrap: wrap; justify-content: center; }
+                .plot-container { margin: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+                .metrics { display: flex; flex-wrap: wrap; margin-top: 30px; }
+                .metric-card { 
+                    flex: 1; min-width: 200px; margin: 10px; padding: 20px; 
+                    background-color: #f8f9fa; border-radius: 10px;
+                    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+                    text-align: center;
+                }
+                .metric-value { font-size: 24px; font-weight: bold; margin: 10px 0; }
+                .metric-title { font-size: 14px; color: #666; }
+                .timestamp { text-align: center; margin-top: 20px; color: #666; font-size: 12px; }
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <div class="header">
+                    <h1>Bayesian Optimization Progress Dashboard</h1>
+                    <p>Real-time monitoring of optimization progress and results</p>
+                </div>
+                
+                <div class="metrics">
+                    <div class="metric-card">
+                        <div class="metric-title">Current Iteration</div>
+                        <div class="metric-value" id="current-iteration">0</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-title">Best Reward</div>
+                        <div class="metric-value" id="best-reward">-</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-title">Running Time</div>
+                        <div class="metric-value" id="elapsed-time">-</div>
+                    </div>
+                </div>
+                
+                <div class="plots">
+                    <div class="plot-container">
+                        <h3>Optimization Progress</h3>
+                        <img src="plots/optimization_progress.png" width="600" id="progress-plot">
+                    </div>
+                    <div class="plot-container">
+                        <h3>Parameter Importance Analysis</h3>
+                        <img src="" width="600" id="importance-plot">
+                    </div>
+                </div>
+                
+                <div class="timestamp" id="update-time"></div>
+            </div>
+            
+            <script>
+                // Dynamically update image src to avoid caching
+                function updateImages() {
+                    const timestamp = new Date().getTime();
+                    document.getElementById('progress-plot').src = 'plots/optimization_progress.png?' + timestamp;
+                    
+                    // Get latest parameter importance plot
+                    fetch('optimization_summary.json?' + timestamp)
+                        .then(response => response.json())
+                        .then(data => {
+                            const iteration = data.iterations_completed;
+                            const importancePlot = document.getElementById('importance-plot');
+                            importancePlot.src = `plots/parameter_importance_iter_${iteration}.png?` + timestamp;
+                            
+                            // Update metrics
+                            document.getElementById('current-iteration').textContent = iteration;
+                            document.getElementById('best-reward').textContent = data.best_reward.toFixed(4);
+                            
+                            const elapsedSeconds = data.elapsed_time;
+                            const hours = Math.floor(elapsedSeconds / 3600);
+                            const minutes = Math.floor((elapsedSeconds % 3600) / 60);
+                            const seconds = Math.floor(elapsedSeconds % 60);
+                            document.getElementById('elapsed-time').textContent = 
+                                `${hours}h ${minutes}m ${seconds}s`;
+                                
+                            document.getElementById('update-time').textContent = 
+                                `Last updated: ${new Date().toLocaleString()}`;
+                        })
+                        .catch(error => console.error('Error fetching data:', error));
+                }
+                
+                // Initial load
+                updateImages();
+                
+                // Update every 10 seconds
+                setInterval(updateImages, 10000);
+            </script>
+        </body>
+        </html>
+        

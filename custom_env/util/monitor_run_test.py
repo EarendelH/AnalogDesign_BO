@@ -7,7 +7,7 @@ def clean_folder(target_folder):
     current_time = time.time()
 
     for entry in os.scandir(target_folder):
-        if entry.is_dir():
+        if entry.is_dir() and  entry.name.startswith('tmp') :
             dir_path = entry.path
             if current_time - os.path.getmtime(dir_path) > 300:
                 for sub_entry in os.scandir(dir_path):
@@ -43,5 +43,6 @@ def main_loop(target_folder):
 
 
 # monitor_dir = input("Please input the directory you want to monitor: ")
-monitor_dir = "/home/wangziheng/AnalogDesignAuto_BO/AnalogDesignAuto_MultiAgent/custom_env/run_Jianping_BO/run_20250704_210816"
+#monitor_dir = "/home/wuhan/AnalogDesignAuto_BO/AnalogDesignAuto_MultiAgent/custom_env/run_AXS_BO_07181343/run_20250721_153107"
+monitor_dir = "/home/wuhan/to_be_deleted/AnalogDesignAuto_BO/AnalogDesignAuto_MultiAgent/custom_env/run_bo_Mohamed_spectre/run_20260410_044501"
 main_loop(monitor_dir)

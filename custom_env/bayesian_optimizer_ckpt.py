@@ -11,6 +11,8 @@ import pickle
 import json
 import swanlab
 from tqdm import tqdm
+import torch
+swanlab.login(api_key="1aombOmAnOJAmhtVFg6av", save=False)
 
 from bo_surrogate_model import SurrogateModel
 
@@ -54,7 +56,12 @@ class BayesianOptimizer:
                  swanlab_run_name: Optional[str] = None,
                  checkpoint_dir: Optional[str] = None,
                  resume: bool = False,
-                 surrogate_learning_rate: float = 1e-4):
+                 surrogate_learning_rate: float = 1e-4,
+                 surrogate_device: Optional[str] = None,
+                 acquisition_optimizer: str = "scipy",
+                 acquisition_steps: int = 80,
+                 acquisition_lr: float = 0.05,
+                 acquisition_population_size: Optional[int] = None):
         """
         初始化贝叶斯优化器
         
@@ -84,6 +91,13 @@ class BayesianOptimizer:
         self.resume = resume
         self.checkpoint_dir = checkpoint_dir
         self.surrogate_learning_rate = surrogate_learning_rate
+        self.surrogate_device = surrogate_device or (
+            "cuda" if torch.cuda.is_available() else "cpu"
+        )
+        self.acquisition_optimizer = acquisition_optimizer.lower()
+        self.acquisition_steps = acquisition_steps
+        self.acquisition_lr = acquisition_lr
+        self.acquisition_population_size = acquisition_population_size
 
         # 如果resume为True且提供了checkpoint_dir，检查是否存在检查点
         if resume and checkpoint_dir:
@@ -108,7 +122,6 @@ class BayesianOptimizer:
             os.makedirs(self.save_dir, exist_ok=True)
 
         # 初始化swanlab
-        use_swanlab=True
         self.use_swanlab = use_swanlab
         if self.use_swanlab:
             try:
@@ -136,6 +149,10 @@ class BayesianOptimizer:
                             "input_dim": input_dim,
                             "exploration_weight": exploration_weight,
                             "n_restarts": n_restarts,
+                            "surrogate_device": self.surrogate_device,
+                            "acquisition_optimizer": self.acquisition_optimizer,
+                            "acquisition_steps": self.acquisition_steps,
+                            "acquisition_lr": self.acquisition_lr,
                             "bounds": {
                                 "lower": bounds[0].tolist() if isinstance(bounds[0], np.ndarray) else bounds[0],
                                 "upper": bounds[1].tolist() if isinstance(bounds[1], np.ndarray) else bounds[1],
@@ -158,8 +175,11 @@ class BayesianOptimizer:
         # 如果不是恢复模式，初始化优化状态
         if not hasattr(self, 'surrogate'):
             # 初始化代理模型
-            
-            self.surrogate = SurrogateModel(input_dim=input_dim,learning_rate=self.surrogate_learning_rate)
+            self.surrogate = SurrogateModel(
+                input_dim=input_dim,
+                learning_rate=self.surrogate_learning_rate,
+                device=self.surrogate_device
+            )
 
             # 初始化优化历史
             self.X_history = []
@@ -181,7 +201,10 @@ class BayesianOptimizer:
             self.completed_iterations = 0
             self.initial_samples_done = False
             
-        logging.info(f"贝叶斯优化器初始化完成，输入维度: {input_dim}")
+        logging.info(
+            f"贝叶斯优化器初始化完成，输入维度: {input_dim}, "
+            f"代理模型设备: {self.surrogate_device}, 采样优化器: {self.acquisition_optimizer}"
+        )
         
         
     def _save_checkpoint(self):
@@ -258,7 +281,11 @@ class BayesianOptimizer:
             self.start_time = time.time() - checkpoint_data.get('elapsed_time', 0)
             
             # 初始化代理模型
-            self.surrogate = SurrogateModel(input_dim=self.input_dim,learning_rate=self.surrogate_learning_rate)
+            self.surrogate = SurrogateModel(
+                input_dim=self.input_dim,
+                learning_rate=self.surrogate_learning_rate,
+                device=self.surrogate_device
+            )
             
             # 如果存在代理模型检查点，恢复代理模型
             surrogate_path = os.path.join(checkpoint_dir, 'surrogate_checkpoint.pt')
@@ -750,7 +777,14 @@ class BayesianOptimizer:
         # 添加探索奖励
         exploration_bonus = self.exploration_weight * std
 
-        return -(improvement + exploration_bonus)  # 最小化负期望改进
+        return float((-(improvement + exploration_bonus)).reshape(-1)[0])  # 最小化负期望改进
+
+    def _acquisition_function_torch(self, x: torch.Tensor) -> torch.Tensor:
+        """Differentiable acquisition function evaluated on the surrogate device."""
+        mean, std = self.surrogate.predict_tensor(x, requires_grad=True)
+        improvement = mean - float(self.best_value)
+        exploration_bonus = self.exploration_weight * std
+        return -(improvement + exploration_bonus)
 
     def _propose_next_point(self) -> np.ndarray:
         """
@@ -779,6 +813,53 @@ class BayesianOptimizer:
                 best_x = result.x
 
         return best_x
+
+    def _propose_multiple_points_torch(self, n_points: int) -> np.ndarray:
+        """
+        Optimize a batch of acquisition candidates directly on the configured device.
+        """
+        device = self.surrogate.device
+        lower = torch.tensor(self.bounds[0], dtype=torch.float32, device=device)
+        upper = torch.tensor(self.bounds[1], dtype=torch.float32, device=device)
+
+        population_size = self.acquisition_population_size
+        if population_size is None:
+            population_size = max(n_points * 8, n_points)
+        else:
+            population_size = max(population_size, n_points)
+
+        candidates = lower + torch.rand(
+            population_size, self.input_dim, device=device
+        ) * (upper - lower)
+        candidates = torch.nn.Parameter(candidates)
+        optimizer = torch.optim.Adam([candidates], lr=self.acquisition_lr)
+
+        for _ in range(self.acquisition_steps):
+            optimizer.zero_grad(set_to_none=True)
+            clipped_candidates = torch.max(torch.min(candidates, upper), lower)
+            acquisition_values = self._acquisition_function_torch(clipped_candidates)
+            acquisition_values.mean().backward()
+            optimizer.step()
+            with torch.no_grad():
+                candidates.data.copy_(torch.max(torch.min(candidates.data, upper), lower))
+
+        with torch.no_grad():
+            final_candidates = torch.max(torch.min(candidates, upper), lower)
+            final_acquisition_values = self._acquisition_function_torch(final_candidates)
+            best_indices = torch.argsort(final_acquisition_values)[:n_points]
+            points = final_candidates[best_indices].detach().cpu().numpy()
+
+        unique_points = []
+        for point in points:
+            if not any(np.allclose(point, existing, atol=1e-6, rtol=0.0) for existing in unique_points):
+                unique_points.append(point)
+
+        while len(unique_points) < n_points:
+            unique_points.append(
+                np.random.uniform(self.bounds[0], self.bounds[1])
+            )
+
+        return np.asarray(unique_points[:n_points])
         
     def _propose_multiple_points(self, n_points: int) -> np.ndarray:
         """
@@ -790,8 +871,13 @@ class BayesianOptimizer:
         Returns:
             points: 候选点数组
         """
+        if self.acquisition_optimizer == "torch":
+            try:
+                return self._propose_multiple_points_torch(n_points)
+            except Exception as exc:
+                logging.warning(f"torch采集优化失败，回退到scipy: {exc}")
+
         points = []
-        acquisition_values = []
 
         # 从多个起点优化采集函数
         for _ in tqdm(range(n_points)):
@@ -806,7 +892,6 @@ class BayesianOptimizer:
             )
 
             points.append(result.x)
-            acquisition_values.append(result.fun)
 
         return np.array(points)
 

@@ -83,13 +83,13 @@ class SurrogateModel:
             learning_rate: Learning rate for optimization
         """
         self.input_dim = input_dim
-        self.device = device
+        self.device = torch.device(device)
         self.ensemble_size = ensemble_size
         self.learning_rate = learning_rate
 
         # Initialize ensemble of networks
         self.networks = [
-            SurrogateNet(input_dim).to(device)
+            SurrogateNet(input_dim).to(self.device)
             for _ in range(ensemble_size)
         ]
 
@@ -104,6 +104,80 @@ class SurrogateModel:
         self.y_scaler = StandardScaler()
 
         self.loss_fn = nn.MSELoss()
+        self.x_mean_tensor = None
+        self.x_scale_tensor = None
+        self.y_mean_tensor = None
+        self.y_scale_tensor = None
+
+    def _refresh_scaler_tensors(self):
+        """Mirror fitted scaler statistics onto the model device."""
+        if hasattr(self.x_scaler, "mean_") and hasattr(self.x_scaler, "scale_"):
+            self.x_mean_tensor = torch.tensor(
+                self.x_scaler.mean_, dtype=torch.float32, device=self.device
+            )
+            self.x_scale_tensor = torch.tensor(
+                self.x_scaler.scale_, dtype=torch.float32, device=self.device
+            )
+
+        if hasattr(self.y_scaler, "mean_") and hasattr(self.y_scaler, "scale_"):
+            self.y_mean_tensor = torch.tensor(
+                self.y_scaler.mean_, dtype=torch.float32, device=self.device
+            )
+            self.y_scale_tensor = torch.tensor(
+                self.y_scaler.scale_, dtype=torch.float32, device=self.device
+            )
+
+    def _ensure_scalers_ready(self):
+        if self.x_mean_tensor is None or self.y_mean_tensor is None:
+            self._refresh_scaler_tensors()
+
+    def _scale_tensor_input(self, X_tensor: torch.Tensor) -> torch.Tensor:
+        self._ensure_scalers_ready()
+        return (X_tensor - self.x_mean_tensor) / self.x_scale_tensor
+
+    def _ensemble_predict_from_scaled_tensor(
+            self, X_scaled: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:
+        predictions = []
+        for net in self.networks:
+            net.eval()
+            pred = net(X_scaled)
+            predictions.append(pred)
+
+        predictions = torch.stack(predictions, dim=0)
+        mean_scaled = predictions.mean(dim=0)
+        std_scaled = predictions.std(dim=0, unbiased=False)
+        return mean_scaled, std_scaled
+
+    def predict_tensor(self,
+                       X_tensor: torch.Tensor,
+                       requires_grad: bool = False) -> Tuple[torch.Tensor, torch.Tensor]:
+        """
+        Predict mean/std directly on tensors, optionally preserving gradients.
+
+        Args:
+            X_tensor: Input tensor of shape [batch, input_dim]
+            requires_grad: Whether gradients w.r.t. the input are needed
+
+        Returns:
+            mean_prediction: Tensor of shape [batch]
+            std_prediction: Tensor of shape [batch]
+        """
+        if not torch.is_tensor(X_tensor):
+            X_tensor = torch.as_tensor(X_tensor, dtype=torch.float32, device=self.device)
+        else:
+            X_tensor = X_tensor.to(self.device, dtype=torch.float32)
+
+        X_scaled = self._scale_tensor_input(X_tensor)
+
+        if requires_grad:
+            mean_scaled, std_scaled = self._ensemble_predict_from_scaled_tensor(X_scaled)
+        else:
+            with torch.no_grad():
+                mean_scaled, std_scaled = self._ensemble_predict_from_scaled_tensor(X_scaled)
+
+        mean_pred = mean_scaled * self.y_scale_tensor + self.y_mean_tensor
+        std_pred = std_scaled * self.y_scale_tensor
+        return mean_pred.squeeze(-1), std_pred.squeeze(-1)
 
     # def fit(self,
     #         X: np.ndarray,
@@ -233,16 +307,23 @@ class SurrogateModel:
         # Scale data
         X_scaled = self.x_scaler.fit_transform(X)
         y_scaled = self.y_scaler.fit_transform(y.reshape(-1, 1))
+        self._refresh_scaler_tensors()
 
         # Convert to tensors
-        X_tensor = torch.FloatTensor(X_scaled).to(self.device)
-        y_tensor = torch.FloatTensor(y_scaled).to(self.device)
+        X_tensor = torch.tensor(X_scaled, dtype=torch.float32, device=self.device)
+        y_tensor = torch.tensor(y_scaled, dtype=torch.float32, device=self.device)
 
         # Split data
-        n_val = int(len(X) * validation_split)
-        indices = torch.randperm(len(X))
-        train_indices = indices[:-n_val]
-        val_indices = indices[-n_val:]
+        n_samples = len(X)
+        n_val = int(n_samples * validation_split)
+        if n_samples > 1:
+            n_val = max(1, n_val)
+        else:
+            n_val = 0
+
+        indices = torch.randperm(n_samples, device=self.device)
+        train_indices = indices[:-n_val] if n_val > 0 else indices
+        val_indices = indices[-n_val:] if n_val > 0 else indices
 
         # Training history
         history = {'train_loss': [], 'val_loss': []}
@@ -274,14 +355,15 @@ class SurrogateModel:
 
                 # Validation
                 net.eval()
-                with torch.no_grad():
-                    val_pred = net(X_tensor[val_indices])
-                    val_loss = self.loss_fn(val_pred, y_tensor[val_indices])
-                    val_losses.append(val_loss.item())
+                if len(val_indices) > 0:
+                    with torch.no_grad():
+                        val_pred = net(X_tensor[val_indices])
+                        val_loss = self.loss_fn(val_pred, y_tensor[val_indices])
+                        val_losses.append(val_loss.item())
 
             # Record metrics
-            avg_train_loss = np.mean(train_losses)
-            avg_val_loss = np.mean(val_losses)
+            avg_train_loss = float(np.mean(train_losses)) if train_losses else 0.0
+            avg_val_loss = float(np.mean(val_losses)) if val_losses else avg_train_loss
             history['train_loss'].append(avg_train_loss)
             history['val_loss'].append(avg_val_loss)
 
@@ -314,28 +396,8 @@ class SurrogateModel:
             mean_prediction: Mean of predictions
             std_prediction: Standard deviation of predictions
         """
-        # Scale input
-        X_scaled = self.x_scaler.transform(X)
-        X_tensor = torch.FloatTensor(X_scaled).to(self.device)
-
-        # Collect predictions from ensemble
-        predictions = []
-        for net in self.networks:
-            net.eval()
-            with torch.no_grad():
-                pred = net(X_tensor).cpu().numpy()
-                predictions.append(pred)
-
-        # Calculate statistics
-        predictions = np.array(predictions)
-        mean_pred = np.mean(predictions, axis=0)
-        std_pred = np.std(predictions, axis=0)
-
-        # Inverse transform predictions
-        mean_pred = self.y_scaler.inverse_transform(mean_pred)
-        std_pred = std_pred * self.y_scaler.scale_
-
-        return mean_pred, std_pred
+        mean_pred, std_pred = self.predict_tensor(X, requires_grad=False)
+        return mean_pred.detach().cpu().numpy().reshape(-1, 1), std_pred.detach().cpu().numpy().reshape(-1, 1)
 
     def save_model(self, path: str):
         """Save model state"""
@@ -348,8 +410,9 @@ class SurrogateModel:
 
     def load_model(self, path: str):
         """Load model state"""
-        state = torch.load(path)
+        state = torch.load(path, map_location=self.device)
         for net, state_dict in zip(self.networks, state['networks']):
             net.load_state_dict(state_dict)
         self.x_scaler = state['x_scaler']
         self.y_scaler = state['y_scaler']
+        self._refresh_scaler_tensors()

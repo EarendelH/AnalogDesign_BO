@@ -52,7 +52,7 @@ def get_default_config() -> Dict[str, Any]:
         "reward_func": "cal_reward_LFM",
         "log_level": "INFO",
         "n_init": 32,
-        "n_iter": 260,
+        "n_iter": 130,
         "batch_size": 32,
         "surrogate_epochs": 20,
         "exploration_weight": 0.3,
