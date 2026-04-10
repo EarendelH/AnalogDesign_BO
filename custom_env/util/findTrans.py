@@ -734,6 +734,155 @@ def findShoot_LFM(filename):
     result = findShoot_general_psf(filename, [(1.0e-6, 1.5e-5), (3.0e-5, 6.0e-5)], 1.0, output_voltage_label, file_size_threshold)
     return result
 
+
+def find_signal_crossing_with_interpolation(signal1, signal2, time_series, rising=True):
+    """
+    Find the first crossing point between two signals using linear interpolation.
+    """
+    try:
+        if len(signal1) != len(signal2) or len(signal1) != len(time_series):
+            print("Error: Signal lengths do not match in crossing detection")
+            return None
+
+        diff_signal = [s1 - s2 for s1, s2 in zip(signal1, signal2)]
+
+        for i in range(len(diff_signal) - 1):
+            current_diff = diff_signal[i]
+            next_diff = diff_signal[i + 1]
+
+            if rising:
+                if current_diff <= 0 and next_diff > 0:
+                    if abs(next_diff - current_diff) > 1e-15:
+                        return time_series[i] + (
+                            time_series[i + 1] - time_series[i]
+                        ) * (-current_diff) / (next_diff - current_diff)
+                    return time_series[i]
+            else:
+                if current_diff >= 0 and next_diff < 0:
+                    if abs(next_diff - current_diff) > 1e-15:
+                        return time_series[i] + (
+                            time_series[i + 1] - time_series[i]
+                        ) * (-current_diff) / (next_diff - current_diff)
+                    return time_series[i]
+
+        return None
+
+    except Exception as e:
+        print(f"Error in signal crossing detection: {str(e)}")
+        return None
+
+
+def create_constant_signal(value, length):
+    """Create a constant-valued signal with the given length."""
+    return [value] * length
+
+
+def findDelay_general(filename, input_neg_trace_name, input_pos_trace_name,
+                      output_trace_name, output_threshold, time_range=None, hysteresis=None):
+    """
+    General function to calculate delay time between input crossing and output threshold crossing.
+    """
+    try:
+        trans_dict = extractTransTrace(filename)
+
+        required_signals = [input_neg_trace_name, input_pos_trace_name, output_trace_name, "time"]
+        for signal in required_signals:
+            if signal not in trans_dict:
+                print(f"Error: Required signal '{signal}' not found in file")
+                return {"rise_delay_time": 100, "fall_delay_time": 100}
+
+        time_series = trans_dict["time"]
+        input_neg_trace = trans_dict[input_neg_trace_name]
+        input_pos_trace = trans_dict[input_pos_trace_name]
+        output_trace = trans_dict[output_trace_name]
+
+        if time_range is not None:
+            start_time, end_time = time_range
+            time_indices = find_indices_in_range(time_series, start_time, end_time)
+
+            if len(time_indices) == 0:
+                print(f"Error: No data points found in time range [{start_time}, {end_time}]")
+                return {"rise_delay_time": 100, "fall_delay_time": 100}
+
+            time_series = [time_series[i] for i in time_indices]
+            input_neg_trace = [input_neg_trace[i] for i in time_indices]
+            input_pos_trace = [input_pos_trace[i] for i in time_indices]
+            output_trace = [output_trace[i] for i in time_indices]
+
+        signal_length = len(time_series)
+        if not (len(input_neg_trace) == len(input_pos_trace) == len(output_trace) == signal_length):
+            print("Error: Filtered signal lengths are not consistent")
+            return {"rise_delay_time": 100, "fall_delay_time": 100}
+
+        if signal_length < 2:
+            print("Error: Insufficient data points for analysis")
+            return {"rise_delay_time": 100, "fall_delay_time": 100}
+
+        threshold_signal = create_constant_signal(output_threshold, signal_length)
+
+        if hysteresis is not None:
+            input_neg_with_hyst_rise = [val + hysteresis for val in input_neg_trace]
+            input_neg_with_hyst_fall = [val - hysteresis for val in input_neg_trace]
+
+            input_cross_time_rise = find_signal_crossing_with_interpolation(
+                input_pos_trace, input_neg_with_hyst_rise, time_series, rising=True)
+            input_cross_time_fall = find_signal_crossing_with_interpolation(
+                input_pos_trace, input_neg_with_hyst_fall, time_series, rising=False)
+        else:
+            input_cross_time_rise = find_signal_crossing_with_interpolation(
+                input_pos_trace, input_neg_trace, time_series, rising=True)
+            input_cross_time_fall = find_signal_crossing_with_interpolation(
+                input_pos_trace, input_neg_trace, time_series, rising=False)
+
+        output_cross_time_rise = find_signal_crossing_with_interpolation(
+            output_trace, threshold_signal, time_series, rising=True)
+        output_cross_time_fall = find_signal_crossing_with_interpolation(
+            output_trace, threshold_signal, time_series, rising=False)
+
+        rise_delay_time = 100
+        fall_delay_time = 100
+
+        if input_cross_time_rise is not None and output_cross_time_rise is not None:
+            rise_delay_time = output_cross_time_rise - input_cross_time_rise
+        else:
+            print("Warning: Could not find rising edge crossing points")
+
+        if input_cross_time_fall is not None and output_cross_time_fall is not None:
+            fall_delay_time = output_cross_time_fall - input_cross_time_fall
+        else:
+            print("Warning: Could not find falling edge crossing points")
+
+        if rise_delay_time <= 0:
+            print(f"Warning: Rise delay time is non-positive: {rise_delay_time}, set to 100")
+            rise_delay_time = 100
+
+        if fall_delay_time <= 0:
+            print(f"Warning: Fall delay time is non-positive: {fall_delay_time}, set to 100")
+            fall_delay_time = 100
+
+        return {
+            "rise_delay_time": rise_delay_time,
+            "fall_delay_time": fall_delay_time
+        }
+
+    except Exception as e:
+        print(f"Error in findDelay_general: {str(e)}")
+        return {"rise_delay_time": 100, "fall_delay_time": 100}
+
+
+def findDelay_CMP_LG(filename):
+    """
+    Calculate comparator delay timing for CMP_LG.
+    """
+    return findDelay_general(
+        filename=filename,
+        input_neg_trace_name="VINN_VC",
+        input_pos_trace_name="VINP_RAMP",
+        output_trace_name="D_COMP_OUT",
+        output_threshold=2.5,
+        time_range=None
+    )
+
 # if __name__ == "__main__":
 #     demo_file = "/Users/hanwu/Downloads/tran.tran.tran"
 #     print(findShoot_LFM(demo_file))

@@ -182,6 +182,19 @@ def findIQ_LFM(filepath):
         power_value = 100.0
     return {"IQ": power_value}
 
+
+def findIQ_CMP_LG(filepath):
+    power_keyword = "I0:6"
+    try:
+        power_value = extract_dcOP_data(filepath, power_keyword)
+    except Exception as e:
+        print(f"Warning: {e}. return to max value.")
+        power_value = 100.0
+    if power_value <= 0.0:
+        print("Power is lower than zero, impossible, return to max value")
+        power_value = 100.0
+    return {"IQ": power_value}
+
 # if __name__ == "__main__":
 #     # Test code
 #     file_path = "/Users/hanwu/Downloads/Netlist_AXS/DC.raw/dcOp.dc"
