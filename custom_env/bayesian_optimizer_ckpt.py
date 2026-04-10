@@ -376,7 +376,6 @@ class BayesianOptimizer:
                     self.swanlab.log({
                         "sim_index": i,
                         "reward": float(reward),
-                        "phase": "initial_sampling",
                         "best_reward_so_far": float(max(y_init[:i+1]) if i > 0 else reward)
                     })
 
@@ -507,7 +506,6 @@ class BayesianOptimizer:
                             "sim_index": sim_idx,
                             "reward": float(reward),
                             "epoch": self.current_epoch,
-                            "phase": "optimization",
                             "best_reward_so_far": float(max(self.best_value, max(next_y_values[:j+1])))
                         })
 
