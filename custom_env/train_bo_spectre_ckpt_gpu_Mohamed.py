@@ -59,7 +59,7 @@ def get_default_config() -> Dict[str, Any]:
         "n_restarts": 32,
         "save_freq": 2,
         "cpu_usage": 32,
-        "gpu_usage": 0,
+        "gpu_usage": 1 if torch.cuda.is_available() else 0,
         "max_step": 1,
         "generalize": True,
         "sim_output": False,
@@ -69,6 +69,10 @@ def get_default_config() -> Dict[str, Any]:
         "region_extract": False,
         "dynamic_queue": False,
         "continue_steps_enable": False,
+        "acquisition_optimizer": "torch",
+        "acquisition_steps": 80,
+        "acquisition_lr": 0.05,
+        "acquisition_population_size": 256,
         "use_swanlab": True,
         "swanlab_project": "BO_Mohamed"
     }
@@ -262,6 +266,21 @@ def main():
         
         logging.info(f"使用 {n_workers} 个CPU核心进行并行评估")
 
+        requested_gpus = int(config.get("gpu_usage", 0))
+        if requested_gpus > 0 and torch.cuda.is_available():
+            surrogate_device = config.get("surrogate_device", "cuda:0")
+            acquisition_optimizer = config.get("acquisition_optimizer", "torch")
+        else:
+            surrogate_device = config.get("surrogate_device", "cpu")
+            acquisition_optimizer = config.get("acquisition_optimizer", "scipy")
+            if requested_gpus > 0 and not torch.cuda.is_available():
+                logging.warning("配置请求了GPU，但当前PyTorch未检测到CUDA，已回退到CPU")
+
+        logging.info(
+            f"代理模型设备: {surrogate_device}, 采样优化器: {acquisition_optimizer}, "
+            f"gpu_usage={requested_gpus}"
+        )
+
         # Initialize Bayesian optimizer with parallel evaluator
         optimizer = BayesianOptimizer(
             eval_func=evaluator.evaluate_single,  # 单样本评估函数
@@ -278,6 +297,11 @@ def main():
             checkpoint_dir=checkpoint_dir,
             resume=resume,
             surrogate_learning_rate=config["surrogate_learning_rate"] if "surrogate_learning_rate" in config else 1e-4,
+            surrogate_device=surrogate_device,
+            acquisition_optimizer=acquisition_optimizer,
+            acquisition_steps=int(config.get("acquisition_steps", 80)),
+            acquisition_lr=float(config.get("acquisition_lr", 0.05)),
+            acquisition_population_size=int(config.get("acquisition_population_size", 256)),
         )
         
         logging.info(f"Bayesian optimizer initialized with {input_dim} dimensions")
