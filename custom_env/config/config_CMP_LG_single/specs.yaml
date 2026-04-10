@@ -1,0 +1,23 @@
+DC:
+  DC_IQ:
+    objective: min
+    reward_type: optimal
+    bounds:
+    - 1.0e-04
+    - 1.5e-04
+    typ_value: 1.0e-04
+Trans:
+  Trans_rise_delay_time:
+    objective: min
+    reward_type: optimal
+    bounds:
+    - 3.5e-09
+    - 4.5e-09
+    typ_value: 4e-09
+  Trans_fall_delay_time:
+    objective: min
+    reward_type: optimal
+    bounds:
+    - 3.5e-09
+    - 4.5e-09
+    typ_value: 4e-09
